@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Página 2 — Animação 16×16 (linhas 9-16) + Registro</title>
+<title>Grade 16×16 — Private HEX + WIF (não comprimido)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   :root {
@@ -20,7 +20,8 @@
   }
 
   #container {
-    width: 80%;
+    width: 90%;
+    max-width: 1100px;
     margin: 30px 0;
     border: 2px solid var(--green);
     border-radius: 10px;
@@ -33,8 +34,7 @@
   h1 { color: var(--dark-green); margin: 4px 0 14px; }
   label.section { display:block; text-align:left; color:var(--dark-green); font-weight:700; margin:10px 0 6px; }
 
-  /* canvas centralizado */
-  .canvas-wrap { display:flex; justify-content:center; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .canvas-wrap { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; flex-wrap:wrap; }
 
   canvas#grid {
     border: 2px solid var(--green);
@@ -43,14 +43,7 @@
     cursor: pointer;
   }
 
-  /* controles */
-  .controls {
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:10px;
-  }
+  .controls { display:flex; justify-content:flex-start; gap:12px; flex-wrap:wrap; margin-top:10px; }
 
   .btn {
     display:inline-block;
@@ -68,18 +61,12 @@
   input[type="range"] { width:180px; }
   .small { font-size:0.9rem; color:#333; }
 
-  /* legenda pequena das linhas */
-  .legend {
-    text-align:center;
-    font-size:0.9rem;
-    color:var(--dark-green);
-    margin-top:8px;
-  }
+  .legend { text-align:center; font-size:0.9rem; color:var(--dark-green); margin-top:8px; }
 
-  textarea#privateKeysLog {
+  textarea.logbox {
     width: 100%;
-    height: 160px;
-    margin-top: 18px;
+    height: 240px;
+    margin-top: 8px;
     box-sizing: border-box;
     border: 2px solid var(--green);
     border-radius: 6px;
@@ -89,10 +76,22 @@
     background: #f9fff9;
     color: #004400;
     overflow-y: auto;
+    white-space: pre;
   }
 
-  /* responsivo */
-  @media (max-width:640px){
+  /* Two-column area for logs */
+  .logs {
+    display:flex;
+    gap:12px;
+    width: 100%;
+    margin-top: 14px;
+    align-items:flex-start;
+  }
+  .logs > div { flex:1; }
+
+  @media (max-width:900px){
+    .canvas-wrap { flex-direction:column; align-items:center; }
+    .logs { flex-direction:column; }
     #container{ width:95%; padding:12px; }
     canvas#grid{ width:320px !important; height:320px !important; }
   }
@@ -100,59 +99,67 @@
 </head>
 <body>
   <div id="container">
-    <h1>Página 2 — Animação: ligar/desligar linhas 9→16</h1>
+    <h1>Grade 16×16 — Private HEX & WIF (não comprimido)</h1>
 
     <label class="section">Descrição</label>
     <textarea rows="3" style="width:100%; box-sizing:border-box; border:2px solid var(--green); border-radius:6px; padding:8px; background:#fff;" readonly>
-Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) são animadas. Cada célula é ligada (preenchida) ou apagada (branca) de forma aleatória. Use os controles para alternar entre Modo Sequencial (varre células linha a linha) e Modo Random (aleatório contínuo).
+A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based), a chave privada inteira (256 bits) será convertida para HEX de 64 dígitos e registrada — apenas a linha HEX. Em paralelo será gerado o WIF não comprimido correspondente (uma linha por WIF).
     </textarea>
 
     <div class="canvas-wrap" style="margin-top:14px;">
-      <div>
+      <div style="min-width:520px;">
         <label class="section">Grade (clique para alternar célula)</label>
         <canvas id="grid" width="512" height="512" style="width:512px; height:512px"></canvas>
         <div class="legend">Linha 1 ↑ — Linha 16 ↓</div>
-      </div>
 
-      <div style="min-width:260px; max-width:320px; text-align:left;">
-        <label class="section">Configurações da Animação</label>
-
-        <div style="margin-bottom:8px;">
-          <div class="small" style="margin-bottom:6px;">Modo de animação</div>
-          <label><input type="radio" name="mode" value="sequential" checked> Sequencial (varre linhas 9→16)</label><br>
-          <label><input type="radio" name="mode" value="random"> Random (aleatório dentro de 9→16)</label>
-        </div>
-
-        <div style="margin-bottom:10px;">
-          <div class="small" style="margin-bottom:6px;">Velocidade (ms por passo)</div>
-          <input id="speed" type="range" min="20" max="500" value="120">
-          <div class="small">Valor atual: <span id="speedLabel">120</span> ms</div>
-        </div>
-
-        <div class="controls">
+        <div class="controls" style="margin-top:12px;">
           <button class="btn" id="startBtn">Iniciar</button>
           <button class="btn" id="stopBtn" disabled>Parar</button>
           <button class="btn" id="clearBtn">Limpar</button>
+          <button class="btn" id="randBtn">Aleatório</button>
         </div>
 
-        <div style="margin-top:12px;">
-          <div class="small"><strong>Opções</strong></div>
-          <label><input type="checkbox" id="toggleOnClick" checked> Permitir alternar célula ao clicar</label><br>
-          <label><input type="checkbox" id="randomizeStatesOnStep" checked> Cada célula recebe estado aleatório (em vez de só ligar)</label>
-        </div>
+        <div style="margin-top:10px;">
+          <label class="small">Modo:</label>
+          <label><input type="radio" name="mode" value="sequential" checked> Sequencial (varre linhas 9→16)</label>
+          <label style="margin-left:8px;"><input type="radio" name="mode" value="random"> Random</label>
 
-        <div style="margin-top:12px;">
-          <div class="small">Observações:</div>
+          <div style="margin-top:8px;">
+            <div class="small" style="margin-bottom:6px;">Velocidade (ms por passo)</div>
+            <input id="speed" type="range" min="20" max="500" value="120">
+            <div class="small">Valor atual: <span id="speedLabel">120</span> ms</div>
+          </div>
+
+          <div style="margin-top:6px;">
+            <label><input type="checkbox" id="toggleOnClick" checked> Permitir alternar célula ao clicar</label><br>
+            <label><input type="checkbox" id="randomizeStatesOnStep" checked> Ao atualizar, atribuir estado aleatório (em vez de só ligar)</label>
+          </div>
+        </div>
+      </div>
+
+      <div style="min-width:300px; max-width:420px; text-align:left;">
+        <label class="section">Opções & Observações</label>
+        <div class="small">
           <ul style="margin:6px 0 0 18px; padding:0;">
-            <li style="font-size:0.9rem;">Linhas animadas = 9..16 (1-based).</li>
-            <li style="font-size:0.9rem;">Sequencial varre célula a célula; Random escolhe células aleatórias dentro das linhas alvo.</li>
+            <li>Linhas animadas = 9..16 (1-based).</li>
+            <li>Sequencial varre célula a célula; Random escolhe células aleatórias dentro das linhas alvo.</li>
+            <li>Cada alteração nas linhas 9..16 gera 1 linha HEX + 1 linha WIF.</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <label class="section" style="margin-top:20px;">Registro das Private Keys</label>
-    <textarea id="privateKeysLog" readonly placeholder="As alterações das células animadas serão registradas aqui..."></textarea>
+    <div class="logs">
+      <div>
+        <label class="section">Private Keys (HEX 64 dígitos) — somente as linhas HEX</label>
+        <textarea id="privateKeysBox" class="logbox" readonly placeholder="As private keys HEX aparecerão aqui, uma por linha..."></textarea>
+      </div>
+
+      <div>
+        <label class="section">WIFs (não comprimido)</label>
+        <textarea id="wifBox" class="logbox" readonly placeholder="Os WIFs correspondentes aparecerão aqui, uma por linha..."></textarea>
+      </div>
+    </div>
 
     <footer style="margin-top:18px; color:#666; font-size:0.9rem;">
       <div>(c) exemplo — grade 16×16</div>
@@ -160,13 +167,23 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
   </div>
 
 <script>
-(function(){
+/*
+  Página: grade 16x16 com geração de Private HEX (64 dígitos) e WIF não comprimido.
+  - Atualiza os dois textareas a cada liga/desliga de células nas linhas 9..16 (0-based 8..15).
+  - WIF não comprimido = Base58Check(0x80 || privateKeyBytes)  (sem byte 0x01 no final).
+  - Usa SubtleCrypto para SHA-256.
+*/
+
+(async function(){
+  // Elements
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d', { alpha: false });
+  const privateKeysBox = document.getElementById('privateKeysBox');
+  const wifBox = document.getElementById('wifBox');
 
   const GRID = 16;
   const CELL = canvas.width / GRID;
-  const rowsToAnimate = { start: 8, end: 15 }; // 0-based indices (linhas 9–16)
+  const rowsToAnimate = { start: 8, end: 15 }; // 0-based para 9..16
   let grid = [];
   let animating = false;
   let mode = 'sequential';
@@ -176,87 +193,187 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
+  const randBtn = document.getElementById('randBtn');
   const toggleOnClickEl = document.getElementById('toggleOnClick');
   const randomizeStatesOnStepEl = document.getElementById('randomizeStatesOnStep');
-  const privateKeysLog = document.getElementById('privateKeysLog');
 
+  // base58 alphabet
+  const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+  // --- Inicialização da grid ---
   function initGrid() {
     grid = new Array(GRID);
-    for (let r = 0; r < GRID; r++) {
+    for (let r=0; r<GRID; r++){
       grid[r] = new Array(GRID).fill(false);
     }
   }
 
   function drawGrid() {
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0,0,canvas.width, canvas.height);
 
-    for (let r = 0; r < GRID; r++) {
-      for (let c = 0; c < GRID; c++) {
+    for (let r=0;r<GRID;r++){
+      for (let c=0;c<GRID;c++){
         const x = c * CELL;
         const y = r * CELL;
-
         if (grid[r][c]) {
           ctx.fillStyle = '#006400';
-          ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
+          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
         } else {
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
+          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
         }
-
         ctx.strokeStyle = '#008000';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
+        ctx.strokeRect(x+0.5, y+0.5, CELL-1, CELL-1);
       }
     }
 
-    for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++) {
+    // highlight linhas animadas
+    for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++){
       ctx.fillStyle = 'rgba(0,128,0,0.03)';
-      ctx.fillRect(0, r * CELL, canvas.width, CELL);
+      ctx.fillRect(0, r*CELL, canvas.width, CELL);
     }
   }
 
-  function generatePrivateKeyHex() {
+  // --- Conversões utilitárias ---
+  function bitsFromGrid() {
+    // retorna string com 256 bits, varrendo linha por linha (r=0..15, c=0..15)
     let bits = '';
-    for (let r = 0; r < GRID; r++) {
-      for (let c = 0; c < GRID; c++) {
+    for (let r=0;r<GRID;r++){
+      for (let c=0;c<GRID;c++){
         bits += grid[r][c] ? '1' : '0';
       }
     }
-
-    let hex = '';
-    for (let i = 0; i < bits.length; i += 4) {
-      const nibble = bits.substr(i, 4);
-      hex += parseInt(nibble, 2).toString(16);
-    }
-
-    hex = hex.padStart(64, '0'); // garante 64 dígitos
-    privateKeysLog.value += `Chave Privada em HEX (64 dígitos):\n${hex}\n\n`;
-    privateKeysLog.scrollTop = privateKeysLog.scrollHeight;
+    return bits;
   }
 
-  function toggleCell(r, c, explicitState) {
+  function hexFromBits(bits) {
+    // bits length expected 256. Converte por nibbles.
+    let hex = '';
+    for (let i=0;i<bits.length;i+=4){
+      const nib = bits.substr(i,4);
+      const val = parseInt(nib, 2);
+      hex += val.toString(16);
+    }
+    // garantir 64 chars (cada hex é 4 bits -> 256/4 = 64)
+    if (hex.length < 64) hex = hex.padStart(64, '0');
+    return hex.toLowerCase();
+  }
+
+  function hexToBytes(hex) {
+    if (hex.length % 2) hex = '0' + hex;
+    const out = new Uint8Array(hex.length/2);
+    for (let i=0;i<out.length;i++){
+      out[i] = parseInt(hex.substr(i*2,2),16);
+    }
+    return out;
+  }
+
+  function concatUint8(a,b) {
+    const out = new Uint8Array(a.length + b.length);
+    out.set(a,0);
+    out.set(b,a.length);
+    return out;
+  }
+
+  async function sha256(buffer) {
+    // buffer: Uint8Array or ArrayBuffer
+    const ab = buffer.buffer ? buffer.buffer : buffer;
+    const hash = await crypto.subtle.digest('SHA-256', ab);
+    return new Uint8Array(hash);
+  }
+
+  async function doubleSha256(bytes) {
+    const h1 = await sha256(bytes);
+    const h2 = await sha256(h1);
+    return h2;
+  }
+
+  function bytesToBigInt(bytes) {
+    let n = 0n;
+    for (let b of bytes) {
+      n = (n << 8n) + BigInt(b);
+    }
+    return n;
+  }
+
+  function base58Encode(bytes) {
+    // preserve leading zeros as '1'
+    let zeros = 0;
+    for (let i=0;i<bytes.length && bytes[i] === 0;i++) zeros++;
+    const payload = bytes.slice(zeros);
+    let n = bytesToBigInt(payload);
+    let chars = '';
+    while (n > 0n) {
+      const rem = n % 58n;
+      chars = BASE58_ALPHABET[Number(rem)] + chars;
+      n = n / 58n;
+    }
+    return '1'.repeat(zeros) + chars;
+  }
+
+  async function privateHexToWIF(hex) {
+    // expects 64-char hex (32 bytes)
+    const priv = hexToBytes(hex.padStart(64,'0'));
+    // prefix 0x80
+    const pref = new Uint8Array([0x80]);
+    const withPrefix = concatUint8(pref, priv); // 33 bytes
+    const checksum = await doubleSha256(withPrefix);
+    const check4 = checksum.slice(0,4);
+    const full = concatUint8(withPrefix, check4); // 37 bytes
+    const wif = base58Encode(full);
+    return wif;
+  }
+
+  // --- Atualização de registros (HEX + WIF) ---
+  async function updateRecords() {
+    // gera hex
+    const bits = bitsFromGrid();
+    const hex = hexFromBits(bits);
+    // append hex line only (sem cabeçalho)
+    privateKeysBox.value += hex + '\n';
+    privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
+
+    // compute WIF async
+    try {
+      const wif = await privateHexToWIF(hex);
+      wifBox.value += wif + '\n';
+      wifBox.scrollTop = wifBox.scrollHeight;
+    } catch (err) {
+      // se algo falhar, escreve uma linha de erro curta (não interrompe)
+      wifBox.value += '[WIF_ERROR]\n';
+      wifBox.scrollTop = wifBox.scrollHeight;
+      console.error('Erro gerando WIF:', err);
+    }
+  }
+
+  // --- Interação com canvas ---
+  function toggleCell(r,c, explicitState) {
     if (explicitState === undefined) grid[r][c] = !grid[r][c];
     else grid[r][c] = !!explicitState;
     drawGrid();
 
+    // se célula está nas linhas 9..16 (start..end), atualizamos registros
     if (r >= rowsToAnimate.start && r <= rowsToAnimate.end) {
-      generatePrivateKeyHex();
+      // disparar updateRecords (assíncrono)
+      updateRecords();
     }
   }
 
-  canvas.addEventListener('click', function(e) {
+  canvas.addEventListener('click', function(e){
     if (!toggleOnClickEl.checked) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const c = Math.floor(x / CELL);
     const r = Math.floor(y / CELL);
-    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
-      toggleCell(r, c);
+    if (r>=0 && r<GRID && c>=0 && c<GRID) {
+      toggleCell(r,c);
     }
   });
 
+  // UI bindings
   document.getElementsByName('mode').forEach(radio => {
     radio.addEventListener('change', function(){
       mode = this.value;
@@ -264,90 +381,91 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
   });
 
   document.getElementById('speed').addEventListener('input', function(){
-    speed = parseInt(this.value, 10);
+    speed = parseInt(this.value,10);
     speedLabel.textContent = speed;
   });
 
   startBtn.addEventListener('click', startAnimation);
   stopBtn.addEventListener('click', stopAnimation);
-  clearBtn.addEventListener('click', function() {
+  clearBtn.addEventListener('click', function(){
     stopAnimation();
     initGrid();
     drawGrid();
-    privateKeysLog.value = '';
+    privateKeysBox.value = '';
+    wifBox.value = '';
+  });
+  randBtn.addEventListener('click', function(){
+    // preenche grid aleatoriamente e força atualização das linhas animadas (gera registros)
+    for (let r=0;r<GRID;r++){
+      for (let c=0;c<GRID;c++){
+        grid[r][c] = Math.random() < 0.5;
+      }
+    }
+    drawGrid();
+    // Only generate record once for the full grid change:
+    updateRecords();
   });
 
-  function startAnimation() {
+  // Animation logic
+  function startAnimation(){
     if (animating) return;
     animating = true;
     startBtn.disabled = true;
     stopBtn.disabled = false;
-    mode === 'sequential' ? sequentialAnimate() : randomAnimate();
+    if (mode === 'sequential') sequentialAnimate();
+    else randomAnimate();
   }
 
-  function stopAnimation() {
+  function stopAnimation(){
     animating = false;
     startBtn.disabled = false;
     stopBtn.disabled = true;
-    if (timer) clearTimeout(timer);
+    if (timer) { clearTimeout(timer); timer = null; }
   }
 
-  function sequentialAnimate() {
+  function sequentialAnimate(){
     let row = rowsToAnimate.start;
     let col = 0;
-
-    function step() {
+    async function step(){
       if (!animating) return;
-
-      let newState = randomizeStatesOnStepEl.checked
-        ? Math.random() < 0.5
-        : true;
-
+      let newState = randomizeStatesOnStepEl.checked ? (Math.random() < 0.5) : true;
       grid[row][col] = newState;
       drawGrid();
-      generatePrivateKeyHex();
+      // atualizar registros (apenas se a célula está nas linhas alvo - sempre estará)
+      await updateRecords();
 
       col++;
-      if (col >= GRID) {
-        col = 0;
-        row++;
-        if (row > rowsToAnimate.end) row = rowsToAnimate.start;
-      }
-
+      if (col >= GRID) { col = 0; row++; if (row > rowsToAnimate.end) row = rowsToAnimate.start; }
       timer = setTimeout(step, speed);
     }
-
     step();
   }
 
-  function randomAnimate() {
-    function step() {
+  function randomAnimate(){
+    async function step(){
       if (!animating) return;
-
       const n = Math.max(1, Math.floor(6 - (speed / 100)));
-
-      for (let i = 0; i < n; i++) {
+      for (let i=0;i<n;i++){
         const r = Math.floor(Math.random() * (rowsToAnimate.end - rowsToAnimate.start + 1)) + rowsToAnimate.start;
         const c = Math.floor(Math.random() * GRID);
-
-        grid[r][c] = randomizeStatesOnStepEl.checked
-          ? Math.random() < 0.5
-          : !grid[r][c];
-
-        generatePrivateKeyHex();
+        grid[r][c] = randomizeStatesOnStepEl.checked ? (Math.random() < 0.5) : !grid[r][c];
+        // cada alteração gera registro
+        await updateRecords();
       }
-
       drawGrid();
       timer = setTimeout(step, speed);
     }
-
     step();
   }
 
+  // Inicializa
   initGrid();
   drawGrid();
+
+  // Expor para debug se necessário
+  window.__pv = { grid, toggleCell, updateRecords };
+
 })();
 </script>
-
 </body>
 </html>
