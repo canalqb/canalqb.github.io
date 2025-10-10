@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Página 2 — Animação 16×16 (linhas 9-16)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root {
+    --green: #008000;
+    --dark-green: #006400;
+    --bg: #ffffff;
+  }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: #000;
+    display: flex;
+    justify-content: center;
+  }
+
+  #container {
+    width: 80%;
+    margin: 30px 0;
+    border: 2px solid var(--green);
+    border-radius: 10px;
+    padding: 18px;
+    box-sizing: border-box;
+    background: #fff;
+    text-align: center;
+  }
+
+  h1 { color: var(--dark-green); margin: 4px 0 14px; }
+  label.section { display:block; text-align:left; color:var(--dark-green); font-weight:700; margin:10px 0 6px; }
+
+  /* canvas centralizado */
+  .canvas-wrap { display:flex; justify-content:center; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+
+  canvas#grid {
+    border: 2px solid var(--green);
+    background: #fff;
+    image-rendering: pixelated;
+    cursor: pointer;
+  }
+
+  /* controles */
+  .controls {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:10px;
+  }
+
+  .btn {
+    display:inline-block;
+    padding:8px 12px;
+    border-radius:6px;
+    border:2px solid var(--green);
+    background:#fff;
+    color:var(--dark-green);
+    cursor:pointer;
+    font-weight:700;
+  }
+  .btn:active { transform:translateY(1px); }
+  .btn.warn { border-color:#d35400; color:#d35400; }
+
+  input[type="range"] { width:180px; }
+  .small { font-size:0.9rem; color:#333; }
+
+  /* legenda pequena das linhas */
+  .legend {
+    text-align:center;
+    font-size:0.9rem;
+    color:var(--dark-green);
+    margin-top:8px;
+  }
+
+  /* responsivo */
+  @media (max-width:640px){
+    #container{ width:95%; padding:12px; }
+    canvas#grid{ width:320px !important; height:320px !important; }
+  }
+</style>
+</head>
+<body>
+  <div id="container">
+    <h1>Página 2 — Animação: ligar/desligar linhas 9→16</h1>
+
+    <label class="section">Descrição</label>
+    <textarea rows="3" style="width:100%; box-sizing:border-box; border:2px solid var(--green); border-radius:6px; padding:8px; background:#fff;" readonly>
+Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) são animadas. Cada célula é ligada (preenchida) ou apagada (branca) de forma aleatória. Use os controles para alternar entre Modo Sequencial (varre células linha a linha) e Modo Random (aleatório contínuo).
+    </textarea>
+
+    <div class="canvas-wrap" style="margin-top:14px;">
+      <div>
+        <label class="section">Grade (clique para alternar célula)</label>
+        <canvas id="grid" width="512" height="512" style="width:512px; height:512px"></canvas>
+        <div class="legend">Linha 1 ↑ — Linha 16 ↓</div>
+      </div>
+
+      <div style="min-width:260px; max-width:320px; text-align:left;">
+        <label class="section">Configurações da Animação</label>
+
+        <div style="margin-bottom:8px;">
+          <div class="small" style="margin-bottom:6px;">Modo de animação</div>
+          <label><input type="radio" name="mode" value="sequential" checked> Sequencial (varre linhas 9→16)</label><br>
+          <label><input type="radio" name="mode" value="random"> Random (aleatório dentro de 9→16)</label>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <div class="small" style="margin-bottom:6px;">Velocidade (ms por passo)</div>
+          <input id="speed" type="range" min="20" max="500" value="120">
+          <div class="small">Valor atual: <span id="speedLabel">120</span> ms</div>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="startBtn">Iniciar</button>
+          <button class="btn" id="stopBtn" disabled>Parar</button>
+          <button class="btn" id="clearBtn">Limpar</button>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="small"><strong>Opções</strong></div>
+          <label><input type="checkbox" id="toggleOnClick" checked> Permitir alternar célula ao clicar</label><br>
+          <label><input type="checkbox" id="randomizeStatesOnStep" checked> Cada célula recebe estado aleatório (em vez de só ligar)</label>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="small">Observações:</div>
+          <ul style="margin:6px 0 0 18px; padding:0;">
+            <li style="font-size:0.9rem;">Linhas animadas = 9..16 (1-based).</li>
+            <li style="font-size:0.9rem;">Sequencial varre célula a célula; Random escolhe células aleatórias dentro das linhas alvo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer style="margin-top:18px; color:#666; font-size:0.9rem;">
+      <div>(c) exemplo — grade 16×16</div>
+    </footer>
+  </div>
+
+<script>
+/*
+  Página2: Animação de células 16x16 nas linhas 9..16.
+  - Grid: 16 x 16
+  - linhas 9..16 (1-based) -> indices 8..15 (0-based)
+  - Dois modos:
+      sequential: varre cada célula das linhas alvo em sequência (coluna a coluna)
+      random: escolhe células aleatórias dentro das linhas alvo continuamente
+  - Cada célula ao "ser atualizada" recebe estado aleatório (on/off) se randomizeStatesOnStep estiver true.
+*/
+
+(function(){
+  const canvas = document.getElementById('grid');
+  const ctx = canvas.getContext('2d', { alpha: false });
+
+  const GRID = 16;
+  const CELL = canvas.width / GRID; // assume square canvas
+  const rowsToAnimate = { start: 8, end: 15 }; // 0-based indices for rows 9..16
+  let grid = []; // grid[r][c] boolean
+  let animating = false;
+  let mode = 'sequential';
+  let timer = null;
+  let speed = parseInt(document.getElementById('speed').value, 10);
+  const speedLabel = document.getElementById('speedLabel');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  const toggleOnClickEl = document.getElementById('toggleOnClick');
+  const randomizeStatesOnStepEl = document.getElementById('randomizeStatesOnStep');
+
+  // initial grid
+  function initGrid() {
+    grid = new Array(GRID);
+    for (let r=0;r<GRID;r++){
+      grid[r] = new Array(GRID).fill(false);
+    }
+  }
+
+  function drawGrid() {
+    // white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+    // draw cells
+    for (let r=0;r<GRID;r++){
+      for (let c=0;c<GRID;c++){
+        const x = c * CELL;
+        const y = r * CELL;
+
+        if (grid[r][c]) {
+          // filled cell
+          ctx.fillStyle = '#006400'; // dark green
+          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
+        } else {
+          // empty cell -> white background (already), draw border light
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
+        }
+
+        // draw cell border
+        ctx.strokeStyle = '#008000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x+0.5, y+0.5, CELL-1, CELL-1);
+      }
+    }
+
+    // draw a subtle line separating animated rows
+    ctx.strokeStyle = '#d0d0d0';
+    ctx.lineWidth = 1;
+    // optional: highlight rows 9..16 horizontally
+    for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++){
+      ctx.fillStyle = 'rgba(0,128,0,0.03)';
+      ctx.fillRect(0, r*CELL, canvas.width, CELL);
+    }
+  }
+
+  function resizeCanvasToDisplay() {
+    // keep canvas square and matching CSS size (already set), but adjust CELL if needed
+    // Not resizing actual canvas here since width/height are fixed; CELL computed from width.
+  }
+
+  function toggleCell(r,c,explicitState) {
+    if (explicitState === undefined) grid[r][c] = !grid[r][c];
+    else grid[r][c] = !!explicitState;
+    drawGrid();
+  }
+
+  // click to toggle
+  canvas.addEventListener('click', function(e){
+    if (!toggleOnClickEl.checked) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const c = Math.floor(x / CELL);
+    const r = Math.floor(y / CELL);
+    if (r>=0 && r<GRID && c>=0 && c<GRID) {
+      toggleCell(r,c);
+    }
+  });
+
+  // UI updates
+  document.getElementsByName('mode').forEach(radio => {
+    radio.addEventListener('change', function(){
+      mode = this.value;
+    });
+  });
+
+  document.getElementById('speed').addEventListener('input', function(){
+    speed = parseInt(this.value, 10);
+    speedLabel.textContent = speed;
+  });
+
+  startBtn.addEventListener('click', startAnimation);
+  stopBtn.addEventListener('click', stopAnimation);
+  clearBtn.addEventListener('click', function(){
+    stopAnimation();
+    initGrid();
+    drawGrid();
+  });
+
+  function startAnimation(){
+    if (animating) return;
+    animating = true;
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+
+    if (mode === 'sequential') {
+      sequentialAnimate();
+    } else {
+      randomAnimate();
+    }
+  }
+
+  function stopAnimation(){
+    animating = false;
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  }
+
+  // SEQUENTIAL: varre cada célula das linhas selecionadas em ordem.
+  function sequentialAnimate() {
+    // We'll iterate rows start..end and columns 0..15
+    let row = rowsToAnimate.start;
+    let col = 0;
+
+    function step() {
+      if (!animating) return;
+      // decide state for this cell
+      let newState;
+      if (randomizeStatesOnStepEl.checked) {
+        newState = Math.random() < 0.5; // 50% chance on/off
+      } else {
+        // if not randomize, toggle to ON (true) else off if already on?
+        newState = true;
+      }
+      grid[row][col] = newState;
+      drawGrid();
+
+      // advance to next cell
+      col++;
+      if (col >= GRID) {
+        col = 0;
+        row++;
+        if (row > rowsToAnimate.end) {
+          // finished a full pass; restart from start
+          row = rowsToAnimate.start;
+        }
+      }
+
+      // next step after speed ms
+      timer = setTimeout(step, speed);
+    }
+
+    step();
+  }
+
+  // RANDOM: a cada intervalo escolhe N aleatórios (1..4) células dentro das linhas alvo e altera o estado aleatoriamente
+  function randomAnimate(){
+    function step() {
+      if (!animating) return;
+      // choose how many random cells to update this tick (1..6 depending on speed)
+      const n = Math.max(1, Math.floor(6 - (speed / 100))); // faster speed -> more updates
+      for (let i=0;i<n;i++){
+        const r = Math.floor(Math.random() * (rowsToAnimate.end - rowsToAnimate.start + 1)) + rowsToAnimate.start;
+        const c = Math.floor(Math.random() * GRID);
+        if (randomizeStatesOnStepEl.checked) {
+          grid[r][c] = Math.random() < 0.5;
+        } else {
+          grid[r][c] = !grid[r][c];
+        }
+      }
+      drawGrid();
+      timer = setTimeout(step, speed);
+    }
+    step();
+  }
+
+  // init
+  initGrid();
+  drawGrid();
+
+  // expose for debugging if needed
+  window.__pv = {
+    grid, toggleCell, drawGrid, startAnimation, stopAnimation
+  };
+
+})();
+</script>
+</body>
+</html>
