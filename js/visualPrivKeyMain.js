@@ -1,310 +1,192 @@
-// ###############################################################################
-// #                                                                             #
-// #        JS script for creating Visual 16x16 (256bit) BTC private keys        #
-// #                                                                             #
-// #           Visual private key generator (c) 2019 by MrFreeDragon             #
-// #                                                                             #
-// ###############################################################################
+<!DOCTYPE html>
+<!-- Visual bitcoin private key generator, 2019 (c) MrFreeDragon -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Gerador Visual de BTC - Gerador de Endereço Bitcoin no Cliente (JS)</title>
+<meta name="description" content="Gerador visual de chave privada Bitcoin. O quadrado 16x16 é usado para geração, onde cada célula é um bit - 0 ou 1. Faça seus desenhos visuais ou use o modo moeda (flip) e preencha a célula correspondente.">
+<meta name="keywords" content="Bitcoin, chave privada, gerador de endereço, gerador bitcoin, gerador de chave privada, padrão de chave privada, visualização bitcoin">
+<meta name="author" content="MrDragon">
 
-(() => {
-  const cellSize = 28;
-  const gridCount = 16;
-  const canvasSize = cellSize * gridCount;
+<link href="css/visualPrivKey.css?v=3b" rel="stylesheet">
+<script src="js/bitcoinJS-lib.js"></script> <!-- BitcoinJS-lib v0.1.3-default, bitcoin JS ECDSA and functions -->
+<script src="js/QRcode.js"></script> <!-- QR Code Generator for JavaScript -->
 
-  const cellFillColor = "green";   // Cell color when bit=1
-  const cellNoFillColor = "white"; // Cell color when bit=0
-  const cellBlockColor = "#a8a8a8"; // Cell color when line/column blocked
+<!-- Estilos adicionais para contornos verdes e fundo branco -->
+<style>
+  /* fundo geral */
+  body { background-color: #ffffff !important; color: #000; }
 
-  const BTCOrderBin = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111010111010101011101101110011100110101011110100100010100000001110111011111111010010010111101000110011010000001101100100000101000000".split("");
+  /* caixa principal */
+  .mainDIVcss { border: 2px solid #008000; background-color: #ffffff; padding: 12px; border-radius: 8px; }
 
-  // HTML elements
-  const canvas = document.getElementById("BTCpic");
-  const ctx = canvas.getContext("2d");
+  /* sobrescrever cabeçalho colorido original */
+  .mainDIVcss > div[style] { background-color: #ffffff !important; border: 2px solid #008000; color: #006400; padding: 10px; border-radius: 12px; }
 
-  const BTCbin = document.getElementById("BTCb");
-  const BTChex = document.getElementById("BTCh");
-  const BTCp_gen = document.getElementById("BTCpub");
-  const BTCaddr_gen = document.getElementById("BTCaddr");
-  const BTCp_c_gen = document.getElementById("BTCpubC");
-  const BTCaddr_c_gen = document.getElementById("BTCaddrC");
-  const BTCadd_trans = document.getElementById("BTCaddrCheck");
-  const BTCadd_c_trans = document.getElementById("BTCaddrCheckC");
-
-  const HEXtick = document.getElementById("ownHEX");
-  const HEXinput = document.getElementById("BTChIn");
-  const HEXform = document.getElementById("ownHEXform");
-  const AdvOptform = document.getElementById("AdvOptDIV");
-
-  const ExportKeyType = document.getElementById("IsCompressedExportKey");
-  const ExportDIV = document.getElementById("ExportKey");
-  const ExportPriv = document.getElementById("PrivKeyExport");
-  const ExportWIF = document.getElementById("PrivKeyWIF");
-  const ExportAddr = document.getElementById("AddressExport");
-
-  const PrivKeyCaution = document.getElementById("Caution");
-
-  // State variables
-  let BTCpk = Array.from({ length: gridCount }, () => Array(gridCount).fill(0));
-  let blockX = Array(gridCount).fill(0);
-  let blockY = Array(gridCount).fill(0);
-  let IsLinesBlockOption = false;
-  let LastCell = [-1, -1];
-  let timer = null;
-  let BlockExplorer = "https://btc.com/";
-  let APIrequestURL = "https://blockchain.info/q/getreceivedbyaddress/";
-
-  // Setup canvas
-  canvas.width = canvasSize + cellSize;
-  canvas.height = canvasSize + cellSize;
-
-  // Draw grid lines and labels
-  function drawGrid() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.setLineDash([1, 3]);
-    ctx.strokeStyle = "blue";
-
-    // vertical lines
-    for (let x = cellSize - 0.5; x <= canvasSize + cellSize; x += cellSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, cellSize);
-      ctx.lineTo(x, canvasSize + cellSize);
-      ctx.stroke();
-    }
-
-    // horizontal lines
-    for (let y = cellSize - 0.5; y <= canvasSize + cellSize; y += cellSize) {
-      ctx.beginPath();
-      ctx.moveTo(cellSize, y);
-      ctx.lineTo(canvasSize + cellSize, y);
-      ctx.stroke();
-    }
-
-    // Labels 1-16 on X and Y axes
-    ctx.font = "bold 12px Verdana";
-    ctx.fillStyle = "green";
-
-    for (let i = 1; i <= gridCount; i++) {
-      ctx.fillText(i, 5, 20 + i * cellSize);
-      ctx.fillText(i, 5 + i * cellSize, 20);
-    }
+  /* inputs e textareas */
+  input[type="text"], .textbox, .textboxVis, .textboxOnlineResult, .textboxVis, .textboxPK, textarea, .textfield, .textfieldPK, .TextDescr, .TextWarn, .VisWarn {
+    border: 2px solid #008000 !important;
+    background-color: #ffffff !important;
+    color: #000;
+    border-radius: 6px;
+    padding: 6px;
+    box-sizing: border-box;
   }
 
-  // Fill cells based on BTCpk array and blocks
-  function fillAllCells() {
-    for (let x = 0; x < gridCount; x++) {
-      for (let y = 0; y < gridCount; y++) {
-        let color = BTCpk[y][x] === 1 ? cellFillColor : cellNoFillColor;
-        if (blockX[x] === 1 || blockY[y] === 1) color = cellBlockColor;
-        ctx.fillStyle = color;
-        ctx.fillRect(cellSize + x * cellSize, cellSize + y * cellSize, cellSize - 1, cellSize - 1);
-      }
-    }
+  /* botões (links com classe .btn) */
+  .btn {
+    border: 2px solid #008000;
+    background-color: #ffffff;
+    color: #006400;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
   }
 
-  // Convert BTCpk array to binary string
-  function privFromArr() {
-    return BTCpk.flat().join('');
+  .btn:hover { background-color: #f0fff0; }
+
+  /* canvas (grade 16x16) */
+  #BTCpic {
+    border: 2px solid #008000;
+    background-color: #ffffff;
+    display: block;
+    margin: 6px 0;
   }
 
-  // Convert binary string to hex string
-  function bin2hex(bin) {
-    let hex = '';
-    let res = bin.length % 4;
-    for (let i = 0; i < bin.length - res; i += 4) {
-      let chunk = bin.substr(bin.length - i - 4, 4);
-      hex = parseInt(chunk, 2).toString(16) + hex;
-    }
-    if (res > 0) {
-      hex = parseInt(bin.substr(0, res), 2).toString(16) + hex;
-    }
-    return hex;
+  /* links youtube / outros */
+  a.youtubeLink, a.AddrLink, a.imgPopUp {
+    color: #006400;
+    border-bottom: 1px dashed #008000;
   }
 
-  // Convert hex string to binary string with padding
-  function hex2bin(hex) {
-    return hex.split('').map(ch => parseInt(ch, 16).toString(2).padStart(4, '0')).join('');
+  /* labels e legendas */
+  .Reslbl, .LabelExp, .printOwnership {
+    color: #006400;
   }
 
-  // Pad string to length with char (left pad)
-  function pad(str, len, ch) {
-    return ch.repeat(len - str.length) + str;
-  }
+  /* pequenos ajustes responsivos */
+  textarea[disabled], textarea[readonly] { resize: vertical; }
 
-  // Check if binary number is less or equal BTC order
-  function isInOrder(binStr) {
-    if (binStr.length > 256) return false;
-    if (binStr.length < 256) return true; // smaller length means smaller number
+  /* garantir que inputs read-only também apareçam com background branco */
+  input[readonly], textarea[readonly], textarea[disabled] { background-color: #ffffff; }
 
-    for (let i = 0; i < 256; i++) {
-      if (binStr[i] > BTCOrderBin[i]) return false;
-      if (binStr[i] < BTCOrderBin[i]) return true;
-    }
-    return true;
-  }
+</style>
 
-  // Calculate keys and addresses (using BitcoinJS or similar library)
-  function legacyAddr(sec_key_hex) {
-    const secKey = pad(sec_key_hex, 64, '0');
-    const hash = Crypto.util.hexToBytes(secKey);
-    const eckey = new Bitcoin.ECKey(hash);
-    const eckey_c = new Bitcoin.ECKey(hash);
+</head>
 
-    const curve = getSECCurveByName("secp256k1");
-    const pt = curve.getG().multiply(eckey.priv);
+<body>
 
-    eckey_c.pub = getEncoded(pt, true);
-    eckey_c.pubKeyHash = Bitcoin.Util.sha256ripe160(eckey_c.pub);
+<div id="MainDIV" class="mainDIVcss">
+  <div style="background-color:lightblue;width:670px;border-radius:15px"><h1>Gerador Visual de Chave Privada Bitcoin</h1></div>
 
-    const hash160 = eckey.getPubKeyHash();
-    const hash160_c = eckey_c.getPubKeyHash();
+  <textarea class="TextDescr" disabled> A tabela abaixo gera uma chave privada Bitcoin de 256 bits representada por um quadrado 16x16 (16 bits por linha). Jogue uma moeda para seleção aleatória de bits ou use o mouse para marcar um bit dentro de uma célula como 1 (célula preenchida) ou 0 (célula vazia). O gerador mostrará imediatamente a chave pública correspondente e o endereço Bitcoin. Depois clique em "Gerar WIF & QR code" para obter as chaves privadas/públicas prontas para impressão e seus QR codes.</textarea>
 
-    const pubkey = Crypto.util.bytesToHex(getEncoded(pt, false));
-    const pubkey_c = Crypto.util.bytesToHex(eckey_c.pub);
+  <p style="margin-block-start:5px; margin-block-end:10px">Tutoriais no YouTube:
+    <a class="youtubeLink" href="https://www.youtube.com/watch?v=WyBdYhwweaE" style="margin-left:20px" target="_blank">Geração de chave privada com moeda</a>
+    <a class="youtubeLink" href="https://www.youtube.com/watch?v=0Ug4YBEyRFQ" style="margin-left:30px" target="_blank">Padrão divertido de chave privada</a>
+  </p>
 
-    const addr = new Bitcoin.Address(hash160);
-    const addr_c = new Bitcoin.Address(hash160_c);
+  <textarea class="TextWarn" disabled>Aviso de segurança: Você pode "desenhar" imagens, logotipos e figuras e usá-los como suas chaves privadas apenas para fins educacionais, por diversão ou para pequenos presentes. Para criar um endereço seguro para armazenamento de valores reais, use uma moeda física e preencha cada bit de sua chave jogando a moeda 256 vezes.</textarea><br>
 
-    return [pubkey, addr.toString(), pubkey_c, addr_c.toString()];
-  }
+  <label class="gtr">
+    <input type="checkbox" id="ownHEX" class="rtg">
+    <span class="mrt"></span>
+    <span class="lst">Visualizar minha própria chave HEX (marque para inserir sua chave)</span>
+  </label>
 
-  // Get encoded public key (compressed or uncompressed)
-  function getEncoded(pt, compressed) {
-    const x = pt.getX().toBigInteger();
-    const y = pt.getY().toBigInteger();
-    let enc = integerToBytes(x, 32);
-    if (compressed) {
-      enc.unshift(y.isEven() ? 0x02 : 0x03);
-    } else {
-      enc.unshift(0x04);
-      enc = enc.concat(integerToBytes(y, 32));
-    }
-    return enc;
-  }
+  <div id="ownHEXform" style="display:none">
+    <textarea class="VisWarn" disabled>Pense bem antes de visualizar sua chave privada! Na maioria dos casos você não encontrará nada de interessante - apenas uma variedade de bits espalhados aleatoriamente pelo quadrado.</textarea><br>
+    <input class="textboxVis" id="BTChIn" type="text" title="Insira a chave privada em formato HEX para visualizar (máx. 64 símbolos hex)" onfocus="this.style.background = 'none';">
+    <a href="javascript:void(0);" class="btn" id="ownHEXbtn" style="display:inline-block">Visualizar</a><br>
+  </div>
 
-  // Fill or clear a cell on canvas and update BTCpk array
-  function fillCell([x, y]) {
-    if (x < 0 || y < 0 || x >= gridCount || y >= gridCount) return;
-    if (x === LastCell[0] && y === LastCell[1]) return; // same cell as last filled
+  <h2>Chave Privada (visualização 256 bits):</h2>
+  <canvas id="BTCpic"></canvas>
+  <br><br>
 
-    if (blockX[x] === 1 || blockY[y] === 1) return; // blocked line or column
+  <a href="javascript:void(0);" class="btn" id="ClearButton" style="display:inline-block;margin-left:20px" title="Limpar a tabela e todos os números calculados">Limpar Tudo</a>
+  <a href="javascript:void(0);" class="btn" id="RandButton" style="display:inline-block;margin-left:15px" title="Gerar aleatoriamente cada bit no modo moeda - 1 ou 0">Chave Aleatória</a>
+  <a href="javascript:void(0);" class="btn" id="Inverse" style="display:inline-block; margin-left:15px" title="Inverter todos os bits: 0->1 1->0">Inverter</a>
+  <a href="javascript:void(0);" class="btn" id="Rotate" style="display:inline-block; margin-left:15px" title="Rotacionar toda a tabela no sentido horário (transpose)">Rotacionar</a>
+  <label class="gtr" style="display:inline-block" title="Opções Avançadas"><input type="checkbox" id="AdvOpt" class="rtg"><span class="mrt"></span></label>
+  <br>
 
-    BTCpk[y][x] = BTCpk[y][x] === 0 ? 1 : 0;
-    const color = BTCpk[y][x] === 1 ? cellFillColor : cellNoFillColor;
+  <div id="AdvOptDIV" style="display:none;margin-block-end:10px">
+    Explorer:
+    <select id="ExplorerSelect" title="Este explorador será aberto ao clicar no título próximo ao endereço gerado">
+      <option value="https://btc.com/">BTC.com (padrão)</option>
+      <option value="https://blockchair.com/bitcoin/address/">Blockchair.com</option>
+      <option value="https://live.blockcypher.com/btc/address/">BLOCKCYPHER.com</option>
+      <option value="https://www.blockchain.com/btc/address/">Blockchain.com</option>
+      <option value="https://explorer.viabtc.com/btc/address/">ViaBTC.com</option>
+      <option value="https://explorer.bitcoin.com/btc/address/">Bitcoin.com</option>
+    </select>
 
-    ctx.fillStyle = color;
-    ctx.fillRect(cellSize + x * cellSize, cellSize + y * cellSize, cellSize - 1, cellSize - 1);
+    <input class="inp-cbx" type="checkbox" id="CheckBlockLines" style="display: none;"/>
+    <label class="cbx" for="CheckBlockLines"><span><svg width="12px" height="10px" viewbox="0 0 12 10">
+    <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span title="Quando marcado, bloqueia linhas/colunas para não serem preenchidas ao clicar no título da linha/coluna">Bloquear linhas</span></label>
 
-    LastCell = [x, y];
-    updateKeyAndAddress();
-  }
+    <input class="inp-cbx" type="checkbox" id="CheckAddrOnline" style="display: none;"/>
+    <label class="cbx" for="CheckAddrOnline"><span><svg width="12px" height="10px" viewbox="0 0 12 10">
+    <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span title="Quando marcado, a ferramenta verificará online se o endereço gerado tem transações">Verificação online</span></label>
 
-  // Event handler for canvas click
-  function onCanvasClick(evt) {
-    const rect = canvas.getBoundingClientRect();
-    const mx = evt.clientX - rect.left - cellSize;
-    const my = evt.clientY - rect.top - cellSize;
+  </div>
 
-    if (mx < 0 || my < 0) return;
+  <div style="page-break-before: always;"></div>
 
-    const x = Math.floor(mx / cellSize);
-    const y = Math.floor(my / cellSize);
+  <div id="Caution" style="color:red; margin:5px;display:none"><span title="Uma chave privada deve estar entre 0x1 e 0xFFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364140"># - - - A Chave Privada está fora de ordem (escolha um número menor) - - - #</span></div>
 
-    fillCell([x, y]);
-  }
+  <textarea class="textfield" id="BTCb" readonly title="Chave privada em BIN a partir do quadrado 16x16"></textarea><label class="Reslbl">Chave Privada em BIN (256 dígitos)</label><br>
 
-  // Toggle blocking of lines/columns
-  function toggleBlockLine(e) {
-    IsLinesBlockOption = e.target.checked;
-    if (IsLinesBlockOption) {
-      AdvOptform.style.display = "block";
-    } else {
-      AdvOptform.style.display = "none";
-      blockX.fill(0);
-      blockY.fill(0);
-    }
-    fillAllCells();
-  }
+  <input class="textbox" style="border: 2px dotted #008000" id="BTCh" type="text" readonly title="Chave privada em formato HEX"><label class="Reslbl">Chave Privada em HEX (64 dígitos)</label>
 
-  // Block or unblock line or column
-  function blockLineOrCol(type, index) {
-    if (!IsLinesBlockOption) return;
+  <h2>Chaves Públicas e Endereços Gerados:</h2>
 
-    if (type === 'X') {
-      blockX[index] = blockX[index] === 0 ? 1 : 0;
-    } else if (type === 'Y') {
-      blockY[index] = blockY[index] === 0 ? 1 : 0;
-    }
-    fillAllCells();
-  }
+  <textarea class="textfieldPK" id="BTCpub" readonly title="Chave pública (não comprimida) em formato HEX"></textarea><label class="Reslbl">Chave Pública</label><br>
 
-  // Update hex and binary fields, and compute keys and addresses
-  function updateKeyAndAddress() {
-    const priv_bin = privFromArr();
-    BTCbin.value = priv_bin;
+  <input class="textbox" id="BTCaddr" type="text" readonly title="Endereço (não comprimido)">
+  <input class="textboxOnlineResult" id="BTCaddrCheck" readonly title="Volume total de transações recebidas (em BTC)">
+  <label class="Reslbl"><a href="javascript:void(0);" class="AddrLink" id="ExploreBTCAddr" target="_blank" title="Clique aqui para ver detalhes do endereço no blockchain">Endereço BTC</a></label><br>
 
-    const priv_hex = bin2hex(priv_bin).padStart(64, '0');
-    BTChex.value = priv_hex;
+  <textarea class="textfieldPK" id="BTCpubC" readonly title="Chave pública (comprimida) em formato HEX"></textarea><label class="Reslbl">Chave Pública <i>(comprimida)</i></label><br>
 
-    if (!isInOrder(priv_bin)) {
-      PrivKeyCaution.style.display = "block";
-    } else {
-      PrivKeyCaution.style.display = "none";
-    }
+  <input class="textbox" id="BTCaddrC" type="text" readonly title="Endereço (comprimido)">
+  <input class="textboxOnlineResult" id="BTCaddrCheckC" readonly title="Volume total de transações recebidas (em BTC)">
+  <label class="Reslbl"><a href="javascript:void(0);" class="AddrLink" id="ExploreBTCAddrC" target="_blank" title="Clique aqui para ver detalhes do endereço no blockchain">Endereço BTC <i>(comprimido)</i></a></label><br>
 
-    const [pub, addr, pubC, addrC] = legacyAddr(priv_hex);
+  <a href="javascript:void(0);" class="btn" id="GenQRbtn" style="display:inline" title="Calcular WIF da chave privada e gerar QR code (clique novamente para alternar comprimido/não comprimido)">Gerar WIF & QR code</a><br><br>
 
-    BTCp_gen.value = pub;
-    BTCaddr_gen.value = addr;
-    BTCp_c_gen.value = pubC;
-    BTCaddr_c_gen.value = addrC;
+  <div id ="DIVtoPrint">
+    <div id="ExportKey" class="ExportDIVField">
+      <input style="display:none" id="IsCompressedExportKey" type="text" maxlength="1" size="1" value="1"><br>
+      <p><b>SUA <i style="color:#FF8C00;font-size:125%">chave privada</i> e ENDEREÇO bitcoin</b></p>
 
-    ExportPriv.value = priv_hex;
-    ExportWIF.value = ""; // Here you can add conversion to WIF if needed
-    ExportAddr.value = ExportKeyType.checked ? addrC : addr;
-  }
+      <label class="LabelExp">Chave Privada em HEX (64 dígitos)</label><br>
+      <input class="textbox" id="PrivKeyExport" type="text" readonly title="Sua chave privada em HEX"><br>
 
-  // Load private key from hex input
-  function loadHexKey() {
-    const hexKey = HEXinput.value.trim();
-    if (!hexKey.match(/^[0-9a-fA-F]{1,64}$/)) {
-      alert("Chave hexadecimal inválida!");
-      return;
-    }
-    const binKey = hex2bin(hexKey).padStart(256, '0');
+      <label class="LabelExp">Chave Privada WIF (formato Wallet Import)</label><br>
+      <input class="textbox" id="PrivKeyWIF" type="text" readonly title="WIF (Wallet Import Format) da chave privada"><br>
 
-    for (let i = 0; i < gridCount; i++) {
-      for (let j = 0; j < gridCount; j++) {
-        BTCpk[i][j] = +binKey[i * gridCount + j];
-      }
-    }
-    fillAllCells();
-    updateKeyAndAddress();
-  }
+      <label class="LabelExp" id="AddressLabel">Endereço BTC</label><br>
+      <input class="textbox" id="AddressExport" type="text" readonly title="Seu endereço BTC (bitcoin)"><br>
 
-  // Initialization
-  function init() {
-    drawGrid();
-    fillAllCells();
-    updateKeyAndAddress();
+      <div style="display:inline-block;width:238px">QR da Chave Privada<br><span id="PrivKeyQR">Span text</span></div>
+      <div style="display:inline-block;width:238px">QR do Endereço<br><span id="AddressQR"></span></div><br><br>
 
-    canvas.addEventListener('click', onCanvasClick);
+      <a href="javascript:void(0);" class="btn" id="PrintBtn" style="display:inline-block" title="Imprimir esta janela com WIF e QR do endereço">Imprimir meu Endereço</a><br>
+      <p class="printOwnership">Criado por Visual Private Key Generator - https://btckeygen.com</p><br>
+    </div>
+  </div>
 
-    HEXtick.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        HEXform.style.display = "block";
-      } else {
-        HEXform.style.display = "none";
-      }
-    });
+  <br><br>
 
-    document.getElementById("ownHEXbtn").addEventListener('click', loadHexKey);
+  <p style="font-size: 1.0em; color:grey">(c) 2019 | <a href="info.txt" target="_blank">Informações</a> | <a href="archive/visualBTC.zip" download>ZIP</a> | <a href="https://github.com/MrFreeDragon/VisualBTC" target="_blank">GitHub</a> | Doações: <a class="imgPopUp" href="bitcoin:1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw">1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw<span><img src="css/donationQR.gif" alt="Endereço de doação"></span></a></p>
 
-    document.getElementById("LinesBlockOption").addEventListener('change', toggleBlockLine);
+</div>
 
-    ExportKeyType.addEventListener('change', updateKeyAndAddress);
-  }
+<script src="js/visualPrivKeyMain.js"></script> <!-- Main script with canvas and object functions -->
 
-  init();
-
-})();
+</body>
+</html>
