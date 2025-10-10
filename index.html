@@ -1,192 +1,208 @@
 <!DOCTYPE html>
-<!-- Visual bitcoin private key generator, 2019 (c) MrFreeDragon -->
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<title>Gerador Visual de BTC - Gerador de Endereço Bitcoin no Cliente (JS)</title>
-<meta name="description" content="Gerador visual de chave privada Bitcoin. O quadrado 16x16 é usado para geração, onde cada célula é um bit - 0 ou 1. Faça seus desenhos visuais ou use o modo moeda (flip) e preencha a célula correspondente.">
-<meta name="keywords" content="Bitcoin, chave privada, gerador de endereço, gerador bitcoin, gerador de chave privada, padrão de chave privada, visualização bitcoin">
-<meta name="author" content="MrDragon">
+  <meta charset="UTF-8">
+  <title>Gerador Visual de Chave Privada Bitcoin</title>
+  <meta name="description" content="Gere chaves privadas de forma visual utilizando um grid 16x16 de bits.">
+  <meta name="keywords" content="Bitcoin, chave privada, gerador visual, endereço Bitcoin">
+  <meta name="author" content="MrFreeDragon (traduzido)">
 
-<link href="css/visualPrivKey.css?v=3b" rel="stylesheet">
-<script src="js/bitcoinJS-lib.js"></script> <!-- BitcoinJS-lib v0.1.3-default, bitcoin JS ECDSA and functions -->
-<script src="js/QRcode.js"></script> <!-- QR Code Generator for JavaScript -->
+  <!-- Estilo customizado -->
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-<!-- Estilos adicionais para contornos verdes e fundo branco -->
-<style>
-  /* fundo geral */
-  body { background-color: #ffffff !important; color: #000; }
+    #MainDIV {
+      width: 80%;
+      margin: 30px auto;
+      background-color: #fff;
+      border: 2px solid green;
+      padding: 20px;
+      border-radius: 12px;
+      box-sizing: border-box;
+      text-align: center;
+    }
 
-  /* caixa principal */
-  .mainDIVcss { border: 2px solid #008000; background-color: #ffffff; padding: 12px; border-radius: 8px; }
+    h1, h2 {
+      color: green;
+    }
 
-  /* sobrescrever cabeçalho colorido original */
-  .mainDIVcss > div[style] { background-color: #ffffff !important; border: 2px solid #008000; color: #006400; padding: 10px; border-radius: 12px; }
+    label {
+      font-weight: bold;
+      color: green;
+      display: block;
+      text-align: left;
+      margin: 12px 0 4px;
+    }
 
-  /* inputs e textareas */
-  input[type="text"], .textbox, .textboxVis, .textboxOnlineResult, .textboxVis, .textboxPK, textarea, .textfield, .textfieldPK, .TextDescr, .TextWarn, .VisWarn {
-    border: 2px solid #008000 !important;
-    background-color: #ffffff !important;
-    color: #000;
-    border-radius: 6px;
-    padding: 6px;
-    box-sizing: border-box;
-  }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 2px solid green;
+      border-radius: 6px;
+      background-color: #fff;
+      color: #000;
+    }
 
-  /* botões (links com classe .btn) */
-  .btn {
-    border: 2px solid #008000;
-    background-color: #ffffff;
-    color: #006400;
-    padding: 6px 10px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-  }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
 
-  .btn:hover { background-color: #f0fff0; }
+    .btn {
+      background-color: #fff;
+      color: green;
+      border: 2px solid green;
+      padding: 10px 18px;
+      border-radius: 8px;
+      margin: 10px 6px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+    }
 
-  /* canvas (grade 16x16) */
-  #BTCpic {
-    border: 2px solid #008000;
-    background-color: #ffffff;
-    display: block;
-    margin: 6px 0;
-  }
+    .btn:hover {
+      background-color: #f0fff0;
+    }
 
-  /* links youtube / outros */
-  a.youtubeLink, a.AddrLink, a.imgPopUp {
-    color: #006400;
-    border-bottom: 1px dashed #008000;
-  }
+    canvas {
+      margin: 15px 0;
+      border: 2px solid green;
+    }
 
-  /* labels e legendas */
-  .Reslbl, .LabelExp, .printOwnership {
-    color: #006400;
-  }
+    .textboxOnlineResult {
+      margin-top: 5px;
+    }
 
-  /* pequenos ajustes responsivos */
-  textarea[disabled], textarea[readonly] { resize: vertical; }
+    .field-section {
+      margin-top: 20px;
+      text-align: left;
+    }
 
-  /* garantir que inputs read-only também apareçam com background branco */
-  input[readonly], textarea[readonly], textarea[disabled] { background-color: #ffffff; }
+    @media (max-width: 768px) {
+      #MainDIV {
+        width: 95%;
+      }
+    }
+  </style>
 
-</style>
-
+  <!-- Scripts necessários -->
+  <script src="js/bitcoinJS-lib.js"></script>
+  <script src="js/QRcode.js"></script>
 </head>
 
 <body>
+  <div id="MainDIV">
+    <h1>Gerador Visual de Chave Privada Bitcoin</h1>
 
-<div id="MainDIV" class="mainDIVcss">
-  <div style="background-color:lightblue;width:670px;border-radius:15px"><h1>Gerador Visual de Chave Privada Bitcoin</h1></div>
+    <label>Descrição:</label>
+    <textarea disabled>
+A tabela abaixo gera uma chave privada visual de 256 bits representada por um quadrado 16x16 (16 bits por linha). Use uma moeda real para gerar aleatoriamente cada bit (cara = 1, coroa = 0) ou desenhe manualmente clicando nos quadrados. A chave pública e o endereço Bitcoin são gerados automaticamente.
+    </textarea>
 
-  <textarea class="TextDescr" disabled> A tabela abaixo gera uma chave privada Bitcoin de 256 bits representada por um quadrado 16x16 (16 bits por linha). Jogue uma moeda para seleção aleatória de bits ou use o mouse para marcar um bit dentro de uma célula como 1 (célula preenchida) ou 0 (célula vazia). O gerador mostrará imediatamente a chave pública correspondente e o endereço Bitcoin. Depois clique em "Gerar WIF & QR code" para obter as chaves privadas/públicas prontas para impressão e seus QR codes.</textarea>
-
-  <p style="margin-block-start:5px; margin-block-end:10px">Tutoriais no YouTube:
-    <a class="youtubeLink" href="https://www.youtube.com/watch?v=WyBdYhwweaE" style="margin-left:20px" target="_blank">Geração de chave privada com moeda</a>
-    <a class="youtubeLink" href="https://www.youtube.com/watch?v=0Ug4YBEyRFQ" style="margin-left:30px" target="_blank">Padrão divertido de chave privada</a>
-  </p>
-
-  <textarea class="TextWarn" disabled>Aviso de segurança: Você pode "desenhar" imagens, logotipos e figuras e usá-los como suas chaves privadas apenas para fins educacionais, por diversão ou para pequenos presentes. Para criar um endereço seguro para armazenamento de valores reais, use uma moeda física e preencha cada bit de sua chave jogando a moeda 256 vezes.</textarea><br>
-
-  <label class="gtr">
-    <input type="checkbox" id="ownHEX" class="rtg">
-    <span class="mrt"></span>
-    <span class="lst">Visualizar minha própria chave HEX (marque para inserir sua chave)</span>
-  </label>
-
-  <div id="ownHEXform" style="display:none">
-    <textarea class="VisWarn" disabled>Pense bem antes de visualizar sua chave privada! Na maioria dos casos você não encontrará nada de interessante - apenas uma variedade de bits espalhados aleatoriamente pelo quadrado.</textarea><br>
-    <input class="textboxVis" id="BTChIn" type="text" title="Insira a chave privada em formato HEX para visualizar (máx. 64 símbolos hex)" onfocus="this.style.background = 'none';">
-    <a href="javascript:void(0);" class="btn" id="ownHEXbtn" style="display:inline-block">Visualizar</a><br>
-  </div>
-
-  <h2>Chave Privada (visualização 256 bits):</h2>
-  <canvas id="BTCpic"></canvas>
-  <br><br>
-
-  <a href="javascript:void(0);" class="btn" id="ClearButton" style="display:inline-block;margin-left:20px" title="Limpar a tabela e todos os números calculados">Limpar Tudo</a>
-  <a href="javascript:void(0);" class="btn" id="RandButton" style="display:inline-block;margin-left:15px" title="Gerar aleatoriamente cada bit no modo moeda - 1 ou 0">Chave Aleatória</a>
-  <a href="javascript:void(0);" class="btn" id="Inverse" style="display:inline-block; margin-left:15px" title="Inverter todos os bits: 0->1 1->0">Inverter</a>
-  <a href="javascript:void(0);" class="btn" id="Rotate" style="display:inline-block; margin-left:15px" title="Rotacionar toda a tabela no sentido horário (transpose)">Rotacionar</a>
-  <label class="gtr" style="display:inline-block" title="Opções Avançadas"><input type="checkbox" id="AdvOpt" class="rtg"><span class="mrt"></span></label>
-  <br>
-
-  <div id="AdvOptDIV" style="display:none;margin-block-end:10px">
-    Explorer:
-    <select id="ExplorerSelect" title="Este explorador será aberto ao clicar no título próximo ao endereço gerado">
-      <option value="https://btc.com/">BTC.com (padrão)</option>
-      <option value="https://blockchair.com/bitcoin/address/">Blockchair.com</option>
-      <option value="https://live.blockcypher.com/btc/address/">BLOCKCYPHER.com</option>
-      <option value="https://www.blockchain.com/btc/address/">Blockchain.com</option>
-      <option value="https://explorer.viabtc.com/btc/address/">ViaBTC.com</option>
-      <option value="https://explorer.bitcoin.com/btc/address/">Bitcoin.com</option>
-    </select>
-
-    <input class="inp-cbx" type="checkbox" id="CheckBlockLines" style="display: none;"/>
-    <label class="cbx" for="CheckBlockLines"><span><svg width="12px" height="10px" viewbox="0 0 12 10">
-    <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span title="Quando marcado, bloqueia linhas/colunas para não serem preenchidas ao clicar no título da linha/coluna">Bloquear linhas</span></label>
-
-    <input class="inp-cbx" type="checkbox" id="CheckAddrOnline" style="display: none;"/>
-    <label class="cbx" for="CheckAddrOnline"><span><svg width="12px" height="10px" viewbox="0 0 12 10">
-    <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span title="Quando marcado, a ferramenta verificará online se o endereço gerado tem transações">Verificação online</span></label>
-
-  </div>
-
-  <div style="page-break-before: always;"></div>
-
-  <div id="Caution" style="color:red; margin:5px;display:none"><span title="Uma chave privada deve estar entre 0x1 e 0xFFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364140"># - - - A Chave Privada está fora de ordem (escolha um número menor) - - - #</span></div>
-
-  <textarea class="textfield" id="BTCb" readonly title="Chave privada em BIN a partir do quadrado 16x16"></textarea><label class="Reslbl">Chave Privada em BIN (256 dígitos)</label><br>
-
-  <input class="textbox" style="border: 2px dotted #008000" id="BTCh" type="text" readonly title="Chave privada em formato HEX"><label class="Reslbl">Chave Privada em HEX (64 dígitos)</label>
-
-  <h2>Chaves Públicas e Endereços Gerados:</h2>
-
-  <textarea class="textfieldPK" id="BTCpub" readonly title="Chave pública (não comprimida) em formato HEX"></textarea><label class="Reslbl">Chave Pública</label><br>
-
-  <input class="textbox" id="BTCaddr" type="text" readonly title="Endereço (não comprimido)">
-  <input class="textboxOnlineResult" id="BTCaddrCheck" readonly title="Volume total de transações recebidas (em BTC)">
-  <label class="Reslbl"><a href="javascript:void(0);" class="AddrLink" id="ExploreBTCAddr" target="_blank" title="Clique aqui para ver detalhes do endereço no blockchain">Endereço BTC</a></label><br>
-
-  <textarea class="textfieldPK" id="BTCpubC" readonly title="Chave pública (comprimida) em formato HEX"></textarea><label class="Reslbl">Chave Pública <i>(comprimida)</i></label><br>
-
-  <input class="textbox" id="BTCaddrC" type="text" readonly title="Endereço (comprimido)">
-  <input class="textboxOnlineResult" id="BTCaddrCheckC" readonly title="Volume total de transações recebidas (em BTC)">
-  <label class="Reslbl"><a href="javascript:void(0);" class="AddrLink" id="ExploreBTCAddrC" target="_blank" title="Clique aqui para ver detalhes do endereço no blockchain">Endereço BTC <i>(comprimido)</i></a></label><br>
-
-  <a href="javascript:void(0);" class="btn" id="GenQRbtn" style="display:inline" title="Calcular WIF da chave privada e gerar QR code (clique novamente para alternar comprimido/não comprimido)">Gerar WIF & QR code</a><br><br>
-
-  <div id ="DIVtoPrint">
-    <div id="ExportKey" class="ExportDIVField">
-      <input style="display:none" id="IsCompressedExportKey" type="text" maxlength="1" size="1" value="1"><br>
-      <p><b>SUA <i style="color:#FF8C00;font-size:125%">chave privada</i> e ENDEREÇO bitcoin</b></p>
-
-      <label class="LabelExp">Chave Privada em HEX (64 dígitos)</label><br>
-      <input class="textbox" id="PrivKeyExport" type="text" readonly title="Sua chave privada em HEX"><br>
-
-      <label class="LabelExp">Chave Privada WIF (formato Wallet Import)</label><br>
-      <input class="textbox" id="PrivKeyWIF" type="text" readonly title="WIF (Wallet Import Format) da chave privada"><br>
-
-      <label class="LabelExp" id="AddressLabel">Endereço BTC</label><br>
-      <input class="textbox" id="AddressExport" type="text" readonly title="Seu endereço BTC (bitcoin)"><br>
-
-      <div style="display:inline-block;width:238px">QR da Chave Privada<br><span id="PrivKeyQR">Span text</span></div>
-      <div style="display:inline-block;width:238px">QR do Endereço<br><span id="AddressQR"></span></div><br><br>
-
-      <a href="javascript:void(0);" class="btn" id="PrintBtn" style="display:inline-block" title="Imprimir esta janela com WIF e QR do endereço">Imprimir meu Endereço</a><br>
-      <p class="printOwnership">Criado por Visual Private Key Generator - https://btckeygen.com</p><br>
+    <div class="field-section">
+      <label>Tutoriais em vídeo:</label>
+      <p>
+        <a href="https://www.youtube.com/watch?v=WyBdYhwweaE" target="_blank">Geração com moeda</a> |
+        <a href="https://www.youtube.com/watch?v=0Ug4YBEyRFQ" target="_blank">Chave personalizada</a>
+      </p>
     </div>
+
+    <label>Aviso de Segurança:</label>
+    <textarea disabled>
+Use este gerador apenas para fins educativos ou diversão. Para gerar uma chave segura, utilize uma moeda física e preencha todos os 256 bits manualmente.
+    </textarea>
+
+    <div class="field-section">
+      <label><input type="checkbox" id="ownHEX"> Visualizar minha própria chave privada HEX</label>
+      <div id="ownHEXform" style="display:none">
+        <label>Insira sua chave privada HEX:</label>
+        <input type="text" id="BTChIn" placeholder="Máx. 64 caracteres hexadecimais">
+        <a href="javascript:void(0);" class="btn" id="ownHEXbtn">Visualizar</a>
+      </div>
+    </div>
+
+    <h2>Visualização da Chave Privada (256 bits):</h2>
+    <canvas id="BTCpic" width="256" height="256"></canvas>
+
+    <div class="field-section">
+      <label>Comandos:</label>
+      <div>
+        <a href="javascript:void(0);" class="btn" id="ClearButton">Limpar Tudo</a>
+        <a href="javascript:void(0);" class="btn" id="RandButton">Chave Aleatória</a>
+        <a href="javascript:void(0);" class="btn" id="Inverse">Inverter</a>
+        <a href="javascript:void(0);" class="btn" id="Rotate">Rotacionar</a>
+      </div>
+    </div>
+
+    <div class="field-section">
+      <label>Chave Privada em BIN (256 dígitos):</label>
+      <textarea id="BTCb" readonly></textarea>
+
+      <label>Chave Privada em HEX (64 dígitos):</label>
+      <input type="text" id="BTCh" readonly>
+    </div>
+
+    <h2>Chaves Públicas e Endereços Gerados:</h2>
+
+    <label>Chave Pública (não comprimida):</label>
+    <textarea id="BTCpub" readonly></textarea>
+
+    <label>Endereço Bitcoin (não comprimido):</label>
+    <input type="text" id="BTCaddr" readonly>
+    <input type="text" id="BTCaddrCheck" readonly class="textboxOnlineResult">
+
+    <label>Chave Pública (comprimida):</label>
+    <textarea id="BTCpubC" readonly></textarea>
+
+    <label>Endereço Bitcoin (comprimido):</label>
+    <input type="text" id="BTCaddrC" readonly>
+    <input type="text" id="BTCaddrCheckC" readonly class="textboxOnlineResult">
+
+    <div class="field-section">
+      <label>Gerar formato WIF + QR Code:</label>
+      <a href="javascript:void(0);" class="btn" id="GenQRbtn">Gerar WIF & QR code</a>
+    </div>
+
+    <div id="DIVtoPrint" style="margin-top:30px">
+      <div id="ExportKey">
+        <p><strong>Sua <span style="color:orange">Chave Privada Bitcoin</span> e Endereço:</strong></p>
+
+        <label>Chave Privada HEX:</label>
+        <input type="text" id="PrivKeyExport" readonly>
+
+        <label>Chave Privada WIF:</label>
+        <input type="text" id="PrivKeyWIF" readonly>
+
+        <label>Endereço Bitcoin:</label>
+        <input type="text" id="AddressExport" readonly>
+
+        <div style="display:inline-block; width:45%">
+          <p>QR da Chave Privada</p>
+          <span id="PrivKeyQR"></span>
+        </div>
+        <div style="display:inline-block; width:45%">
+          <p>QR do Endereço</p>
+          <span id="AddressQR"></span>
+        </div>
+
+        <div style="margin-top:20px">
+          <a href="javascript:void(0);" class="btn" id="PrintBtn">Imprimir Dados</a>
+        </div>
+      </div>
+    </div>
+
+    <footer style="margin-top:40px; font-size:0.9em; color:gray">
+      <p>(c) 2019 | <a href="info.txt" target="_blank">Informações</a> | <a href="archive/visualBTC.zip" download>Baixar ZIP</a> | <a href="https://github.com/MrFreeDragon/VisualBTC" target="_blank">GitHub</a></p>
+      <p>Doações: <a href="bitcoin:1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw">1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw</a></p>
+    </footer>
   </div>
 
-  <br><br>
-
-  <p style="font-size: 1.0em; color:grey">(c) 2019 | <a href="info.txt" target="_blank">Informações</a> | <a href="archive/visualBTC.zip" download>ZIP</a> | <a href="https://github.com/MrFreeDragon/VisualBTC" target="_blank">GitHub</a> | Doações: <a class="imgPopUp" href="bitcoin:1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw">1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw<span><img src="css/donationQR.gif" alt="Endereço de doação"></span></a></p>
-
-</div>
-
-<script src="js/visualPrivKeyMain.js"></script> <!-- Main script with canvas and object functions -->
-
+  <script src="js/visualPrivKeyMain.js"></script>
 </body>
 </html>
