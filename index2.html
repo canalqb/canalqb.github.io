@@ -2,148 +2,36 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Grade 16×16 — Private HEX + WIF (não comprimido)</title>
+<title>Grade 16×16 — Private HEX + WIFs</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-  :root {
-    --green: #008000;
-    --dark-green: #006400;
-    --bg: #ffffff;
-  }
-  body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: var(--bg);
-    color: #000;
-    display: flex;
-    justify-content: center;
-  }
-
-  #container {
-    width: 90%;
-    max-width: 1100px;
-    margin: 30px 0;
-    border: 2px solid var(--green);
-    border-radius: 10px;
-    padding: 18px;
-    box-sizing: border-box;
-    background: #fff;
-    text-align: center;
-  }
-
-  h1 { color: var(--dark-green); margin: 4px 0 14px; }
-  label.section { display:block; text-align:left; color:var(--dark-green); font-weight:700; margin:10px 0 6px; }
-
-  .canvas-wrap { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; flex-wrap:wrap; }
-
-  canvas#grid {
-    border: 2px solid var(--green);
-    background: #fff;
-    image-rendering: pixelated;
-    cursor: pointer;
-  }
-
-  .controls { display:flex; justify-content:flex-start; gap:12px; flex-wrap:wrap; margin-top:10px; }
-
-  .btn {
-    display:inline-block;
-    padding:8px 12px;
-    border-radius:6px;
-    border:2px solid var(--green);
-    background:#fff;
-    color:var(--dark-green);
-    cursor:pointer;
-    font-weight:700;
-  }
-  .btn:active { transform:translateY(1px); }
-  .btn.warn { border-color:#d35400; color:#d35400; }
-
-  input[type="range"] { width:180px; }
-  .small { font-size:0.9rem; color:#333; }
-
-  .legend { text-align:center; font-size:0.9rem; color:var(--dark-green); margin-top:8px; }
-
-  textarea.logbox {
-    width: 100%;
-    height: 240px;
-    margin-top: 8px;
-    box-sizing: border-box;
-    border: 2px solid var(--green);
-    border-radius: 6px;
-    padding: 8px;
-    font-family: monospace;
-    resize: vertical;
-    background: #f9fff9;
-    color: #004400;
-    overflow-y: auto;
-    white-space: pre;
-  }
-
-  /* Two-column area for logs */
-  .logs {
-    display:flex;
-    gap:12px;
-    width: 100%;
-    margin-top: 14px;
-    align-items:flex-start;
-  }
-  .logs > div { flex:1; }
-
-  @media (max-width:900px){
-    .canvas-wrap { flex-direction:column; align-items:center; }
-    .logs { flex-direction:column; }
-    #container{ width:95%; padding:12px; }
-    canvas#grid{ width:320px !important; height:320px !important; }
-  }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="container">
-    <h1>Grade 16×16 — Private HEX & WIF (não comprimido)</h1>
+    <h1>Grade 16×16 — Private HEX + WIFs</h1>
 
     <label class="section">Descrição</label>
-    <textarea rows="3" style="width:100%; box-sizing:border-box; border:2px solid var(--green); border-radius:6px; padding:8px; background:#fff;" readonly>
-A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based), a chave privada inteira (256 bits) será convertida para HEX de 64 dígitos e registrada — apenas a linha HEX. Em paralelo será gerado o WIF não comprimido correspondente (uma linha por WIF).
+    <textarea rows="3" readonly style="width:100%; box-sizing:border-box; border:2px solid var(--green); border-radius:6px; padding:8px;">
+A cada alteração nas linhas 9 a 16 da grade, é gerada uma Private Key (HEX) de 256 bits, o WIF Comprimido (começa com 5) e o WIF Não Comprimido (começa com K ou L).
     </textarea>
 
     <div class="canvas-wrap" style="margin-top:14px;">
       <div style="min-width:520px;">
         <label class="section">Grade (clique para alternar célula)</label>
-        <canvas id="grid" width="512" height="512" style="width:512px; height:512px"></canvas>
+        <canvas id="grid" width="512" height="512"></canvas>
         <div class="legend">Linha 1 ↑ — Linha 16 ↓</div>
-
         <div class="controls" style="margin-top:12px;">
-          <button class="btn" id="startBtn">Iniciar</button>
-          <button class="btn" id="stopBtn" disabled>Parar</button>
-          <button class="btn" id="clearBtn">Limpar</button>
-          <button class="btn" id="randBtn">Aleatório</button>
-        </div>
-
-        <div style="margin-top:10px;">
-          <label class="small">Modo:</label>
-          <label><input type="radio" name="mode" value="sequential" checked> Sequencial (varre linhas 9→16)</label>
-          <label style="margin-left:8px;"><input type="radio" name="mode" value="random"> Random</label>
-
-          <div style="margin-top:8px;">
-            <div class="small" style="margin-bottom:6px;">Velocidade (ms por passo)</div>
-            <input id="speed" type="range" min="20" max="500" value="120">
-            <div class="small">Valor atual: <span id="speedLabel">120</span> ms</div>
-          </div>
-
-          <div style="margin-top:6px;">
-            <label><input type="checkbox" id="toggleOnClick" checked> Permitir alternar célula ao clicar</label><br>
-            <label><input type="checkbox" id="randomizeStatesOnStep" checked> Ao atualizar, atribuir estado aleatório (em vez de só ligar)</label>
-          </div>
+          <button class="btn" onclick="initGrid(); drawGrid();">Limpar</button>
         </div>
       </div>
 
       <div style="min-width:300px; max-width:420px; text-align:left;">
-        <label class="section">Opções & Observações</label>
-        <div class="small">
+        <label class="section">Notas</label>
+        <div style="font-size:0.9rem;">
           <ul style="margin:6px 0 0 18px; padding:0;">
-            <li>Linhas animadas = 9..16 (1-based).</li>
-            <li>Sequencial varre célula a célula; Random escolhe células aleatórias dentro das linhas alvo.</li>
-            <li>Cada alteração nas linhas 9..16 gera 1 linha HEX + 1 linha WIF.</li>
+            <li>Linhas afetadas: 9 a 16.</li>
+            <li>Cada clique em uma dessas linhas gera HEX, WIF comprimido e não comprimido.</li>
+            <li>Sem duplicações consecutivas.</li>
           </ul>
         </div>
       </div>
@@ -151,39 +39,43 @@ A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based)
 
     <div class="logs">
       <div>
-        <label class="section">Private Keys (HEX 64 dígitos) — somente as linhas HEX</label>
-        <textarea id="privateKeysBox" class="logbox" readonly placeholder="As private keys HEX aparecerão aqui, uma por linha..."></textarea>
+        <label class="section">Private Keys (HEX)</label>
+        <textarea id="privateKeysBox" class="logbox" readonly></textarea>
       </div>
 
       <div>
-        <label class="section">WIFs (não comprimido)</label>
-        <textarea id="wifBox" class="logbox" readonly placeholder="Os WIFs correspondentes aparecerão aqui, uma por linha..."></textarea>
+        <label class="section">WIFs (Comprimido - começam com 5)</label>
+        <textarea id="wifBox" class="logbox" readonly></textarea>
+      </div>
+
+      <div>
+        <label class="section">WIFs (Não Comprimido - começam com K ou L)</label>
+        <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
       </div>
     </div>
 
-    <footer style="margin-top:18px; color:#666; font-size:0.9rem;">
-      <div>(c) exemplo — grade 16×16</div>
-    </footer>
+    <div style="margin-top:18px;">
+      <button class="btn" onclick="exportLog('privateKeysBox', 'private_keys_hex.txt')">Exportar HEX</button>
+      <button class="btn" onclick="exportLog('wifBox', 'wif_comprimido.txt')">Exportar WIF Comprimido</button>
+      <button class="btn" onclick="exportLog('wifBoxUncompressed', 'wif_nao_comprimido.txt')">Exportar WIF Não Comprimido</button>
+    </div>
+
+    <footer style="margin-top:20px; font-size:0.85rem; color:#777;">&copy; Grade 16×16 — Exemplo</footer>
   </div>
 
-  <canvas id="grid" width="256" height="256"></canvas>
-
-<textarea id="privateKeysBox" readonly></textarea>
-<textarea id="wifBox" readonly></textarea> <!-- comprimido -->
-<textarea id="wifBoxUncompressed" readonly></textarea> <!-- não comprimido -->
-  
 <script>
 (async function () {
   const canvas = document.getElementById('grid');
-  const privateKeysBox = document.getElementById('privateKeysBox');
-  const wifBox = document.getElementById('wifBox'); // Comprimido (5...)
-  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed'); // Não Comprimido (K, L)
-
   const ctx = canvas.getContext('2d', { alpha: false });
   const GRID = 16;
   const CELL = canvas.width / GRID;
   let grid = [];
+
   const rowsToWatch = { start: 8, end: 15 };
+
+  const privateKeysBox = document.getElementById('privateKeysBox');
+  const wifBox = document.getElementById('wifBox');
+  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
 
   let lastHex = '', lastWif = '', lastWifUncompressed = '';
 
@@ -235,14 +127,22 @@ A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based)
   }
 
   function bytesToBase58(bytes) {
-    let n = bytes.reduce((acc, b) => (acc << 8n) | BigInt(b), 0n);
+    let n = 0n;
+    for (const b of bytes) {
+      n = (n << 8n) + BigInt(b);
+    }
     let result = '';
     while (n > 0n) {
-      const rem = n % 58n;
-      n /= 58n;
-      result = BASE58[Number(rem)] + result;
+      const mod = n % 58n;
+      n = n / 58n;
+      result = BASE58[Number(mod)] + result;
     }
-    const leadingZeros = Array.from(bytes).filter(b => b === 0).length;
+    // Count leading zeros
+    let leadingZeros = 0;
+    for (const b of bytes) {
+      if (b === 0) leadingZeros++;
+      else break;
+    }
     return '1'.repeat(leadingZeros) + result;
   }
 
@@ -256,75 +156,87 @@ A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based)
     return bytesToBase58(full);
   }
 
-  async function updateOutputs() {
-    const bits = bitsFromGrid();
-    const hex = hexFromBits(bits);
-    if (hex !== lastHex) {
+  function updateLogs(hex, wifComp, wifUncomp) {
+    if (hex && hex !== lastHex) {
       privateKeysBox.value += hex + '\n';
-      privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
       lastHex = hex;
     }
-
-    const wifCompressed = await privateKeyToWIF(hex, true);
-    if (wifCompressed !== lastWif) {
-      wifBox.value += wifCompressed + '\n';
-      wifBox.scrollTop = wifBox.scrollHeight;
-      lastWif = wifCompressed;
+    if (wifComp && wifComp !== lastWif) {
+      wifBox.value += wifComp + '\n';
+      lastWif = wifComp;
     }
-
-    const wifUncompressed = await privateKeyToWIF(hex, false);
-    if (wifUncompressed !== lastWifUncompressed) {
-      wifBoxUncompressed.value += wifUncompressed + '\n';
-      wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
-      lastWifUncompressed = wifUncompressed;
+    if (wifUncomp && wifUncomp !== lastWifUncompressed) {
+      wifBoxUncompressed.value += wifUncomp + '\n';
+      lastWifUncompressed = wifUncomp;
     }
   }
 
-  canvas.addEventListener('click', e => {
+  function cellIndexFromCoord(x, y) {
+    const col = Math.floor(x / CELL);
+    const row = Math.floor(y / CELL);
+    if (col >= 0 && col < GRID && row >= 0 && row < GRID) {
+      return { row, col };
+    }
+    return null;
+  }
+
+  function toggleCell(row, col) {
+    grid[row][col] = !grid[row][col];
+  }
+
+  async function handleGridChange() {
+    drawGrid();
+
+    // Apenas processar linhas 9 a 16 (índices 8 a 15)
+    let bits = '';
+    for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
+      bits += grid[r].map(b => b ? '1' : '0').join('');
+    }
+
+    const hex = hexFromBits(bits);
+    const wifComp = await privateKeyToWIF(hex, true);
+    const wifUncomp = await privateKeyToWIF(hex, false);
+
+    // Só atualiza se for diferente da última entrada para evitar duplicação
+    if (privateKeysBox.value.trim().split('\n').pop() !== hex) {
+      updateLogs(hex, wifComp, wifUncomp);
+    }
+  }
+
+  canvas.addEventListener('click', async e => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    const c = Math.floor(x / CELL);
-    const r = Math.floor(y / CELL);
-    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
-      grid[r][c] = !grid[r][c];
+    const idx = cellIndexFromCoord(x, y);
+    if (!idx) return;
+
+    toggleCell(idx.row, idx.col);
+
+    // Só processa se estiver na linha de interesse
+    if (idx.row >= rowsToWatch.start && idx.row <= rowsToWatch.end) {
+      await handleGridChange();
+    } else {
       drawGrid();
-      if (r >= rowsToWatch.start && r <= rowsToWatch.end) updateOutputs();
     }
   });
 
-  function addExportButtons() {
-    const container = document.createElement('div');
-    container.style.marginTop = '10px';
-
-    const createBtn = (label, textAreaId, filename) => {
-      const btn = document.createElement('button');
-      btn.className = 'btn';
-      btn.textContent = label;
-      btn.onclick = () => {
-        const ta = document.getElementById(textAreaId);
-        const blob = new Blob([ta.value], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        link.click();
-      };
-      return btn;
-    };
-
-    container.appendChild(createBtn('Exportar HEX (.txt)', 'privateKeysBox', 'private_keys_hex.txt'));
-    container.appendChild(createBtn('Exportar WIF (comprimido)', 'wifBox', 'wif_comprimido.txt'));
-    container.appendChild(createBtn('Exportar WIF (não comprimido)', 'wifBoxUncompressed', 'wif_nao_comprimido.txt'));
-
-    document.body.appendChild(container);
+  function exportLog(id, filename) {
+    const data = document.getElementById(id).value;
+    const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
   }
 
-  // Inicializa
+  window.initGrid = initGrid;
+  window.drawGrid = drawGrid;
+  window.exportLog = exportLog;
+
   initGrid();
   drawGrid();
-  addExportButtons();
 })();
 </script>
-
 </body>
 </html>
