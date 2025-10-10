@@ -165,9 +165,9 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
   const ctx = canvas.getContext('2d', { alpha: false });
 
   const GRID = 16;
-  const CELL = canvas.width / GRID; // assume square canvas
-  const rowsToAnimate = { start: 8, end: 15 }; // 0-based índices para linhas 9..16
-  let grid = []; // grid[r][c] boolean
+  const CELL = canvas.width / GRID;
+  const rowsToAnimate = { start: 8, end: 15 }; // 0-based indices (linhas 9–16)
+  let grid = [];
   let animating = false;
   let mode = 'sequential';
   let timer = null;
@@ -176,15 +176,13 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
-
   const toggleOnClickEl = document.getElementById('toggleOnClick');
   const randomizeStatesOnStepEl = document.getElementById('randomizeStatesOnStep');
-
   const privateKeysLog = document.getElementById('privateKeysLog');
 
   function initGrid() {
     grid = new Array(GRID);
-    for (let r=0; r<GRID; r++) {
+    for (let r = 0; r < GRID; r++) {
       grid[r] = new Array(GRID).fill(false);
     }
   }
@@ -193,38 +191,47 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    for (let r=0; r<GRID; r++) {
-      for (let c=0; c<GRID; c++) {
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
         const x = c * CELL;
         const y = r * CELL;
 
         if (grid[r][c]) {
-          ctx.fillStyle = '#006400'; // verde escuro
-          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
+          ctx.fillStyle = '#006400';
+          ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
         } else {
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
+          ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
         }
 
         ctx.strokeStyle = '#008000';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x+0.5, y+0.5, CELL-1, CELL-1);
+        ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
       }
     }
 
-    // destaca linhas animadas
     for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++) {
       ctx.fillStyle = 'rgba(0,128,0,0.03)';
-      ctx.fillRect(0, r*CELL, canvas.width, CELL);
+      ctx.fillRect(0, r * CELL, canvas.width, CELL);
     }
   }
 
-  // registra a alteração na textarea
-  function logPrivateKey(row, col, state) {
-    const time = new Date().toLocaleTimeString();
-    const status = state ? 'ON' : 'OFF';
-    const entry = `[${time}] Linha ${row+1}, Coluna ${col+1} => ${status}\n`;
-    privateKeysLog.value += entry;
+  function generatePrivateKeyHex() {
+    let bits = '';
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        bits += grid[r][c] ? '1' : '0';
+      }
+    }
+
+    let hex = '';
+    for (let i = 0; i < bits.length; i += 4) {
+      const nibble = bits.substr(i, 4);
+      hex += parseInt(nibble, 2).toString(16);
+    }
+
+    hex = hex.padStart(64, '0'); // garante 64 dígitos
+    privateKeysLog.value += `Chave Privada em HEX (64 dígitos):\n${hex}\n\n`;
     privateKeysLog.scrollTop = privateKeysLog.scrollHeight;
   }
 
@@ -232,6 +239,10 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     if (explicitState === undefined) grid[r][c] = !grid[r][c];
     else grid[r][c] = !!explicitState;
     drawGrid();
+
+    if (r >= rowsToAnimate.start && r <= rowsToAnimate.end) {
+      generatePrivateKeyHex();
+    }
   }
 
   canvas.addEventListener('click', function(e) {
@@ -243,7 +254,6 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     const r = Math.floor(y / CELL);
     if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
       toggleCell(r, c);
-      logPrivateKey(r, c, grid[r][c]);
     }
   });
 
@@ -272,22 +282,14 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     animating = true;
     startBtn.disabled = true;
     stopBtn.disabled = false;
-
-    if (mode === 'sequential') {
-      sequentialAnimate();
-    } else {
-      randomAnimate();
-    }
+    mode === 'sequential' ? sequentialAnimate() : randomAnimate();
   }
 
   function stopAnimation() {
     animating = false;
     startBtn.disabled = false;
     stopBtn.disabled = true;
-    if (timer !== null) {
-      clearTimeout(timer);
-      timer = null;
-    }
+    if (timer) clearTimeout(timer);
   }
 
   function sequentialAnimate() {
@@ -297,23 +299,19 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     function step() {
       if (!animating) return;
 
-      let newState;
-      if (randomizeStatesOnStepEl.checked) {
-        newState = Math.random() < 0.5;
-      } else {
-        newState = true;
-      }
+      let newState = randomizeStatesOnStepEl.checked
+        ? Math.random() < 0.5
+        : true;
+
       grid[row][col] = newState;
       drawGrid();
-      logPrivateKey(row, col, newState);
+      generatePrivateKeyHex();
 
       col++;
       if (col >= GRID) {
         col = 0;
         row++;
-        if (row > rowsToAnimate.end) {
-          row = rowsToAnimate.start;
-        }
+        if (row > rowsToAnimate.end) row = rowsToAnimate.start;
       }
 
       timer = setTimeout(step, speed);
@@ -332,28 +330,24 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
         const r = Math.floor(Math.random() * (rowsToAnimate.end - rowsToAnimate.start + 1)) + rowsToAnimate.start;
         const c = Math.floor(Math.random() * GRID);
 
-        if (randomizeStatesOnStepEl.checked) {
-          grid[r][c] = Math.random() < 0.5;
-        } else {
-          grid[r][c] = !grid[r][c];
-        }
-        logPrivateKey(r, c, grid[r][c]);
+        grid[r][c] = randomizeStatesOnStepEl.checked
+          ? Math.random() < 0.5
+          : !grid[r][c];
+
+        generatePrivateKeyHex();
       }
 
       drawGrid();
       timer = setTimeout(step, speed);
     }
+
     step();
   }
 
   initGrid();
   drawGrid();
-
-  window.__pv = {
-    grid, toggleCell, drawGrid, startAnimation, stopAnimation
-  };
-
 })();
 </script>
+
 </body>
 </html>
