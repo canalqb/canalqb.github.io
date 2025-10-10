@@ -166,306 +166,165 @@ A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based)
     </footer>
   </div>
 
+  <canvas id="grid" width="256" height="256"></canvas>
+
+<textarea id="privateKeysBox" readonly></textarea>
+<textarea id="wifBox" readonly></textarea> <!-- comprimido -->
+<textarea id="wifBoxUncompressed" readonly></textarea> <!-- não comprimido -->
+  
 <script>
-/*
-  Página: grade 16x16 com geração de Private HEX (64 dígitos) e WIF não comprimido.
-  - Atualiza os dois textareas a cada liga/desliga de células nas linhas 9..16 (0-based 8..15).
-  - WIF não comprimido = Base58Check(0x80 || privateKeyBytes)  (sem byte 0x01 no final).
-  - Usa SubtleCrypto para SHA-256.
-*/
-
-(async function(){
-  // Elements
+(async function () {
   const canvas = document.getElementById('grid');
-  const ctx = canvas.getContext('2d', { alpha: false });
   const privateKeysBox = document.getElementById('privateKeysBox');
-  const wifBox = document.getElementById('wifBox');
+  const wifBox = document.getElementById('wifBox'); // Comprimido (5...)
+  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed'); // Não Comprimido (K, L)
 
+  const ctx = canvas.getContext('2d', { alpha: false });
   const GRID = 16;
   const CELL = canvas.width / GRID;
-  const rowsToAnimate = { start: 8, end: 15 }; // 0-based para 9..16
   let grid = [];
-  let animating = false;
-  let mode = 'sequential';
-  let timer = null;
-  let speed = parseInt(document.getElementById('speed').value, 10);
-  const speedLabel = document.getElementById('speedLabel');
-  const startBtn = document.getElementById('startBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const randBtn = document.getElementById('randBtn');
-  const toggleOnClickEl = document.getElementById('toggleOnClick');
-  const randomizeStatesOnStepEl = document.getElementById('randomizeStatesOnStep');
+  const rowsToWatch = { start: 8, end: 15 };
 
-  // base58 alphabet
-  const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let lastHex = '', lastWif = '', lastWifUncompressed = '';
 
-  // --- Inicialização da grid ---
+  const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
   function initGrid() {
-    grid = new Array(GRID);
-    for (let r=0; r<GRID; r++){
-      grid[r] = new Array(GRID).fill(false);
-    }
+    grid = Array.from({ length: GRID }, () => Array(GRID).fill(false));
   }
 
   function drawGrid() {
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0,0,canvas.width, canvas.height);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    for (let r=0;r<GRID;r++){
-      for (let c=0;c<GRID;c++){
-        const x = c * CELL;
-        const y = r * CELL;
-        if (grid[r][c]) {
-          ctx.fillStyle = '#006400';
-          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
-        } else {
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
-        }
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        const x = c * CELL, y = r * CELL;
+        ctx.fillStyle = grid[r][c] ? '#006400' : '#ffffff';
+        ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
         ctx.strokeStyle = '#008000';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x+0.5, y+0.5, CELL-1, CELL-1);
+        ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
       }
-    }
-
-    // highlight linhas animadas
-    for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++){
-      ctx.fillStyle = 'rgba(0,128,0,0.03)';
-      ctx.fillRect(0, r*CELL, canvas.width, CELL);
     }
   }
 
-  // --- Conversões utilitárias ---
   function bitsFromGrid() {
-    // retorna string com 256 bits, varrendo linha por linha (r=0..15, c=0..15)
-    let bits = '';
-    for (let r=0;r<GRID;r++){
-      for (let c=0;c<GRID;c++){
-        bits += grid[r][c] ? '1' : '0';
-      }
-    }
-    return bits;
+    return grid.flat().map(b => b ? '1' : '0').join('');
   }
 
   function hexFromBits(bits) {
-    // bits length expected 256. Converte por nibbles.
-    let hex = '';
-    for (let i=0;i<bits.length;i+=4){
-      const nib = bits.substr(i,4);
-      const val = parseInt(nib, 2);
-      hex += val.toString(16);
-    }
-    // garantir 64 chars (cada hex é 4 bits -> 256/4 = 64)
-    if (hex.length < 64) hex = hex.padStart(64, '0');
-    return hex.toLowerCase();
+    return bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16)).join('').padStart(64, '0');
   }
 
   function hexToBytes(hex) {
-    if (hex.length % 2) hex = '0' + hex;
-    const out = new Uint8Array(hex.length/2);
-    for (let i=0;i<out.length;i++){
-      out[i] = parseInt(hex.substr(i*2,2),16);
-    }
-    return out;
+    return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
   }
 
-  function concatUint8(a,b) {
-    const out = new Uint8Array(a.length + b.length);
-    out.set(a,0);
-    out.set(b,a.length);
-    return out;
+  function concatBytes(...arrays) {
+    return Uint8Array.from(arrays.flatMap(a => Array.from(a)));
   }
 
-  async function sha256(buffer) {
-    // buffer: Uint8Array or ArrayBuffer
-    const ab = buffer.buffer ? buffer.buffer : buffer;
-    const hash = await crypto.subtle.digest('SHA-256', ab);
+  async function sha256(buf) {
+    const hash = await crypto.subtle.digest('SHA-256', buf);
     return new Uint8Array(hash);
   }
 
-  async function doubleSha256(bytes) {
-    const h1 = await sha256(bytes);
-    const h2 = await sha256(h1);
-    return h2;
+  async function doubleSha256(buf) {
+    return await sha256(await sha256(buf));
   }
 
-  function bytesToBigInt(bytes) {
-    let n = 0n;
-    for (let b of bytes) {
-      n = (n << 8n) + BigInt(b);
-    }
-    return n;
-  }
-
-  function base58Encode(bytes) {
-    // preserve leading zeros as '1'
-    let zeros = 0;
-    for (let i=0;i<bytes.length && bytes[i] === 0;i++) zeros++;
-    const payload = bytes.slice(zeros);
-    let n = bytesToBigInt(payload);
-    let chars = '';
+  function bytesToBase58(bytes) {
+    let n = bytes.reduce((acc, b) => (acc << 8n) | BigInt(b), 0n);
+    let result = '';
     while (n > 0n) {
       const rem = n % 58n;
-      chars = BASE58_ALPHABET[Number(rem)] + chars;
-      n = n / 58n;
+      n /= 58n;
+      result = BASE58[Number(rem)] + result;
     }
-    return '1'.repeat(zeros) + chars;
+    const leadingZeros = Array.from(bytes).filter(b => b === 0).length;
+    return '1'.repeat(leadingZeros) + result;
   }
 
-  async function privateHexToWIF(hex) {
-    // expects 64-char hex (32 bytes)
-    const priv = hexToBytes(hex.padStart(64,'0'));
-    // prefix 0x80
-    const pref = new Uint8Array([0x80]);
-    const withPrefix = concatUint8(pref, priv); // 33 bytes
-    const checksum = await doubleSha256(withPrefix);
-    const check4 = checksum.slice(0,4);
-    const full = concatUint8(withPrefix, check4); // 37 bytes
-    const wif = base58Encode(full);
-    return wif;
+  async function privateKeyToWIF(hex, compressed = true) {
+    const key = hexToBytes(hex.padStart(64, '0'));
+    const prefix = Uint8Array.of(0x80);
+    const suffix = compressed ? Uint8Array.of(0x01) : new Uint8Array([]);
+    const payload = concatBytes(prefix, key, suffix);
+    const checksum = (await doubleSha256(payload)).slice(0, 4);
+    const full = concatBytes(payload, checksum);
+    return bytesToBase58(full);
   }
 
-  // --- Atualização de registros (HEX + WIF) ---
-  async function updateRecords() {
-    // gera hex
+  async function updateOutputs() {
     const bits = bitsFromGrid();
     const hex = hexFromBits(bits);
-    // append hex line only (sem cabeçalho)
-    privateKeysBox.value += hex + '\n';
-    privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
+    if (hex !== lastHex) {
+      privateKeysBox.value += hex + '\n';
+      privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
+      lastHex = hex;
+    }
 
-    // compute WIF async
-    try {
-      const wif = await privateHexToWIF(hex);
-      wifBox.value += wif + '\n';
+    const wifCompressed = await privateKeyToWIF(hex, true);
+    if (wifCompressed !== lastWif) {
+      wifBox.value += wifCompressed + '\n';
       wifBox.scrollTop = wifBox.scrollHeight;
-    } catch (err) {
-      // se algo falhar, escreve uma linha de erro curta (não interrompe)
-      wifBox.value += '[WIF_ERROR]\n';
-      wifBox.scrollTop = wifBox.scrollHeight;
-      console.error('Erro gerando WIF:', err);
+      lastWif = wifCompressed;
+    }
+
+    const wifUncompressed = await privateKeyToWIF(hex, false);
+    if (wifUncompressed !== lastWifUncompressed) {
+      wifBoxUncompressed.value += wifUncompressed + '\n';
+      wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
+      lastWifUncompressed = wifUncompressed;
     }
   }
 
-  // --- Interação com canvas ---
-  function toggleCell(r,c, explicitState) {
-    if (explicitState === undefined) grid[r][c] = !grid[r][c];
-    else grid[r][c] = !!explicitState;
-    drawGrid();
-
-    // se célula está nas linhas 9..16 (start..end), atualizamos registros
-    if (r >= rowsToAnimate.start && r <= rowsToAnimate.end) {
-      // disparar updateRecords (assíncrono)
-      updateRecords();
-    }
-  }
-
-  canvas.addEventListener('click', function(e){
-    if (!toggleOnClickEl.checked) return;
+  canvas.addEventListener('click', e => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const c = Math.floor(x / CELL);
     const r = Math.floor(y / CELL);
-    if (r>=0 && r<GRID && c>=0 && c<GRID) {
-      toggleCell(r,c);
-    }
-  });
-
-  // UI bindings
-  document.getElementsByName('mode').forEach(radio => {
-    radio.addEventListener('change', function(){
-      mode = this.value;
-    });
-  });
-
-  document.getElementById('speed').addEventListener('input', function(){
-    speed = parseInt(this.value,10);
-    speedLabel.textContent = speed;
-  });
-
-  startBtn.addEventListener('click', startAnimation);
-  stopBtn.addEventListener('click', stopAnimation);
-  clearBtn.addEventListener('click', function(){
-    stopAnimation();
-    initGrid();
-    drawGrid();
-    privateKeysBox.value = '';
-    wifBox.value = '';
-  });
-  randBtn.addEventListener('click', function(){
-    // preenche grid aleatoriamente e força atualização das linhas animadas (gera registros)
-    for (let r=0;r<GRID;r++){
-      for (let c=0;c<GRID;c++){
-        grid[r][c] = Math.random() < 0.5;
-      }
-    }
-    drawGrid();
-    // Only generate record once for the full grid change:
-    updateRecords();
-  });
-
-  // Animation logic
-  function startAnimation(){
-    if (animating) return;
-    animating = true;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    if (mode === 'sequential') sequentialAnimate();
-    else randomAnimate();
-  }
-
-  function stopAnimation(){
-    animating = false;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    if (timer) { clearTimeout(timer); timer = null; }
-  }
-
-  function sequentialAnimate(){
-    let row = rowsToAnimate.start;
-    let col = 0;
-    async function step(){
-      if (!animating) return;
-      let newState = randomizeStatesOnStepEl.checked ? (Math.random() < 0.5) : true;
-      grid[row][col] = newState;
+    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
+      grid[r][c] = !grid[r][c];
       drawGrid();
-      // atualizar registros (apenas se a célula está nas linhas alvo - sempre estará)
-      await updateRecords();
-
-      col++;
-      if (col >= GRID) { col = 0; row++; if (row > rowsToAnimate.end) row = rowsToAnimate.start; }
-      timer = setTimeout(step, speed);
+      if (r >= rowsToWatch.start && r <= rowsToWatch.end) updateOutputs();
     }
-    step();
-  }
+  });
 
-  function randomAnimate(){
-    async function step(){
-      if (!animating) return;
-      const n = Math.max(1, Math.floor(6 - (speed / 100)));
-      for (let i=0;i<n;i++){
-        const r = Math.floor(Math.random() * (rowsToAnimate.end - rowsToAnimate.start + 1)) + rowsToAnimate.start;
-        const c = Math.floor(Math.random() * GRID);
-        grid[r][c] = randomizeStatesOnStepEl.checked ? (Math.random() < 0.5) : !grid[r][c];
-        // cada alteração gera registro
-        await updateRecords();
-      }
-      drawGrid();
-      timer = setTimeout(step, speed);
-    }
-    step();
+  function addExportButtons() {
+    const container = document.createElement('div');
+    container.style.marginTop = '10px';
+
+    const createBtn = (label, textAreaId, filename) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = label;
+      btn.onclick = () => {
+        const ta = document.getElementById(textAreaId);
+        const blob = new Blob([ta.value], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+      };
+      return btn;
+    };
+
+    container.appendChild(createBtn('Exportar HEX (.txt)', 'privateKeysBox', 'private_keys_hex.txt'));
+    container.appendChild(createBtn('Exportar WIF (comprimido)', 'wifBox', 'wif_comprimido.txt'));
+    container.appendChild(createBtn('Exportar WIF (não comprimido)', 'wifBoxUncompressed', 'wif_nao_comprimido.txt'));
+
+    document.body.appendChild(container);
   }
 
   // Inicializa
   initGrid();
   drawGrid();
-
-  // Expor para debug se necessário
-  window.__pv = { grid, toggleCell, updateRecords };
-
+  addExportButtons();
 })();
 </script>
+
 </body>
 </html>
