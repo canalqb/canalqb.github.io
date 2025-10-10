@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Página 2 — Animação 16×16 (linhas 9-16)</title>
+<title>Página 2 — Animação 16×16 (linhas 9-16) + Registro</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   :root {
@@ -76,6 +76,21 @@
     margin-top:8px;
   }
 
+  textarea#privateKeysLog {
+    width: 100%;
+    height: 160px;
+    margin-top: 18px;
+    box-sizing: border-box;
+    border: 2px solid var(--green);
+    border-radius: 6px;
+    padding: 8px;
+    font-family: monospace;
+    resize: vertical;
+    background: #f9fff9;
+    color: #004400;
+    overflow-y: auto;
+  }
+
   /* responsivo */
   @media (max-width:640px){
     #container{ width:95%; padding:12px; }
@@ -136,29 +151,22 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
       </div>
     </div>
 
+    <label class="section" style="margin-top:20px;">Registro das Private Keys</label>
+    <textarea id="privateKeysLog" readonly placeholder="As alterações das células animadas serão registradas aqui..."></textarea>
+
     <footer style="margin-top:18px; color:#666; font-size:0.9rem;">
       <div>(c) exemplo — grade 16×16</div>
     </footer>
   </div>
 
 <script>
-/*
-  Página2: Animação de células 16x16 nas linhas 9..16.
-  - Grid: 16 x 16
-  - linhas 9..16 (1-based) -> indices 8..15 (0-based)
-  - Dois modos:
-      sequential: varre cada célula das linhas alvo em sequência (coluna a coluna)
-      random: escolhe células aleatórias dentro das linhas alvo continuamente
-  - Cada célula ao "ser atualizada" recebe estado aleatório (on/off) se randomizeStatesOnStep estiver true.
-*/
-
 (function(){
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d', { alpha: false });
 
   const GRID = 16;
   const CELL = canvas.width / GRID; // assume square canvas
-  const rowsToAnimate = { start: 8, end: 15 }; // 0-based indices for rows 9..16
+  const rowsToAnimate = { start: 8, end: 15 }; // 0-based índices para linhas 9..16
   let grid = []; // grid[r][c] boolean
   let animating = false;
   let mode = 'sequential';
@@ -172,77 +180,73 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
   const toggleOnClickEl = document.getElementById('toggleOnClick');
   const randomizeStatesOnStepEl = document.getElementById('randomizeStatesOnStep');
 
-  // initial grid
+  const privateKeysLog = document.getElementById('privateKeysLog');
+
   function initGrid() {
     grid = new Array(GRID);
-    for (let r=0;r<GRID;r++){
+    for (let r=0; r<GRID; r++) {
       grid[r] = new Array(GRID).fill(false);
     }
   }
 
   function drawGrid() {
-    // white background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0,0,canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // draw cells
-    for (let r=0;r<GRID;r++){
-      for (let c=0;c<GRID;c++){
+    for (let r=0; r<GRID; r++) {
+      for (let c=0; c<GRID; c++) {
         const x = c * CELL;
         const y = r * CELL;
 
         if (grid[r][c]) {
-          // filled cell
-          ctx.fillStyle = '#006400'; // dark green
+          ctx.fillStyle = '#006400'; // verde escuro
           ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
         } else {
-          // empty cell -> white background (already), draw border light
           ctx.fillStyle = '#ffffff';
           ctx.fillRect(x+1, y+1, CELL-2, CELL-2);
         }
 
-        // draw cell border
         ctx.strokeStyle = '#008000';
         ctx.lineWidth = 1;
         ctx.strokeRect(x+0.5, y+0.5, CELL-1, CELL-1);
       }
     }
 
-    // draw a subtle line separating animated rows
-    ctx.strokeStyle = '#d0d0d0';
-    ctx.lineWidth = 1;
-    // optional: highlight rows 9..16 horizontally
-    for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++){
+    // destaca linhas animadas
+    for (let r = rowsToAnimate.start; r <= rowsToAnimate.end; r++) {
       ctx.fillStyle = 'rgba(0,128,0,0.03)';
       ctx.fillRect(0, r*CELL, canvas.width, CELL);
     }
   }
 
-  function resizeCanvasToDisplay() {
-    // keep canvas square and matching CSS size (already set), but adjust CELL if needed
-    // Not resizing actual canvas here since width/height are fixed; CELL computed from width.
+  // registra a alteração na textarea
+  function logPrivateKey(row, col, state) {
+    const time = new Date().toLocaleTimeString();
+    const status = state ? 'ON' : 'OFF';
+    const entry = `[${time}] Linha ${row+1}, Coluna ${col+1} => ${status}\n`;
+    privateKeysLog.value += entry;
+    privateKeysLog.scrollTop = privateKeysLog.scrollHeight;
   }
 
-  function toggleCell(r,c,explicitState) {
+  function toggleCell(r, c, explicitState) {
     if (explicitState === undefined) grid[r][c] = !grid[r][c];
     else grid[r][c] = !!explicitState;
     drawGrid();
   }
 
-  // click to toggle
-  canvas.addEventListener('click', function(e){
+  canvas.addEventListener('click', function(e) {
     if (!toggleOnClickEl.checked) return;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const c = Math.floor(x / CELL);
     const r = Math.floor(y / CELL);
-    if (r>=0 && r<GRID && c>=0 && c<GRID) {
-      toggleCell(r,c);
+    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
+      toggleCell(r, c);
+      logPrivateKey(r, c, grid[r][c]);
     }
   });
 
-  // UI updates
   document.getElementsByName('mode').forEach(radio => {
     radio.addEventListener('change', function(){
       mode = this.value;
@@ -256,13 +260,14 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
 
   startBtn.addEventListener('click', startAnimation);
   stopBtn.addEventListener('click', stopAnimation);
-  clearBtn.addEventListener('click', function(){
+  clearBtn.addEventListener('click', function() {
     stopAnimation();
     initGrid();
     drawGrid();
+    privateKeysLog.value = '';
   });
 
-  function startAnimation(){
+  function startAnimation() {
     if (animating) return;
     animating = true;
     startBtn.disabled = true;
@@ -275,7 +280,7 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     }
   }
 
-  function stopAnimation(){
+  function stopAnimation() {
     animating = false;
     startBtn.disabled = false;
     stopBtn.disabled = true;
@@ -285,69 +290,65 @@ Esta página mostra uma grade 16×16 onde as linhas 9 a 16 (últimas 8 linhas) s
     }
   }
 
-  // SEQUENTIAL: varre cada célula das linhas selecionadas em ordem.
   function sequentialAnimate() {
-    // We'll iterate rows start..end and columns 0..15
     let row = rowsToAnimate.start;
     let col = 0;
 
     function step() {
       if (!animating) return;
-      // decide state for this cell
+
       let newState;
       if (randomizeStatesOnStepEl.checked) {
-        newState = Math.random() < 0.5; // 50% chance on/off
+        newState = Math.random() < 0.5;
       } else {
-        // if not randomize, toggle to ON (true) else off if already on?
         newState = true;
       }
       grid[row][col] = newState;
       drawGrid();
+      logPrivateKey(row, col, newState);
 
-      // advance to next cell
       col++;
       if (col >= GRID) {
         col = 0;
         row++;
         if (row > rowsToAnimate.end) {
-          // finished a full pass; restart from start
           row = rowsToAnimate.start;
         }
       }
 
-      // next step after speed ms
       timer = setTimeout(step, speed);
     }
 
     step();
   }
 
-  // RANDOM: a cada intervalo escolhe N aleatórios (1..4) células dentro das linhas alvo e altera o estado aleatoriamente
-  function randomAnimate(){
+  function randomAnimate() {
     function step() {
       if (!animating) return;
-      // choose how many random cells to update this tick (1..6 depending on speed)
-      const n = Math.max(1, Math.floor(6 - (speed / 100))); // faster speed -> more updates
-      for (let i=0;i<n;i++){
+
+      const n = Math.max(1, Math.floor(6 - (speed / 100)));
+
+      for (let i = 0; i < n; i++) {
         const r = Math.floor(Math.random() * (rowsToAnimate.end - rowsToAnimate.start + 1)) + rowsToAnimate.start;
         const c = Math.floor(Math.random() * GRID);
+
         if (randomizeStatesOnStepEl.checked) {
           grid[r][c] = Math.random() < 0.5;
         } else {
           grid[r][c] = !grid[r][c];
         }
+        logPrivateKey(r, c, grid[r][c]);
       }
+
       drawGrid();
       timer = setTimeout(step, speed);
     }
     step();
   }
 
-  // init
   initGrid();
   drawGrid();
 
-  // expose for debugging if needed
   window.__pv = {
     grid, toggleCell, drawGrid, startAnimation, stopAnimation
   };
