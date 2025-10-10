@@ -17,14 +17,14 @@
   const ctx = canvas.getContext('2d', { alpha: false });
   const GRID = 16;
   const CELL = canvas.width / GRID;
-  let grid = [];
-  const rowsToWatch = { start: 8, end: 15 }; // zero-based, lines 9..16 (1-based)
+  const rowsToWatch = { start: 8, end: 15 }; // zero-based (linhas 9..16 em 1-based)
 
+  let grid = [];
   let lastHex = '', lastWif = '', lastWifUncompressed = '';
   let timerId = null;
   let currentStep = 0;
 
-  // Base58 alphabet for encoding
+  // Base58 alphabet para encoding WIF
   const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   function initGrid() {
@@ -48,12 +48,11 @@
   }
 
   function bitsFromGrid() {
-    // Flatten grid row-wise into a bit string
+    // Gera string de bits da grid toda (256 bits)
     return grid.flat().map(b => (b ? '1' : '0')).join('');
   }
 
   function hexFromBits(bits) {
-    // bits -> hex string 64 hex chars (256 bits)
     const nibbles = bits.match(/.{1,4}/g) || [];
     return nibbles.map(b => parseInt(b, 2).toString(16)).join('').padStart(64, '0');
   }
@@ -76,17 +75,14 @@
   }
 
   function bytesToBase58(bytes) {
-    // Convert byte array to BigInt
     let n = bytes.reduce((acc, b) => (acc << 8n) | BigInt(b), 0n);
-
     let result = '';
     while (n > 0n) {
       const rem = n % 58n;
       n /= 58n;
       result = BASE58[Number(rem)] + result;
     }
-
-    // Leading zeros as '1's
+    // Contar zeros à esquerda para '1's
     const leadingZeros = Array.from(bytes).findIndex(b => b !== 0);
     const zerosCount = leadingZeros === -1 ? bytes.length : leadingZeros;
     return '1'.repeat(zerosCount) + result;
@@ -127,9 +123,6 @@
     }
   }
 
-  // Funcionalidade dos botões e controle da animação
-
-  // Retorna array de células (r,c) que serão varridas no modo sequencial (linhas 9..16)
   function getSequentialCells() {
     const cells = [];
     for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
@@ -160,8 +153,6 @@
       } else {
         grid[r][c] = true;
       }
-      drawGrid();
-      await updateOutputs();
     } else {
       const [r, c] = getRandomCell();
       if (randomizeStatesOnStep.checked) {
@@ -169,9 +160,9 @@
       } else {
         grid[r][c] = true;
       }
-      drawGrid();
-      await updateOutputs();
     }
+    drawGrid();
+    await updateOutputs();
   }
 
   function startAnimation() {
@@ -215,8 +206,6 @@
     updateOutputs();
   }
 
-  // Eventos
-
   canvas.addEventListener('click', e => {
     if (!toggleOnClick.checked) return;
 
@@ -228,25 +217,15 @@
     if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
       grid[r][c] = !grid[r][c];
       drawGrid();
-      if (r >= rowsToWatch.start && r <= rowsToWatch.end) updateOutputs();
+      // Atualiza sempre a saída, seja qual linha for clicada
+      updateOutputs();
     }
   });
 
-  startBtn.addEventListener('click', () => {
-    startAnimation();
-  });
-
-  stopBtn.addEventListener('click', () => {
-    stopAnimation();
-  });
-
-  clearBtn.addEventListener('click', () => {
-    clearGrid();
-  });
-
-  randBtn.addEventListener('click', () => {
-    randomizeGrid();
-  });
+  startBtn.addEventListener('click', startAnimation);
+  stopBtn.addEventListener('click', stopAnimation);
+  clearBtn.addEventListener('click', clearGrid);
+  randBtn.addEventListener('click', randomizeGrid);
 
   speedSlider.addEventListener('input', () => {
     speedLabel.textContent = speedSlider.value;
@@ -256,7 +235,7 @@
     }
   });
 
-  // Inicialização
+  // Init
   initGrid();
   drawGrid();
 })();
