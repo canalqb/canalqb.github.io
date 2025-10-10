@@ -2,29 +2,18 @@
   const canvas = document.getElementById('grid');
   const privateKeysBox = document.getElementById('privateKeysBox');
   const wifBox = document.getElementById('wifBox'); // Comprimido (5...)
-  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed'); // Não comprimido (K,L)
-
-  const startBtn = document.getElementById('startBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const randBtn = document.getElementById('randBtn');
-  const speedSlider = document.getElementById('speed');
-  const speedLabel = document.getElementById('speedLabel');
-  const toggleOnClick = document.getElementById('toggleOnClick');
-  const randomizeStatesOnStep = document.getElementById('randomizeStatesOnStep');
-  const modeRadios = document.getElementsByName('mode');
+  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed'); // Não Comprimido (K, L)
 
   const ctx = canvas.getContext('2d', { alpha: false });
   const GRID = 16;
   const CELL = canvas.width / GRID;
-  const rowsToWatch = { start: 8, end: 15 }; // zero-based (linhas 9..16 em 1-based)
-
   let grid = [];
-  let lastHex = '', lastWif = '', lastWifUncompressed = '';
-  let timerId = null;
-  let currentStep = 0;
+  const rowsToWatch = { start: 8, end: 15 }; // 0-based linhas 9..16 (1-based)
 
-  // Base58 alphabet para encoding WIF
+  let animationInterval = null;
+  let currentRow = rowsToWatch.start;
+  let currentCol = 0;
+
   const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   function initGrid() {
@@ -38,7 +27,7 @@
     for (let r = 0; r < GRID; r++) {
       for (let c = 0; c < GRID; c++) {
         const x = c * CELL, y = r * CELL;
-        ctx.fillStyle = grid[r][c] ? '#006400' : '#fff';
+        ctx.fillStyle = grid[r][c] ? '#006400' : '#ffffff';
         ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
         ctx.strokeStyle = '#008000';
         ctx.lineWidth = 1;
@@ -48,13 +37,11 @@
   }
 
   function bitsFromGrid() {
-    // Gera string de bits da grid toda (256 bits)
-    return grid.flat().map(b => (b ? '1' : '0')).join('');
+    return grid.flat().map(b => b ? '1' : '0').join('');
   }
 
   function hexFromBits(bits) {
-    const nibbles = bits.match(/.{1,4}/g) || [];
-    return nibbles.map(b => parseInt(b, 2).toString(16)).join('').padStart(64, '0');
+    return bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16)).join('').padStart(64, '0');
   }
 
   function hexToBytes(hex) {
@@ -82,10 +69,8 @@
       n /= 58n;
       result = BASE58[Number(rem)] + result;
     }
-    // Contar zeros à esquerda para '1's
-    const leadingZeros = Array.from(bytes).findIndex(b => b !== 0);
-    const zerosCount = leadingZeros === -1 ? bytes.length : leadingZeros;
-    return '1'.repeat(zerosCount) + result;
+    const leadingZeros = Array.from(bytes).filter(b => b === 0).length;
+    return '1'.repeat(leadingZeros) + result;
   }
 
   async function privateKeyToWIF(hex, compressed = true) {
@@ -102,111 +87,21 @@
     const bits = bitsFromGrid();
     const hex = hexFromBits(bits);
 
-    if (hex !== lastHex) {
-      privateKeysBox.value += hex + '\n';
-      privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
-      lastHex = hex;
-    }
+    // Sempre adiciona a linha no output, mesmo que hex seja zeros
+    privateKeysBox.value += hex + '\n';
+    privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
 
     const wifCompressed = await privateKeyToWIF(hex, true);
-    if (wifCompressed !== lastWif) {
-      wifBox.value += wifCompressed + '\n';
-      wifBox.scrollTop = wifBox.scrollHeight;
-      lastWif = wifCompressed;
-    }
+    wifBox.value += wifCompressed + '\n';
+    wifBox.scrollTop = wifBox.scrollHeight;
 
     const wifUncompressed = await privateKeyToWIF(hex, false);
-    if (wifUncompressed !== lastWifUncompressed) {
-      wifBoxUncompressed.value += wifUncompressed + '\n';
-      wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
-      lastWifUncompressed = wifUncompressed;
-    }
-  }
-
-  function getSequentialCells() {
-    const cells = [];
-    for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
-      for (let c = 0; c < GRID; c++) {
-        cells.push([r, c]);
-      }
-    }
-    return cells;
-  }
-
-  function getRandomCell() {
-    const r = rowsToWatch.start + Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1));
-    const c = Math.floor(Math.random() * GRID);
-    return [r, c];
-  }
-
-  async function step() {
-    const mode = Array.from(modeRadios).find(r => r.checked)?.value || 'sequential';
-
-    if (mode === 'sequential') {
-      const seqCells = getSequentialCells();
-      if (currentStep >= seqCells.length) currentStep = 0;
-      const [r, c] = seqCells[currentStep];
-      currentStep++;
-
-      if (randomizeStatesOnStep.checked) {
-        grid[r][c] = Math.random() < 0.5;
-      } else {
-        grid[r][c] = true;
-      }
-    } else {
-      const [r, c] = getRandomCell();
-      if (randomizeStatesOnStep.checked) {
-        grid[r][c] = Math.random() < 0.5;
-      } else {
-        grid[r][c] = true;
-      }
-    }
-    drawGrid();
-    await updateOutputs();
-  }
-
-  function startAnimation() {
-    if (timerId) return;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    clearBtn.disabled = true;
-    randBtn.disabled = true;
-
-    timerId = setInterval(step, parseInt(speedSlider.value));
-  }
-
-  function stopAnimation() {
-    if (!timerId) return;
-    clearInterval(timerId);
-    timerId = null;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    clearBtn.disabled = false;
-    randBtn.disabled = false;
-  }
-
-  function clearGrid() {
-    stopAnimation();
-    initGrid();
-    drawGrid();
-    privateKeysBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
-    lastHex = lastWif = lastWifUncompressed = '';
-    currentStep = 0;
-  }
-
-  function randomizeGrid() {
-    for (let r = 0; r < GRID; r++) {
-      for (let c = 0; c < GRID; c++) {
-        grid[r][c] = Math.random() < 0.5;
-      }
-    }
-    drawGrid();
-    updateOutputs();
+    wifBoxUncompressed.value += wifUncompressed + '\n';
+    wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
   canvas.addEventListener('click', e => {
+    const toggleOnClick = document.getElementById('toggleOnClick');
     if (!toggleOnClick.checked) return;
 
     const rect = canvas.getBoundingClientRect();
@@ -217,25 +112,106 @@
     if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
       grid[r][c] = !grid[r][c];
       drawGrid();
-      // Atualiza sempre a saída, seja qual linha for clicada
       updateOutputs();
     }
   });
 
-  startBtn.addEventListener('click', startAnimation);
-  stopBtn.addEventListener('click', stopAnimation);
-  clearBtn.addEventListener('click', clearGrid);
-  randBtn.addEventListener('click', randomizeGrid);
+  function stepSequential() {
+    // Desliga célula atual
+    grid[currentRow][currentCol] = false;
 
-  speedSlider.addEventListener('input', () => {
-    speedLabel.textContent = speedSlider.value;
-    if (timerId) {
-      stopAnimation();
-      startAnimation();
+    // Avança coluna
+    currentCol++;
+    if (currentCol >= GRID) {
+      currentCol = 0;
+      currentRow++;
+      if (currentRow > rowsToWatch.end) currentRow = rowsToWatch.start;
+    }
+
+    // Liga nova célula
+    if (randomizeStatesOnStep.checked) {
+      grid[currentRow][currentCol] = Math.random() < 0.5;
+    } else {
+      grid[currentRow][currentCol] = true;
+    }
+  }
+
+  function stepRandom() {
+    // Escolhe célula aleatória nas linhas 9..16 (8..15 0-based)
+    const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
+    const c = Math.floor(Math.random() * GRID);
+
+    // Alterna célula com base em checkbox
+    if (randomizeStatesOnStep.checked) {
+      grid[r][c] = Math.random() < 0.5;
+    } else {
+      grid[r][c] = true;
+    }
+  }
+
+  async function step() {
+    if (modeSequential.checked) {
+      stepSequential();
+    } else {
+      stepRandom();
+    }
+    drawGrid();
+    await updateOutputs();
+  }
+
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const randBtn = document.getElementById('randBtn');
+
+  const speedInput = document.getElementById('speed');
+  const speedLabel = document.getElementById('speedLabel');
+  const modeSequential = document.querySelector('input[name="mode"][value="sequential"]');
+  const randomizeStatesOnStep = document.getElementById('randomizeStatesOnStep');
+
+  startBtn.addEventListener('click', () => {
+    if (animationInterval) return; // Já rodando
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+
+    animationInterval = setInterval(step, parseInt(speedInput.value));
+  });
+
+  stopBtn.addEventListener('click', () => {
+    if (!animationInterval) return;
+
+    clearInterval(animationInterval);
+    animationInterval = null;
+
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  });
+
+  clearBtn.addEventListener('click', () => {
+    initGrid();
+    drawGrid();
+  });
+
+  randBtn.addEventListener('click', () => {
+    for (let r = 0; r < GRID; r++) {
+      for (let c = 0; c < GRID; c++) {
+        grid[r][c] = Math.random() < 0.5;
+      }
+    }
+    drawGrid();
+    updateOutputs();
+  });
+
+  speedInput.addEventListener('input', () => {
+    speedLabel.textContent = speedInput.value;
+    if (animationInterval) {
+      clearInterval(animationInterval);
+      animationInterval = setInterval(step, parseInt(speedInput.value));
     }
   });
 
-  // Init
+  // Inicialização
   initGrid();
   drawGrid();
 })();
