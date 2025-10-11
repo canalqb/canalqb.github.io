@@ -27,12 +27,13 @@ body {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 #grid-container {
   flex: 1 1 600px;
   text-align: center;
+  min-width: 320px;
 }
 
 #grid-container h2 {
@@ -45,11 +46,12 @@ canvas#grid {
   background: #fff;
   image-rendering: pixelated;
   cursor: pointer;
-  max-width: 600px;
-  max-height: 600px;
   width: 100%;
+  max-width: 600px;
   height: auto;
   box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
 }
 
 #grid-container div {
@@ -68,6 +70,7 @@ canvas#grid {
   font-family: Arial, Helvetica, sans-serif;
   display: flex;
   flex-direction: column;
+  min-width: 280px;
 }
 
 #description {
