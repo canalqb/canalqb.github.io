@@ -1,303 +1,290 @@
-// auto16.js - Ajustado para altura ativa 9..16 e invertida verticalmente
+// auto16.js
 
-// ---------- Configurações ----------
-const GRID_SIZE = 16;            // 16x16
-const CELL_PADDING = 1;         // pixels entre células
-const DEFAULT_SPEED = 500;      // ms
-const DEFAULT_MAX_STEPS = 1000000; // limite prático para varredura sequencial por segurança
-// ------------------------------------
+(() => {
+  const canvas = document.getElementById('grid');
+  const ctx = canvas.getContext('2d');
 
-/* ----- ... [seu código de utilitários criptográficos permanece igual] ----- */
+  const HEX_CHARS = '0123456789abcdef';
 
-/* ----- DOM & Canvas ----- */
-const canvas = document.getElementById('grid');
-const ctx = canvas.getContext('2d');
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-const clearBtn = document.getElementById('clearBtn');
-const randBtn = document.getElementById('randBtn');
-const speedInput = document.getElementById('speed');
-const speedLabel = document.getElementById('speedLabel');
-const activeHeightLabel = document.getElementById('activeHeightLabel');
-const heightButtons = document.getElementById('heightButtons');
-const hexBox = document.getElementById('hexBox');
-const wifBox = document.getElementById('wifBox');
-const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-const modeRadios = document.getElementsByName('mode');
-const toggleOnClickEl = document.getElementById('toggleOnClick');
-const randomizeOnStepEl = document.getElementById('randomizeStatesOnStep');
+  // Configurações da grade
+  const SIZE = 16; // 16x16
+  const CELL_SIZE = canvas.width / SIZE;
 
-let cellSize = Math.floor(canvas.width / GRID_SIZE);
-let grid = new Array(GRID_SIZE * GRID_SIZE).fill(0); // 0 = off, 1 = on
-let running = false;
-let abortRun = false;
+  // Estado da matriz: array 16x16 de booleanos (false = desligado, true = ligado)
+  let gridState = Array(SIZE * SIZE).fill(false);
 
-const MIN_ACTIVE_HEIGHT = 9;
-const MAX_ACTIVE_HEIGHT = 16;
+  // Controles
+  const hexBox = document.getElementById('hexBox');
+  const wifBox = document.getElementById('wifBox');
+  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
 
-let activeHeight = MIN_ACTIVE_HEIGHT; // default inicia em 9
-let speed = DEFAULT_SPEED;
-let maxSteps = DEFAULT_MAX_STEPS;
-speedLabel.textContent = speed;
-activeHeightLabel.textContent = activeHeight;
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const randBtn = document.getElementById('randBtn');
 
-// Cria botões de altura 16 (topo) até 9 (base) - invertido visualmente para refletir "de baixo pra cima"
-(function createHeightButtons(){
-  for (let h = MAX_ACTIVE_HEIGHT; h >= MIN_ACTIVE_HEIGHT; h--) {
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-sm btn-outline-primary size-btn';
-    btn.textContent = h;
-    btn.onclick = () => {
-      activeHeight = h;
-      activeHeightLabel.textContent = activeHeight;
-      render();
-    };
-    heightButtons.appendChild(btn);
-  }
-})();
+  const speedInput = document.getElementById('speed');
+  const speedLabel = document.getElementById('speedLabel');
 
-function getMode() {
-  return Array.from(modeRadios).find(r => r.checked).value;
-}
+  const modeRadios = document.getElementsByName('mode');
+  const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
+  const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
 
-function indexFromXY(x,y) { return y*GRID_SIZE + x; }
-function setCell(x,y,val){ grid[indexFromXY(x,y)] = val ? 1 : 0; }
-function getCell(x,y){ return grid[indexFromXY(x,y)]; }
+  const activeHeightLabel = document.getElementById('activeHeightLabel');
+  const heightButtonsDiv = document.getElementById('heightButtons');
 
-function clearGrid(){
-  grid.fill(0);
-  render();
-}
+  // Variáveis para animação automática
+  let intervalId = null;
+  let currentHeight = 16; // Altura ativa
+  let currentStepIndex = 0;
 
-// Para altura ativa de baixo para cima, precisamos mapear activeHeight (9..16) para linhas na grid (0..15)
-// Linha 0 = topo, linha 15 = base
-// Exemplo: activeHeight=9 significa que linhas 7..15 estão ativas (ou seja, linhas 16..9 na contagem "humana")
-// Logo:
-// activeHeight invertido (em linha da grade) = GRID_SIZE - activeHeight
-
-function isWithinActiveHeight(y) {
-  // y é linha 0..15
-  // linhas ativas são as últimas "activeHeight" linhas da grade
-  return y >= (GRID_SIZE - activeHeight);
-}
-
-// desenha grade inteira
-function render() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  cellSize = Math.floor(canvas.width / GRID_SIZE);
-  for (let y=0; y<GRID_SIZE; y++){
-    for (let x=0; x<GRID_SIZE; x++){
-      const idx = indexFromXY(x,y);
-      const val = grid[idx];
-      const px = x*cellSize + CELL_PADDING;
-      const py = y*cellSize + CELL_PADDING;
-      const w = cellSize - CELL_PADDING*2;
-      const h = cellSize - CELL_PADDING*2;
-      ctx.fillStyle = val ? '#2ecc71' : '#ffffff';
-      ctx.fillRect(px,py,w,h);
-      ctx.strokeStyle = '#ddd';
-      ctx.strokeRect(px,py,w,h);
+  // Inicialização das alturas (9 a 16) como botões
+  function createHeightButtons() {
+    for (let h = 9; h <= 16; h++) {
+      const btn = document.createElement('button');
+      btn.textContent = h;
+      btn.className = 'btn btn-outline-primary size-btn';
+      if (h === currentHeight) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        currentHeight = h;
+        activeHeightLabel.textContent = h;
+        updateHeightButtons();
+      });
+      heightButtonsDiv.appendChild(btn);
     }
   }
-  // marca area ativa (retângulo 16 x activeHeight) - area ativa nas linhas de baixo pra cima
-  ctx.strokeStyle = 'rgba(255,99,71,0.9)';
-  ctx.lineWidth = 2;
-  const activeYStart = cellSize * (GRID_SIZE - activeHeight) + CELL_PADDING;
-  ctx.strokeRect(CELL_PADDING, activeYStart, cellSize*GRID_SIZE - CELL_PADDING*2, cellSize*activeHeight - CELL_PADDING*2);
-}
-
-// clique para alternar célula (se ativado)
-canvas.addEventListener('click', (ev) => {
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor( (ev.clientX - rect.left) / cellSize );
-  const y = Math.floor( (ev.clientY - rect.top) / cellSize );
-  if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) return;
-  if (toggleOnClickEl.checked) {
-    setCell(x,y, !getCell(x,y));
-    render();
+  function updateHeightButtons() {
+    Array.from(heightButtonsDiv.children).forEach(btn => {
+      btn.classList.toggle('active', Number(btn.textContent) === currentHeight);
+    });
   }
-  updateKeysDisplayFromGrid();
-});
 
-// transforma bits da grid (top->bottom, left->right) em 32 bytes (256 bits)
-// se activeHeight < 16, linhas acima da área ativa ficam 0
-function gridToPrivateKeyBytes() {
-  const bytes = new Uint8Array(32);
-  let bitIndex = 0;
-  for (let y=0; y<GRID_SIZE; y++){
-    for (let x=0; x<GRID_SIZE; x++){
-      const withinActive = isWithinActiveHeight(y);
-      let bit = 0;
-      if (withinActive) {
-        bit = getCell(x,y) ? 1 : 0;
-      } else {
-        bit = 0;
+  // Desenha a grade
+  function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const idx = y * SIZE + x;
+        ctx.fillStyle = gridState[idx] ? '#2f9e44' : '#eee'; // verde se ligado, cinza claro se desligado
+        ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+        ctx.strokeStyle = '#ccc';
+        ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
-      const bytePos = Math.floor(bitIndex / 8);
-      const bitInByte = 7 - (bitIndex % 8); // MSB-first
-      if (bit) bytes[bytePos] |= (1 << bitInByte);
-      bitIndex++;
-      if (bitIndex >= 256) break;
-    }
-    if (bitIndex >= 256) break;
-  }
-  return bytes;
-}
-
-async function updateKeysDisplayFromGrid(){
-  const keyBytes = gridToPrivateKeyBytes();
-  const hex = Array.from(keyBytes).map(b => b.toString(16).padStart(2,'0')).join('');
-  hexBox.value = hex;
-  const { wifUncomp, wifComp } = await toWIF(keyBytes);
-  wifBox.value = wifComp;
-  wifBoxUncompressed.value = wifUncomp;
-}
-
-/* ----- Sequencial counter over active rectangle ----- */
-// Mapeamento de bits que serão incrementados: lista de índices (0..255) correspondendo ao retângulo ativo.
-// Aqui também precisamos respeitar a inversão vertical no filtro activeHeight
-function activeBitIndicesList() {
-  const indices = [];
-  let bitIndex = 0;
-  for (let y=0; y<GRID_SIZE; y++){
-    for (let x=0; x<GRID_SIZE; x++){
-      if (isWithinActiveHeight(y)) indices.push({x,y,bitIndex});
-      bitIndex++;
     }
   }
-  return indices;
-}
 
-// aplica um número (BigInt) como padrão binário nos bits ativos
-function applyCounterToGrid(counterBigInt, activeList) {
-  for (const it of activeList) setCell(it.x, it.y, 0);
-  let i = 0n;
-  for (let pos = activeList.length - 1; pos >= 0; pos--) {
-    if (counterBigInt === 0n && i > 60n) {
-      break;
+  // Toggle célula no índice dado
+  function toggleCellAt(x, y) {
+    if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return;
+    const idx = y * SIZE + x;
+    gridState[idx] = !gridState[idx];
+  }
+
+  // Gera a private key HEX a partir da gridState
+  // Aqui vamos montar um array de bytes de 32 bytes usando as primeiras 256 células (16x16 = 256 bits = 32 bytes)
+  // Cada célula = 1 bit, vamos montar o array de bytes bit a bit, linha por linha.
+  function generatePrivateKeyHex() {
+    const bytes = new Uint8Array(32); // 32 bytes = 256 bits
+    for (let i = 0; i < 256; i++) {
+      if (gridState[i]) {
+        const byteIndex = Math.floor(i / 8);
+        const bitIndex = 7 - (i % 8); // Bit mais significativo na esquerda
+        bytes[byteIndex] |= (1 << bitIndex);
+      }
     }
-    const bit = (counterBigInt & 1n) ? 1 : 0;
-    const loc = activeList[pos];
-    setCell(loc.x, loc.y, bit);
-    counterBigInt = counterBigInt >> 1n;
-    i++;
-    if (pos === 0) break;
+    return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
   }
-}
 
-/* ----- Randomize active area ----- */
-function randomizeActiveArea(activeList) {
-  for (const it of activeList) {
-    const r = Math.random() < 0.5 ? 0 : 1;
-    setCell(it.x, it.y, r);
+  // Funções para converter chave privada hex em WIF (comprimido e não comprimido)
+  // Baseado no padrão Bitcoin:
+  // https://en.bitcoin.it/wiki/Wallet_import_format
+
+  // Função auxiliar: SHA256, usando SubtleCrypto (async)
+  async function sha256(data) {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return new Uint8Array(hashBuffer);
   }
-}
 
-/* ----- Runner ----- */
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+  // Função auxiliar: double SHA256
+  async function doubleSha256(data) {
+    const first = await sha256(data);
+    return await sha256(first);
+  }
 
-async function runGenerator() {
-  if (running) return;
-  running = true;
-  abortRun = false;
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
+  // Base58 alphabet
+  const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
-  // heights de 9 até 16
-  const heights = [];
-  for (let h = MIN_ACTIVE_HEIGHT; h <= MAX_ACTIVE_HEIGHT; h++) heights.push(h);
+  // Converte bytes para base58
+  function base58Encode(buffer) {
+    let intVal = BigInt(0);
+    for (const b of buffer) {
+      intVal = (intVal << 8n) + BigInt(b);
+    }
 
-  try {
-    for (const h of heights) {
-      if (abortRun) break;
-      activeHeight = h;
-      activeHeightLabel.textContent = activeHeight;
-      const activeList = activeBitIndicesList();
-      const nBits = activeList.length;
+    let encoded = '';
+    while (intVal > 0) {
+      const mod = intVal % 58n;
+      intVal = intVal / 58n;
+      encoded = BASE58_ALPHABET[Number(mod)] + encoded;
+    }
 
-      const mode = getMode();
+    // Conta zeros à esquerda para prefixar '1's
+    for (const b of buffer) {
+      if (b === 0) encoded = '1' + encoded;
+      else break;
+    }
+    return encoded;
+  }
 
+  // Converte private key hex para WIF
+  // Param: compress = true para WIF comprimido
+  async function privateKeyHexToWIF(hex, compress = true) {
+    // prefixo 0x80
+    const keyBytes = hexToBytes(hex);
+    const payload = new Uint8Array(compress ? 34 : 33);
+    payload[0] = 0x80;
+    payload.set(keyBytes, 1);
+    if (compress) payload[33] = 0x01;
+
+    const checksumFull = await doubleSha256(payload);
+    const checksum = checksumFull.slice(0, 4);
+
+    // concat payload + checksum
+    const full = new Uint8Array(payload.length + 4);
+    full.set(payload, 0);
+    full.set(checksum, payload.length);
+
+    return base58Encode(full);
+  }
+
+  // Helper para converter hex para bytes Uint8Array
+  function hexToBytes(hex) {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+    }
+    return bytes;
+  }
+
+  // Atualiza os textarea concatenando uma nova linha com as chaves
+  async function updateKeyOutputs() {
+    const hex = generatePrivateKeyHex();
+    const wifCompressed = await privateKeyHexToWIF(hex, true);
+    const wifUncompressed = await privateKeyHexToWIF(hex, false);
+
+    hexBox.value += (hexBox.value ? '\n' : '') + hex;
+    wifBox.value += (wifBox.value ? '\n' : '') + wifCompressed;
+    wifBoxUncompressed.value += (wifBoxUncompressed.value ? '\n' : '') + wifUncompressed;
+  }
+
+  // Evento de clique no canvas
+  canvas.addEventListener('click', async (e) => {
+    if (!toggleOnClickCheckbox.checked) return; // clique desativado
+
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
+    const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
+
+    toggleCellAt(x, y);
+    drawGrid();
+    await updateKeyOutputs();
+  });
+
+  // Função para limpar a grid e os outputs
+  function clearGrid() {
+    gridState.fill(false);
+    drawGrid();
+    hexBox.value = '';
+    wifBox.value = '';
+    wifBoxUncompressed.value = '';
+  }
+
+  // Aleatoriza a grid
+  function randomizeGrid() {
+    for (let i = 0; i < gridState.length; i++) {
+      gridState[i] = Math.random() < 0.5;
+    }
+    drawGrid();
+  }
+
+  // Passo automático (um passo de animação)
+  async function step() {
+    const mode = [...modeRadios].find(r => r.checked).value;
+
+    if (randomizeOnStepCheckbox.checked) {
+      randomizeGrid();
+    } else {
       if (mode === 'sequential') {
-        let step = 0;
-        let counter = 0n;
-        const maxPossible = (nBits >= 64) ? null : ((1n << BigInt(nBits)) - 1n);
-        const stepsLimit = Math.min(maxSteps, (maxPossible === null ? maxSteps : Number(maxPossible)+1 || maxSteps));
-
-        while (!abortRun) {
-          applyCounterToGrid(counter, activeList);
-
-          if (randomizeOnStepEl.checked) randomizeActiveArea(activeList);
-
-          render();
-          await updateKeysDisplayFromGrid();
-
-          step++;
-          if (step >= stepsLimit) break;
-
-          counter = counter + 1n;
-          await sleep(speed);
-        }
-      } else {
-        // random mode: gera 10 padrões por altura para evitar bloqueio
-        const repeats = 10;
-        for (let r = 0; r < repeats; r++) {
-          if (abortRun) break;
-          randomizeActiveArea(activeList);
-          render();
-          await updateKeysDisplayFromGrid();
-          await sleep(speed);
-        }
+        // Alterna a célula no índice currentStepIndex dentro da altura ativa (height * width)
+        // Aqui vamos usar as primeiras currentHeight linhas, todas as 16 colunas = currentHeight * 16 células
+        const maxCells = currentHeight * SIZE;
+        // Limitar índice
+        if (currentStepIndex >= maxCells) currentStepIndex = 0;
+        gridState[currentStepIndex] = !gridState[currentStepIndex];
+        currentStepIndex++;
+      } else if (mode === 'random') {
+        const maxCells = currentHeight * SIZE;
+        const idx = Math.floor(Math.random() * maxCells);
+        gridState[idx] = !gridState[idx];
       }
-      if (abortRun) break;
     }
-  } catch (e) {
-    console.error('Runner error:', e);
-  } finally {
-    running = false;
-    abortRun = false;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
+
+    drawGrid();
+    await updateKeyOutputs();
   }
-}
 
-/* ----- Eventos dos botões ----- */
-startBtn.addEventListener('click', async () => {
-  const newMax = prompt(`Limite de passos sequenciais por altura (padrão ${maxSteps}). Atenção: 2^n cresce rápido!\nInsira um número inteiro ou deixe em branco para manter:`, String(maxSteps));
-  if (newMax !== null && newMax.trim() !== '') {
-    const parsed = parseInt(newMax,10);
-    if (!isNaN(parsed) && parsed > 0) maxSteps = parsed;
+  // Inicia a animação automática
+  function start() {
+    if (intervalId !== null) return;
+    currentStepIndex = 0;
+    const speed = Number(speedInput.value);
+    intervalId = setInterval(() => step(), speed);
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
   }
-  runGenerator();
-});
 
-stopBtn.addEventListener('click', () => {
-  if (running) {
-    abortRun = true;
-  }
-});
-
-clearBtn.addEventListener('click', () => {
-  clearGrid();
-  updateKeysDisplayFromGrid();
-});
-
-randBtn.addEventListener('click', () => {
-  for (let y=0; y<GRID_SIZE; y++){
-    for (let x=0; x<GRID_SIZE; x++){
-      setCell(x,y, Math.random() < 0.5 ? 1 : 0);
+  // Para a animação automática
+  function stop() {
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+      intervalId = null;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
     }
   }
-  render();
-  updateKeysDisplayFromGrid();
-});
 
-speedInput.addEventListener('input', () => {
-  speed = parseInt(speedInput.value,10);
-  speedLabel.textContent = speed;
-});
+  // Atualiza o label da velocidade
+  speedInput.addEventListener('input', () => {
+    speedLabel.textContent = speedInput.value;
+    if (intervalId !== null) {
+      stop();
+      start();
+    }
+  });
 
-/* ----- Inicialização ----- */
-render();
-updateKeysDisplayFromGrid();
+  // Eventos dos botões
+  startBtn.addEventListener('click', () => {
+    start();
+  });
+
+  stopBtn.addEventListener('click', () => {
+    stop();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    stop();
+    clearGrid();
+  });
+
+  randBtn.addEventListener('click', () => {
+    randomizeGrid();
+  });
+
+  // Inicialização
+  createHeightButtons();
+  updateHeightButtons();
+  drawGrid();
+
+})();
