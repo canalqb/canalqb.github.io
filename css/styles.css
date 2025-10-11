@@ -1,227 +1,131 @@
-// auto16.js
-
-const canvas = document.getElementById('grid');
-const ctx = canvas.getContext('2d');
-
-const rows = 16;
-const cols = 16;
-const cellSize = 32; // para 512x512 canvas, 16x16 células
-
-canvas.width = cols * cellSize;
-canvas.height = rows * cellSize;
-
-let grid = [];
-let intervalId = null;
-let currentStep = 0;
-let running = false;
-
-const modeRadios = document.getElementsByName('mode');
-const speedRange = document.getElementById('speedRange');
-const speedValue = document.getElementById('speedValue');
-const alternateCheckbox = document.getElementById('alternate');
-const randomStateCheckbox = document.getElementById('randomState');
-
-const btnStart = document.getElementById('start');
-const btnStop = document.getElementById('stop');
-const btnClear = document.getElementById('clear');
-const btnRandom = document.getElementById('random');
-
-const logBox = document.getElementById('logbox');
-
-function initGrid() {
-  grid = [];
-  for (let r = 0; r < rows; r++) {
-    grid[r] = [];
-    for (let c = 0; c < cols; c++) {
-      grid[r][c] = false; // célula apagada
-    }
-  }
+:root {
+  --green: #008000;
+  --dark-green: #006400;
+  --bg: #ffffff;
 }
 
-function drawGrid() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // desenha linhas da grade
-  ctx.strokeStyle = '#008000';
-  ctx.lineWidth = 2;
-
-  for (let r = 0; r <= rows; r++) {
-    ctx.beginPath();
-    ctx.moveTo(0, r * cellSize);
-    ctx.lineTo(canvas.width, r * cellSize);
-    ctx.stroke();
-  }
-  for (let c = 0; c <= cols; c++) {
-    ctx.beginPath();
-    ctx.moveTo(c * cellSize, 0);
-    ctx.lineTo(c * cellSize, canvas.height);
-    ctx.stroke();
-  }
-
-  // preenche células acesas
-  ctx.fillStyle = '#006400';
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      if (grid[r][c]) {
-        ctx.fillRect(c * cellSize + 2, r * cellSize + 2, cellSize - 3, cellSize - 3);
-      }
-    }
-  }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: #000;
+  display: flex;
+  justify-content: center;
 }
 
-function toggleCell(r, c) {
-  grid[r][c] = !grid[r][c];
-  drawGrid();
+#container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 30px 0;
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  padding: 18px;
+  box-sizing: border-box;
+  background: #fff;
+  text-align: center;
 }
 
-canvas.addEventListener('click', e => {
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  const col = Math.floor(x / cellSize);
-  const row = Math.floor(y / cellSize);
-
-  if (row >= 0 && row < rows && col >= 0 && col < cols) {
-    toggleCell(row, col);
-    log(`Célula [${row + 1}, ${col + 1}] ${grid[row][col] ? 'ativa' : 'desativada'}`);
-  }
-});
-
-function getSelectedMode() {
-  for (const radio of modeRadios) {
-    if (radio.checked) return radio.value;
-  }
-  return 'sequential';
+h1 {
+  color: var(--dark-green);
+  margin: 4px 0 14px;
 }
 
-function log(msg) {
-  const timestamp = new Date().toLocaleTimeString();
-  logBox.textContent += `[${timestamp}] ${msg}\n`;
-  logBox.scrollTop = logBox.scrollHeight;
+label.section {
+  display: block;
+  text-align: left;
+  color: var(--dark-green);
+  font-weight: 700;
+  margin: 10px 0 6px;
 }
 
-function stepSequential() {
-  // Pisca a célula da etapa atual
-  // No modo sequencial, vamos deixar a célula "acesa" após piscar
-  // Se 'atribuir estado aleatório' estiver ativo, definimos o estado da célula aleatoriamente
-  const r = Math.floor(currentStep / cols);
-  const c = currentStep % cols;
-
-  if (alternateCheckbox.checked) {
-    // Apaga todas células menos a atual, para efeito de "piscar"
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        grid[i][j] = false;
-      }
-    }
-  }
-
-  if (randomStateCheckbox.checked) {
-    grid[r][c] = Math.random() < 0.5; // 50% chance ligada/desligada
-  } else {
-    grid[r][c] = true;
-  }
-
-  drawGrid();
-  log(`Sequencial passo ${currentStep + 1} — célula [${r + 1}, ${c + 1}] ${grid[r][c] ? 'ativa' : 'desativada'}`);
-
-  currentStep++;
-  if (currentStep >= rows * cols) {
-    currentStep = 0;
-  }
+.canvas-wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
-function stepRandom() {
-  // Escolhe uma célula aleatória
-  const r = Math.floor(Math.random() * rows);
-  const c = Math.floor(Math.random() * cols);
+canvas#grid {
+  border: 2px solid var(--green);
+  background: #fff;
+  image-rendering: pixelated;
+  cursor: pointer;
+  /* Ensure canvas size matches width/height attributes */
+  width: 512px;
+  height: 512px;
+}
 
-  // Se randomStateCheckbox estiver marcado, atribui estado aleatório
-  if (randomStateCheckbox.checked) {
-    grid[r][c] = Math.random() < 0.5;
-  } else {
-    grid[r][c] = true;
+.controls {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--dark-green);
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+  background-color: #e6f0e6;
+}
+
+textarea.logbox {
+  width: 100%;
+  height: 220px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  border: 2px solid var(--green);
+  border-radius: 6px;
+  padding: 8px;
+  font-family: monospace;
+  resize: vertical;
+  background: #f9fff9;
+  color: #004400;
+  overflow-y: auto;
+  white-space: pre;
+}
+
+.logs {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.logs > div {
+  flex: 1;
+  min-width: 280px;
+}
+
+@media (max-width: 900px) {
+  .canvas-wrap {
+    flex-direction: column;
+    align-items: center;
   }
 
-  drawGrid();
-  log(`Random — célula [${r + 1}, ${c + 1}] ${grid[r][c] ? 'ativa' : 'desativada'}`);
-}
-
-function start() {
-  if (running) return;
-
-  running = true;
-  currentStep = 0;
-
-  const mode = getSelectedMode();
-  const delay = parseInt(speedRange.value, 10);
-
-  if (mode === 'sequential') {
-    intervalId = setInterval(stepSequential, delay);
-  } else if (mode === 'random') {
-    intervalId = setInterval(stepRandom, delay);
+  .logs {
+    flex-direction: column;
   }
 
-  log('Execução iniciada');
-}
-
-function stop() {
-  if (!running) return;
-
-  clearInterval(intervalId);
-  running = false;
-  log('Execução parada');
-}
-
-function clearGrid() {
-  stop();
-  initGrid();
-  drawGrid();
-  log('Grade limpa');
-}
-
-function fillRandom() {
-  stop();
-  initGrid();
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      grid[r][c] = Math.random() < 0.5;
-    }
+  #container {
+    width: 95%;
+    padding: 12px;
   }
-  drawGrid();
-  log('Grade preenchida aleatoriamente');
-}
 
-// Atualiza valor de velocidade visível
-speedRange.addEventListener('input', () => {
-  speedValue.textContent = speedRange.value + ' ms';
-
-  if (running) {
-    stop();
-    start();
+  canvas#grid {
+    width: 320px !important;
+    height: 320px !important;
   }
-});
-
-// Botões
-btnStart.addEventListener('click', () => {
-  start();
-});
-
-btnStop.addEventListener('click', () => {
-  stop();
-});
-
-btnClear.addEventListener('click', () => {
-  clearGrid();
-});
-
-btnRandom.addEventListener('click', () => {
-  fillRandom();
-});
-
-// Inicialização
-initGrid();
-drawGrid();
-log('Sistema inicializado');
+}
