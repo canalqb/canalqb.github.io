@@ -145,24 +145,26 @@
     }
   });
 
-  function stepSequential() {
-    grid[currentRow][currentCol] = false;
-
+  function stepSequential() { 
+    const randomize = document.getElementById('randomizeStatesOnStep').checked;
+  
+    // Avança para próxima célula
     currentCol++;
     if (currentCol >= GRID) {
       currentCol = 0;
       currentRow++;
       if (currentRow > rowsToWatch.end) currentRow = rowsToWatch.start;
     }
-
-    const randomize = document.getElementById('randomizeStatesOnStep').checked;
+  
+    // Define estado da célula (mantendo ligado se não randomizado)
     grid[currentRow][currentCol] = randomize ? Math.random() < 0.5 : true;
   }
 
-  function stepRandom() {
+  function stepRandom() { 
     const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
     const c = Math.floor(Math.random() * GRID);
     const randomize = document.getElementById('randomizeStatesOnStep').checked;
+  
     grid[r][c] = randomize ? Math.random() < 0.5 : true;
   }
 
