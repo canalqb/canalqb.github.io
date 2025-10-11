@@ -12,7 +12,7 @@
 
     <label class="section">Descrição</label>
     <textarea rows="3" readonly style="width:100%; box-sizing:border-box; border:2px solid var(--green); border-radius:6px; padding:8px; background:#fff;">
-A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based), a chave privada inteira (256 bits) será convertida para HEX de 64 dígitos e registrada — apenas a linha HEX. Em paralelo será gerado o WIF não comprimido correspondente (uma linha por WIF).
+Somente alterações nas linhas 9 a 16 (1-based) afetam a geração da chave privada (256 bits). Cada modificação gera uma linha HEX e um WIF (comprimido e não comprimido).
     </textarea>
 
     <div class="canvas-wrap" style="margin-top:14px;">
@@ -30,7 +30,7 @@ A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based)
 
         <div style="margin-top:10px;">
           <label class="small">Modo:</label>
-          <label><input type="radio" name="mode" value="sequential" checked /> Sequencial (varre linhas 9→16)</label>
+          <label><input type="radio" name="mode" value="sequential" checked /> Sequencial</label>
           <label style="margin-left:8px;"><input type="radio" name="mode" value="random" /> Random</label>
 
           <div style="margin-top:8px;">
@@ -40,38 +40,36 @@ A cada alteração (liga/desliga) de qualquer célula nas linhas 9..16 (1-based)
           </div>
 
           <div style="margin-top:6px;">
-            <label><input type="checkbox" id="toggleOnClick" checked /> Permitir alternar célula ao clicar</label><br />
-            <label><input type="checkbox" id="randomizeStatesOnStep" checked /> Ao atualizar, atribuir estado aleatório (em vez de só ligar)</label>
+            <label><input type="checkbox" id="toggleOnClick" checked /> Alternar célula ao clicar</label><br />
+            <label><input type="checkbox" id="randomizeStatesOnStep" checked /> Atribuir estado aleatório a cada passo</label>
           </div>
         </div>
       </div>
 
       <div style="min-width:300px; max-width:420px; text-align:left;">
         <label class="section">Opções & Observações</label>
-        <div class="small">
-          <ul style="margin:6px 0 0 18px; padding:0;">
-            <li>Linhas animadas = 9..16 (1-based).</li>
-            <li>Sequencial varre célula a célula; Random escolhe células aleatórias dentro das linhas alvo.</li>
-            <li>Cada alteração nas linhas 9..16 gera 1 linha HEX + 1 linha WIF.</li>
-          </ul>
-        </div>
+        <ul style="margin:6px 0 0 18px; padding:0;" class="small">
+          <li>Linhas 9 a 16 geram os bits da chave (128 células = 256 bits).</li>
+          <li>Sequencial varre célula por célula; Random escolhe células aleatórias.</li>
+          <li>Chaves inválidas (ex: tudo zero) são descartadas.</li>
+        </ul>
       </div>
     </div>
 
     <div class="logs">
       <div>
-        <label class="section">Private Keys</label>
-        <textarea id="privateKeysBox" class="logbox" readonly placeholder="As private keys HEX aparecerão aqui, uma por linha..."></textarea>
+        <label class="section">Private Keys (HEX)</label>
+        <textarea id="privateKeysBox" class="logbox" readonly placeholder="As chaves privadas HEX aparecerão aqui..."></textarea>
       </div>
 
       <div>
         <label class="section">WIFs (comprimido)</label>
-        <textarea id="wifBox" class="logbox" readonly placeholder="Os WIFs comprimidos aparecerão aqui, uma por linha..."></textarea>
+        <textarea id="wifBox" class="logbox" readonly placeholder="Os WIFs comprimidos aparecerão aqui..."></textarea>
       </div>
 
       <div>
         <label class="section">WIFs (não comprimido)</label>
-        <textarea id="wifBoxUncompressed" class="logbox" readonly placeholder="Os WIFs não comprimidos aparecerão aqui, uma por linha..."></textarea>
+        <textarea id="wifBoxUncompressed" class="logbox" readonly placeholder="Os WIFs não comprimidos aparecerão aqui..."></textarea>
       </div>
     </div>
 
