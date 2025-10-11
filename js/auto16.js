@@ -37,8 +37,11 @@
 
   // Cria botões de altura e base
   function createRangeButtons() {
-    // altura (1 a 16)
-    for (let h = 1; h <= SIZE; h++) {
+    heightButtonsDiv.innerHTML = '';
+    baseButtonsDiv.innerHTML = '';
+  
+    // Criar botões de altura (linha superior)
+    for (let h = 1; h <= SIZE - 1; h++) {
       const btn = document.createElement('button');
       btn.textContent = h;
       btn.className = 'btn btn-sm btn-outline-primary size-btn';
@@ -52,8 +55,9 @@
       });
       heightButtonsDiv.appendChild(btn);
     }
-    // base (1 a 16)
-    for (let b = 1; b <= SIZE; b++) {
+  
+    // Criar botões de base (linha inferior)
+    for (let b = 2; b <= SIZE; b++) {
       const btn = document.createElement('button');
       btn.textContent = b;
       btn.className = 'btn btn-sm btn-outline-primary size-btn';
@@ -67,8 +71,10 @@
       });
       baseButtonsDiv.appendChild(btn);
     }
+  
     updateRangeButtons();
   }
+
 
   function updateRangeButtons() {
     // altura buttons
