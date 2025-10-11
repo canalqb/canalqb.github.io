@@ -3,6 +3,7 @@
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
 
+  // DOM
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
@@ -12,62 +13,80 @@
   const modeRadios = document.querySelectorAll('input[name="mode"]');
   const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
   const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
-  const activeHeightLabel = document.getElementById('activeHeightLabel');
-  const heightButtonsContainer = document.getElementById('heightButtons');
-
   const hexBox = document.getElementById('hexBox');
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
   const privateKeysBox = document.getElementById('privateKeysBox');
 
+  // Novos controles: faixa de altura e faixa de base
+  const heightSelect = document.getElementById('heightSelect');  // linha superior
+  const baseSelect = document.getElementById('baseSelect');      // linha inferior
+
+  // Estado
   let gridState = new Array(SIZE * SIZE).fill(false);
 
-  let currentHeight = 1;  // valor “alturas” de 1 a 16, interpretado de baixo para cima
-  const MIN_HEIGHT = 1;
-  const MAX_HEIGHT = 16;
+  // altura e base em termos de linha, de 1 a 16
+  // altura (top) de 1 a 15, base (bot) de 2 a 16, e base > altura
+  let altura = 1;   // linha superior (mais acima)
+  let base = 2;     // linha inferior (mais abaixo)
+
   let stateCounter = 0n;
-
-  const CELL_SIZE = canvas.width / SIZE;  // assume canvas quadrado
-
   let running = false;
   let timeoutId = null;
 
-  // Constrói botões de altura de 1 a 16
-  function createHeightButtons() {
-    for (let h = MIN_HEIGHT; h <= MAX_HEIGHT; h++) {
-      const btn = document.createElement('button');
-      btn.textContent = h;
-      btn.dataset.h = h;
-      btn.className = 'btn btn-outline-primary size-btn';
-      btn.addEventListener('click', () => {
-        if (running) return; // não permitir trocar altura enquanto roda
-        currentHeight = h;
-        activeHeightLabel.textContent = h;
-        updateHeightButtons();
-        drawGrid();
-      });
-      heightButtonsContainer.appendChild(btn);
+  const CELL_SIZE = canvas.width / SIZE;
+
+  // Cria selects para altura e base
+  function createRangeSelectors() {
+    // altura: 1 a 15
+    for (let h = 1; h <= SIZE - 1; h++) {
+      const opt = document.createElement('option');
+      opt.value = h;
+      opt.textContent = `Linha ${h}`;
+      heightSelect.appendChild(opt);
     }
-    updateHeightButtons();
-  }
-  function updateHeightButtons() {
-    Array.from(heightButtonsContainer.children).forEach(btn => {
-      const h = parseInt(btn.dataset.h, 10);
-      if (h === currentHeight) {
-        btn.classList.add('btn-primary');
-        btn.classList.remove('btn-outline-primary');
-      } else {
-        btn.classList.remove('btn-primary');
-        btn.classList.add('btn-outline-primary');
+    // base: 2 a 16
+    for (let b = 2; b <= SIZE; b++) {
+      const opt = document.createElement('option');
+      opt.value = b;
+      opt.textContent = `Linha ${b}`;
+      baseSelect.appendChild(opt);
+    }
+
+    heightSelect.value = altura;
+    baseSelect.value = base;
+
+    heightSelect.addEventListener('change', () => {
+      const v = parseInt(heightSelect.value, 10);
+      altura = v;
+      // força base > altura
+      if (base <= altura) {
+        base = altura + 1;
+        baseSelect.value = base;
       }
+      drawGrid();
+    });
+
+    baseSelect.addEventListener('change', () => {
+      const v = parseInt(baseSelect.value, 10);
+      base = v;
+      if (base <= altura) {
+        base = altura + 1;
+        baseSelect.value = base;
+      }
+      drawGrid();
     });
   }
 
-  // Verifica se a linha y (0 = topo) está dentro da altura ativa de baixo pra cima
+  // Verifica se uma linha y é ativa (está entre altura e base, inclusive)
   function isRowActive(y) {
-    // linhas contadas de 0 (topo) até SIZE-1 (base)
-    // Se altura = h, queremos as últimas h linhas: y >= SIZE - h
-    return y >= (SIZE - currentHeight);
+    // y de 0 (topo) a SIZE-1 (base)
+    // altura = linha superior 1 → significa y = altura-1
+    // base = linha inferior 16 → y = base-1
+    const y_line = y; // índice zero-based
+    const alturaIdx = altura - 1;
+    const baseIdx = base - 1;
+    return (y_line >= alturaIdx && y_line <= baseIdx);
   }
 
   function drawGrid() {
@@ -83,14 +102,16 @@
       }
     }
 
-    // Destacar área ativa — às últimas currentHeight linhas
-    const startRow = SIZE - currentHeight;
-    ctx.fillStyle = 'rgba(255, 99, 71, 0.3)';
-    ctx.fillRect(0, startRow * CELL_SIZE, SIZE * CELL_SIZE, currentHeight * CELL_SIZE);
+    // marca faixa ativa visualmente
+    ctx.fillStyle = 'rgba(255,99,71,0.3)';
+    const alturaIdx = (altura - 1) * CELL_SIZE;
+    const baseIdx = (base - 1) * CELL_SIZE;
+    const heightPx = (base - altura + 1) * CELL_SIZE;
+    ctx.fillRect(0, alturaIdx, SIZE * CELL_SIZE, heightPx);
   }
 
+  // Converte gridState + faixa ativa em HEX de 256 bits
   function gridToHex() {
-    // Gera HEX considerando bits apenas nas linhas ativas; outras linhas como 0
     const bits = [];
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
@@ -101,7 +122,6 @@
         }
       }
     }
-    // bits.length == SIZE*SIZE = 256
     const bytes = [];
     for (let i = 0; i < bits.length; i += 8) {
       const byteStr = bits.slice(i, i + 8).join('');
@@ -110,11 +130,10 @@
     return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  async function sha256(buffer) {
-    const hash = await crypto.subtle.digest('SHA-256', buffer);
+  async function sha256(buf) {
+    const hash = await crypto.subtle.digest('SHA-256', buf);
     return new Uint8Array(hash);
   }
-
   const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   function base58Encode(buffer) {
@@ -125,7 +144,7 @@
     let s = '';
     while (intVal > 0n) {
       const mod = intVal % 58n;
-      intVal = intVal / 58n;
+      intVal /= 58n;
       s = BASE58_ALPHABET[Number(mod)] + s;
     }
     for (const b of buffer) {
@@ -168,37 +187,31 @@
   }
 
   async function updateKeyOutputs() {
-    const hex = gridToHex();
-    const wifC = await privateKeyToWIF(hex, true);
-    const wifU = await privateKeyToWIF(hex, false);
+    const hexKey = gridToHex();
+    const wifC = await privateKeyToWIF(hexKey, true);
+    const wifU = await privateKeyToWIF(hexKey, false);
 
-    hexBox.value += hex + '\n';
+    hexBox.value += hexKey + '\n';
     wifBox.value += wifC + '\n';
     wifBoxUncompressed.value += wifU + '\n';
-
-    privateKeysBox.value += `HEX:${hex} WIFc:${wifC} WIFu:${wifU}\n`;
+    privateKeysBox.value += `HEX:${hexKey} WIFc:${wifC} WIFu:${wifU}\n`;
 
     hexBox.scrollTop = hexBox.scrollHeight;
     wifBox.scrollTop = wifBox.scrollHeight;
     wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
-  function randomizeGrid() {
-    for (let y = SIZE - currentHeight; y < SIZE; y++) {
+  function randomizeArea() {
+    for (let y = altura - 1; y <= base - 1; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = Math.random() < 0.5;
-      }
-    }
-    for (let y = 0; y < SIZE - currentHeight; y++) {
-      for (let x = 0; x < SIZE; x++) {
-        gridState[y * SIZE + x] = false;
       }
     }
     drawGrid();
     updateKeyOutputs();
   }
 
-  function clearGrid() {
+  function clearAll() {
     gridState.fill(false);
     drawGrid();
     hexBox.value = '';
@@ -208,20 +221,28 @@
   }
 
   function getMaxCounter() {
-    // número de bits ativos = currentHeight * SIZE
-    return 1n << BigInt(currentHeight * SIZE);
+    const activeRows = base - altura + 1;
+    return 1n << BigInt(activeRows * SIZE);
   }
 
-  function setGridFromCounter(counter) {
-    const totalActiveBits = currentHeight * SIZE;
-    for (let i = 0; i < totalActiveBits; i++) {
-      // mapa linear: i => bit
-      const bit = (counter >> BigInt(totalActiveBits - 1 - i)) & 1n;
-      gridState[i] = (bit === 1n);
+  function setGridFromCounter(cnt) {
+    const activeRows = base - altura + 1;
+    const totalBits = activeRows * SIZE;
+    for (let i = 0; i < totalBits; i++) {
+      const bit = (cnt >> BigInt(totalBits - 1 - i)) & 1n;
+      // mapa para linha-coluna:
+      const rowOffset = Math.floor(i / SIZE);
+      const col = i % SIZE;
+      const y = (altura - 1) + rowOffset;  // linha y na matriz
+      gridState[y * SIZE + col] = (bit === 1n);
     }
-    // zera o restante
-    for (let i = totalActiveBits; i < SIZE * SIZE; i++) {
-      gridState[i] = false;
+    // fora da área ativa, zera
+    for (let y = 0; y < SIZE; y++) {
+      if (y < (altura - 1) || y > (base - 1)) {
+        for (let x = 0; x < SIZE; x++) {
+          gridState[y * SIZE + x] = false;
+        }
+      }
     }
   }
 
@@ -229,34 +250,32 @@
     const mode = Array.from(modeRadios).find(r => r.checked).value;
 
     if (randomizeOnStepCheckbox.checked) {
-      randomizeGrid();
+      randomizeArea();
       scheduleNext();
       return;
     }
 
     if (mode === 'sequential') {
-      const max = getMaxCounter();
-      if (stateCounter >= max) {
-        // passa para próxima altura
-        currentHeight++;
-        if (currentHeight > MAX_HEIGHT) {
-          stop();
-          return;
-        }
-        stateCounter = 0n;
-        activeHeightLabel.textContent = currentHeight;
-        updateHeightButtons();
+      const maxCnt = getMaxCounter();
+      if (stateCounter >= maxCnt) {
+        stop();
+        return;
       }
-
       setGridFromCounter(stateCounter);
       drawGrid();
       await updateKeyOutputs();
       stateCounter++;
       scheduleNext();
-    } else { // random mode
-      const activeBits = currentHeight * SIZE;
-      const idx = Math.floor(Math.random() * activeBits);
-      gridState[idx] = !gridState[idx];
+    } else {
+      // modo random dentro área
+      const activeRows = base - altura + 1;
+      const totalCells = activeRows * SIZE;
+      const idx = Math.floor(Math.random() * totalCells);
+      const rowOffset = Math.floor(idx / SIZE);
+      const col = idx % SIZE;
+      const y = (altura - 1) + rowOffset;
+      const pos = y * SIZE + col;
+      gridState[pos] = !gridState[pos];
       drawGrid();
       await updateKeyOutputs();
       scheduleNext();
@@ -270,22 +289,16 @@
   function start() {
     if (running) return;
     running = true;
-    currentHeight = MIN_HEIGHT;
-    activeHeightLabel.textContent = currentHeight;
-    updateHeightButtons();
     stateCounter = 0n;
-
-    hexBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
-    privateKeysBox.value = '';
-
-    step();  // dispara imediatamente
+    clearAll();  // zera grade e caixas
+    step();
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
   }
 
   function stop() {
     running = false;
-    if (timeoutId != null) {
+    if (timeoutId !== null) {
       clearTimeout(timeoutId);
       timeoutId = null;
     }
@@ -300,36 +313,30 @@
     const y = e.clientY - rect.top;
     const col = Math.floor(x / CELL_SIZE);
     const row = Math.floor(y / CELL_SIZE);
-    // somente permitir clique dentro da área ativa
     if (!isRowActive(row)) return;
-
-    const idx = row * SIZE + col;
-    gridState[idx] = !gridState[idx];
+    const pos = row * SIZE + col;
+    gridState[pos] = !gridState[pos];
     drawGrid();
     updateKeyOutputs();
   });
 
-  startBtn.addEventListener('click', () => {
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    start();
-  });
+  startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
   clearBtn.addEventListener('click', () => {
     stop();
-    clearGrid();
+    clearAll();
   });
-  randBtn.addEventListener('click', randomizeGrid);
+  randBtn.addEventListener('click', randomizeArea);
   speedInput.addEventListener('input', () => {
     speedLabel.textContent = speedInput.value;
-    // se estiver rodando, ajustar cronograma
     if (running) {
       clearTimeout(timeoutId);
       scheduleNext();
     }
   });
 
-  // Inicialização UI
-  createHeightButtons();
+  // Inicialização
+  createRangeSelectors();
   drawGrid();
+
 })();
