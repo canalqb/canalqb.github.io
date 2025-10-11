@@ -16,17 +16,20 @@
   let currentRow = rowsToWatch.start;
   let currentCol = 0;
 
+  // Inicializa a grade com valores false
   function initGrid() {
     grid = Array.from({ length: GRID }, () => Array(GRID).fill(false));
   }
 
+  // Desenha a grade no canvas
   function drawGrid() {
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     for (let r = 0; r < GRID; r++) {
       for (let c = 0; c < GRID; c++) {
-        const x = c * CELL, y = r * CELL;
+        const x = c * CELL;
+        const y = r * CELL;
         ctx.fillStyle = grid[r][c] ? '#006400' : '#ffffff';
         ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
         ctx.strokeStyle = '#008000';
@@ -36,35 +39,44 @@
     }
   }
 
+  // Extrai bits da área observada na grade
   function bitsFromGrid() {
     return grid
       .slice(rowsToWatch.start, rowsToWatch.end + 1)
       .flat()
-      .map(b => (b ? '1' : '0'))
+      .map(bit => (bit ? '1' : '0'))
       .join('');
   }
 
+  // Converte bits em string hexadecimal (64 caracteres)
   function hexFromBits(bits) {
-    return bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16)).join('').padStart(64, '0');
+    const hexArray = bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16));
+    return hexArray.join('').padStart(64, '0');
   }
 
+  // Converte string hex em Uint8Array de bytes
   function hexToBytes(hex) {
     return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
   }
 
+  // Concatena múltiplos Uint8Arrays em um só
   function concatBytes(...arrays) {
     return Uint8Array.from(arrays.flatMap(arr => [...arr]));
   }
 
-  async function sha256(buf) {
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return new Uint8Array(hash);
+  // Hash SHA-256 usando Web Crypto API
+  async function sha256(buffer) {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    return new Uint8Array(hashBuffer);
   }
 
-  async function doubleSha256(buf) {
-    return await sha256(await sha256(buf));
+  // Double SHA-256
+  async function doubleSha256(buffer) {
+    const firstHash = await sha256(buffer);
+    return await sha256(firstHash);
   }
 
+  // Converte bytes para Base58 (Bitcoin alphabet)
   function bytesToBase58(bytes) {
     let leadingZeros = 0;
     while (leadingZeros < bytes.length && bytes[leadingZeros] === 0) {
@@ -86,12 +98,14 @@
     return '1'.repeat(leadingZeros) + result;
   }
 
+  // Valida se a chave privada está dentro do intervalo permitido
   function isValidPrivateKey(hex) {
     const n = BigInt('0x' + hex);
-    const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140');
+    const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
     return n > 0n && n < max;
   }
 
+  // Converte chave privada hex para WIF (Wallet Import Format)
   async function privateKeyToWIF(hex, compressed = true) {
     const key = hexToBytes(hex);
     const prefix = Uint8Array.of(0x80);
@@ -102,6 +116,7 @@
     return bytesToBase58(full);
   }
 
+  // Atualiza as caixas de saída (chave privada, WIF compressa e WIF não compressa)
   async function updateOutputs() {
     const bits = bitsFromGrid();
     const hex = hexFromBits(bits);
@@ -125,6 +140,7 @@
     wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
+  // Evento de clique para alternar células da grade
   canvas.addEventListener('click', e => {
     const toggleOnClick = document.getElementById('toggleOnClick');
     if (!toggleOnClick.checked) return;
@@ -145,6 +161,7 @@
     }
   });
 
+  // Passo no modo sequencial
   function stepSequential() {
     grid[currentRow][currentCol] = false;
 
@@ -159,6 +176,7 @@
     grid[currentRow][currentCol] = randomize ? Math.random() < 0.5 : true;
   }
 
+  // Passo no modo aleatório
   function stepRandom() {
     const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
     const c = Math.floor(Math.random() * GRID);
@@ -166,6 +184,7 @@
     grid[r][c] = randomize ? Math.random() < 0.5 : true;
   }
 
+  // Função de passo (executada no intervalo)
   async function step() {
     const mode = document.querySelector('input[name="mode"]:checked').value;
     if (mode === 'sequential') stepSequential();
@@ -175,12 +194,13 @@
     await updateOutputs();
   }
 
+  // Eventos dos botões
   document.getElementById('startBtn').addEventListener('click', () => {
     if (animationInterval) return;
 
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
-    animationInterval = setInterval(step, parseInt(document.getElementById('speed').value));
+    animationInterval = setInterval(step, parseInt(document.getElementById('speed').value, 10));
   });
 
   document.getElementById('stopBtn').addEventListener('click', () => {
@@ -210,7 +230,7 @@
     document.getElementById('speedLabel').textContent = speed;
     if (animationInterval) {
       clearInterval(animationInterval);
-      animationInterval = setInterval(step, parseInt(speed));
+      animationInterval = setInterval(step, parseInt(speed, 10));
     }
   });
 
