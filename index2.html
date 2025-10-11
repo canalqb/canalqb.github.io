@@ -1,77 +1,107 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Grade 16×16 — Private HEX + WIF</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/styles.css">
-  
+  <meta charset="UTF-8" />
+  <title>Grade 16×16 para Geração de Chaves Privadas Bitcoin em HEX e WIF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Aprenda a gerar chaves privadas Bitcoin em formato HEX e WIF (comprimido e não comprimido) utilizando uma grade 16×16 interativa. Entenda os modos sequencial e aleatório para criação das chaves." />
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="bingbot" content="index, follow" />
 </head>
 <body>
+
   <h1>Grade 16×16 — Private HEX & WIF (não comprimido)</h1>
 
-  <label class="section">Descrição</label>
-  <textarea rows="3" readonly style="width:100%; box-sizing:border-box; border:2px solid #008000; border-radius:6px; padding:8px; background:#fff;">
-Somente alterações nas linhas 9 a 16 (1-based) afetam a geração da chave privada (256 bits). Cada modificação gera uma linha HEX e um WIF (comprimido e não comprimido).
-  </textarea>
+  <section>
+    <h2>Descrição do Funcionamento</h2>
+    <p>Somente alterações nas linhas 9 a 16 (base 1) afetam a geração da chave privada (256 bits). Cada modificação gera uma linha HEX e um WIF (comprimido e não comprimido).</p>
+  </section>
 
-  <div class="canvas-wrap">
+  <section>
+    <h2>Grade Interativa</h2>
+
+    <p>Utilize a grade 16×16 abaixo para gerar visualmente chaves privadas Bitcoin. Você pode clicar em células para ativá-las ou desativá-las, e escolher entre o modo sequencial ou aleatório para alterar os bits das linhas 9 a 16.</p>
+
+    <canvas id="grid" width="512" height="512" style="width:512px; height:512px;" aria-label="Grade interativa 16 por 16 para geração de chaves"></canvas>
+    <p style="font-size:0.9em; color:#555;">Linha 1 ↑ — Linha 16 ↓</p>
+
     <div>
-      <label class="section">Grade (clique para alternar célula)</label>
-      <canvas id="grid" width="512" height="512" style="width:512px; height:512px;"></canvas>
-      <div class="legend">Linha 1 ↑ — Linha 16 ↓</div>
-
-      <div class="controls" style="margin-top:12px;">
-        <button class="btn" id="startBtn">Iniciar</button>
-        <button class="btn" id="stopBtn" disabled>Parar</button>
-        <button class="btn" id="clearBtn">Limpar</button>
-        <button class="btn" id="randBtn">Aleatório</button>
-      </div>
-
-      <div style="margin-top:10px;">
-        <label class="small">Modo:</label>
-        <label><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
-        <label style="margin-left:8px;"><input type="radio" name="mode" value="random"> Random</label>
-
-        <div style="margin-top:8px;">
-          <div class="small" style="margin-bottom:4px;">Velocidade (ms por passo):</div>
-          <input id="speed" type="range" min="20" max="500" value="120">
-          <div class="small">Valor atual: <span id="speedLabel">120</span> ms</div>
-        </div>
-
-        <div style="margin-top:6px;">
-          <label><input type="checkbox" id="toggleOnClick" checked> Alternar célula ao clicar</label><br>
-          <label><input type="checkbox" id="randomizeStatesOnStep" checked> Atribuir estado aleatório a cada passo</label>
-        </div>
-      </div>
+      <button id="startBtn" type="button">Iniciar</button>
+      <button id="stopBtn" type="button" disabled>Parar</button>
+      <button id="clearBtn" type="button">Limpar</button>
+      <button id="randBtn" type="button">Aleatório</button>
     </div>
 
-    <div style="max-width:420px;">
-      <label class="section">Opções & Observações</label>
-      <ul style="margin:6px 0 0 18px; padding:0;" class="small">
-        <li>Linhas 9 a 16 geram os bits da chave (128 células = 256 bits).</li>
-        <li>Modo sequencial percorre todas as combinações possíveis.</li>
-        <li>Modo aleatório ativa bits aleatórios nas linhas 9 a 16.</li>
-        <li>Chaves inválidas (como tudo zero) são descartadas.</li>
-      </ul>
-    </div>
-  </div>
+    <fieldset style="margin-top:1em; border:1px solid #ccc; padding:8px; max-width:400px;">
+      <legend><strong>Configurações de Modo</strong></legend>
 
-  <div class="logs">
-    <label class="section">Private Keys (HEX)</label>
-    <textarea id="privateKeysBox" class="logbox" readonly placeholder="As chaves privadas HEX aparecerão aqui..."></textarea>
+      <label>
+        <input type="radio" name="mode" value="sequential" checked />
+        Sequencial
+      </label>
+      <label style="margin-left:1em;">
+        <input type="radio" name="mode" value="random" />
+        Aleatório
+      </label>
 
-    <label class="section">WIFs (comprimido)</label>
-    <textarea id="wifBox" class="logbox" readonly placeholder="Os WIFs comprimidos aparecerão aqui..."></textarea>
+      <div style="margin-top:0.5em;">
+        <label for="speed">Velocidade (ms por passo): </label>
+        <input id="speed" type="range" min="20" max="500" value="120" />
+        <span id="speedLabel">120</span> ms
+      </div>
 
-    <label class="section">WIFs (não comprimido)</label>
-    <textarea id="wifBoxUncompressed" class="logbox" readonly placeholder="Os WIFs não comprimidos aparecerão aqui..."></textarea>
-  </div>
+      <div style="margin-top:0.5em;">
+        <label><input type="checkbox" id="toggleOnClick" checked /> Alternar célula ao clicar</label><br />
+        <label><input type="checkbox" id="randomizeStatesOnStep" checked /> Atribuir estado aleatório a cada passo</label>
+      </div>
+    </fieldset>
+  </section>
 
-  <footer>
-    (c) Exemplo — grade 16×16 com geração de chaves privadas Bitcoin
+  <section>
+    <h2>Opções e Observações Importantes</h2>
+    <ul>
+      <li>As linhas 9 a 16 geram os bits da chave privada, totalizando 128 células equivalentes a 256 bits.</li>
+      <li>O modo sequencial percorre todas as combinações possíveis das linhas da grade.</li>
+      <li>O modo aleatório ativa bits aleatórios nas linhas 9 a 16 para variações imprevisíveis.</li>
+      <li>Chaves inválidas, como aquelas compostas por todos os bits zerados, são automaticamente descartadas.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Chaves Privadas Geradas</h2>
+
+    <label for="privateKeysBox">Private Keys (HEX)</label><br />
+    <textarea id="privateKeysBox" rows="6" style="width:100%; box-sizing: border-box;" readonly placeholder="As chaves privadas HEX aparecerão aqui..."></textarea>
+
+    <label for="wifBox" style="margin-top:1em; display:block;">WIFs (comprimido)</label><br />
+    <textarea id="wifBox" rows="6" style="width:100%; box-sizing: border-box;" readonly placeholder="Os WIFs comprimidos aparecerão aqui..."></textarea>
+
+    <label for="wifBoxUncompressed" style="margin-top:1em; display:block;">WIFs (não comprimido)</label><br />
+    <textarea id="wifBoxUncompressed" rows="6" style="width:100%; box-sizing: border-box;" readonly placeholder="Os WIFs não comprimidos aparecerão aqui..."></textarea>
+  </section>
+
+  <aside style="float:right; width:300px; margin-left:1em; padding:1em; border:1px solid #ddd; background:#f9f9f9;">
+    <h2>Publicidade</h2>
+    <!-- Google AdSense lateral -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- AdSense Sidebar -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXXXXX"
+         data-ad-slot="YYYYYYYYYYY"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </aside>
+
+  <footer style="clear:both; margin-top:2em; font-size:0.85em; color:#666;">
+    &copy; Exemplo — Grade 16×16 para geração de chaves privadas Bitcoin. Use esta ferramenta para estudo e aprendizado.
   </footer>
 
   <script src="js/auto16.js"></script>
+
 </body>
 </html>
