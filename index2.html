@@ -3,197 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Controle da Grade</title>
-  <style>
-    :root {
-      --green: #008000;
-      --dark-green: #006400;
-      --bg: #ffffff;
-    }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: #000;
-      display: flex;
-      justify-content: center;
-    }
-    #container {
-      width: 90%;
-      max-width: 1100px;
-      margin: 30px 0;
-      border: 2px solid var(--green);
-      border-radius: 10px;
-      padding: 18px;
-      box-sizing: border-box;
-      background: #fff;
-      text-align: center;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    #grid-container {
-      flex: 1 1 600px;
-      text-align: center;
-    }
-    #sidebar {
-      flex: 0 0 300px;
-      border: 1px solid var(--green);
-      border-radius: 6px;
-      padding: 12px;
-      box-sizing: border-box;
-      color: var(--dark-green);
-      font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      flex-direction: column;
-    }
-    #description {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-    #description h3 {
-      margin-top: 0;
-    }
-    #buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    #buttons button {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 2px solid var(--green);
-      background: #fff;
-      color: var(--dark-green);
-      font-weight: 700;
-      cursor: pointer;
-    }
-    #controls {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      font-weight: 600;
-      text-align: left;
-    }
-    #controls label {
-      cursor: pointer;
-    }
-    .mode label {
-      margin-right: 12px;
-      font-weight: 600;
-    }
-    .speed {
-      font-weight: 400;
-    }
-    .speed input[type="range"] {
-      width: 100%;
-    }
-    .speed div {
-      margin-top: 4px;
-      font-size: 0.9em;
-      color: var(--green);
-    }
-    .checkboxes label {
-      font-weight: 400;
-      user-select: none;
-      cursor: pointer;
-      display: block;
-    }
-
-    canvas#grid {
-      border: 2px solid var(--green);
-      background: #fff;
-      image-rendering: pixelated;
-      cursor: pointer;
-      max-width: 600px;
-      max-height: 600px;
-      width: 100%;
-      height: auto;
-    }
-
-    @media (max-width: 900px) {
-      #container {
-        flex-direction: column;
-        align-items: center;
-        width: 95%;
-        padding: 12px;
-      }
-      #sidebar {
-        width: 100%;
-        flex: none;
-      }
-      #grid-container {
-        width: 100%;
-        flex: none;
-        margin-bottom: 20px;
-      }
-      canvas#grid {
-        width: 320px !important;
-        height: 320px !important;
-      }
-      #buttons {
-        justify-content: flex-start;
-      }
-    }
-  </style>
+  <title>Grade Interativa</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="container">
-    <div id="grid-container">
-      <h2>Grade (clique para alternar célula)</h2>
-      <canvas id="grid" width="320" height="320"></canvas>
-      <div>Linha 1 ↑ — Linha 16 ↓</div>
-    </div>
-
-    <div id="sidebar">
-      <div id="description">
-        <h3>Opções & Observações</h3>
-        <ul>
-          <li>Linhas 9 a 16 geram os bits da chave (128 células = 256 bits).</li>
-          <li>Sequencial varre célula por célula; Random escolhe células aleatórias.</li>
-          <li>Chaves inválidas (ex: tudo zero) são descartadas.</li>
-        </ul>
+    <div class="canvas-wrap">
+      <div id="grid-container">
+        <h2>Grade (clique para alternar célula)</h2>
+        <canvas id="grid" width="512" height="512"></canvas>
+        <div class="line-label">Linha 1 ↑ — Linha 16 ↓</div>
       </div>
 
-      <div id="buttons">
-        <button id="startBtn">Iniciar</button>
-        <button id="stopBtn">Parar</button>
-        <button id="clearBtn">Limpar</button>
-        <button id="randomBtn">Aleatório</button>
-      </div>
-
-      <div id="controls">
-        <div class="mode">
-          <label>Modo:</label>
-          <label><input type="radio" name="mode" value="sequential" checked /> Sequencial</label>
-          <label><input type="radio" name="mode" value="random" /> Random</label>
+      <div id="sidebar">
+        <div id="description">
+          <h3>Opções &amp; Observações</h3>
+          <ul>
+            <li>Linhas 9 a 16 geram os bits da chave (128 células = 256 bits).</li>
+            <li>Sequencial varre célula por célula; Random escolhe células aleatórias.</li>
+            <li>Chaves inválidas (ex: tudo zero) são descartadas.</li>
+          </ul>
         </div>
 
-        <div class="speed">
-          <label for="speedRange">Velocidade (ms por passo)</label>
-          <input id="speedRange" type="range" min="1" max="100" value="20" />
-          <div>Valor atual: <span id="speedValue">20</span> ms</div>
+        <div id="buttons">
+          <button id="startBtn" class="btn">Iniciar</button>
+          <button id="stopBtn" class="btn">Parar</button>
+          <button id="clearBtn" class="btn">Limpar</button>
+          <button id="randomBtn" class="btn">Aleatório</button>
         </div>
 
-        <div class="checkboxes">
-          <label><input type="checkbox" id="toggleClick" checked /> Alternar célula ao clicar</label>
-          <label><input type="checkbox" id="randomState" checked /> Atribuir estado aleatório a cada passo</label>
+        <div id="controls">
+          <div class="mode">
+            <label><strong>Modo:</strong></label>
+            <label><input type="radio" name="mode" value="sequential" checked /> Sequencial</label>
+            <label><input type="radio" name="mode" value="random" /> Random</label>
+          </div>
+
+          <div class="speed">
+            <label for="speedRange">Velocidade (ms por passo)</label>
+            <input type="range" id="speedRange" min="10" max="500" step="10" value="20" />
+            <div>Valor atual: <span id="speedValue">20</span> ms</div>
+          </div>
+
+          <div class="checkboxes">
+            <label><input type="checkbox" id="toggleCellClick" checked /> Alternar célula ao clicar</label>
+            <label><input type="checkbox" id="randomState" checked /> Atribuir estado aleatório a cada passo</label>
+          </div>
         </div>
+
+        <textarea id="logbox" class="logbox" readonly></textarea>
       </div>
     </div>
   </div>
 
-  <!-- Aqui seu script ou link para auto16.js -->
-  <script>
-    // Exemplo simples para atualizar o valor da velocidade dinamicamente
-    const speedRange = document.getElementById('speedRange');
-    const speedValue = document.getElementById('speedValue');
-    speedRange.addEventListener('input', () => {
-      speedValue.textContent = speedRange.value;
-    });
-  </script>
+  <script src="auto16.js"></script>
 </body>
 </html>
