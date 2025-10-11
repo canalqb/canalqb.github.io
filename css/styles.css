@@ -12,7 +12,11 @@
   --light-gray: #f5f5f5;
 }
 
-/* ---------- Estrutura Geral ---------- */
+/* ---------- Reset e estrutura geral ---------- */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -21,108 +25,61 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
 }
 
-#container {
+/* Container principal */
+.container-main {
   width: 90%;
   max-width: 1100px;
-  margin: 30px 0;
+  background: #fff;
   border: 2px solid var(--green);
   border-radius: 10px;
-  padding: 18px;
-  box-sizing: border-box;
-  background: #fff;
+  padding: 20px;
+  margin: 30px 0;
+  box-shadow: 0 0 10px rgb(0 128 0 / 0.1);
 }
 
-/* ---------- Cabeçalho e Navegação ---------- */
-header, nav, footer {
-  background-color: #fff;
-  text-align: center;
-  width: 100%;
-}
-
+/* Cabeçalho */
 header {
-  padding: 1em;
-  border-radius: 10px 10px 0 0;
+  text-align: center;
+  padding-bottom: 15px;
   border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
 }
 
 header h1 {
-  margin: 0.3em 0;
-  font-size: 1.7em;
+  margin: 0;
+  font-size: 1.8rem;
   color: var(--dark-green);
+  font-weight: 700;
 }
 
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  background-color: #f1f1f1;
-  border-bottom: 1px solid #ddd;
-  padding: 0.5em;
-  gap: 12px;
-}
-
-/* Links de publicidade (nav) */
-nav a {
-  color: var(--dark-green);
-  font-weight: 600;
-  text-decoration: none;
-  border: 1px solid var(--green);
-  border-radius: 6px;
-  padding: 6px 12px;
-  background: #fff;
-  transition: all 0.2s ease;
-}
-
-nav a:hover {
-  background: var(--green);
-  color: #fff;
-}
-
-/* ---------- Layout Principal ---------- */
-main {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 1em;
-  max-width: 1200px;
+/* Navbar simples */
+nav.navbar {
   width: 100%;
-  box-sizing: border-box;
-  gap: 1em;
-}
-
-section.content {
-  flex: 1;
-  min-width: 320px;
-  background: #fff;
-  padding: 1.2em;
-  border-radius: 8px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.08);
-}
-
-/* Sidebar (Publicidade) */
-aside.sidebar {
-  width: 280px;
-  background: #fff;
-  padding: 1em;
-  border-radius: 8px;
-  box-shadow: 0 0 6px rgba(0,0,0,0.08);
-}
-
-/* ---------- Canvas e Controles ---------- */
-.canvas-wrap {
+  background: #f1f1f1;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
   display: flex;
   justify-content: center;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 15px;
 }
 
-canvas#grid {
+nav.navbar a.navbar-brand {
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  font-size: 1.25rem;
+}
+
+nav.navbar a.navbar-brand:hover {
+  color: var(--dark-green);
+}
+
+/* Canvas grid */
+#grid {
   border: 2px solid var(--green);
   background: #fff;
   image-rendering: pixelated;
@@ -130,33 +87,39 @@ canvas#grid {
   display: block;
   width: 512px;
   height: 512px;
-  margin: 10px auto;
+  margin: 0 auto 15px auto;
 }
 
-/* ---------- Botões e Campos ---------- */
+/* Indicador altura ativa */
+.row-indicator {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Controles - botões */
 .controls {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
-  margin-top: 10px;
+  margin-bottom: 25px;
 }
 
-button,
-.btn {
-  display: inline-block;
+button, .btn {
   padding: 8px 14px;
   border-radius: 6px;
   border: 2px solid var(--green);
   background: #fff;
   color: var(--dark-green);
-  cursor: pointer;
   font-weight: 700;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  user-select: none;
 }
 
-button:hover,
-.btn:hover {
+button:hover, .btn:hover {
   background: var(--green);
   color: #fff;
 }
@@ -168,45 +131,72 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ---------- Fieldsets ---------- */
-fieldset {
-  border: 1px solid #ccc;
-  padding: 1em;
-  border-radius: 6px;
-  max-width: 400px;
-  margin: 1em auto;
-  background: #fdfdfd;
+/* Velocidade e radios alinhados */
+.controls > div {
+  margin-top: 10px;
+  text-align: center;
 }
 
-legend {
-  font-weight: bold;
+.controls label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+/* Height buttons */
+.height-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.height-panel button {
+  min-width: 40px;
+  padding: 6px 10px;
+  border: 2px solid var(--green);
+  background: #fff;
   color: var(--dark-green);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ---------- Textareas ---------- */
-textarea,
-textarea.logbox {
+.height-panel button:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+.height-panel button.active {
+  background: var(--dark-green);
+  color: #fff;
+  cursor: default;
+}
+
+/* Textareas logs */
+.logbox {
   width: 100%;
-  height: 180px;
+  height: 160px;
   margin-top: 8px;
-  box-sizing: border-box;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 0.9rem;
   border: 2px solid var(--green);
   border-radius: 6px;
-  padding: 8px;
-  font-family: monospace;
-  resize: vertical;
   background: #f9fff9;
   color: #004400;
+  resize: vertical;
   overflow-y: auto;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
-/* ---------- Logs ---------- */
+/* Logs container */
 .logs {
   display: flex;
-  gap: 12px;
-  margin-top: 14px;
   flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .logs > div {
@@ -214,56 +204,42 @@ textarea.logbox {
   min-width: 280px;
 }
 
-/* Oculta o log de criação (mantém estrutura) */
-#privateKeysBox {
-  display: none;
-}
-
-/* ---------- Rodapé ---------- */
+/* Footer */
 footer {
+  width: 100%;
   background: #fff;
   border-top: 1px solid #ddd;
+  padding: 15px 10px;
   text-align: center;
-  padding: 1em;
-  font-size: 0.9em;
   color: #555;
+  font-size: 0.9rem;
   border-radius: 0 0 10px 10px;
-  margin-top: 1.5em;
+  margin-top: 40px;
 }
 
 footer a {
   color: var(--green);
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-/* ---------- Responsividade ---------- */
+footer a:hover {
+  color: var(--dark-green);
+}
+
+/* Responsividade */
 @media (max-width: 900px) {
-  main {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  aside.sidebar {
-    width: 100%;
-  }
-
-  .canvas-wrap {
-    flex-direction: column;
-    align-items: center;
+  #grid {
+    width: 320px !important;
+    height: 320px !important;
   }
 
   .logs {
     flex-direction: column;
   }
 
-  #container {
+  .container-main {
     width: 95%;
-    padding: 12px;
-  }
-
-  canvas#grid {
-    width: 320px !important;
-    height: 320px !important;
+    padding: 15px;
   }
 }
