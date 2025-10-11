@@ -13,7 +13,7 @@
 
   let grid = [];
   let animationInterval = null;
-  let bitCounter = new Uint8Array(32); // 256 bits
+  let bitCounter = new Uint8Array(16); // 128 bits -> percorre 2^128 combinações
 
   // Inicializa grade com tudo desligado
   function initGrid() {
@@ -38,8 +38,9 @@
     }
   }
 
-  // Aplica os bits do contador de 256 bits na grade (linhas 9–16)
+  // Aplica os bits do contador de 128 bits na grade (linhas 9–16)
   function applyCounterToGrid(counter) {
+    // Produz array de bits (128) a partir dos 16 bytes
     const bits = Array.from(counter).flatMap(byte =>
       byte.toString(2).padStart(8, '0').split('').map(b => b === '1')
     );
@@ -47,20 +48,20 @@
     let bitIndex = 0;
     for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
       for (let c = 0; c < GRID; c++) {
-        grid[r][c] = bits[bitIndex++];
+        grid[r][c] = bits[bitIndex++] || false;
       }
     }
   }
 
-  // Incrementa o contador de 256 bits
+  // Incrementa o contador de 128 bits (big-endian comportamento semelhante)
   function incrementCounter(counter) {
-    for (let i = 31; i >= 0; i--) {
-      counter[i]++;
+    for (let i = counter.length - 1; i >= 0; i--) {
+      counter[i] = (counter[i] + 1) & 0xff;
       if (counter[i] !== 0) break; // Para quando não houver overflow
     }
   }
 
-  // Extrai os bits da grade
+  // Extrai os bits das 128 células observadas como string '0'/'1'
   function bitsFromGrid() {
     return grid
       .slice(rowsToWatch.start, rowsToWatch.end + 1)
@@ -69,15 +70,33 @@
       .join('');
   }
 
-  // Converte bits em hexadecimal
+  // Expande 128 bits -> 256 bits (cada célula vira 2 bits)
+  // Estratégia simples: 0 -> "00", 1 -> "11" (mantém distinção entre ligado/desligado)
+  // Isso gera 256 bits que se convertem para 64 hex chars.
+  function expandBitsTo256(bits128) {
+    // bits128 length == 128
+    let out = '';
+    for (let i = 0; i < bits128.length; i++) {
+      out += bits128[i] === '1' ? '11' : '00';
+    }
+    return out;
+  }
+
+  // Converte bits (string) para HEX (assume comprimento múltiplo de 4)
   function hexFromBits(bits) {
-    const hexArray = bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16));
-    return hexArray.join('').padStart(64, '0');
+    const padded = bits.padStart(Math.ceil(bits.length / 4) * 4, '0');
+    const hexArray = padded.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16));
+    return hexArray.join('').toLowerCase().padStart(64, '0');
   }
 
   // HEX para bytes
   function hexToBytes(hex) {
-    return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
+    const cleansed = hex.replace(/^0x/, '');
+    const arr = [];
+    for (let i = 0; i < cleansed.length; i += 2) {
+      arr.push(parseInt(cleansed.substr(i, 2), 16));
+    }
+    return Uint8Array.from(arr);
   }
 
   // Concatena múltiplos Uint8Arrays
@@ -97,13 +116,15 @@
     return await sha256(first);
   }
 
-  // Bytes para Base58
+  // Bytes para Base58Check
   function bytesToBase58(bytes) {
+    // conta zeros à esquerda
     let leadingZeros = 0;
     while (leadingZeros < bytes.length && bytes[leadingZeros] === 0) {
       leadingZeros++;
     }
 
+    // converte para BigInt
     let n = 0n;
     for (let i = leadingZeros; i < bytes.length; i++) {
       n = (n << 8n) | BigInt(bytes[i]);
@@ -119,11 +140,15 @@
     return '1'.repeat(leadingZeros) + result;
   }
 
-  // Valida a chave privada
+  // Valida a chave privada (HEX de 64 chars)
   function isValidPrivateKey(hex) {
-    const n = BigInt('0x' + hex);
-    const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
-    return n > 0n && n < max;
+    try {
+      const n = BigInt('0x' + hex);
+      const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
+      return n > 0n && n < max;
+    } catch (e) {
+      return false;
+    }
   }
 
   // Gera WIF a partir de HEX
@@ -139,29 +164,29 @@
 
   // Atualiza as caixas de saída (HEX + WIF)
   async function updateOutputs() {
-    const bits = bitsFromGrid();
-    const hex = hexFromBits(bits);
+    const bits128 = bitsFromGrid(); // 128 bits
+    const bits256 = expandBitsTo256(bits128); // agora 256 bits
+    const hex = hexFromBits(bits256); // 64 hex chars
 
     if (!isValidPrivateKey(hex)) {
       privateKeysBox.value += '[chave inválida]\n';
       wifBox.value += '[inválido]\n';
       wifBoxUncompressed.value += '[inválido]\n';
-      return;
+    } else {
+      privateKeysBox.value += hex + '\n';
+      privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
+
+      const wifCompressed = await privateKeyToWIF(hex, true);
+      wifBox.value += wifCompressed + '\n';
+      wifBox.scrollTop = wifBox.scrollHeight;
+
+      const wifUncompressed = await privateKeyToWIF(hex, false);
+      wifBoxUncompressed.value += wifUncompressed + '\n';
+      wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
     }
-
-    privateKeysBox.value += hex + '\n';
-    privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
-
-    const wifCompressed = await privateKeyToWIF(hex, true);
-    wifBox.value += wifCompressed + '\n';
-    wifBox.scrollTop = wifBox.scrollHeight;
-
-    const wifUncompressed = await privateKeyToWIF(hex, false);
-    wifBoxUncompressed.value += wifUncompressed + '\n';
-    wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
-  // Modo sequencial: percorre todas as combinações possíveis
+  // Modo sequencial: incrementa o contador 128-bit e aplica à grade
   function stepSequential() {
     incrementCounter(bitCounter);
     applyCounterToGrid(bitCounter);
@@ -196,7 +221,8 @@
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
 
-    animationInterval = setInterval(step, parseInt(document.getElementById('speed').value, 10));
+    const speed = parseInt(document.getElementById('speed').value, 10);
+    animationInterval = setInterval(step, speed);
   });
 
   document.getElementById('stopBtn').addEventListener('click', () => {
@@ -212,7 +238,7 @@
     privateKeysBox.value = '';
     wifBox.value = '';
     wifBoxUncompressed.value = '';
-    bitCounter = new Uint8Array(32); // Reinicia contador
+    bitCounter = new Uint8Array(16); // Reinicia contador (128 bits)
   });
 
   document.getElementById('randBtn').addEventListener('click', () => {
