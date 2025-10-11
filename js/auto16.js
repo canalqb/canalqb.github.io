@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', () => {
 (() => {
   const SIZE = 16;
   const canvas = document.getElementById('grid');
@@ -365,3 +366,5 @@
   drawGrid();
   clearAll();
 })();
+
+});
