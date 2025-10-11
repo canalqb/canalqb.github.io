@@ -3,7 +3,6 @@
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
 
-  // DOM
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
@@ -13,22 +12,24 @@
   const modeRadios = document.querySelectorAll('input[name="mode"]');
   const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
   const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
+
   const hexBox = document.getElementById('hexBox');
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
   const privateKeysBox = document.getElementById('privateKeysBox');
 
-  // Novos controles: faixa de altura e faixa de base
-  const heightSelect = document.getElementById('heightSelect');  // linha superior
-  const baseSelect = document.getElementById('baseSelect');      // linha inferior
+  // Botões para escolher altura (linha superior) e base (linha inferior)
+  const heightButtonsDiv = document.getElementById('heightButtons'); // será usado para altura
+  const baseButtonsDiv = document.createElement('div');
+  baseButtonsDiv.id = 'baseButtons';
+  baseButtonsDiv.className = 'height-panel';
 
-  // Estado
+  // Estado da faixa
+  let altura = 1;  // valor de linha superior, de 1 a 16
+  let base = 1;    // valor de linha inferior, de 1 a 16 (agora pode ser igual à altura)
+
+  // Estado da matriz
   let gridState = new Array(SIZE * SIZE).fill(false);
-
-  // altura e base em termos de linha, de 1 a 16
-  // altura (top) de 1 a 15, base (bot) de 2 a 16, e base > altura
-  let altura = 1;   // linha superior (mais acima)
-  let base = 2;     // linha inferior (mais abaixo)
 
   let stateCounter = 0n;
   let running = false;
@@ -36,62 +37,97 @@
 
   const CELL_SIZE = canvas.width / SIZE;
 
-  // Cria selects para altura e base
-  function createRangeSelectors() {
-    // altura: 1 a 15
-    for (let h = 1; h <= SIZE - 1; h++) {
-      const opt = document.createElement('option');
-      opt.value = h;
-      opt.textContent = `Linha ${h}`;
-      heightSelect.appendChild(opt);
+  // Cria botões de altura e base
+  function createRangeButtons() {
+    // altura (linha superior): 1 a 16
+    const alturaGroup = document.createElement('div');
+    alturaGroup.className = 'mb-2';
+    alturaGroup.innerHTML = '<div class="small">Altura (linha superior):</div>';
+    for (let h = 1; h <= SIZE; h++) {
+      const btn = document.createElement('button');
+      btn.textContent = h;
+      btn.className = 'btn btn-sm btn-outline-primary size-btn';
+      btn.dataset.h = h;
+      btn.addEventListener('click', () => {
+        if (running) return;
+        altura = h;
+        // força base ≥ altura
+        if (base < altura) {
+          base = altura;
+        }
+        updateHeightBaseButtons();
+        drawGrid();
+      });
+      alturaGroup.appendChild(btn);
     }
-    // base: 2 a 16
-    for (let b = 2; b <= SIZE; b++) {
-      const opt = document.createElement('option');
-      opt.value = b;
-      opt.textContent = `Linha ${b}`;
-      baseSelect.appendChild(opt);
+    heightButtonsDiv.parentNode.insertBefore(alturaGroup, heightButtonsDiv);
+    heightButtonsDiv.remove(); // vamos reaproveitar heightButtonsDiv para base?
+
+    // usar heightButtonsDiv como container de base
+    const baseGroup = document.createElement('div');
+    baseGroup.className = 'mt-3';
+    baseGroup.innerHTML = '<div class="small">Base (linha inferior):</div>';
+    for (let b = 1; b <= SIZE; b++) {
+      const btn = document.createElement('button');
+      btn.textContent = b;
+      btn.className = 'btn btn-sm btn-outline-primary size-btn';
+      btn.dataset.b = b;
+      btn.addEventListener('click', () => {
+        if (running) return;
+        base = b;
+        // força base ≥ altura
+        if (base < altura) {
+          base = altura;
+        }
+        updateHeightBaseButtons();
+        drawGrid();
+      });
+      baseGroup.appendChild(btn);
     }
+    // inserir baseGroup após alturaGroup
+    alturaGroup.parentNode.insertBefore(baseGroup, startBtn);
 
-    heightSelect.value = altura;
-    baseSelect.value = base;
+    // guardar referências
+    baseButtonsDiv.appendChild(baseGroup);
+    updateHeightBaseButtons();
+  }
 
-    heightSelect.addEventListener('change', () => {
-      const v = parseInt(heightSelect.value, 10);
-      altura = v;
-      // força base > altura
-      if (base <= altura) {
-        base = altura + 1;
-        baseSelect.value = base;
+  function updateHeightBaseButtons() {
+    // atualizar estilo dos botões de altura e base
+    const alturaBtns = document.querySelectorAll('[data-h]');
+    alturaBtns.forEach(btn => {
+      const h = parseInt(btn.dataset.h, 10);
+      if (h === altura) {
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-outline-primary');
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline-primary');
       }
-      drawGrid();
     });
-
-    baseSelect.addEventListener('change', () => {
-      const v = parseInt(baseSelect.value, 10);
-      base = v;
-      if (base <= altura) {
-        base = altura + 1;
-        baseSelect.value = base;
+    const baseBtns = document.querySelectorAll('[data.b]');
+    baseBtns.forEach(btn => {
+      const b = parseInt(btn.dataset.b, 10);
+      if (b === base) {
+        btn.classList.add('btn-primary');
+        btn.classList.remove('btn-outline-primary');
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline-primary');
       }
-      drawGrid();
     });
   }
 
-  // Verifica se uma linha y é ativa (está entre altura e base, inclusive)
+  // Verifica se linha y (0-based) está dentro da faixa ativa entre altura e base (inclusive)
   function isRowActive(y) {
-    // y de 0 (topo) a SIZE-1 (base)
-    // altura = linha superior 1 → significa y = altura-1
-    // base = linha inferior 16 → y = base-1
-    const y_line = y; // índice zero-based
+    const idxRow = y;  // 0 = topo, 15 = base
     const alturaIdx = altura - 1;
     const baseIdx = base - 1;
-    return (y_line >= alturaIdx && y_line <= baseIdx);
+    return idxRow >= alturaIdx && idxRow <= baseIdx;
   }
 
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
@@ -101,25 +137,20 @@
         ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
-
-    // marca faixa ativa visualmente
+    // destacar a faixa ativa
     ctx.fillStyle = 'rgba(255,99,71,0.3)';
-    const alturaIdx = (altura - 1) * CELL_SIZE;
-    const baseIdx = (base - 1) * CELL_SIZE;
-    const heightPx = (base - altura + 1) * CELL_SIZE;
-    ctx.fillRect(0, alturaIdx, SIZE * CELL_SIZE, heightPx);
+    const yStart = (altura - 1) * CELL_SIZE;
+    const heightRows = (base - altura + 1) * CELL_SIZE;
+    ctx.fillRect(0, yStart, SIZE * CELL_SIZE, heightRows);
   }
 
-  // Converte gridState + faixa ativa em HEX de 256 bits
+  // Converte a faixa ativa da matriz para HEX (256 bits, bits fora da faixa = 0)
   function gridToHex() {
     const bits = [];
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
-        if (isRowActive(y)) {
-          bits.push(gridState[y * SIZE + x] ? '1' : '0');
-        } else {
-          bits.push('0');
-        }
+        if (isRowActive(y)) bits.push(gridState[y * SIZE + x] ? '1' : '0');
+        else bits.push('0');
       }
     }
     const bytes = [];
@@ -135,7 +166,6 @@
     return new Uint8Array(hash);
   }
   const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
   function base58Encode(buffer) {
     let intVal = 0n;
     for (const b of buffer) {
@@ -153,7 +183,6 @@
     }
     return s;
   }
-
   function hexStringToUint8Array(hex) {
     const arr = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
@@ -161,7 +190,6 @@
     }
     return arr;
   }
-
   async function privateKeyToWIF(hexKey, compressed = true) {
     const keyBytes = hexStringToUint8Array(hexKey);
     let payload;
@@ -194,14 +222,14 @@
     hexBox.value += hexKey + '\n';
     wifBox.value += wifC + '\n';
     wifBoxUncompressed.value += wifU + '\n';
-    privateKeysBox.value += `HEX:${hexKey} WIFc:${wifC} WIFu:${wifU}\n`;
+    privateKeysBox.value += `HEX:${hexKey} | WIFc:${wifC} | WIFu:${wifU}\n`;
 
     hexBox.scrollTop = hexBox.scrollHeight;
     wifBox.scrollTop = wifBox.scrollHeight;
     wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
-  function randomizeArea() {
+  function randomizeRange() {
     for (let y = altura - 1; y <= base - 1; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = Math.random() < 0.5;
@@ -221,22 +249,21 @@
   }
 
   function getMaxCounter() {
-    const activeRows = base - altura + 1;
-    return 1n << BigInt(activeRows * SIZE);
+    const numRows = base - altura + 1;
+    return 1n << BigInt(numRows * SIZE);
   }
 
   function setGridFromCounter(cnt) {
-    const activeRows = base - altura + 1;
-    const totalBits = activeRows * SIZE;
+    const numRows = base - altura + 1;
+    const totalBits = numRows * SIZE;
     for (let i = 0; i < totalBits; i++) {
       const bit = (cnt >> BigInt(totalBits - 1 - i)) & 1n;
-      // mapa para linha-coluna:
       const rowOffset = Math.floor(i / SIZE);
       const col = i % SIZE;
-      const y = (altura - 1) + rowOffset;  // linha y na matriz
+      const y = (altura - 1) + rowOffset;
       gridState[y * SIZE + col] = (bit === 1n);
     }
-    // fora da área ativa, zera
+    // zerar fora
     for (let y = 0; y < SIZE; y++) {
       if (y < (altura - 1) || y > (base - 1)) {
         for (let x = 0; x < SIZE; x++) {
@@ -250,7 +277,7 @@
     const mode = Array.from(modeRadios).find(r => r.checked).value;
 
     if (randomizeOnStepCheckbox.checked) {
-      randomizeArea();
+      randomizeRange();
       scheduleNext();
       return;
     }
@@ -267,9 +294,8 @@
       stateCounter++;
       scheduleNext();
     } else {
-      // modo random dentro área
-      const activeRows = base - altura + 1;
-      const totalCells = activeRows * SIZE;
+      const numRows = base - altura + 1;
+      const totalCells = numRows * SIZE;
       const idx = Math.floor(Math.random() * totalCells);
       const rowOffset = Math.floor(idx / SIZE);
       const col = idx % SIZE;
@@ -290,7 +316,7 @@
     if (running) return;
     running = true;
     stateCounter = 0n;
-    clearAll();  // zera grade e caixas
+    clearAll();
     step();
     startBtn.disabled = true;
     stopBtn.disabled = false;
@@ -298,7 +324,7 @@
 
   function stop() {
     running = false;
-    if (timeoutId !== null) {
+    if (timeoutId != null) {
       clearTimeout(timeoutId);
       timeoutId = null;
     }
@@ -326,7 +352,7 @@
     stop();
     clearAll();
   });
-  randBtn.addEventListener('click', randomizeArea);
+  randBtn.addEventListener('click', randomizeRange);
   speedInput.addEventListener('input', () => {
     speedLabel.textContent = speedInput.value;
     if (running) {
@@ -335,8 +361,7 @@
     }
   });
 
-  // Inicialização
-  createRangeSelectors();
+  // Inicializar botões e grade
+  createRangeButtons();
   drawGrid();
-
 })();
