@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-(() => {
+
   const SIZE = 16;
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
@@ -365,6 +365,5 @@ document.addEventListener('DOMContentLoaded', () => {
   createRangeButtons();
   drawGrid();
   clearAll();
-})();
 
 });
