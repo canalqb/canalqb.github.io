@@ -145,20 +145,23 @@
     }
   });
 
-  function stepSequential() { 
+  function stepSequential() {
     const randomize = document.getElementById('randomizeStatesOnStep').checked;
   
-    // Avança para próxima célula
+    // Avança para a próxima célula
     currentCol++;
     if (currentCol >= GRID) {
       currentCol = 0;
       currentRow++;
-      if (currentRow > rowsToWatch.end) currentRow = rowsToWatch.start;
+      if (currentRow > rowsToWatch.end) {
+        currentRow = rowsToWatch.start;
+      }
     }
   
-    // Define estado da célula (mantendo ligado se não randomizado)
+    // Define a nova célula como ligada ou aleatória
     grid[currentRow][currentCol] = randomize ? Math.random() < 0.5 : true;
   }
+
 
   function stepRandom() { 
     const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
