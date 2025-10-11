@@ -61,17 +61,31 @@
     return await sha256(await sha256(buf));
   }
 
-  function bytesToBase58(bytes) {
-    let n = bytes.reduce((acc, b) => (acc << 8n) | BigInt(b), 0n);
+  function bytesToBase58(bytes) { 
+    // conta apenas os zeros iniciais consecutivos
+    let leadingZeros = 0;
+    while (leadingZeros < bytes.length && bytes[leadingZeros] === 0) {
+      leadingZeros++;
+    }
+  
+    // constrói o inteiro big-endian a partir do primeiro byte não-zero
+    let n = 0n;
+    for (let i = leadingZeros; i < bytes.length; i++) {
+      n = (n << 8n) | BigInt(bytes[i]);
+    }
+  
+    // converte para base58
     let result = '';
     while (n > 0n) {
       const rem = n % 58n;
-      n /= 58n;
+      n = n / 58n;
       result = BASE58[Number(rem)] + result;
     }
-    const leadingZeros = Array.from(bytes).filter(b => b === 0).length;
+  
+    // prefixa '1' para cada zero inicial
     return '1'.repeat(leadingZeros) + result;
   }
+
 
   async function privateKeyToWIF(hex, compressed = true) {
     const key = hexToBytes(hex.padStart(64, '0'));
