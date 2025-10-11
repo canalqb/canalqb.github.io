@@ -4,105 +4,223 @@
   <meta charset="UTF-8" />
   <title>Grade 16×16 para Geração de Chaves Privadas Bitcoin em HEX e WIF</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Aprenda a gerar chaves privadas Bitcoin em formato HEX e WIF (comprimido e não comprimido) utilizando uma grade 16×16 interativa. Entenda os modos sequencial e aleatório para criação das chaves." />
-  <meta name="robots" content="index, follow" />
-  <meta name="googlebot" content="index, follow" />
-  <meta name="bingbot" content="index, follow" />
-  <link rel="stylesheet" href="css/styles.css">
+  <meta name="description" content="Aprenda a gerar chaves privadas Bitcoin em formato HEX e WIF (comprimido e não comprimido) utilizando uma grade 16×16 interativa." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #222;
+      background-color: #f7f7f7;
+    }
+
+    header, nav, footer {
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      padding: 1em;
+    }
+
+    header h1 {
+      margin: 0.3em 0;
+      font-size: 1.6em;
+      color: #222;
+    }
+
+    nav {
+      font-size: 0.95em;
+      background-color: #f1f1f1;
+    }
+
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 1em;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    section.content {
+      flex: 1;
+      min-width: 300px;
+      background: #fff;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    aside.sidebar {
+      width: 300px;
+      background: #fff;
+      padding: 1em;
+      margin-top: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      background: #fff;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      padding: 1em;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    canvas {
+      display: block;
+      margin: 1em auto;
+      border: 1px solid #ccc;
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 1em;
+    }
+
+    button {
+      margin: 0.3em;
+      padding: 0.5em 1em;
+      border: none;
+      background: #0078D7;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 1em;
+      border-radius: 6px;
+      max-width: 400px;
+      margin: 1em auto;
+    }
+
+    legend {
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 0.5em;
+    }
+
+    hr {
+      margin: 2em 0 1em 0;
+      border: 0;
+      border-top: 1px solid #ccc;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+      }
+      aside.sidebar {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <header>
+    <h1>Grade 16×16 — Private HEX & WIF (não comprimido)</h1>
+  </header>
 
-  <h1>Grade 16×16 — Private HEX & WIF (não comprimido)</h1>
+  <nav>
+    <p>Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF.</p>
+  </nav>
 
-  <section>
-    <h2>Descrição do Funcionamento</h2>
-    <p>Somente alterações nas linhas 9 a 16 (base 1) afetam a geração da chave privada (256 bits). Cada modificação gera uma linha HEX e um WIF (comprimido e não comprimido).</p>
-  </section>
+  <main>
+    <section class="content">
+      <h2>Descrição do Funcionamento</h2>
+      <p>Somente alterações nas linhas 9 a 16 (base 1) afetam a geração da chave privada (256 bits). Cada modificação gera uma linha HEX e um WIF (comprimido e não comprimido).</p>
 
-  <section>
-    <h2>Grade Interativa</h2>
+      <hr>
 
-    <p>Utilize a grade 16×16 abaixo para gerar visualmente chaves privadas Bitcoin. Você pode clicar em células para ativá-las ou desativá-las, e escolher entre o modo sequencial ou aleatório para alterar os bits das linhas 9 a 16.</p>
+      <div class="container">
+        <canvas id="grid" width="512" height="512" aria-label="Grade interativa 16×16 para geração de chaves"></canvas>
+        <p style="text-align:center; font-size:0.9em; color:#555;">Linha 1 ↑ — Linha 16 ↓</p>
 
-    <canvas id="grid" width="512" height="512" style="width:512px; height:512px;" aria-label="Grade interativa 16 por 16 para geração de chaves"></canvas>
-    <p style="font-size:0.9em; color:#555;">Linha 1 ↑ — Linha 16 ↓</p>
+        <div class="controls">
+          <button id="startBtn" type="button">Iniciar</button>
+          <button id="stopBtn" type="button" disabled>Parar</button>
+          <button id="clearBtn" type="button">Limpar</button>
+          <button id="randBtn" type="button">Aleatório</button>
+        </div>
 
-    <div>
-      <button id="startBtn" type="button">Iniciar</button>
-      <button id="stopBtn" type="button" disabled>Parar</button>
-      <button id="clearBtn" type="button">Limpar</button>
-      <button id="randBtn" type="button">Aleatório</button>
-    </div>
+        <fieldset>
+          <legend>Configurações de Modo</legend>
+          <label><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
+          <label style="margin-left:1em;"><input type="radio" name="mode" value="random"> Aleatório</label>
 
-    <fieldset style="margin-top:1em; border:1px solid #ccc; padding:8px; max-width:400px;">
-      <legend><strong>Configurações de Modo</strong></legend>
+          <div style="margin-top:0.5em;">
+            <label for="speed">Velocidade (ms por passo):</label>
+            <input id="speed" type="range" min="20" max="500" value="120">
+            <span id="speedLabel">120</span> ms
+          </div>
 
-      <label>
-        <input type="radio" name="mode" value="sequential" checked />
-        Sequencial
-      </label>
-      <label style="margin-left:1em;">
-        <input type="radio" name="mode" value="random" />
-        Aleatório
-      </label>
-
-      <div style="margin-top:0.5em;">
-        <label for="speed">Velocidade (ms por passo): </label>
-        <input id="speed" type="range" min="20" max="500" value="120" />
-        <span id="speedLabel">120</span> ms
+          <div style="margin-top:0.5em;">
+            <label><input type="checkbox" id="toggleOnClick" checked> Alternar célula ao clicar</label><br>
+            <label><input type="checkbox" id="randomizeStatesOnStep" checked> Atribuir estado aleatório a cada passo</label>
+          </div>
+        </fieldset>
       </div>
 
-      <div style="margin-top:0.5em;">
-        <label><input type="checkbox" id="toggleOnClick" checked /> Alternar célula ao clicar</label><br />
-        <label><input type="checkbox" id="randomizeStatesOnStep" checked /> Atribuir estado aleatório a cada passo</label>
+      <section>
+        <h2>Chaves Privadas Geradas</h2>
+
+        <label for="privateKeysBox">Private Keys (HEX)</label>
+        <textarea id="privateKeysBox" rows="6" readonly placeholder="As chaves privadas HEX aparecerão aqui..."></textarea>
+
+        <label for="wifBox" style="margin-top:1em; display:block;">WIFs (comprimido)</label>
+        <textarea id="wifBox" rows="6" readonly placeholder="Os WIFs comprimidos aparecerão aqui..."></textarea>
+
+        <label for="wifBoxUncompressed" style="margin-top:1em; display:block;">WIFs (não comprimido)</label>
+        <textarea id="wifBoxUncompressed" rows="6" readonly placeholder="Os WIFs não comprimidos aparecerão aqui..."></textarea>
+      </section>
+    </section>
+
+    <aside class="sidebar">
+      <h2>Publicidade</h2>
+      <!-- Google AdSense lateral -->
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXX"
+           data-ad-slot="YYYYYYYYYYY"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+
+      <hr>
+
+      <div class="controls">
+        <h3>Controles Extras</h3>
+        <button id="startBtnSide" type="button">Iniciar</button>
+        <button id="stopBtnSide" type="button" disabled>Parar</button>
+        <button id="randBtnSide" type="button">Aleatório</button>
       </div>
-    </fieldset>
-  </section>
+    </aside>
+  </main>
 
-  <section>
-    <h2>Opções e Observações Importantes</h2>
-    <ul>
-      <li>As linhas 9 a 16 geram os bits da chave privada, totalizando 128 células equivalentes a 256 bits.</li>
-      <li>O modo sequencial percorre todas as combinações possíveis das linhas da grade.</li>
-      <li>O modo aleatório ativa bits aleatórios nas linhas 9 a 16 para variações imprevisíveis.</li>
-      <li>Chaves inválidas, como aquelas compostas por todos os bits zerados, são automaticamente descartadas.</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Chaves Privadas Geradas</h2>
-
-    <label for="privateKeysBox">Private Keys (HEX)</label><br />
-    <textarea id="privateKeysBox" rows="6" style="width:100%; box-sizing: border-box;" readonly placeholder="As chaves privadas HEX aparecerão aqui..."></textarea>
-
-    <label for="wifBox" style="margin-top:1em; display:block;">WIFs (comprimido)</label><br />
-    <textarea id="wifBox" rows="6" style="width:100%; box-sizing: border-box;" readonly placeholder="Os WIFs comprimidos aparecerão aqui..."></textarea>
-
-    <label for="wifBoxUncompressed" style="margin-top:1em; display:block;">WIFs (não comprimido)</label><br />
-    <textarea id="wifBoxUncompressed" rows="6" style="width:100%; box-sizing: border-box;" readonly placeholder="Os WIFs não comprimidos aparecerão aqui..."></textarea>
-  </section>
-
-  <aside style="float:right; width:300px; margin-left:1em; padding:1em; border:1px solid #ddd; background:#f9f9f9;">
-    <h2>Publicidade</h2>
-    <!-- Google AdSense lateral -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- AdSense Sidebar -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXX"
-         data-ad-slot="YYYYYYYYYYY"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </aside>
-
-  <footer style="clear:both; margin-top:2em; font-size:0.85em; color:#666;">
-    &copy; Exemplo — Grade 16×16 para geração de chaves privadas Bitcoin. Use esta ferramenta para estudo e aprendizado.
+  <footer>
+    © <strong>CanalQb</strong> {<a href="http://canalqb.blogspot.com/" target="_blank">http://canalqb.blogspot.com/</a>} — Rodrigo Carlos Moraes<br>
+    Gerador de private keys para o puzzle 1000 bitcoins
   </footer>
 
   <script src="js/auto16.js"></script>
-
 </body>
 </html>
