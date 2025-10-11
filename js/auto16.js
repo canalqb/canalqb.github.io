@@ -3,6 +3,7 @@
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
 
+  // Controles DOM
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
@@ -18,17 +19,14 @@
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
   const privateKeysBox = document.getElementById('privateKeysBox');
 
-  // Botões para escolher altura (linha superior) e base (linha inferior)
-  const heightButtonsDiv = document.getElementById('heightButtons'); // será usado para altura
-  const baseButtonsDiv = document.createElement('div');
-  baseButtonsDiv.id = 'baseButtons';
-  baseButtonsDiv.className = 'height-panel';
+  const heightButtonsDiv = document.getElementById('heightButtons');
+  const baseButtonsDiv = document.getElementById('baseButtons');
 
   // Estado da faixa
-  let altura = 1;  // valor de linha superior, de 1 a 16
-  let base = 1;    // valor de linha inferior, de 1 a 16 (agora pode ser igual à altura)
+  let altura = 1;  // linha superior (1..16)
+  let base = 1;    // linha inferior (1..16), pode ser igual a altura
 
-  // Estado da matriz
+  // Estado da matriz (bits)
   let gridState = new Array(SIZE * SIZE).fill(false);
 
   let stateCounter = 0n;
@@ -39,10 +37,7 @@
 
   // Cria botões de altura e base
   function createRangeButtons() {
-    // altura (linha superior): 1 a 16
-    const alturaGroup = document.createElement('div');
-    alturaGroup.className = 'mb-2';
-    alturaGroup.innerHTML = '<div class="small">Altura (linha superior):</div>';
+    // altura (1 a 16)
     for (let h = 1; h <= SIZE; h++) {
       const btn = document.createElement('button');
       btn.textContent = h;
@@ -51,22 +46,13 @@
       btn.addEventListener('click', () => {
         if (running) return;
         altura = h;
-        // força base ≥ altura
-        if (base < altura) {
-          base = altura;
-        }
-        updateHeightBaseButtons();
+        if (base < altura) base = altura;
+        updateRangeButtons();
         drawGrid();
       });
-      alturaGroup.appendChild(btn);
+      heightButtonsDiv.appendChild(btn);
     }
-    heightButtonsDiv.parentNode.insertBefore(alturaGroup, heightButtonsDiv);
-    heightButtonsDiv.remove(); // vamos reaproveitar heightButtonsDiv para base?
-
-    // usar heightButtonsDiv como container de base
-    const baseGroup = document.createElement('div');
-    baseGroup.className = 'mt-3';
-    baseGroup.innerHTML = '<div class="small">Base (linha inferior):</div>';
+    // base (1 a 16)
     for (let b = 1; b <= SIZE; b++) {
       const btn = document.createElement('button');
       btn.textContent = b;
@@ -75,27 +61,19 @@
       btn.addEventListener('click', () => {
         if (running) return;
         base = b;
-        // força base ≥ altura
-        if (base < altura) {
-          base = altura;
-        }
-        updateHeightBaseButtons();
+        if (base < altura) base = altura;
+        updateRangeButtons();
         drawGrid();
       });
-      baseGroup.appendChild(btn);
+      baseButtonsDiv.appendChild(btn);
     }
-    // inserir baseGroup após alturaGroup
-    alturaGroup.parentNode.insertBefore(baseGroup, startBtn);
-
-    // guardar referências
-    baseButtonsDiv.appendChild(baseGroup);
-    updateHeightBaseButtons();
+    updateRangeButtons();
   }
 
-  function updateHeightBaseButtons() {
-    // atualizar estilo dos botões de altura e base
-    const alturaBtns = document.querySelectorAll('[data-h]');
-    alturaBtns.forEach(btn => {
+  function updateRangeButtons() {
+    // altura buttons
+    const hBtns = heightButtonsDiv.querySelectorAll('button');
+    hBtns.forEach(btn => {
       const h = parseInt(btn.dataset.h, 10);
       if (h === altura) {
         btn.classList.add('btn-primary');
@@ -105,8 +83,9 @@
         btn.classList.add('btn-outline-primary');
       }
     });
-    const baseBtns = document.querySelectorAll('[data.b]');
-    baseBtns.forEach(btn => {
+    // base buttons
+    const bBtns = baseButtonsDiv.querySelectorAll('button');
+    bBtns.forEach(btn => {
       const b = parseInt(btn.dataset.b, 10);
       if (b === base) {
         btn.classList.add('btn-primary');
@@ -116,14 +95,19 @@
         btn.classList.add('btn-outline-primary');
       }
     });
+    // também exibir no rótulo
+    const selTop = document.getElementById('selectedTop');
+    const selBottom = document.getElementById('selectedBottom');
+    if (selTop) selTop.textContent = altura;
+    if (selBottom) selBottom.textContent = base;
   }
 
-  // Verifica se linha y (0-based) está dentro da faixa ativa entre altura e base (inclusive)
+  // Verifica se a linha y (0-index) está dentro da faixa ativa
   function isRowActive(y) {
-    const idxRow = y;  // 0 = topo, 15 = base
-    const alturaIdx = altura - 1;
+    const yIdx = y; // 0..15
+    const altIdx = altura - 1;
     const baseIdx = base - 1;
-    return idxRow >= alturaIdx && idxRow <= baseIdx;
+    return (yIdx >= altIdx && yIdx <= baseIdx);
   }
 
   function drawGrid() {
@@ -137,20 +121,22 @@
         ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
-    // destacar a faixa ativa
-    ctx.fillStyle = 'rgba(255,99,71,0.3)';
+    // destacar faixa ativa
+    ctx.fillStyle = 'rgba(255, 99, 71, 0.3)';
     const yStart = (altura - 1) * CELL_SIZE;
-    const heightRows = (base - altura + 1) * CELL_SIZE;
-    ctx.fillRect(0, yStart, SIZE * CELL_SIZE, heightRows);
+    const heightPx = (base - altura + 1) * CELL_SIZE;
+    ctx.fillRect(0, yStart, SIZE * CELL_SIZE, heightPx);
   }
 
-  // Converte a faixa ativa da matriz para HEX (256 bits, bits fora da faixa = 0)
   function gridToHex() {
     const bits = [];
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
-        if (isRowActive(y)) bits.push(gridState[y * SIZE + x] ? '1' : '0');
-        else bits.push('0');
+        if (isRowActive(y)) {
+          bits.push(gridState[y * SIZE + x] ? '1' : '0');
+        } else {
+          bits.push('0');
+        }
       }
     }
     const bytes = [];
@@ -162,10 +148,12 @@
   }
 
   async function sha256(buf) {
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return new Uint8Array(hash);
+    const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+    return new Uint8Array(hashBuf);
   }
+
   const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
   function base58Encode(buffer) {
     let intVal = 0n;
     for (const b of buffer) {
@@ -183,13 +171,15 @@
     }
     return s;
   }
+
   function hexStringToUint8Array(hex) {
     const arr = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
-      arr[i / 2] = parseInt(hex.substr(i, 2), 16);
+      arr[i/2] = parseInt(hex.substr(i, 2), 16);
     }
     return arr;
   }
+
   async function privateKeyToWIF(hexKey, compressed = true) {
     const keyBytes = hexStringToUint8Array(hexKey);
     let payload;
@@ -215,14 +205,14 @@
   }
 
   async function updateKeyOutputs() {
-    const hexKey = gridToHex();
-    const wifC = await privateKeyToWIF(hexKey, true);
-    const wifU = await privateKeyToWIF(hexKey, false);
+    const hex = gridToHex();
+    const wifC = await privateKeyToWIF(hex, true);
+    const wifU = await privateKeyToWIF(hex, false);
 
-    hexBox.value += hexKey + '\n';
+    hexBox.value += hex + '\n';
     wifBox.value += wifC + '\n';
     wifBoxUncompressed.value += wifU + '\n';
-    privateKeysBox.value += `HEX:${hexKey} | WIFc:${wifC} | WIFu:${wifU}\n`;
+    privateKeysBox.value += `HEX:${hex} | WIFc:${wifC} | WIFu:${wifU}\n`;
 
     hexBox.scrollTop = hexBox.scrollHeight;
     wifBox.scrollTop = wifBox.scrollHeight;
@@ -242,10 +232,10 @@
   function clearAll() {
     gridState.fill(false);
     drawGrid();
-    hexBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
-    privateKeysBox.value = '';
+    if (hexBox) hexBox.value = '';
+    if (wifBox) wifBox.value = '';
+    if (wifBoxUncompressed) wifBoxUncompressed.value = '';
+    if (privateKeysBox) privateKeysBox.value = '';
   }
 
   function getMaxCounter() {
@@ -263,7 +253,7 @@
       const y = (altura - 1) + rowOffset;
       gridState[y * SIZE + col] = (bit === 1n);
     }
-    // zerar fora
+    // fora da faixa ativa, zera
     for (let y = 0; y < SIZE; y++) {
       if (y < (altura - 1) || y > (base - 1)) {
         for (let x = 0; x < SIZE; x++) {
@@ -293,7 +283,7 @@
       await updateKeyOutputs();
       stateCounter++;
       scheduleNext();
-    } else {
+    } else { // random
       const numRows = base - altura + 1;
       const totalCells = numRows * SIZE;
       const idx = Math.floor(Math.random() * totalCells);
@@ -335,10 +325,8 @@
   canvas.addEventListener('click', e => {
     if (!toggleOnClickCheckbox.checked) return;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const col = Math.floor(x / CELL_SIZE);
-    const row = Math.floor(y / CELL_SIZE);
+    const col = Math.floor((e.clientX - rect.left) / CELL_SIZE);
+    const row = Math.floor((e.clientY - rect.top) / CELL_SIZE);
     if (!isRowActive(row)) return;
     const pos = row * SIZE + col;
     gridState[pos] = !gridState[pos];
@@ -353,6 +341,7 @@
     clearAll();
   });
   randBtn.addEventListener('click', randomizeRange);
+
   speedInput.addEventListener('input', () => {
     speedLabel.textContent = speedInput.value;
     if (running) {
@@ -361,7 +350,7 @@
     }
   });
 
-  // Inicializar botões e grade
+  // Inicialização
   createRangeButtons();
   drawGrid();
 })();
