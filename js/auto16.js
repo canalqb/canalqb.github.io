@@ -1,10 +1,11 @@
 (async function () {
   const canvas = document.getElementById('grid');
+  const ctx = canvas.getContext('2d', { alpha: false });
+
   const privateKeysBox = document.getElementById('privateKeysBox');
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
 
-  const ctx = canvas.getContext('2d', { alpha: false });
   const GRID = 16;
   const CELL = canvas.width / GRID;
   const rowsToWatch = { start: 8, end: 15 }; // linhas 9–16 (0-based)
@@ -13,10 +14,10 @@
 
   let grid = [];
   let animationInterval = null;
-  let currentRow = rowsToWatch.start;
-  let currentCol = 0;
 
-  // Inicializa a grade com valores false
+  let bitCounter = new Uint8Array(32); // 256 bits (32 bytes)
+
+  // Inicializa a grade com tudo desligado
   function initGrid() {
     grid = Array.from({ length: GRID }, () => Array(GRID).fill(false));
   }
@@ -39,7 +40,7 @@
     }
   }
 
-  // Extrai bits da área observada na grade
+  // Extrai os bits da grade (linhas 9 a 16)
   function bitsFromGrid() {
     return grid
       .slice(rowsToWatch.start, rowsToWatch.end + 1)
@@ -48,35 +49,35 @@
       .join('');
   }
 
-  // Converte bits em string hexadecimal (64 caracteres)
+  // Converte bits para HEX (64 caracteres)
   function hexFromBits(bits) {
     const hexArray = bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16));
     return hexArray.join('').padStart(64, '0');
   }
 
-  // Converte string hex em Uint8Array de bytes
+  // HEX -> Uint8Array
   function hexToBytes(hex) {
     return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
   }
 
-  // Concatena múltiplos Uint8Arrays em um só
+  // Concatena arrays de bytes
   function concatBytes(...arrays) {
     return Uint8Array.from(arrays.flatMap(arr => [...arr]));
   }
 
-  // Hash SHA-256 usando Web Crypto API
+  // SHA-256
   async function sha256(buffer) {
     const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
     return new Uint8Array(hashBuffer);
   }
 
-  // Double SHA-256
+  // SHA-256 duplo
   async function doubleSha256(buffer) {
-    const firstHash = await sha256(buffer);
-    return await sha256(firstHash);
+    const first = await sha256(buffer);
+    return await sha256(first);
   }
 
-  // Converte bytes para Base58 (Bitcoin alphabet)
+  // Bytes para Base58
   function bytesToBase58(bytes) {
     let leadingZeros = 0;
     while (leadingZeros < bytes.length && bytes[leadingZeros] === 0) {
@@ -98,14 +99,14 @@
     return '1'.repeat(leadingZeros) + result;
   }
 
-  // Valida se a chave privada está dentro do intervalo permitido
+  // Validação da chave privada
   function isValidPrivateKey(hex) {
     const n = BigInt('0x' + hex);
     const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
     return n > 0n && n < max;
   }
 
-  // Converte chave privada hex para WIF (Wallet Import Format)
+  // HEX -> WIF (com ou sem compressão)
   async function privateKeyToWIF(hex, compressed = true) {
     const key = hexToBytes(hex);
     const prefix = Uint8Array.of(0x80);
@@ -116,7 +117,7 @@
     return bytesToBase58(full);
   }
 
-  // Atualiza as caixas de saída (chave privada, WIF compressa e WIF não compressa)
+  // Atualiza as saídas (HEX e WIFs)
   async function updateOutputs() {
     const bits = bitsFromGrid();
     const hex = hexFromBits(bits);
@@ -140,47 +141,35 @@
     wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
-  // Evento de clique para alternar células da grade
-  canvas.addEventListener('click', e => {
-    const toggleOnClick = document.getElementById('toggleOnClick');
-    if (!toggleOnClick.checked) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const c = Math.floor(x / CELL);
-    const r = Math.floor(y / CELL);
-
-    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
-      grid[r][c] = !grid[r][c];
-      drawGrid();
-
-      if (r >= rowsToWatch.start && r <= rowsToWatch.end) {
-        updateOutputs();
-      }
+  // Incrementa o contador de 256 bits
+  function incrementCounter(counter) {
+    for (let i = 31; i >= 0; i--) {
+      counter[i]++;
+      if (counter[i] !== 0) break;
     }
-  });
-
-  // Passo no modo sequencial
-  function stepSequential() {
-    const randomize = document.getElementById('randomizeStatesOnStep').checked;
-  
-    // Avança para a próxima célula
-    currentCol++;
-    if (currentCol >= GRID) {
-      currentCol = 0;
-      currentRow++;
-      if (currentRow > rowsToWatch.end) {
-        currentRow = rowsToWatch.start;
-      }
-    }
-  
-    // Define a nova célula como ligada ou aleatória
-    grid[currentRow][currentCol] = randomize ? Math.random() < 0.5 : true;
   }
 
+  // Aplica o valor do contador à grade (linhas 9 a 16)
+  function applyCounterToGrid(counter) {
+    const bits = Array.from(counter).flatMap(byte =>
+      byte.toString(2).padStart(8, '0').split('').map(b => b === '1')
+    );
 
-  // Passo no modo aleatório
+    let bitIndex = 0;
+    for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
+      for (let c = 0; c < GRID; c++) {
+        grid[r][c] = bits[bitIndex++];
+      }
+    }
+  }
+
+  // Passo sequencial: incrementa contador e atualiza grade
+  function stepSequential() {
+    incrementCounter(bitCounter);
+    applyCounterToGrid(bitCounter);
+  }
+
+  // Passo aleatório: altera uma célula aleatória nas linhas 9 a 16
   function stepRandom() {
     const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
     const c = Math.floor(Math.random() * GRID);
@@ -188,11 +177,14 @@
     grid[r][c] = randomize ? Math.random() < 0.5 : true;
   }
 
-  // Função de passo (executada no intervalo)
+  // Função de passo geral
   async function step() {
     const mode = document.querySelector('input[name="mode"]:checked').value;
-    if (mode === 'sequential') stepSequential();
-    else stepRandom();
+    if (mode === 'sequential') {
+      stepSequential();
+    } else {
+      stepRandom();
+    }
 
     drawGrid();
     await updateOutputs();
@@ -204,6 +196,7 @@
 
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
+
     animationInterval = setInterval(step, parseInt(document.getElementById('speed').value, 10));
   });
 
@@ -217,6 +210,10 @@
   document.getElementById('clearBtn').addEventListener('click', () => {
     initGrid();
     drawGrid();
+    privateKeysBox.value = '';
+    wifBox.value = '';
+    wifBoxUncompressed.value = '';
+    bitCounter = new Uint8Array(32);
   });
 
   document.getElementById('randBtn').addEventListener('click', () => {
@@ -238,7 +235,28 @@
     }
   });
 
-  // Inicializa
+  // Clique na grade para alternar células
+  canvas.addEventListener('click', e => {
+    const toggleOnClick = document.getElementById('toggleOnClick');
+    if (!toggleOnClick.checked) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const c = Math.floor(x / CELL);
+    const r = Math.floor(y / CELL);
+
+    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
+      grid[r][c] = !grid[r][c];
+      drawGrid();
+
+      if (r >= rowsToWatch.start && r <= rowsToWatch.end) {
+        updateOutputs();
+      }
+    }
+  });
+
+  // Inicialização
   initGrid();
   drawGrid();
 })();
