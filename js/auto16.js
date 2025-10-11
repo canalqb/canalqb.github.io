@@ -14,17 +14,18 @@
   const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
   const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
 
+  // Textareas para saída de chaves
   const hexBox = document.getElementById('hexBox');
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-  const privateKeysBox = document.getElementById('privateKeysBox');
 
+  // Contêineres dos botões
   const heightButtonsDiv = document.getElementById('heightButtons');
   const baseButtonsDiv = document.getElementById('baseButtons');
 
   // Estado da faixa
-  let altura = 1;  // linha superior (1..16)
-  let base = 1;    // linha inferior (1..16), pode ser igual a altura
+  let altura = SIZE; // linha superior (1..16), padrão para última linha
+  let base = SIZE;   // linha inferior (1..16), padrão para última linha
 
   // Estado da matriz (bits)
   let gridState = new Array(SIZE * SIZE).fill(false);
@@ -35,16 +36,15 @@
 
   const CELL_SIZE = canvas.width / SIZE;
 
-  // Cria botões de altura e base
+  // Cria botões para selecionar altura e base
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
-  
-    // Criar botões de altura (linha superior)
-    for (let h = 1; h <= SIZE - 1; h++) {
+
+    for (let h = 1; h <= SIZE; h++) {
       const btn = document.createElement('button');
       btn.textContent = h;
-      btn.className = 'btn btn-sm btn-outline-primary size-btn';
+      btn.className = 'btn btn-sm size-btn btn-outline-primary';
       btn.dataset.h = h;
       btn.addEventListener('click', () => {
         if (running) return;
@@ -55,12 +55,11 @@
       });
       heightButtonsDiv.appendChild(btn);
     }
-  
-    // Criar botões de base (linha inferior)
-    for (let b = 2; b <= SIZE; b++) {
+
+    for (let b = 1; b <= SIZE; b++) {
       const btn = document.createElement('button');
       btn.textContent = b;
-      btn.className = 'btn btn-sm btn-outline-primary size-btn';
+      btn.className = 'btn btn-sm size-btn btn-outline-primary';
       btn.dataset.b = b;
       btn.addEventListener('click', () => {
         if (running) return;
@@ -71,78 +70,56 @@
       });
       baseButtonsDiv.appendChild(btn);
     }
-  
+
     updateRangeButtons();
   }
 
-
+  // Atualiza estilos dos botões e labels de seleção
   function updateRangeButtons() {
-    // altura buttons
-    const hBtns = heightButtonsDiv.querySelectorAll('button');
-    hBtns.forEach(btn => {
-      const h = parseInt(btn.dataset.h, 10);
-      if (h === altura) {
-        btn.classList.add('btn-primary');
-        btn.classList.remove('btn-outline-primary');
-      } else {
-        btn.classList.remove('btn-primary');
-        btn.classList.add('btn-outline-primary');
-      }
+    heightButtonsDiv.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('btn-primary', parseInt(btn.dataset.h, 10) === altura);
+      btn.classList.toggle('btn-outline-primary', parseInt(btn.dataset.h, 10) !== altura);
     });
-    // base buttons
-    const bBtns = baseButtonsDiv.querySelectorAll('button');
-    bBtns.forEach(btn => {
-      const b = parseInt(btn.dataset.b, 10);
-      if (b === base) {
-        btn.classList.add('btn-primary');
-        btn.classList.remove('btn-outline-primary');
-      } else {
-        btn.classList.remove('btn-primary');
-        btn.classList.add('btn-outline-primary');
-      }
+
+    baseButtonsDiv.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('btn-primary', parseInt(btn.dataset.b, 10) === base);
+      btn.classList.toggle('btn-outline-primary', parseInt(btn.dataset.b, 10) !== base);
     });
-    // também exibir no rótulo
-    const selTop = document.getElementById('selectedTop');
-    const selBottom = document.getElementById('selectedBottom');
-    if (selTop) selTop.textContent = altura;
-    if (selBottom) selBottom.textContent = base;
   }
 
-  // Verifica se a linha y (0-index) está dentro da faixa ativa
+  // Verifica se a linha y está dentro da faixa ativa (base ≥ altura)
   function isRowActive(y) {
-    const yIdx = y; // 0..15
+    const yIdx = y;
     const altIdx = altura - 1;
     const baseIdx = base - 1;
     return (yIdx >= altIdx && yIdx <= baseIdx);
   }
 
+  // Desenha a grade com destaque na faixa ativa
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
-        ctx.fillStyle = gridState[idx] ? '#2ecc71' : '#ffffff';
+        ctx.fillStyle = gridState[idx] ? '#2ecc71' : '#fff';
         ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         ctx.strokeStyle = '#ddd';
         ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
-    // destacar faixa ativa
+    // Destaque faixa ativa
     ctx.fillStyle = 'rgba(255, 99, 71, 0.3)';
     const yStart = (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
     ctx.fillRect(0, yStart, SIZE * CELL_SIZE, heightPx);
   }
 
+  // Converte a matriz ativa para string hex
   function gridToHex() {
     const bits = [];
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
-        if (isRowActive(y)) {
-          bits.push(gridState[y * SIZE + x] ? '1' : '0');
-        } else {
-          bits.push('0');
-        }
+        bits.push(isRowActive(y) && gridState[y * SIZE + x] ? '1' : '0');
       }
     }
     const bytes = [];
@@ -153,11 +130,13 @@
     return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  async function sha256(buf) {
-    const hashBuf = await crypto.subtle.digest('SHA-256', buf);
-    return new Uint8Array(hashBuf);
+  // SHA-256 async
+  async function sha256(buffer) {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    return new Uint8Array(hashBuffer);
   }
 
+  // Base58 encoding
   const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   function base58Encode(buffer) {
@@ -178,24 +157,26 @@
     return s;
   }
 
+  // Helper para converter hex em Uint8Array
   function hexStringToUint8Array(hex) {
     const arr = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
-      arr[i/2] = parseInt(hex.substr(i, 2), 16);
+      arr[i / 2] = parseInt(hex.substr(i, 2), 16);
     }
     return arr;
   }
 
+  // Converte chave privada hex para WIF (compressed ou não)
   async function privateKeyToWIF(hexKey, compressed = true) {
     const keyBytes = hexStringToUint8Array(hexKey);
     let payload;
     if (compressed) {
-      payload = new Uint8Array(1 + 32 + 1);
+      payload = new Uint8Array(34);
       payload[0] = 0x80;
       payload.set(keyBytes, 1);
       payload[33] = 0x01;
     } else {
-      payload = new Uint8Array(1 + 32);
+      payload = new Uint8Array(33);
       payload[0] = 0x80;
       payload.set(keyBytes, 1);
     }
@@ -210,21 +191,27 @@
     return base58Encode(full);
   }
 
+  // Atualiza os textareas com as chaves geradas, mantendo scroll na última linha
   async function updateKeyOutputs() {
     const hex = gridToHex();
-    const wifC = await privateKeyToWIF(hex, true);
-    const wifU = await privateKeyToWIF(hex, false);
+    const wifCompressed = await privateKeyToWIF(hex, true);
+    const wifUncompressed = await privateKeyToWIF(hex, false);
 
-    hexBox.value += hex + '\n';
-    wifBox.value += wifC + '\n';
-    wifBoxUncompressed.value += wifU + '\n';
-    privateKeysBox.value += `HEX:${hex} | WIFc:${wifC} | WIFu:${wifU}\n`;
-
-    hexBox.scrollTop = hexBox.scrollHeight;
-    wifBox.scrollTop = wifBox.scrollHeight;
-    wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
+    if (hexBox) {
+      hexBox.value += hex + '\n';
+      hexBox.scrollTop = hexBox.scrollHeight;
+    }
+    if (wifBox) {
+      wifBox.value += wifCompressed + '\n';
+      wifBox.scrollTop = wifBox.scrollHeight;
+    }
+    if (wifBoxUncompressed) {
+      wifBoxUncompressed.value += wifUncompressed + '\n';
+      wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
+    }
   }
 
+  // Aleatoriza a faixa ativa da matriz
   function randomizeRange() {
     for (let y = altura - 1; y <= base - 1; y++) {
       for (let x = 0; x < SIZE; x++) {
@@ -235,20 +222,22 @@
     updateKeyOutputs();
   }
 
+  // Limpa toda matriz e caixas de texto
   function clearAll() {
     gridState.fill(false);
     drawGrid();
     if (hexBox) hexBox.value = '';
     if (wifBox) wifBox.value = '';
     if (wifBoxUncompressed) wifBoxUncompressed.value = '';
-    if (privateKeysBox) privateKeysBox.value = '';
   }
 
+  // Retorna o máximo valor do contador para a faixa ativa
   function getMaxCounter() {
     const numRows = base - altura + 1;
     return 1n << BigInt(numRows * SIZE);
   }
 
+  // Seta a matriz a partir do contador (modo sequencial)
   function setGridFromCounter(cnt) {
     const numRows = base - altura + 1;
     const totalBits = numRows * SIZE;
@@ -259,7 +248,7 @@
       const y = (altura - 1) + rowOffset;
       gridState[y * SIZE + col] = (bit === 1n);
     }
-    // fora da faixa ativa, zera
+    // Limpa fora da faixa ativa
     for (let y = 0; y < SIZE; y++) {
       if (y < (altura - 1) || y > (base - 1)) {
         for (let x = 0; x < SIZE; x++) {
@@ -269,8 +258,9 @@
     }
   }
 
+  // Função de passo da simulação
   async function step() {
-    const mode = Array.from(modeRadios).find(r => r.checked).value;
+    const mode = Array.from(modeRadios).find(r => r.checked)?.value || 'sequential';
 
     if (randomizeOnStepCheckbox.checked) {
       randomizeRange();
@@ -289,7 +279,8 @@
       await updateKeyOutputs();
       stateCounter++;
       scheduleNext();
-    } else { // random
+    } else {
+      // modo aleatório: toggle uma célula aleatória na faixa ativa
       const numRows = base - altura + 1;
       const totalCells = numRows * SIZE;
       const idx = Math.floor(Math.random() * totalCells);
@@ -304,10 +295,12 @@
     }
   }
 
+  // Agenda próximo passo
   function scheduleNext() {
     timeoutId = setTimeout(step, Number(speedInput.value));
   }
 
+  // Inicia a simulação
   function start() {
     if (running) return;
     running = true;
@@ -318,9 +311,10 @@
     stopBtn.disabled = false;
   }
 
+  // Para a simulação
   function stop() {
     running = false;
-    if (timeoutId != null) {
+    if (timeoutId !== null) {
       clearTimeout(timeoutId);
       timeoutId = null;
     }
@@ -328,6 +322,7 @@
     stopBtn.disabled = true;
   }
 
+  // Clique no canvas para alterar célula, se permitido
   canvas.addEventListener('click', e => {
     if (!toggleOnClickCheckbox.checked) return;
     const rect = canvas.getBoundingClientRect();
@@ -340,6 +335,7 @@
     updateKeyOutputs();
   });
 
+  // Eventos dos botões e controles
   startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
   clearBtn.addEventListener('click', () => {
