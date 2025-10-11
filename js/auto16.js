@@ -163,18 +163,22 @@
 
   // Passo no modo sequencial
   function stepSequential() {
-    grid[currentRow][currentCol] = false;
-
+    const randomize = document.getElementById('randomizeStatesOnStep').checked;
+  
+    // Avança para a próxima célula
     currentCol++;
     if (currentCol >= GRID) {
       currentCol = 0;
       currentRow++;
-      if (currentRow > rowsToWatch.end) currentRow = rowsToWatch.start;
+      if (currentRow > rowsToWatch.end) {
+        currentRow = rowsToWatch.start;
+      }
     }
-
-    const randomize = document.getElementById('randomizeStatesOnStep').checked;
+  
+    // Define a nova célula como ligada ou aleatória
     grid[currentRow][currentCol] = randomize ? Math.random() < 0.5 : true;
   }
+
 
   // Passo no modo aleatório
   function stepRandom() {
