@@ -51,9 +51,6 @@ canvas#grid {
   background: #fff;
   image-rendering: pixelated;
   cursor: pointer;
-  /* Ensure canvas size matches width/height attributes */
-  width: 512px;
-  height: 512px;
 }
 
 .controls {
@@ -73,12 +70,10 @@ canvas#grid {
   color: var(--dark-green);
   cursor: pointer;
   font-weight: 700;
-  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .btn:active {
   transform: translateY(1px);
-  background-color: #e6f0e6;
 }
 
 textarea.logbox {
