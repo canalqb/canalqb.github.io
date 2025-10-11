@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gerador de Private Keys Bitcoin — CanalQb</title>
 
-  <!-- Bootstrap -->
+  <!-- Bootstrap (apenas CSS) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Estilos principais -->
-  <link rel="stylesheet" href="css/styles.css">
   <style>
-    /* Pequenos estilos inline para garantir visual do canvas */
-    #grid { cursor: pointer; border: 1px solid #ccc; background: #fafafa; }
-    .logbox { width:100%; height:60px; font-family:monospace; }
+    body { background:#fafafa; }
+    #grid { cursor:pointer; border:1px solid #ccc; background:#fff; display:block; margin:0 auto; }
+    .logbox { width:100%; height:60px; font-family:monospace; resize:vertical; }
     .section-label { font-weight:600; }
-    .size-btn { min-width:40px; margin:2px; }
+    .size-btn { min-width:56px; margin:4px; }
     .controls .btn { margin:4px; }
-    .row-indicator { font-size:0.9rem; color:#666; }
+    .row-indicator { font-size:0.95rem; color:#666; }
+    .height-panel { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
+    footer { font-size:0.9rem; color:#666; margin-top:1.5rem; }
+    .container-main { max-width:980px; margin:18px auto; }
   </style>
 </head>
 <body>
-
-  <!-- Navbar / Publicidade -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
     <div class="container">
       <a class="navbar-brand fw-bold text-success" href="http://canalqb.blogspot.com/">CanalQb</a>
@@ -33,441 +32,79 @@
     </div>
   </nav>
 
-  <!-- Container principal -->
-  <div id="container" class="container my-4">
+  <div class="container container-main bg-white p-4 shadow-sm rounded">
     <header>
-      <h1>Gerador de Private Keys Bitcoin</h1>
+      <h1 class="h4">Gerador de Private Keys Bitcoin</h1>
     </header>
 
-    <main>
-      <section class="content w-100">
+    <main class="mt-3">
+      <p class="text-muted">Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF usando uma matriz 16×16.</p>
 
-        <p class="text-center text-muted mb-4">
-          Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF.
-        </p>
+      <div class="text-center mb-3">
+        <h6 class="text-success mb-2">Grade (clique para alternar célula)</h6>
+        <canvas id="grid" width="512" height="512"></canvas>
+        <div class="row-indicator mt-2">Altura ativa: <span id="activeHeightLabel">16</span> (clique nos botões abaixo)</div>
+      </div>
 
-        <!-- Descrição -->
-        <section class="mb-4">
-          <h5 class="text-success">Descrição do Funcionamento</h5>
-          <p class="text-secondary">
-            Este gerador utiliza uma matriz de 16×16 (Grade) para gerar combinações de bits
-            que formam chaves privadas Bitcoin válidas. Você pode alternar entre modos de geração
-            sequencial ou aleatória, e visualizar as chaves em formato HEX e WIF.
-          </p>
-        </section>
+      <div class="controls text-center mb-3">
+        <button id="startBtn" class="btn btn-success">Iniciar</button>
+        <button id="stopBtn" class="btn btn-danger" disabled>Parar</button>
+        <button id="clearBtn" class="btn btn-secondary">Limpar</button>
+        <button id="randBtn" class="btn btn-outline-secondary">Aleatorizar</button>
 
-        <!-- Grade -->
-        <div class="text-center mb-4">
-          <h6 class="text-success mb-2">Grade (clique para alternar célula)</h6>
-          <canvas id="grid" width="512" height="512"></canvas>
-          <div class="row-indicator mt-2">Altura ativa: <span id="activeHeightLabel">16</span> (controle abaixo)</div>
+        <div class="mt-3">
+          <label for="speed">Velocidade: <span id="speedLabel">500</span> ms</label>
+          <input type="range" id="speed" min="50" max="2000" step="50" value="500">
         </div>
 
-        <!-- Controles -->
-        <div class="controls text-center mb-4">
-          <button id="startBtn" class="btn btn-success">Iniciar</button>
-          <button id="stopBtn" class="btn btn-danger" disabled>Parar</button>
-          <button id="clearBtn" class="btn btn-secondary">Limpar</button>
-          <button id="randBtn" class="btn btn-outline-secondary">Aleatorizar</button>
-
-          <div class="mt-3">
-            <label for="speed">Velocidade: <span id="speedLabel">500</span> ms</label>
-            <input type="range" id="speed" min="50" max="2000" step="50" value="500">
-          </div>
-
-          <div class="mt-3">
-            <label><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
-            <label class="ms-3"><input type="radio" name="mode" value="random"> Aleatório</label>
-          </div>
-
-          <div class="form-check form-switch mt-3 d-inline-block ms-3">
-            <input class="form-check-input" type="checkbox" id="toggleOnClick" checked>
-            <label class="form-check-label" for="toggleOnClick">Clique alterna célula</label>
-          </div>
-
-          <div class="form-check form-switch mt-3 d-inline-block ms-3">
-            <input class="form-check-input" type="checkbox" id="randomizeStatesOnStep">
-            <label class="form-check-label" for="randomizeStatesOnStep">Aleatorizar no passo</label>
-          </div>
+        <div class="mt-3">
+          <label class="me-3"><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
+          <label><input type="radio" name="mode" value="random"> Aleatório</label>
         </div>
 
-        <!-- Alturas (1..16) -->
-        <div class="text-center mb-3">
-          <div class="d-inline-block p-2 border rounded bg-white">
-            <div class="mb-2">Alturas (clique para selecionar altura ativa)</div>
-            <div id="heightButtons" class="d-flex flex-wrap justify-content-center"></div>
-            <div class="small text-muted mt-2">Modo automático por padrão varre <strong>9 → 16</strong> (sequencial ou random)</div>
-          </div>
+        <div class="form-check form-switch mt-3 d-inline-block ms-3">
+          <input class="form-check-input" type="checkbox" id="toggleOnClick" checked>
+          <label class="form-check-label" for="toggleOnClick">Clique alterna célula</label>
         </div>
 
-        <!-- Saídas -->
-        <div class="logs">
-          <div class="mb-2">
-            <label for="hexBox" class="section-label">Private Key HEX (64 bytes)</label>
-            <textarea id="hexBox" class="logbox" readonly></textarea>
-          </div>
-          <div class="mb-2">
-            <label for="wifBox" class="section-label">WIF (Comprimido)</label>
-            <textarea id="wifBox" class="logbox" readonly></textarea>
-          </div>
-          <div class="mb-2">
-            <label for="wifBoxUncompressed" class="section-label">WIF (Não Comprimido)</label>
-            <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
-          </div>
+        <div class="form-check form-switch mt-3 d-inline-block ms-3">
+          <input class="form-check-input" type="checkbox" id="randomizeStatesOnStep">
+          <label class="form-check-label" for="randomizeStatesOnStep">Aleatorizar no passo</label>
         </div>
+      </div>
 
-        <!-- Log oculto -->
-        <textarea id="privateKeysBox" style="display:none;"></textarea>
-      </section>
+      <div class="text-center mb-3">
+        <div class="d-inline-block p-2 border rounded bg-white">
+          <div class="mb-2 small">Alturas (clique para selecionar altura ativa)</div>
+          <div id="heightButtons" class="height-panel"></div>
+          <div class="small text-muted mt-2">Modo automático por padrão varre <strong>9 → 16</strong> (sequencial ou aleatório)</div>
+        </div>
+      </div>
 
-      <!-- Sidebar (Publicidade) -->
-      <aside class="sidebar mt-4">
-        <h6 class="text-success">Publicidade</h6>
-        <div class="border rounded p-3 text-center bg-light">[ Espaço para anúncio 300×250 ]</div>
-      </aside>
+      <div class="logs">
+        <div class="mb-2">
+          <label for="hexBox" class="section-label">Private Key HEX (32 bytes / 64 hex chars)</label>
+          <textarea id="hexBox" class="logbox" readonly></textarea>
+        </div>
+        <div class="mb-2">
+          <label for="wifBox" class="section-label">WIF (Comprimido)</label>
+          <textarea id="wifBox" class="logbox" readonly></textarea>
+        </div>
+        <div class="mb-2">
+          <label for="wifBoxUncompressed" class="section-label">WIF (Não Comprimido)</label>
+          <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
+        </div>
+      </div>
+
+      <textarea id="privateKeysBox" style="display:none;"></textarea>
     </main>
 
-    <!-- Rodapé -->
-    <footer class="mt-4">
-      © CanalQb <a href="http://canalqb.blogspot.com/">http://canalqb.blogspot.com/</a> — Rodrigo Carlos Moraes<br>
-      Gerador de private keys para o puzzle 1000 bitcoins
+    <footer class="mt-3 text-center">
+      © CanalQb — Rodrigo Carlos Moraes — Gerador de private keys para o puzzle 1000 bitcoins
     </footer>
   </div>
 
-  <!-- Bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Script principal (implementação corrigida) -->
-  <script>
-/*
-  auto16.js embutido:
-  - grade 16x16
-  - mapeamento de bits: first bit => MSB ... last bit => LSB
-  - iteração automática de alturas 9..16 (respeita modo sequencial/random)
-  - usuário pode clicar nas alturas 1..16 para editar manualmente
-  - gera HEX padded (64 bytes) e WIF compressed / uncompressed
-*/
-
-(() => {
-  const canvas = document.getElementById('grid');
-  const ctx = canvas.getContext('2d');
-  const size = 16;
-  const cellPx = canvas.width / size;
-  let grid = new Array(size).fill(0).map(() => new Array(size).fill(0));
-  let activeHeight = 16; // altura atual selecionada (1..16), usuário pode escolher
-  let running = false;
-  let intervalId = null;
-
-  // Controls
-  const startBtn = document.getElementById('startBtn');
-  const stopBtn = document.getElementById('stopBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const randBtn = document.getElementById('randBtn');
-  const speedInput = document.getElementById('speed');
-  const speedLabel = document.getElementById('speedLabel');
-  const modeInputs = document.getElementsByName('mode');
-  const toggleOnClick = document.getElementById('toggleOnClick');
-  const randomizeStatesOnStep = document.getElementById('randomizeStatesOnStep');
-  const hexBox = document.getElementById('hexBox');
-  const wifBox = document.getElementById('wifBox');
-  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-  const activeHeightLabel = document.getElementById('activeHeightLabel');
-  const heightButtonsContainer = document.getElementById('heightButtons');
-
-  // Inicializa botões de altura 1..16
-  for (let h = 1; h <= 16; h++) {
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-outline-primary size-btn';
-    btn.textContent = h + 'x16';
-    btn.dataset.h = h;
-    btn.addEventListener('click', () => {
-      activeHeight = h;
-      activeHeightLabel.textContent = activeHeight;
-      render();
-    });
-    heightButtonsContainer.appendChild(btn);
-  }
-
-  // Desenha grade
-  function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        // linhas acima da activeHeight ficam levemente mais escuras pra indicar "fora" se r >= activeHeight
-        if (r >= activeHeight) {
-          ctx.fillStyle = '#f0f0f0';
-        } else {
-          ctx.fillStyle = grid[r][c] ? '#333' : '#fff';
-        }
-        ctx.fillRect(c * cellPx, r * cellPx, cellPx, cellPx);
-        ctx.strokeStyle = '#ddd';
-        ctx.strokeRect(c * cellPx, r * cellPx, cellPx, cellPx);
-      }
-    }
-    // atualiza boxes
-    const hex = gridToHex();
-    hexBox.value = hex;
-    convertToWIF(hex).then(([wifCompressed, wifUncompressed]) => {
-      wifBox.value = wifCompressed;
-      wifBoxUncompressed.value = wifUncompressed;
-    });
-  }
-
-  // Converte grid para HEX (64 bytes padded)
-  // Mapeamento: percorre linhas 0..15 e colunas 0..15; bit order: primeiro bit gerado é MSB (bit 255),
-  // último bit gerado é LSB (bit 0). Assim, se apenas última célula (r=15,c=15) estiver 1 => valor = 1 => ...0001.
-  function gridToBinaryString() {
-    let bits = '';
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        const bit = grid[r][c] ? '1' : '0';
-        bits += bit;
-      }
-    }
-    // bits[0] => MSB (bit 255), bits[255] => LSB (bit 0)
-    return bits;
-  }
-
-  function binaryStringToHex(bin) {
-    // bin length 256
-    if (bin.length !== 256) {
-      // pad left with zeros if needed
-      bin = bin.padStart(256, '0');
-    }
-    // convert using BigInt for reliability
-    let n = 0n;
-    for (let i = 0; i < bin.length; i++) {
-      n = (n << 1n) + BigInt(bin[i] === '1' ? 1 : 0);
-    }
-    // format to 64 bytes (128 hex chars? No: 256 bits = 64 hex bytes? Wait:)
-    // 256 bits => 64 hex bytes? Correction: 1 hex char = 4 bits, so 256 bits => 64 hex *bytes? No: 256/4 = 64 hex characters.
-    // But private key in hex is 32 bytes => 64 hex chars. We will produce 64 hex chars.
-    // Key length expected 64 hex chars = 32 bytes.
-    let hex = n.toString(16).padStart(64, '0');
-    return hex;
-  }
-
-  function gridToHex() {
-    const bin = gridToBinaryString();
-    return binaryStringToHex(bin);
-  }
-
-  // Canvas click handler
-  canvas.addEventListener('click', (ev) => {
-    if (!toggleOnClick.checked) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = ev.clientX - rect.left;
-    const y = ev.clientY - rect.top;
-    const c = Math.floor(x / cellPx);
-    const r = Math.floor(y / cellPx);
-    // permitimos clique em qualquer r (1..16) — usuário pode clicar em todas as linhas
-    if (r >= 0 && r < size && c >= 0 && c < size) {
-      grid[r][c] = grid[r][c] ? 0 : 1;
-      render();
-    }
-  });
-
-  // Botões
-  clearBtn.addEventListener('click', () => {
-    grid = new Array(size).fill(0).map(() => new Array(size).fill(0));
-    render();
-  });
-
-  randBtn.addEventListener('click', () => {
-    for (let r = 0; r < size; r++) {
-      for (let c = 0; c < size; c++) {
-        grid[r][c] = Math.random() > 0.5 ? 1 : 0;
-      }
-    }
-    render();
-  });
-
-  speedInput.addEventListener('input', () => {
-    speedLabel.textContent = speedInput.value;
-    if (running) {
-      stop();
-      start();
-    }
-  });
-
-  startBtn.addEventListener('click', () => start());
-  stopBtn.addEventListener('click', () => stop());
-
-  function getSelectedMode() {
-    for (const m of modeInputs) if (m.checked) return m.value;
-    return 'sequential';
-  }
-
-  // Start/Stop automação
-  function start() {
-    if (running) return;
-    running = true;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-
-    // Geração automática: alturas 9..16 (preferência)
-    const heights = [9,10,11,12,13,14,15,16];
-    const mode = getSelectedMode();
-
-    let sequenceHeights = [...heights];
-    if (mode === 'random') {
-      sequenceHeights = shuffleArray(sequenceHeights);
-    }
-
-    // We'll iterate over heights array, for each height we step cells inside that height
-    let outerIndex = 0;
-
-    function stepForHeight(h) {
-      // set activeHeight visual but do not restrict clicks (user still can click any height)
-      activeHeight = h;
-      activeHeightLabel.textContent = activeHeight;
-
-      // cellsToVisit: list of positions within rows 0..h-1 and cols 0..15
-      const cells = [];
-      for (let r = 0; r < h; r++) {
-        for (let c = 0; c < size; c++) {
-          cells.push({r,c});
-        }
-      }
-      if (getSelectedMode() === 'random') shuffleArray(cells);
-
-      let i = 0;
-      const tick = async () => {
-        if (!running) return;
-        if (randomizeStatesOnStep.checked) {
-          // randomize some cells within the active height
-          for (let rr = 0; rr < h; rr++) {
-            for (let cc = 0; cc < size; cc++) {
-              if (Math.random() < 0.05) grid[rr][cc] = 1 - grid[rr][cc];
-            }
-          }
-        }
-        // toggle current cell
-        const cell = cells[i];
-        grid[cell.r][cell.c] = grid[cell.r][cell.c] ? 0 : 1;
-        render();
-
-        i++;
-        if (i >= cells.length) {
-          // finished this height, move to next
-          outerIndex++;
-          if (outerIndex >= sequenceHeights.length) {
-            // finished full cycle; if mode random reshuffle for next cycle
-            outerIndex = 0;
-            if (getSelectedMode() === 'random') sequenceHeights = shuffleArray([...heights]);
-          }
-          // call step next height after small delay
-          const nextH = sequenceHeights[outerIndex];
-          setTimeout(() => {
-            if (running) stepForHeight(nextH);
-          }, Number(speedInput.value));
-        } else {
-          // schedule next cell in this height
-          intervalId = setTimeout(tick, Number(speedInput.value));
-        }
-      };
-
-      // start ticking for this height
-      tick();
-    }
-
-    // begin
-    stepForHeight(sequenceHeights[outerIndex]);
-  }
-
-  function stop() {
-    running = false;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    if (intervalId) { clearTimeout(intervalId); intervalId = null;}
-  }
-
-  // Utils
-  function shuffleArray(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  // Converte HEX (64 chars) para WIF (compressed / uncompressed)
-  async function convertToWIF(hex) {
-    // hex => bytes
-    const keyBytes = hexToBytes(hex.padStart(64, '0')); // 32 bytes
-    // Uncompressed WIF: prefix 0x80 + key + checksum
-    const unprefixed = concatUint8Arrays(new Uint8Array([0x80]), keyBytes);
-    const uncheck = await doubleSha256(unprefixed);
-    const uncrc = uncheck.slice(0,4);
-    const unpayload = concatUint8Arrays(unprefixed, uncrc);
-    const wifUncompressed = base58Encode(unpayload);
-
-    // Compressed: prefix 0x80 + key + 0x01 + checksum
-    const compressedPrefix = concatUint8Arrays(new Uint8Array([0x80]), keyBytes);
-    const compressedWithFlag = concatUint8Arrays(compressedPrefix, new Uint8Array([0x01]));
-    const check = await doubleSha256(compressedWithFlag);
-    const crc = check.slice(0,4);
-    const payload = concatUint8Arrays(compressedWithFlag, crc);
-    const wifCompressed = base58Encode(payload);
-
-    return [wifCompressed, wifUncompressed];
-  }
-
-  // SHA256 double
-  async function doubleSha256(bytes) {
-    const single = await crypto.subtle.digest('SHA-256', bytes);
-    const double = await crypto.subtle.digest('SHA-256', single);
-    return new Uint8Array(double);
-  }
-
-  // Helpers: hex <-> bytes
-  function hexToBytes(hex) {
-    const clean = hex.replace(/[^0-9a-fA-F]/g,'').padStart(64,'0');
-    const bytes = new Uint8Array(clean.length/2);
-    for (let i = 0; i < clean.length; i += 2) {
-      bytes[i/2] = parseInt(clean.substr(i,2),16);
-    }
-    return bytes;
-  }
-
-  function concatUint8Arrays(a,b) {
-    const c = new Uint8Array(a.length + b.length);
-    c.set(a, 0);
-    c.set(b, a.length);
-    return c;
-  }
-
-  // Base58 implementation (Bitcoin alphabet)
-  const B58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-  function base58Encode(buffer) {
-    // buffer is Uint8Array
-    let x = BigInt(0);
-    for (let i = 0; i < buffer.length; i++) {
-      x = (x << 8n) + BigInt(buffer[i]);
-    }
-    let result = '';
-    while (x > 0n) {
-      const mod = x % 58n;
-      result = B58_ALPHABET[Number(mod)] + result;
-      x = x / 58n;
-    }
-    // leading zeros
-    for (let i = 0; i < buffer.length && buffer[i] === 0; i++) result = '1' + result;
-    return result || '1';
-  }
-
-  // Inicial render
-  render();
-
-  // Expose for debugging (opcional)
-  window.__auto16 = {
-    getGrid: () => grid,
-    setGrid: (g) => { grid = g; render(); },
-    gridToHex
-  };
-
-})();
-  </script>
+  <!-- auto16.js (carregado no final) -->
+  <script src="auto16.js"></script>
 </body>
 </html>
