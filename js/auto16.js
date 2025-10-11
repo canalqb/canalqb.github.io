@@ -8,21 +8,19 @@
 
   const GRID = 16;
   const CELL = canvas.width / GRID;
-  const rowsToWatch = { start: 8, end: 15 }; // linhas 9–16 (0-based)
-
+  const rowsToWatch = { start: 8, end: 15 }; // Linhas 9 a 16 (0-based)
   const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   let grid = [];
   let animationInterval = null;
+  let bitCounter = new Uint8Array(32); // 256 bits
 
-  let bitCounter = new Uint8Array(32); // 256 bits (32 bytes)
-
-  // Inicializa a grade com tudo desligado
+  // Inicializa grade com tudo desligado
   function initGrid() {
     grid = Array.from({ length: GRID }, () => Array(GRID).fill(false));
   }
 
-  // Desenha a grade no canvas
+  // Desenha a grade
   function drawGrid() {
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -40,7 +38,29 @@
     }
   }
 
-  // Extrai os bits da grade (linhas 9 a 16)
+  // Aplica os bits do contador de 256 bits na grade (linhas 9–16)
+  function applyCounterToGrid(counter) {
+    const bits = Array.from(counter).flatMap(byte =>
+      byte.toString(2).padStart(8, '0').split('').map(b => b === '1')
+    );
+
+    let bitIndex = 0;
+    for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
+      for (let c = 0; c < GRID; c++) {
+        grid[r][c] = bits[bitIndex++];
+      }
+    }
+  }
+
+  // Incrementa o contador de 256 bits
+  function incrementCounter(counter) {
+    for (let i = 31; i >= 0; i--) {
+      counter[i]++;
+      if (counter[i] !== 0) break; // Para quando não houver overflow
+    }
+  }
+
+  // Extrai os bits da grade
   function bitsFromGrid() {
     return grid
       .slice(rowsToWatch.start, rowsToWatch.end + 1)
@@ -49,18 +69,18 @@
       .join('');
   }
 
-  // Converte bits para HEX (64 caracteres)
+  // Converte bits em hexadecimal
   function hexFromBits(bits) {
     const hexArray = bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16));
     return hexArray.join('').padStart(64, '0');
   }
 
-  // HEX -> Uint8Array
+  // HEX para bytes
   function hexToBytes(hex) {
     return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
   }
 
-  // Concatena arrays de bytes
+  // Concatena múltiplos Uint8Arrays
   function concatBytes(...arrays) {
     return Uint8Array.from(arrays.flatMap(arr => [...arr]));
   }
@@ -71,7 +91,7 @@
     return new Uint8Array(hashBuffer);
   }
 
-  // SHA-256 duplo
+  // Double SHA-256
   async function doubleSha256(buffer) {
     const first = await sha256(buffer);
     return await sha256(first);
@@ -99,14 +119,14 @@
     return '1'.repeat(leadingZeros) + result;
   }
 
-  // Validação da chave privada
+  // Valida a chave privada
   function isValidPrivateKey(hex) {
     const n = BigInt('0x' + hex);
     const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
     return n > 0n && n < max;
   }
 
-  // HEX -> WIF (com ou sem compressão)
+  // Gera WIF a partir de HEX
   async function privateKeyToWIF(hex, compressed = true) {
     const key = hexToBytes(hex);
     const prefix = Uint8Array.of(0x80);
@@ -117,7 +137,7 @@
     return bytesToBase58(full);
   }
 
-  // Atualiza as saídas (HEX e WIFs)
+  // Atualiza as caixas de saída (HEX + WIF)
   async function updateOutputs() {
     const bits = bitsFromGrid();
     const hex = hexFromBits(bits);
@@ -141,35 +161,13 @@
     wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
   }
 
-  // Incrementa o contador de 256 bits
-  function incrementCounter(counter) {
-    for (let i = 31; i >= 0; i--) {
-      counter[i]++;
-      if (counter[i] !== 0) break;
-    }
-  }
-
-  // Aplica o valor do contador à grade (linhas 9 a 16)
-  function applyCounterToGrid(counter) {
-    const bits = Array.from(counter).flatMap(byte =>
-      byte.toString(2).padStart(8, '0').split('').map(b => b === '1')
-    );
-
-    let bitIndex = 0;
-    for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
-      for (let c = 0; c < GRID; c++) {
-        grid[r][c] = bits[bitIndex++];
-      }
-    }
-  }
-
-  // Passo sequencial: incrementa contador e atualiza grade
+  // Modo sequencial: percorre todas as combinações possíveis
   function stepSequential() {
     incrementCounter(bitCounter);
     applyCounterToGrid(bitCounter);
   }
 
-  // Passo aleatório: altera uma célula aleatória nas linhas 9 a 16
+  // Modo aleatório: alterna célula aleatória nas linhas 9–16
   function stepRandom() {
     const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
     const c = Math.floor(Math.random() * GRID);
@@ -177,9 +175,10 @@
     grid[r][c] = randomize ? Math.random() < 0.5 : true;
   }
 
-  // Função de passo geral
+  // Passo geral
   async function step() {
     const mode = document.querySelector('input[name="mode"]:checked').value;
+
     if (mode === 'sequential') {
       stepSequential();
     } else {
@@ -213,7 +212,7 @@
     privateKeysBox.value = '';
     wifBox.value = '';
     wifBoxUncompressed.value = '';
-    bitCounter = new Uint8Array(32);
+    bitCounter = new Uint8Array(32); // Reinicia contador
   });
 
   document.getElementById('randBtn').addEventListener('click', () => {
@@ -235,7 +234,6 @@
     }
   });
 
-  // Clique na grade para alternar células
   canvas.addEventListener('click', e => {
     const toggleOnClick = document.getElementById('toggleOnClick');
     if (!toggleOnClick.checked) return;
