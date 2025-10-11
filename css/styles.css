@@ -4,15 +4,18 @@
   --bg: #ffffff;
 }
 
+/* ---------- Estrutura geral ---------- */
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   background: var(--bg);
   color: #000;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Container principal */
 #container {
   width: 90%;
   max-width: 1100px;
@@ -22,22 +25,64 @@ body {
   padding: 18px;
   box-sizing: border-box;
   background: #fff;
+}
+
+/* ---------- Cabeçalho e Navegação ---------- */
+header, nav, footer {
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
   text-align: center;
+  width: 100%;
 }
 
-h1 {
+header {
+  padding: 1em;
+  border-radius: 10px 10px 0 0;
+}
+
+header h1 {
+  margin: 0.3em 0;
+  font-size: 1.6em;
   color: var(--dark-green);
-  margin: 4px 0 14px;
 }
 
-label.section {
-  display: block;
-  text-align: left;
-  color: var(--dark-green);
-  font-weight: 700;
-  margin: 10px 0 6px;
+nav {
+  font-size: 0.95em;
+  background-color: #f1f1f1;
+  padding: 0.5em;
 }
 
+/* ---------- Layout Principal ---------- */
+main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 1em;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+section.content {
+  flex: 1;
+  min-width: 300px;
+  background: #fff;
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* Sidebar (Publicidade) */
+aside.sidebar {
+  width: 300px;
+  background: #fff;
+  padding: 1em;
+  margin-top: 1em;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* ---------- Canvas e Controles ---------- */
 .canvas-wrap {
   display: flex;
   justify-content: space-between;
@@ -51,16 +96,19 @@ canvas#grid {
   background: #fff;
   image-rendering: pixelated;
   cursor: pointer;
+  display: block;
+  margin: 1em auto;
 }
 
 .controls {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
   margin-top: 10px;
 }
 
+button,
 .btn {
   display: inline-block;
   padding: 8px 12px;
@@ -70,12 +118,44 @@ canvas#grid {
   color: var(--dark-green);
   cursor: pointer;
   font-weight: 700;
+  transition: all 0.2s ease;
 }
 
+button:hover,
+.btn:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+button:disabled {
+  background: #ccc;
+  color: #666;
+  border-color: #aaa;
+  cursor: not-allowed;
+}
+
+button:active,
 .btn:active {
   transform: translateY(1px);
 }
 
+/* ---------- Fieldsets e Configurações ---------- */
+fieldset {
+  border: 1px solid #ccc;
+  padding: 1em;
+  border-radius: 6px;
+  max-width: 400px;
+  margin: 1em auto;
+  background: #fdfdfd;
+}
+
+legend {
+  font-weight: bold;
+  color: var(--dark-green);
+}
+
+/* ---------- Textareas e Logs ---------- */
+textarea,
 textarea.logbox {
   width: 100%;
   height: 220px;
@@ -104,7 +184,33 @@ textarea.logbox {
   min-width: 280px;
 }
 
+/* ---------- Rodapé ---------- */
+footer {
+  background: #fff;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  padding: 1em;
+  font-size: 0.9em;
+  color: #555;
+  border-radius: 0 0 10px 10px;
+}
+
+footer a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* ---------- Responsividade ---------- */
 @media (max-width: 900px) {
+  main {
+    flex-direction: column;
+  }
+
+  aside.sidebar {
+    width: 100%;
+  }
+
   .canvas-wrap {
     flex-direction: column;
     align-items: center;
