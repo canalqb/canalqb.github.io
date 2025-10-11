@@ -1,217 +1,227 @@
-:root {
-  --green: #008000;
-  --dark-green: #006400;
-  --bg: #ffffff;
-  --border-radius: 6px;
-  --font-family: Arial, Helvetica, sans-serif;
-}
+// auto16.js
 
-* {
-  box-sizing: border-box;
-}
+const canvas = document.getElementById('grid');
+const ctx = canvas.getContext('2d');
 
-body {
-  margin: 0;
-  font-family: var(--font-family);
-  background: var(--bg);
-  color: #000;
-  display: flex;
-  justify-content: center;
-  padding: 30px 10px;
-  min-height: 100vh;
-}
+const rows = 16;
+const cols = 16;
+const cellSize = 32; // para 512x512 canvas, 16x16 células
 
-#container {
-  width: 90%;
-  max-width: 1100px;
-  border: 2px solid var(--green);
-  border-radius: 10px;
-  padding: 20px;
-  background: #fff;
-  box-sizing: border-box;
-}
+canvas.width = cols * cellSize;
+canvas.height = rows * cellSize;
 
-.canvas-wrap {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+let grid = [];
+let intervalId = null;
+let currentStep = 0;
+let running = false;
 
-#grid-container {
-  flex: 1 1 520px; /* mínimo 520px para o canvas */
-  text-align: center;
-}
+const modeRadios = document.getElementsByName('mode');
+const speedRange = document.getElementById('speedRange');
+const speedValue = document.getElementById('speedValue');
+const alternateCheckbox = document.getElementById('alternate');
+const randomStateCheckbox = document.getElementById('randomState');
 
-#grid-container h2 {
-  color: var(--dark-green);
-  margin-bottom: 10px;
-  font-weight: bold;
-}
+const btnStart = document.getElementById('start');
+const btnStop = document.getElementById('stop');
+const btnClear = document.getElementById('clear');
+const btnRandom = document.getElementById('random');
 
-canvas#grid {
-  border: 2px solid var(--green);
-  background: #fff;
-  image-rendering: pixelated;
-  cursor: pointer;
-  display: block;
-  margin: 0 auto;
-  width: 512px;
-  height: 512px;
-}
+const logBox = document.getElementById('logbox');
 
-.line-label {
-  margin-top: 8px;
-  font-size: 0.9rem;
-  color: var(--dark-green);
-}
-
-#sidebar {
-  flex: 0 0 300px; /* largura fixa para sidebar */
-  border: 1px solid var(--green);
-  border-radius: var(--border-radius);
-  padding: 15px 20px;
-  background: #f9fff9;
-  color: var(--dark-green);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-#description h3 {
-  margin-top: 0;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--dark-green);
-}
-
-#description ul {
-  padding-left: 20px;
-  margin-top: 5px;
-  margin-bottom: 10px;
-}
-
-#description ul li {
-  margin-bottom: 6px;
-  font-size: 0.9rem;
-  line-height: 1.3;
-}
-
-#buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-#buttons .btn {
-  flex: 1 1 80px;
-  padding: 8px 12px;
-  border-radius: var(--border-radius);
-  border: 2px solid var(--green);
-  background: #fff;
-  color: var(--dark-green);
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-align: center;
-}
-
-#buttons .btn:hover {
-  background-color: var(--green);
-  color: #fff;
-}
-
-#buttons .btn:active {
-  transform: translateY(1px);
-}
-
-#controls {
-  font-size: 0.9rem;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-.mode label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  margin-right: 15px;
-  cursor: pointer;
-}
-
-.mode strong {
-  display: block;
-  margin-bottom: 5px;
-  color: var(--dark-green);
-}
-
-.speed label {
-  display: block;
-  margin-bottom: 5px;
-  color: var(--dark-green);
-  font-weight: 600;
-}
-
-#speedRange {
-  width: 100%;
-  cursor: pointer;
-}
-
-#speedValue {
-  font-weight: 700;
-  color: var(--dark-green);
-}
-
-.checkboxes label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  color: var(--dark-green);
-  font-size: 0.9rem;
-}
-
-.logbox {
-  width: 100%;
-  height: 140px;
-  border: 2px solid var(--green);
-  border-radius: var(--border-radius);
-  padding: 8px;
-  font-family: monospace;
-  resize: vertical;
-  background: #f9fff9;
-  color: #004400;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  margin-top: auto; /* empurra o textarea para baixo da sidebar */
-}
-
-@media (max-width: 900px) {
-  #container {
-    width: 95%;
-    padding: 12px;
-  }
-  .canvas-wrap {
-    flex-direction: column;
-    align-items: center;
-  }
-  #grid-container {
-    flex: none;
-    width: 100%;
-  }
-  canvas#grid {
-    width: 320px !important;
-    height: 320px !important;
-  }
-  #sidebar {
-    flex: none;
-    width: 100%;
-    margin-top: 20px;
-  }
-  #buttons {
-    justify-content: flex-start;
+function initGrid() {
+  grid = [];
+  for (let r = 0; r < rows; r++) {
+    grid[r] = [];
+    for (let c = 0; c < cols; c++) {
+      grid[r][c] = false; // célula apagada
+    }
   }
 }
+
+function drawGrid() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // desenha linhas da grade
+  ctx.strokeStyle = '#008000';
+  ctx.lineWidth = 2;
+
+  for (let r = 0; r <= rows; r++) {
+    ctx.beginPath();
+    ctx.moveTo(0, r * cellSize);
+    ctx.lineTo(canvas.width, r * cellSize);
+    ctx.stroke();
+  }
+  for (let c = 0; c <= cols; c++) {
+    ctx.beginPath();
+    ctx.moveTo(c * cellSize, 0);
+    ctx.lineTo(c * cellSize, canvas.height);
+    ctx.stroke();
+  }
+
+  // preenche células acesas
+  ctx.fillStyle = '#006400';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c]) {
+        ctx.fillRect(c * cellSize + 2, r * cellSize + 2, cellSize - 3, cellSize - 3);
+      }
+    }
+  }
+}
+
+function toggleCell(r, c) {
+  grid[r][c] = !grid[r][c];
+  drawGrid();
+}
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  const col = Math.floor(x / cellSize);
+  const row = Math.floor(y / cellSize);
+
+  if (row >= 0 && row < rows && col >= 0 && col < cols) {
+    toggleCell(row, col);
+    log(`Célula [${row + 1}, ${col + 1}] ${grid[row][col] ? 'ativa' : 'desativada'}`);
+  }
+});
+
+function getSelectedMode() {
+  for (const radio of modeRadios) {
+    if (radio.checked) return radio.value;
+  }
+  return 'sequential';
+}
+
+function log(msg) {
+  const timestamp = new Date().toLocaleTimeString();
+  logBox.textContent += `[${timestamp}] ${msg}\n`;
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+function stepSequential() {
+  // Pisca a célula da etapa atual
+  // No modo sequencial, vamos deixar a célula "acesa" após piscar
+  // Se 'atribuir estado aleatório' estiver ativo, definimos o estado da célula aleatoriamente
+  const r = Math.floor(currentStep / cols);
+  const c = currentStep % cols;
+
+  if (alternateCheckbox.checked) {
+    // Apaga todas células menos a atual, para efeito de "piscar"
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        grid[i][j] = false;
+      }
+    }
+  }
+
+  if (randomStateCheckbox.checked) {
+    grid[r][c] = Math.random() < 0.5; // 50% chance ligada/desligada
+  } else {
+    grid[r][c] = true;
+  }
+
+  drawGrid();
+  log(`Sequencial passo ${currentStep + 1} — célula [${r + 1}, ${c + 1}] ${grid[r][c] ? 'ativa' : 'desativada'}`);
+
+  currentStep++;
+  if (currentStep >= rows * cols) {
+    currentStep = 0;
+  }
+}
+
+function stepRandom() {
+  // Escolhe uma célula aleatória
+  const r = Math.floor(Math.random() * rows);
+  const c = Math.floor(Math.random() * cols);
+
+  // Se randomStateCheckbox estiver marcado, atribui estado aleatório
+  if (randomStateCheckbox.checked) {
+    grid[r][c] = Math.random() < 0.5;
+  } else {
+    grid[r][c] = true;
+  }
+
+  drawGrid();
+  log(`Random — célula [${r + 1}, ${c + 1}] ${grid[r][c] ? 'ativa' : 'desativada'}`);
+}
+
+function start() {
+  if (running) return;
+
+  running = true;
+  currentStep = 0;
+
+  const mode = getSelectedMode();
+  const delay = parseInt(speedRange.value, 10);
+
+  if (mode === 'sequential') {
+    intervalId = setInterval(stepSequential, delay);
+  } else if (mode === 'random') {
+    intervalId = setInterval(stepRandom, delay);
+  }
+
+  log('Execução iniciada');
+}
+
+function stop() {
+  if (!running) return;
+
+  clearInterval(intervalId);
+  running = false;
+  log('Execução parada');
+}
+
+function clearGrid() {
+  stop();
+  initGrid();
+  drawGrid();
+  log('Grade limpa');
+}
+
+function fillRandom() {
+  stop();
+  initGrid();
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      grid[r][c] = Math.random() < 0.5;
+    }
+  }
+  drawGrid();
+  log('Grade preenchida aleatoriamente');
+}
+
+// Atualiza valor de velocidade visível
+speedRange.addEventListener('input', () => {
+  speedValue.textContent = speedRange.value + ' ms';
+
+  if (running) {
+    stop();
+    start();
+  }
+});
+
+// Botões
+btnStart.addEventListener('click', () => {
+  start();
+});
+
+btnStop.addEventListener('click', () => {
+  stop();
+});
+
+btnClear.addEventListener('click', () => {
+  clearGrid();
+});
+
+btnRandom.addEventListener('click', () => {
+  fillRandom();
+});
+
+// Inicialização
+initGrid();
+drawGrid();
+log('Sistema inicializado');
