@@ -1,260 +1,141 @@
-(async function () {
-  const canvas = document.getElementById('grid');
-  const ctx = canvas.getContext('2d', { alpha: false });
-
-  const privateKeysBox = document.getElementById('privateKeysBox');
-  const wifBox = document.getElementById('wifBox');
-  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-
-  const GRID = 16;
-  const CELL = canvas.width / GRID;
-  const rowsToWatch = { start: 8, end: 15 }; // Linhas 9 a 16 (0-based)
-  const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
-  let grid = [];
-  let animationInterval = null;
-  let bitCounter = new Uint8Array(32); // 256 bits
-
-  // Inicializa grade com tudo desligado
-  function initGrid() {
-    grid = Array.from({ length: GRID }, () => Array(GRID).fill(false));
-  }
-
-  // Desenha a grade
-  function drawGrid() {
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    for (let r = 0; r < GRID; r++) {
-      for (let c = 0; c < GRID; c++) {
-        const x = c * CELL;
-        const y = r * CELL;
-        ctx.fillStyle = grid[r][c] ? '#006400' : '#ffffff';
-        ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
-        ctx.strokeStyle = '#008000';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x + 0.5, y + 0.5, CELL - 1, CELL - 1);
-      }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Grade 16×16 — Private HEX + WIF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background: #f9f9f9;
+      color: #222;
     }
-  }
-
-  // Aplica os bits do contador de 256 bits na grade (linhas 9–16)
-  function applyCounterToGrid(counter) {
-    const bits = Array.from(counter).flatMap(byte =>
-      byte.toString(2).padStart(8, '0').split('').map(b => b === '1')
-    );
-
-    let bitIndex = 0;
-    for (let r = rowsToWatch.start; r <= rowsToWatch.end; r++) {
-      for (let c = 0; c < GRID; c++) {
-        grid[r][c] = bits[bitIndex++];
-      }
+    h1 {
+      font-size: 1.4em;
     }
-  }
-
-  // Incrementa o contador de 256 bits
-  function incrementCounter(counter) {
-    for (let i = 31; i >= 0; i--) {
-      counter[i]++;
-      if (counter[i] !== 0) break; // Para quando não houver overflow
+    .section {
+      display: block;
+      margin: 12px 0 4px;
+      font-weight: bold;
     }
-  }
-
-  // Extrai os bits da grade
-  function bitsFromGrid() {
-    return grid
-      .slice(rowsToWatch.start, rowsToWatch.end + 1)
-      .flat()
-      .map(bit => (bit ? '1' : '0'))
-      .join('');
-  }
-
-  // Converte bits em hexadecimal
-  function hexFromBits(bits) {
-    const hexArray = bits.match(/.{1,4}/g).map(b => parseInt(b, 2).toString(16));
-    return hexArray.join('').padStart(64, '0');
-  }
-
-  // HEX para bytes
-  function hexToBytes(hex) {
-    return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
-  }
-
-  // Concatena múltiplos Uint8Arrays
-  function concatBytes(...arrays) {
-    return Uint8Array.from(arrays.flatMap(arr => [...arr]));
-  }
-
-  // SHA-256
-  async function sha256(buffer) {
-    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-    return new Uint8Array(hashBuffer);
-  }
-
-  // Double SHA-256
-  async function doubleSha256(buffer) {
-    const first = await sha256(buffer);
-    return await sha256(first);
-  }
-
-  // Bytes para Base58
-  function bytesToBase58(bytes) {
-    let leadingZeros = 0;
-    while (leadingZeros < bytes.length && bytes[leadingZeros] === 0) {
-      leadingZeros++;
+    .small {
+      font-size: 0.9em;
+      color: #444;
     }
-
-    let n = 0n;
-    for (let i = leadingZeros; i < bytes.length; i++) {
-      n = (n << 8n) | BigInt(bytes[i]);
+    .canvas-wrap {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
-
-    let result = '';
-    while (n > 0n) {
-      const rem = n % 58n;
-      n = n / 58n;
-      result = BASE58[Number(rem)] + result;
+    canvas {
+      border: 1px solid #008000;
     }
-
-    return '1'.repeat(leadingZeros) + result;
-  }
-
-  // Valida a chave privada
-  function isValidPrivateKey(hex) {
-    const n = BigInt('0x' + hex);
-    const max = BigInt('0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141');
-    return n > 0n && n < max;
-  }
-
-  // Gera WIF a partir de HEX
-  async function privateKeyToWIF(hex, compressed = true) {
-    const key = hexToBytes(hex);
-    const prefix = Uint8Array.of(0x80);
-    const suffix = compressed ? Uint8Array.of(0x01) : new Uint8Array([]);
-    const payload = concatBytes(prefix, key, suffix);
-    const checksum = (await doubleSha256(payload)).slice(0, 4);
-    const full = concatBytes(payload, checksum);
-    return bytesToBase58(full);
-  }
-
-  // Atualiza as caixas de saída (HEX + WIF)
-  async function updateOutputs() {
-    const bits = bitsFromGrid();
-    const hex = hexFromBits(bits);
-
-    if (!isValidPrivateKey(hex)) {
-      privateKeysBox.value += '[chave inválida]\n';
-      wifBox.value += '[inválido]\n';
-      wifBoxUncompressed.value += '[inválido]\n';
-      return;
+    .btn {
+      padding: 6px 12px;
+      margin: 4px 4px 0 0;
+      border: none;
+      background: #006400;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
     }
-
-    privateKeysBox.value += hex + '\n';
-    privateKeysBox.scrollTop = privateKeysBox.scrollHeight;
-
-    const wifCompressed = await privateKeyToWIF(hex, true);
-    wifBox.value += wifCompressed + '\n';
-    wifBox.scrollTop = wifBox.scrollHeight;
-
-    const wifUncompressed = await privateKeyToWIF(hex, false);
-    wifBoxUncompressed.value += wifUncompressed + '\n';
-    wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
-  }
-
-  // Modo sequencial: percorre todas as combinações possíveis
-  function stepSequential() {
-    incrementCounter(bitCounter);
-    applyCounterToGrid(bitCounter);
-  }
-
-  // Modo aleatório: alterna célula aleatória nas linhas 9–16
-  function stepRandom() {
-    const r = Math.floor(Math.random() * (rowsToWatch.end - rowsToWatch.start + 1)) + rowsToWatch.start;
-    const c = Math.floor(Math.random() * GRID);
-    const randomize = document.getElementById('randomizeStatesOnStep').checked;
-    grid[r][c] = randomize ? Math.random() < 0.5 : true;
-  }
-
-  // Passo geral
-  async function step() {
-    const mode = document.querySelector('input[name="mode"]:checked').value;
-
-    if (mode === 'sequential') {
-      stepSequential();
-    } else {
-      stepRandom();
+    .btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
     }
-
-    drawGrid();
-    await updateOutputs();
-  }
-
-  // Eventos dos botões
-  document.getElementById('startBtn').addEventListener('click', () => {
-    if (animationInterval) return;
-
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('stopBtn').disabled = false;
-
-    animationInterval = setInterval(step, parseInt(document.getElementById('speed').value, 10));
-  });
-
-  document.getElementById('stopBtn').addEventListener('click', () => {
-    clearInterval(animationInterval);
-    animationInterval = null;
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = true;
-  });
-
-  document.getElementById('clearBtn').addEventListener('click', () => {
-    initGrid();
-    drawGrid();
-    privateKeysBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
-    bitCounter = new Uint8Array(32); // Reinicia contador
-  });
-
-  document.getElementById('randBtn').addEventListener('click', () => {
-    for (let r = 0; r < GRID; r++) {
-      for (let c = 0; c < GRID; c++) {
-        grid[r][c] = Math.random() < 0.5;
-      }
+    .logbox {
+      width: 100%;
+      height: 120px;
+      padding: 6px;
+      box-sizing: border-box;
+      font-family: monospace;
+      background: #fff;
+      border: 1px solid #ccc;
+      margin-top: 6px;
+      border-radius: 4px;
+      resize: vertical;
     }
-    drawGrid();
-    updateOutputs();
-  });
-
-  document.getElementById('speed').addEventListener('input', () => {
-    const speed = document.getElementById('speed').value;
-    document.getElementById('speedLabel').textContent = speed;
-    if (animationInterval) {
-      clearInterval(animationInterval);
-      animationInterval = setInterval(step, parseInt(speed, 10));
+    .legend {
+      margin-top: 4px;
+      font-size: 0.85em;
+      color: #555;
     }
-  });
-
-  canvas.addEventListener('click', e => {
-    const toggleOnClick = document.getElementById('toggleOnClick');
-    if (!toggleOnClick.checked) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const c = Math.floor(x / CELL);
-    const r = Math.floor(y / CELL);
-
-    if (r >= 0 && r < GRID && c >= 0 && c < GRID) {
-      grid[r][c] = !grid[r][c];
-      drawGrid();
-
-      if (r >= rowsToWatch.start && r <= rowsToWatch.end) {
-        updateOutputs();
-      }
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #888;
     }
-  });
+  </style>
+</head>
+<body>
+  <h1>Grade 16×16 — Private HEX & WIF (não comprimido)</h1>
 
-  // Inicialização
-  initGrid();
-  drawGrid();
-})();
+  <label class="section">Descrição</label>
+  <textarea rows="3" readonly style="width:100%; box-sizing:border-box; border:2px solid #008000; border-radius:6px; padding:8px; background:#fff;">
+Somente alterações nas linhas 9 a 16 (1-based) afetam a geração da chave privada (256 bits). Cada modificação gera uma linha HEX e um WIF (comprimido e não comprimido).
+  </textarea>
+
+  <div class="canvas-wrap">
+    <div>
+      <label class="section">Grade (clique para alternar célula)</label>
+      <canvas id="grid" width="512" height="512" style="width:512px; height:512px;"></canvas>
+      <div class="legend">Linha 1 ↑ — Linha 16 ↓</div>
+
+      <div class="controls" style="margin-top:12px;">
+        <button class="btn" id="startBtn">Iniciar</button>
+        <button class="btn" id="stopBtn" disabled>Parar</button>
+        <button class="btn" id="clearBtn">Limpar</button>
+        <button class="btn" id="randBtn">Aleatório</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label class="small">Modo:</label>
+        <label><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
+        <label style="margin-left:8px;"><input type="radio" name="mode" value="random"> Random</label>
+
+        <div style="margin-top:8px;">
+          <div class="small" style="margin-bottom:4px;">Velocidade (ms por passo):</div>
+          <input id="speed" type="range" min="20" max="500" value="120">
+          <div class="small">Valor atual: <span id="speedLabel">120</span> ms</div>
+        </div>
+
+        <div style="margin-top:6px;">
+          <label><input type="checkbox" id="toggleOnClick" checked> Alternar célula ao clicar</label><br>
+          <label><input type="checkbox" id="randomizeStatesOnStep" checked> Atribuir estado aleatório a cada passo</label>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:420px;">
+      <label class="section">Opções & Observações</label>
+      <ul style="margin:6px 0 0 18px; padding:0;" class="small">
+        <li>Linhas 9 a 16 geram os bits da chave (128 células = 256 bits).</li>
+        <li>Modo sequencial percorre todas as combinações possíveis.</li>
+        <li>Modo aleatório ativa bits aleatórios nas linhas 9 a 16.</li>
+        <li>Chaves inválidas (como tudo zero) são descartadas.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="logs">
+    <label class="section">Private Keys (HEX)</label>
+    <textarea id="privateKeysBox" class="logbox" readonly placeholder="As chaves privadas HEX aparecerão aqui..."></textarea>
+
+    <label class="section">WIFs (comprimido)</label>
+    <textarea id="wifBox" class="logbox" readonly placeholder="Os WIFs comprimidos aparecerão aqui..."></textarea>
+
+    <label class="section">WIFs (não comprimido)</label>
+    <textarea id="wifBoxUncompressed" class="logbox" readonly placeholder="Os WIFs não comprimidos aparecerão aqui..."></textarea>
+  </div>
+
+  <footer>
+    (c) Exemplo — grade 16×16 com geração de chaves privadas Bitcoin
+  </footer>
+
+  <script src="js/auto16.js"></script>
+</body>
+</html>
