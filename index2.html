@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerador de Private Keys Bitcoin — CanalQb</title>
-  <link rel="stylesheet" href="css/styles.css">
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Estilos principais -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -23,90 +24,97 @@
     </div>
   </nav>
 
-  <!-- Conteúdo principal -->
-  <main class="container my-4">
+  <!-- Container principal -->
+  <div id="container">
+    <header>
+      <h1>Gerador de Private Keys Bitcoin</h1>
+    </header>
 
-    <h1 class="text-center mb-2 text-success">Gerador de Private Keys Bitcoin</h1>
-    <p class="text-center text-muted mb-4">
-      Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF.
-    </p>
+    <main>
+      <section class="content w-100">
 
-    <!-- Descrição -->
-    <section class="mb-4">
-      <h5 class="text-success">Descrição do Funcionamento</h5>
-      <p class="text-secondary">
-        Este gerador utiliza uma matriz de 16×16 (Grade) para gerar combinações de bits
-        que formam chaves privadas Bitcoin válidas. Você pode alternar entre modos de geração
-        sequencial ou aleatória, e visualizar as chaves em formato HEX e WIF.
-      </p>
-    </section>
+        <p class="text-center text-muted mb-4">
+          Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF.
+        </p>
 
-    <!-- Canvas -->
-    <div class="text-center mb-4">
-      <h6 class="text-success mb-2">Grade (clique para alternar célula)</h6>
-      <canvas id="grid" width="512" height="512"></canvas>
-    </div>
+        <!-- Descrição -->
+        <section class="mb-4">
+          <h5 class="text-success">Descrição do Funcionamento</h5>
+          <p class="text-secondary">
+            Este gerador utiliza uma matriz de 16×16 (Grade) para gerar combinações de bits
+            que formam chaves privadas Bitcoin válidas. Você pode alternar entre modos de geração
+            sequencial ou aleatória, e visualizar as chaves em formato HEX e WIF.
+          </p>
+        </section>
 
-    <!-- Controles -->
-    <div class="text-center mb-4">
-      <button id="startBtn" class="btn btn-success me-2">Iniciar</button>
-      <button id="stopBtn" class="btn btn-danger me-2" disabled>Parar</button>
-      <button id="clearBtn" class="btn btn-secondary me-2">Limpar</button>
-      <button id="randBtn" class="btn btn-outline-success">Aleatorizar</button>
+        <!-- Grade -->
+        <div class="text-center mb-4">
+          <h6 class="text-success mb-2">Grade (clique para alternar célula)</h6>
+          <canvas id="grid" width="512" height="512"></canvas>
+        </div>
 
-      <div class="mt-3">
-        <label for="speed" class="form-label">Velocidade: <span id="speedLabel">500</span> ms</label>
-        <input type="range" class="form-range" id="speed" min="50" max="1000" step="50" value="500">
-      </div>
+        <!-- Controles -->
+        <div class="controls text-center mb-4">
+          <button id="startBtn" class="btn">Iniciar</button>
+          <button id="stopBtn" class="btn" disabled>Parar</button>
+          <button id="clearBtn" class="btn">Limpar</button>
+          <button id="randBtn" class="btn">Aleatorizar</button>
 
-      <div class="mt-3">
-        <label class="form-check-label me-2">Modo:</label>
-        <input type="radio" name="mode" value="sequential" id="modeSequential" checked>
-        <label for="modeSequential" class="me-3">Sequencial</label>
-        <input type="radio" name="mode" value="random" id="modeRandom">
-        <label for="modeRandom">Aleatório</label>
-      </div>
+          <div class="mt-3">
+            <label for="speed">Velocidade: <span id="speedLabel">500</span> ms</label>
+            <input type="range" id="speed" min="50" max="1000" step="50" value="500">
+          </div>
 
-      <div class="form-check form-switch mt-3 d-inline-block">
-        <input class="form-check-input" type="checkbox" id="toggleOnClick" checked>
-        <label class="form-check-label" for="toggleOnClick">Clique alterna célula</label>
-      </div>
+          <div class="mt-3">
+            <label><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
+            <label class="ms-3"><input type="radio" name="mode" value="random"> Aleatório</label>
+          </div>
 
-      <div class="form-check form-switch mt-3 d-inline-block">
-        <input class="form-check-input" type="checkbox" id="randomizeStatesOnStep">
-        <label class="form-check-label" for="randomizeStatesOnStep">Aleatorizar no passo</label>
-      </div>
-    </div>
+          <div class="form-check form-switch mt-3 d-inline-block">
+            <input class="form-check-input" type="checkbox" id="toggleOnClick" checked>
+            <label class="form-check-label" for="toggleOnClick">Clique alterna célula</label>
+          </div>
 
-    <!-- Saídas -->
-    <div class="row mb-4">
-      <div class="col-md-6 mb-3">
-        <label class="section-label">WIF (Comprimido)</label>
-        <textarea id="wifBox" class="logbox" readonly></textarea>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label class="section-label">WIF (Não Comprimido)</label>
-        <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
-      </div>
-    </div>
+          <div class="form-check form-switch mt-3 d-inline-block">
+            <input class="form-check-input" type="checkbox" id="randomizeStatesOnStep">
+            <label class="form-check-label" for="randomizeStatesOnStep">Aleatorizar no passo</label>
+          </div>
+        </div>
 
-    <!-- Log oculto -->
-    <textarea id="privateKeysBox" readonly></textarea>
-  </main>
+        <!-- Saídas -->
+        <div class="logs">
+          <div>
+            <label for="wifBox" class="section-label">WIF (Comprimido)</label>
+            <textarea id="wifBox" class="logbox" readonly></textarea>
+          </div>
+          <div>
+            <label for="wifBoxUncompressed" class="section-label">WIF (Não Comprimido)</label>
+            <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
+          </div>
+        </div>
 
-  <!-- Rodapé -->
-  <footer class="text-center py-3">
-    <small>
-      © CanalQb <a href="http://canalqb.blogspot.com/" class="text-success text-decoration-none">http://canalqb.blogspot.com/</a> —
-      Rodrigo Carlos Moraes<br>
+        <!-- Log oculto -->
+        <textarea id="privateKeysBox" style="display:none;"></textarea>
+      </section>
+
+      <!-- Sidebar (Publicidade) -->
+      <aside class="sidebar">
+        <h6 class="text-success">Publicidade</h6>
+        <div class="border rounded p-3 text-center bg-light">[ Espaço para anúncio 300×250 ]</div>
+      </aside>
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+      © CanalQb <a href="http://canalqb.blogspot.com/">http://canalqb.blogspot.com/</a> — Rodrigo Carlos Moraes<br>
       Gerador de private keys para o puzzle 1000 bitcoins
-    </small>
-  </footer>
+    </footer>
+  </div>
 
   <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Script -->
+  <!-- Script principal -->
   <script src="js/auto16.js"></script>
 </body>
 </html>
