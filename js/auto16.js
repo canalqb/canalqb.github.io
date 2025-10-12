@@ -267,9 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const wif = await privateKeyToWIF(hex, true);
     const wifU = await privateKeyToWIF(hex, false);
 
-    appendLineAndFocus(hexBox, hex, { selectLine: true });
-    appendLineAndFocus(wifBox, wif);
-    appendLineAndFocus(wifBoxUncompressed, wifU);
+    appendLineAndFocus(hexBox, hex, { selectLine: true, smooth: true });
+    appendLineAndFocus(wifBox, wif, { selectLine: true, smooth: true });
+    appendLineAndFocus(wifBoxUncompressed, wifU, { selectLine: true, smooth: true });
+
 
   }
 
