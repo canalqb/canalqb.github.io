@@ -1,123 +1,724 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Gerador de Private Keys Bitcoin — CanalQb</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
 
-  <!-- CSS customizado -->
-  <link href="css/styles.css" rel="stylesheet" />
+    .navbar {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+    }
 
-  <!-- Google AdSense (substitua ca-pub e configure no painel) -->
-  <script async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-    data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"></script>
+    .container-main {
+      margin: 2rem auto;
+      max-width: 1000px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #2d3748;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Canvas com precisão corrigida */
+    .canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    #grid {
+      border: 3px solid #2d3748;
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: block;
+      /* Tamanho fixo para melhor precisão */
+      width: 512px;
+      height: 512px;
+      touch-action: none;
+    }
+
+    .range-indicator {
+      text-align: center;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      border-radius: 8px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .range-indicator span {
+      color: #667eea;
+      font-size: 1.1rem;
+    }
+
+    .control-section {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #4a5568;
+      margin-bottom: 1rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .range-btn {
+      padding: 8px 4px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #4a5568;
+    }
+
+    .range-btn:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    .range-btn.active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-color: #667eea;
+    }
+
+    .main-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    .btn-custom {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #48bb78, #38a169);
+      color: white;
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+    }
+
+    .btn-start:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(72, 187, 120, 0.5);
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, #f56565, #e53e3e);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
+    }
+
+    .btn-stop:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 101, 101, 0.5);
+    }
+
+    .btn-clear, .btn-random {
+      background: white;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-clear:hover, .btn-random:hover {
+      border-color: #667eea;
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .btn-custom:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .speed-control input[type="range"] {
+      width: 200px;
+      height: 6px;
+      border-radius: 3px;
+      background: #e2e8f0;
+      outline: none;
+    }
+
+    .speed-control input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .option-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      color: #2d3748;
+    }
+
+    .option-label input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .output-section {
+      margin: 2rem 0;
+    }
+
+    .output-label {
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .output-box {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      resize: vertical;
+      background: #f7fafc;
+      color: #2d3748;
+      transition: all 0.3s ease;
+    }
+
+    .output-box:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: #718096;
+      font-size: 0.9rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      #grid {
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        aspect-ratio: 1;
+      }
+
+      .button-grid {
+        grid-template-columns: repeat(8, 1fr);
+      }
+
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
+  <nav class="navbar navbar-expand-lg shadow-sm">
     <div class="container">
-      <a class="navbar-brand fw-bold text-success" href="http://canalqb.blogspot.com/">CanalQb</a>
-      <div class="ms-auto d-flex gap-3 align-items-center">
-        <div class="text-muted small">Publicidade</div>
-        <div class="bg-light border rounded px-3 py-1 small">[ Anúncio 728x90 ]</div>
-      </div>
+      <a class="navbar-brand fw-bold" style="color: #667eea;" href="http://canalqb.blogspot.com/">
+        🔐 CanalQb
+      </a>
     </div>
   </nav>
 
-  <div class="container container-main bg-white p-4 shadow-sm rounded">
+  <div class="container-main p-4">
     <header>
-      <h1 class="h4">Gerador de Private Keys Bitcoin</h1>
+      <h1>Gerador de Private Keys Bitcoin</h1>
+      <p class="subtitle">Ferramenta interativa para geração de chaves privadas usando matriz 16×16</p>
     </header>
 
-    <main class="mt-3">
-      <p class="text-muted">Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF usando uma matriz 16×16.</p>
-
-      <div class="text-center mb-3">
-        <h6 class="text-success mb-2">Grade (clique para alternar célula)</h6>
+    <main>
+      <div class="canvas-wrapper">
         <canvas id="grid" width="512" height="512"></canvas>
-        <div class="row-indicator mt-2">
-          Altura ativa: <span id="activeHeightLabel">16</span> (clique nos botões abaixo)
+      </div>
+
+      <div class="range-indicator">
+        Faixa ativa: Linha <span id="activeRangeLabel">1 até 16</span>
+      </div>
+
+      <div class="control-section">
+        <div class="section-title">🎯 Selecionar Altura (Linha Inicial)</div>
+        <div id="heightButtons" class="button-grid"></div>
+
+        <div class="section-title mt-3">📍 Selecionar Base (Linha Final)</div>
+        <div id="baseButtons" class="button-grid"></div>
+      </div>
+
+      <div class="main-controls">
+        <button id="startBtn" class="btn-custom btn-start">▶ Iniciar</button>
+        <button id="stopBtn" class="btn-custom btn-stop" disabled>⏸ Parar</button>
+        <button id="clearBtn" class="btn-custom btn-clear">🗑 Limpar</button>
+        <button id="randBtn" class="btn-custom btn-random">🎲 Aleatorizar</button>
+      </div>
+
+      <div class="control-section">
+        <div class="speed-control">
+          <label for="speed" style="font-weight: 600;">⚡ Velocidade:</label>
+          <input type="range" id="speed" min="50" max="2000" step="50" value="500">
+          <span id="speedLabel" style="font-weight: 700; color: #667eea;">500 ms</span>
+        </div>
+
+        <div class="options-grid">
+          <div class="option-card">
+            <label class="option-label">
+              <input type="radio" name="mode" value="sequential" checked>
+              <span>📊 Sequencial</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="radio" name="mode" value="random">
+              <span>🎰 Aleatório</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="checkbox" id="toggleOnClick" checked>
+              <span>👆 Clique alterna célula</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="checkbox" id="randomizeStatesOnStep">
+              <span>🔄 Aleatorizar no passo</span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <div class="text-center mb-3">
-        <div class="d-inline-block p-3 border rounded bg-light">
-          <div class="mb-2 small fw-bold">Selecionar Altura (linha superior da área ativa):</div>
-          <div id="heightButtons" class="height-panel mb-3"></div>
-
-          <div class="mb-2 small fw-bold">Selecionar Base (linha inferior da área ativa):</div>
-          <div id="baseButtons" class="height-panel"></div>
+      <div class="output-section">
+        <div class="mb-3">
+          <label class="output-label">🔑 Private Key HEX (64 caracteres)</label>
+          <textarea id="hexBox" class="output-box" readonly></textarea>
         </div>
-      </div>
-
-      <div class="controls text-center mb-3">
-        <button id="startBtn" class="btn btn-success">Iniciar</button>
-        <button id="stopBtn" class="btn btn-danger" disabled>Parar</button>
-        <button id="clearBtn" class="btn btn-secondary">Limpar</button>
-        <button id="randBtn" class="btn btn-outline-secondary">Aleatorizar</button>
-
-        <div class="mt-3">
-          <label for="speed">Velocidade: <span id="speedLabel">500</span> ms</label>
-          <input type="range" id="speed" min="50" max="2000" step="50" value="500" />
+        <div class="mb-3">
+          <label class="output-label">💼 WIF Comprimido</label>
+          <textarea id="wifBox" class="output-box" readonly></textarea>
         </div>
-
-        <div class="mt-3">
-          <label class="me-3"><input type="radio" name="mode" value="sequential" checked /> Sequencial</label>
-          <label><input type="radio" name="mode" value="random" /> Aleatório</label>
-        </div>
-
-        <div class="form-check form-switch mt-3 d-inline-block ms-3">
-          <input class="form-check-input" type="checkbox" id="toggleOnClick" checked />
-          <label class="form-check-label" for="toggleOnClick">Clique alterna célula</label>
-        </div>
-
-        <div class="form-check form-switch mt-3 d-inline-block ms-3">
-          <input class="form-check-input" type="checkbox" id="randomizeStatesOnStep" />
-          <label class="form-check-label" for="randomizeStatesOnStep">Aleatorizar no passo</label>
-        </div>
-      </div>
-
-      <div class="logs">
-        <div class="mb-2">
-          <label for="hexBox" class="section-label">Private Key HEX (32 bytes / 64 hex chars)</label>
-          <textarea id="hexBox" class="logbox" readonly></textarea>
-        </div>
-        <div class="mb-2">
-          <label for="wifBox" class="section-label">WIF (Comprimido)</label>
-          <textarea id="wifBox" class="logbox" readonly></textarea>
-        </div>
-        <div class="mb-2">
-          <label for="wifBoxUncompressed" class="section-label">WIF (Não Comprimido)</label>
-          <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
+        <div class="mb-3">
+          <label class="output-label">📦 WIF Não Comprimido</label>
+          <textarea id="wifBoxUncompressed" class="output-box" readonly></textarea>
         </div>
       </div>
     </main>
 
-    <footer class="mt-3 text-center">
-      © CanalQb — Rodrigo Carlos Moraes — Gerador de private keys para o puzzle 1000 bitcoins
+    <footer>
+      © 2025 CanalQb — Rodrigo Carlos Moraes<br>
+      Gerador de private keys Bitcoin - Puzzle 1000 BTC
     </footer>
   </div>
 
-  <!-- Anúncio Flutuante Google AdSense -->
-  <div id="myFloatingAd" class="ad-floating" aria-label="Anúncio flutuante Google AdSense" role="region">
-    <button class="close-btn" aria-label="Fechar anúncio" id="closeAdBtn">✕</button>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const SIZE = 16;
+      const canvas = document.getElementById('grid');
+      const ctx = canvas.getContext('2d');
 
-    <!-- bloco responsivo do AdSense (substitua data-ad-slot) -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-format="auto"
-         data-full-width-responsive="true"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="1234567890"></ins>
-  </div>
+      // Controles
+      const startBtn = document.getElementById('startBtn');
+      const stopBtn = document.getElementById('stopBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const randBtn = document.getElementById('randBtn');
+      const speedInput = document.getElementById('speed');
+      const speedLabel = document.getElementById('speedLabel');
+      const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
+      const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
+      const hexBox = document.getElementById('hexBox');
+      const wifBox = document.getElementById('wifBox');
+      const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
+      const heightButtonsDiv = document.getElementById('heightButtons');
+      const baseButtonsDiv = document.getElementById('baseButtons');
 
-  <!-- Seu JS da aplicação -->
-  <script src="js/auto16.js"></script>
+      let altura = 1;
+      let base = SIZE;
+      let gridState = new Array(SIZE * SIZE).fill(false);
+      let stateCounter = 0n;
+      let running = false;
+      let timeoutId = null;
 
-  <!-- Script do anúncio flutuante -->
-  <script src="js/adFloating.js"></script>
+      // Calcula tamanho da célula baseado nas dimensões REAIS do canvas
+      function getCellSize() {
+        return canvas.width / SIZE;
+      }
+
+      // Cria botões para altura e base
+      function createRangeButtons() {
+        heightButtonsDiv.innerHTML = '';
+        baseButtonsDiv.innerHTML = '';
+
+        for (let h = 1; h <= SIZE; h++) {
+          const btn = document.createElement('button');
+          btn.textContent = h;
+          btn.className = 'range-btn';
+          btn.dataset.h = h;
+          btn.addEventListener('click', () => {
+            if (running) return;
+            altura = h;
+            if (base < altura) base = altura;
+            updateRangeButtons();
+            drawGrid();
+          });
+          heightButtonsDiv.appendChild(btn);
+        }
+
+        for (let b = 1; b <= SIZE; b++) {
+          const btn = document.createElement('button');
+          btn.textContent = b;
+          btn.className = 'range-btn';
+          btn.dataset.b = b;
+          btn.addEventListener('click', () => {
+            if (running) return;
+            base = b;
+            if (base < altura) altura = base;
+            updateRangeButtons();
+            drawGrid();
+          });
+          baseButtonsDiv.appendChild(btn);
+        }
+
+        updateRangeButtons();
+      }
+
+      function updateRangeButtons() {
+        heightButtonsDiv.querySelectorAll('button').forEach(btn => {
+          const h = parseInt(btn.dataset.h, 10);
+          btn.classList.toggle('active', h === altura);
+        });
+
+        baseButtonsDiv.querySelectorAll('button').forEach(btn => {
+          const b = parseInt(btn.dataset.b, 10);
+          btn.classList.toggle('active', b === base);
+        });
+
+        document.getElementById('activeRangeLabel').textContent = `${altura} até ${base}`;
+      }
+
+      function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const CELL_SIZE = getCellSize();
+
+        // Desenha células
+        for (let y = 0; y < SIZE; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            const idx = y * SIZE + x;
+            ctx.fillStyle = gridState[idx] ? '#48bb78' : '#ffffff';
+            ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          }
+        }
+
+        // Destaca faixa ativa
+        ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+        const yStart = (altura - 1) * CELL_SIZE;
+        const heightPx = (base - altura + 1) * CELL_SIZE;
+        ctx.fillRect(0, yStart, SIZE * CELL_SIZE, heightPx);
+
+        // Borda da faixa ativa
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(0, yStart, SIZE * CELL_SIZE, heightPx);
+      }
+
+      function gridToHex() {
+        const bits = [];
+        for (let y = 0; y < SIZE; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            bits.push(gridState[y * SIZE + x] ? '1' : '0');
+          }
+        }
+        const bytes = [];
+        for (let i = 0; i < bits.length; i += 8) {
+          const byteStr = bits.slice(i, i + 8).join('');
+          bytes.push(parseInt(byteStr, 2));
+        }
+        return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      async function sha256(buf) {
+        const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+        return new Uint8Array(hashBuf);
+      }
+
+      const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+      function base58Encode(buffer) {
+        let intVal = 0n;
+        for (const b of buffer) {
+          intVal = (intVal << 8n) + BigInt(b);
+        }
+        let s = '';
+        while (intVal > 0n) {
+          const mod = intVal % 58n;
+          intVal /= 58n;
+          s = BASE58_ALPHABET[Number(mod)] + s;
+        }
+        for (const b of buffer) {
+          if (b === 0) s = '1' + s;
+          else break;
+        }
+        return s;
+      }
+
+      function hexStringToUint8Array(hex) {
+        const arr = new Uint8Array(hex.length / 2);
+        for (let i = 0; i < hex.length; i += 2) {
+          arr[i / 2] = parseInt(hex.substr(i, 2), 16);
+        }
+        return arr;
+      }
+
+      async function privateKeyToWIF(hexKey, compressed = true) {
+        const keyBytes = hexStringToUint8Array(hexKey);
+        let payload;
+        if (compressed) {
+          payload = new Uint8Array(1 + 32 + 1);
+          payload[0] = 0x80;
+          payload.set(keyBytes, 1);
+          payload[33] = 0x01;
+        } else {
+          payload = new Uint8Array(1 + 32);
+          payload[0] = 0x80;
+          payload.set(keyBytes, 1);
+        }
+        const h1 = await sha256(payload);
+        const h2 = await sha256(h1);
+        const checksum = h2.slice(0, 4);
+
+        const full = new Uint8Array(payload.length + 4);
+        full.set(payload, 0);
+        full.set(checksum, payload.length);
+
+        return base58Encode(full);
+      }
+
+      async function updateKeyOutputs() {
+        const hex = gridToHex();
+        const wifC = await privateKeyToWIF(hex, true);
+        const wifU = await privateKeyToWIF(hex, false);
+
+        hexBox.value += hex + '\n';
+        hexBox.scrollTop = hexBox.scrollHeight;
+        wifBox.value += wifC + '\n';
+        wifBox.scrollTop = wifBox.scrollHeight;
+        wifBoxUncompressed.value += wifU + '\n';
+        wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
+      }
+
+      function randomizeRange() {
+        for (let y = altura - 1; y <= base - 1; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            gridState[y * SIZE + x] = Math.random() < 0.5;
+          }
+        }
+        drawGrid();
+        updateKeyOutputs();
+      }
+
+      function clearAll() {
+        gridState.fill(false);
+        stateCounter = 0n;
+        drawGrid();
+        hexBox.value = '';
+        wifBox.value = '';
+        wifBoxUncompressed.value = '';
+      }
+
+      function getMaxCounter() {
+        const numRows = base - altura + 1;
+        return 1n << BigInt(numRows * SIZE);
+      }
+
+      function setGridFromCounter(cnt) {
+        const numRows = base - altura + 1;
+        const totalBits = numRows * SIZE;
+        for (let i = 0; i < totalBits; i++) {
+          const bit = (cnt >> BigInt(totalBits - 1 - i)) & 1n;
+          const rowOffset = Math.floor(i / SIZE);
+          const col = i % SIZE;
+          const y = (altura - 1) + rowOffset;
+          gridState[y * SIZE + col] = bit === 1n;
+        }
+        drawGrid();
+      }
+
+      function step() {
+        if (!running) return;
+
+        stateCounter++;
+
+        if (stateCounter >= getMaxCounter()) {
+          running = false;
+          clearTimeout(timeoutId);
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          return;
+        }
+
+        setGridFromCounter(stateCounter);
+
+        if (randomizeOnStepCheckbox.checked) {
+          randomizeRange();
+        } else {
+          drawGrid();
+          updateKeyOutputs();
+        }
+
+        timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
+      }
+
+      // CORREÇÃO DO CLIQUE - Agora com precisão perfeita
+      canvas.addEventListener('click', e => {
+        if (running) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const CELL_SIZE = getCellSize();
+        
+        // Calcula posição considerando o tamanho real do canvas na tela
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        const canvasX = (e.clientX - rect.left) * scaleX;
+        const canvasY = (e.clientY - rect.top) * scaleY;
+        
+        const x = Math.floor(canvasX / CELL_SIZE);
+        const y = Math.floor(canvasY / CELL_SIZE);
+
+        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
+
+        if (toggleOnClickCheckbox.checked) {
+          const idx = y * SIZE + x;
+          gridState[idx] = !gridState[idx];
+          drawGrid();
+          updateKeyOutputs();
+        }
+      });
+
+      // Inicialização
+      createRangeButtons();
+      drawGrid();
+
+      startBtn.addEventListener('click', () => {
+        if (running) return;
+        running = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        step();
+      });
+
+      stopBtn.addEventListener('click', () => {
+        running = false;
+        clearTimeout(timeoutId);
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      });
+
+      clearBtn.addEventListener('click', () => {
+        if (running) return;
+        clearAll();
+      });
+
+      randBtn.addEventListener('click', () => {
+        if (running) return;
+        randomizeRange();
+      });
+
+      speedInput.addEventListener('input', () => {
+        speedLabel.textContent = `${speedInput.value} ms`;
+      });
+    });
+  </script>
 </body>
 </html>
