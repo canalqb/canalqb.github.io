@@ -27,6 +27,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const hexBox = document.getElementById('hexBox');
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
+  // Adiciona linha ao textarea, foca e rola até ela
+  function appendLineAndFocus(ta, line, { selectLine = false, smooth = false } = {}) {
+    const newline = ta.value.length ? '\n' + line : line;
+    ta.value += newline;
+  
+    const lineEnd = ta.value.length;
+    const lineStart = lineEnd - line.length;
+  
+    ta.focus();
+    if (selectLine) {
+      ta.setSelectionRange(lineStart, lineEnd);
+    } else {
+      ta.setSelectionRange(lineEnd, lineEnd);
+    }
+  
+    if ('scrollTo' in ta && smooth) {
+      ta.scrollTo({ top: ta.scrollHeight, behavior: 'smooth' });
+    } else {
+      ta.scrollTop = ta.scrollHeight;
+    }
+  }
+
 
   const heightButtonsDiv = document.getElementById('heightButtons');
   const baseButtonsDiv = document.getElementById('baseButtons');
@@ -245,9 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const wif = await privateKeyToWIF(hex, true);
     const wifU = await privateKeyToWIF(hex, false);
 
-    hexBox.value += hex + '\n';
-    wifBox.value += wif + '\n';
-    wifBoxUncompressed.value += wifU + '\n';
+    appendLineAndFocus(hexBox, hex, { selectLine: true });
+    appendLineAndFocus(wifBox, wif);
+    appendLineAndFocus(wifBoxUncompressed, wifU);
+
   }
 
   // Limpa matriz e textareas
