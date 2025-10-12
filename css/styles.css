@@ -1,8 +1,6 @@
 /* =====================================================
    CanalQb - Gerador de Private Keys Bitcoin
-   Autor: Rodrigo Carlos Moraes
-   -----------------------------------------------------
-   Estilo moderno, limpo e responsivo (Bootstrap-like)
+   Estilo moderno, limpo e responsivo
    ===================================================== */
 
 :root {
@@ -78,16 +76,18 @@ nav.navbar a.navbar-brand:hover {
   color: var(--dark-green);
 }
 
-/* Canvas grid */
+/* Canvas grid (AGORA RESPONSIVO) */
 #grid {
   border: 2px solid var(--green);
   background: #fff;
   image-rendering: pixelated;
   cursor: pointer;
   display: block;
-  width: 512px;
-  height: 512px;
   margin: 0 auto 15px auto;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  max-width: 512px;
 }
 
 /* Indicador altura ativa */
@@ -227,19 +227,17 @@ footer a:hover {
   color: var(--dark-green);
 }
 
-/* Responsividade */
-@media (max-width: 900px) {
-  #grid {
-    width: 320px !important;
-    height: 320px !important;
-  }
-
-  .logs {
-    flex-direction: column;
-  }
-
+/* Responsividade extra */
+@media (max-width: 600px) {
   .container-main {
-    width: 95%;
     padding: 15px;
+  }
+
+  .controls {
+    gap: 8px;
+  }
+
+  .logbox {
+    height: 120px;
   }
 }
