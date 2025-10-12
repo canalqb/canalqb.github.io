@@ -27,15 +27,18 @@ h1 {
 #grid {
   width: 100%;
   max-width: 600px;
-  aspect-ratio: 1 / 1; /* deixa quadrado */
+  aspect-ratio: 1 / 1; /* mantém quadrado */
   border: 2px solid #333;
   background-color: #fff;
   display: block;
   margin: 10px auto 20px;
-  touch-action: manipulation; /* melhora toque em mobile */
+  touch-action: manipulation;
   cursor: pointer;
   user-select: none;
 }
+
+/* Remove qualquer definição fixa de width/height no canvas */
+
 
 /* Botões gerais */
 button {
