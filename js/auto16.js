@@ -288,3 +288,4 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCopyAndSaveButtons('wifBox', 'WIF Comprimido');
   setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Comprimido');
 });
+ 
