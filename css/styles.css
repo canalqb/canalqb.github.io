@@ -296,6 +296,11 @@ h1 {
   animation: slideIn 0.5s ease-out;
 }
 
+textarea[readonly] {
+  user-select: none;  /* evita seleção do texto */
+  pointer-events: none; /* bloqueia clique e foco */
+}
+
 @keyframes slideIn {
   from {
     transform: translateX(400px);
