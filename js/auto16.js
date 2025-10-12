@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
   // Adiciona linha ao textarea, foca e rola até ela
-  function appendLineAndFocus(ta, line, { selectLine = false, smooth = false } = {}) {
+  function appendLineAndFocus(ta, line, { selectLine = false, smooth = false } = {}) { 
     const newline = ta.value.length ? '\n' + line : line;
     ta.value += newline;
   
@@ -36,18 +36,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineStart = lineEnd - line.length;
   
     ta.focus();
+  
     if (selectLine) {
       ta.setSelectionRange(lineStart, lineEnd);
     } else {
       ta.setSelectionRange(lineEnd, lineEnd);
     }
   
-    if ('scrollTo' in ta && smooth) {
-      ta.scrollTo({ top: ta.scrollHeight, behavior: 'smooth' });
-    } else {
-      ta.scrollTop = ta.scrollHeight;
-    }
+    // Garante scroll para a nova linha adicionada
+    requestAnimationFrame(() => {
+      if (smooth && 'scrollTo' in ta) {
+        ta.scrollTo({ top: ta.scrollHeight, behavior: 'smooth' });
+      } else {
+        ta.scrollTop = ta.scrollHeight;
+      }
+    });
   }
+
 
 
   const heightButtonsDiv = document.getElementById('heightButtons');
