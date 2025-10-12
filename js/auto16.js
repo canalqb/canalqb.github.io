@@ -305,13 +305,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Clique livre em qualquer célula para alterar bit (independente da faixa)
   canvas.addEventListener('click', e => {
-    if (running) return;
+    if (running) return; // evita clique durante execução
+  
     const rect = canvas.getBoundingClientRect();
     const CELL_SIZE = getCellSize();
     const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
     const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
-
+  
     if (toggleOnClickCheckbox.checked) {
       const idx = y * SIZE + x;
       gridState[idx] = !gridState[idx];
@@ -319,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateKeyOutputs();
     }
   });
+
 
   startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
