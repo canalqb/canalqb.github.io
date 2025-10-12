@@ -34,6 +34,34 @@ document.addEventListener('DOMContentLoaded', () => {
   function getCellSize() {
     return canvas.width / SIZE;
   }
+  
+  function copyText(id) {
+    const textArea = document.getElementById(id);
+    textArea.select();
+    textArea.setSelectionRange(0, 99999); // para dispositivos móveis
+  
+    try {
+      document.execCommand('copy');
+      alert('Texto copiado!');
+    } catch (err) {
+      alert('Erro ao copiar texto');
+    }
+    window.getSelection().removeAllRanges();
+  }
+  
+  function saveText(id, filename) {
+    const text = document.getElementById(id).value;
+    const blob = new Blob([text], {type: 'text/plain'});
+    const link = document.createElement('a');
+  
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+  
+    document.body.appendChild(link);
+    link.click();
+  
+    document.body.removeChild(link);
+  }
 
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
