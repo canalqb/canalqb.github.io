@@ -28,60 +28,57 @@ document.addEventListener('DOMContentLoaded', () => {
   let timeoutId = null;
 
   function getCellSize() {
+    // Mantém o canvas quadrado
     return canvas.width / SIZE;
   }
 
-  // Função atualizada com verificação de conteúdo antes de copiar/salvar
-  function setupCopyAndSaveButtons(id, label = '') {
-    const textArea = document.getElementById(id);
-    const container = textArea.parentElement;
+  // Botões copiar + salvar em textarea
+  function setupCopyAndSaveButtons(id, label) {
+    const textarea = document.getElementById(id);
+    const container = textarea.parentElement;
+
+    const btnGroup = document.createElement('div');
+    btnGroup.style.display = 'flex';
+    btnGroup.style.gap = '10px';
+    btnGroup.style.marginBottom = '10px';
 
     const copyBtn = document.createElement('button');
-    copyBtn.textContent = '📋 Copiar';
-    copyBtn.className = 'btn btn-sm btn-outline-primary me-2';
-    copyBtn.addEventListener('click', () => {
-      const content = textArea.value.trim();
-      if (!content) {
-        alert(`⚠️ Nada para copiar em ${label || id}.`);
-        return;
-      }
-      navigator.clipboard.writeText(content)
-        .then(() => alert(`✅ Copiado com sucesso: ${label || id}`))
-        .catch(() => alert('❌ Erro ao copiar'));
-    });
+    copyBtn.className = 'btn btn-sm btn-outline-secondary';
+    copyBtn.innerText = `📋 Copiar ${label}`;
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(textarea.value)
+        .then(() => alert(`${label} copiado para a área de transferência!`))
+        .catch(() => alert(`Erro ao copiar ${label}`));
+    };
 
     const saveBtn = document.createElement('button');
-    saveBtn.textContent = '💾 Salvar';
-    saveBtn.className = 'btn btn-sm btn-outline-success';
-    saveBtn.addEventListener('click', () => {
-      const content = textArea.value.trim();
-      if (!content) {
-        alert(`⚠️ Nada para salvar em ${label || id}.`);
+    saveBtn.className = 'btn btn-sm btn-outline-primary';
+    saveBtn.innerText = `💾 Salvar ${label}`;
+    saveBtn.onclick = () => {
+      if (!textarea.value.trim()) {
+        alert(`⚠️ Nada para salvar em ${label}.`);
         return;
       }
-      const blob = new Blob([content], { type: 'text/plain' });
+      const blob = new Blob([textarea.value], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `${label || id}.txt`;
+      link.download = `${id}.txt`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    });
+    };
 
-    const btnGroup = document.createElement('div');
-    btnGroup.className = 'mt-2 d-flex';
     btnGroup.appendChild(copyBtn);
     btnGroup.appendChild(saveBtn);
-
-    container.appendChild(btnGroup);
+    container.insertBefore(btnGroup, textarea);
   }
 
-  // Função para desenhar a grade e os números das linhas e colunas
+  // Desenha a matriz, números das linhas/colunas, e intervalo das potências de 2 do lado direito
   function drawGrid() {
     const CELL_SIZE = getCellSize();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Desenha células
+    // Desenhar células
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
@@ -92,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Destaque faixa de altura/base
+    // Destacar faixa de altura/base selecionada
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -102,27 +99,37 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = 3;
     ctx.strokeRect(0, yStart, canvas.width, heightPx);
 
-    // Configura estilo texto para numeração
+    // Texto para numeração das colunas no topo
     ctx.fillStyle = '#333';
     ctx.font = `${Math.floor(CELL_SIZE / 2)}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Números das colunas no topo (de 1 até SIZE)
     for (let x = 0; x < SIZE; x++) {
       const posX = x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), posX, CELL_SIZE / 4);
     }
 
-    // Números das linhas na direita (de 1 até SIZE)
+    // Texto para numeração das linhas e intervalo de potências do lado direito
     ctx.textAlign = 'left';
+
     for (let y = 0; y < SIZE; y++) {
       const posY = y * CELL_SIZE + CELL_SIZE / 2;
-      ctx.fillText((y + 1).toString(), canvas.width - CELL_SIZE / 4, posY);
+      const linhaNum = y + 1;
+      ctx.fillText(linhaNum.toString(), canvas.width - CELL_SIZE / 4, posY);
+
+      // Intervalo de potências de 2 (de baixo para cima)
+      const linhasContadas = SIZE - y; // linhas de baixo pra cima contando essa
+      const powStart = (linhasContadas - 1) * SIZE;
+      const powEnd = linhasContadas * SIZE - 1;
+
+      // Formatar intervalo como 2^powStart .. 2^powEnd
+      const intervalo = `2^${powStart} .. 2^${powEnd}`;
+      ctx.fillText(intervalo, canvas.width - CELL_SIZE * 3, posY);
     }
   }
 
-  // Criação dos botões para altura e base
+  // Cria botões para selecionar altura e base (range)
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
@@ -158,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRangeButtons();
   }
 
+  // Atualiza estilo dos botões selecionados (active)
   function updateRangeButtons() {
     heightButtonsDiv.querySelectorAll('button').forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === altura);
@@ -169,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('activeRangeLabel').textContent = `${altura} até ${base}`;
   }
 
+  // Converte grid para string hex (8 bits por byte)
   function gridToHex() {
     const bits = gridState.map(cell => (cell ? '1' : '0')).join('');
     const hex = [];
@@ -179,15 +188,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return hex.join('');
   }
 
+  // SHA-256 (Web Crypto API)
   async function sha256(buffer) {
     const hash = await crypto.subtle.digest('SHA-256', buffer);
     return new Uint8Array(hash);
   }
 
+  // Hex para Uint8Array
   function hexToBytes(hex) {
     return Uint8Array.from(hex.match(/.{2}/g).map(byte => parseInt(byte, 16)));
   }
 
+  // Gera WIF (Wallet Import Format) do private key hex, com ou sem compressão
   async function privateKeyToWIF(hex, compressed = true) {
     const key = hexToBytes(hex);
     const prefix = [0x80];
@@ -202,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return base58Encode(fullPayload);
   }
 
+  // Base58 encode (Bitcoin style)
   const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   function base58Encode(buffer) {
     let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
@@ -217,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return result;
   }
 
+  // Atualiza as textareas com HEX, WIF e WIF não comprimido
   async function updateOutput() {
     const hex = gridToHex();
     const wif = await privateKeyToWIF(hex, true);
@@ -227,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wifBoxUncompressed.value += wifU + '\n';
   }
 
+  // Limpa grid e textareas
   function clearAll() {
     gridState.fill(false);
     stateCounter = 0n;
@@ -236,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wifBoxUncompressed.value = '';
   }
 
+  // Preenche aleatoriamente o intervalo altura..base
   function randomizeRange() {
     for (let y = altura - 1; y < base; y++) {
       for (let x = 0; x < SIZE; x++) {
@@ -246,6 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateOutput();
   }
 
+  // Passo automático de contagem e desenho
   function step() {
     if (!running) return;
     stateCounter++;
@@ -272,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     timeoutId = setTimeout(step, parseInt(speedInput.value));
   }
 
+  // Inicia loop automático
   function start() {
     if (running) return;
     running = true;
@@ -280,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     step();
   }
 
+  // Para loop automático
   function stop() {
     running = false;
     clearTimeout(timeoutId);
@@ -287,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopBtn.disabled = true;
   }
 
+  // Clique no canvas para alternar célula
   canvas.addEventListener('click', e => {
     if (running || !toggleOnClickCheckbox.checked) return;
 
@@ -305,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Eventos dos botões
   startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
   clearBtn.addEventListener('click', () => !running && clearAll());
