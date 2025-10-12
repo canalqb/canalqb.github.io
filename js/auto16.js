@@ -29,21 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const activeHeightLabel = document.getElementById('activeHeightLabel');
 
   // Responsividade do canvas
-  function resizeCanvas() {
-    const containerWidth = canvas.parentElement.clientWidth;
-    const size = Math.min(containerWidth, 512);
-    const dpr = window.devicePixelRatio || 1;
+function resizeCanvas() {
+  const displayWidth = canvas.clientWidth;
+  const displayHeight = canvas.clientHeight;
 
-    canvas.style.width = size + 'px';
-    canvas.style.height = size + 'px';
-
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    drawGrid();
+  // Corrigir dimensões internas (pixels reais)
+  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
   }
+
+  drawGrid();
+}
 
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
