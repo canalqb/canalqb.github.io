@@ -1,83 +1,251 @@
-<!-- ============================================ -->
-<!-- ARQUIVO: js/ads.js -->
-<!-- ============================================ -->
-/*
+/**
+ * ads.js - Gerenciador de Anúncios Google AdSense
+ * CanalQb - Gerador de Private Keys Bitcoin
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Inicializa anúncios estáticos (topo e in-feed)
-  initStaticAds();
-  
-  // Inicializa anúncio flutuante
-  initFloatingAd();
-});
+  // ========================================
+  // CONFIGURAÇÕES
+  // ========================================
+  const AD_CONFIG = {
+    floatingDelay: 8000,        // Tempo para mostrar anúncio flutuante (8s)
+    floatingCloseDelay: 15000,  // Tempo para fechar automaticamente (15s)
+    floatingShowInterval: 60000, // Intervalo para reexibir (60s)
+    enableFloating: true,        // Ativar/desativar anúncio flutuante
+    enableAutoClose: false       // Fechar automaticamente após delay
+  };
 
-// Inicializa anúncios estáticos do Google AdSense
-function initStaticAds() {
-  try {
-    // Inicializa os anúncios do topo e in-feed
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    
-    console.log('✅ Anúncios estáticos inicializados');
-  } catch (error) {
-    console.error('❌ Erro ao inicializar anúncios estáticos:', error);
-  }
-}
-
-// Gerencia o anúncio flutuante
-function initFloatingAd() {
-  const floatingAd = document.getElementById('floatingAd');
-  const closeBtn = document.getElementById('closeFloatingAd');
-  
-  if (!floatingAd || !closeBtn) {
-    console.warn('⚠️ Elementos do anúncio flutuante não encontrados');
-    return;
-  }
-
-  // Variável para controlar se o anúncio foi fechado
-  let adClosed = false;
-
-  // Mostra o anúncio flutuante após 5 segundos
-  setTimeout(() => {
-    if (!adClosed) {
-      floatingAd.style.display = 'block';
+  // ========================================
+  // INICIALIZAÇÃO DOS ANÚNCIOS ADSENSE
+  // ========================================
+  function initializeAds() {
+    try {
+      // Carrega os anúncios AdSense na página
+      const adElements = document.querySelectorAll('.adsbygoogle');
       
+      adElements.forEach((ad, index) => {
+        // Verifica se o anúncio já foi inicializado
+        if (!ad.dataset.adsbygoogleStatus) {
+          try {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            console.log(`✅ Anúncio ${index + 1} inicializado`);
+          } catch (error) {
+            console.warn(`⚠️ Erro ao inicializar anúncio ${index + 1}:`, error);
+          }
+        }
+      });
+    } catch (error) {
+      console.error('❌ Erro ao inicializar anúncios:', error);
+    }
+  }
+
+  // ========================================
+  // GERENCIAMENTO DO ANÚNCIO FLUTUANTE
+  // ========================================
+  const floatingAd = document.getElementById('floatingAd');
+  const closeFloatingBtn = document.getElementById('closeFloatingAd');
+  let floatingAdTimer = null;
+  let autoCloseTimer = null;
+  let floatingAdClosed = false;
+
+  function showFloatingAd() {
+    if (!AD_CONFIG.enableFloating || !floatingAd || floatingAdClosed) return;
+
+    floatingAd.style.display = 'block';
+    console.log('📢 Anúncio flutuante exibido');
+
+    // Inicializa o anúncio dentro do flutuante se ainda não foi
+    const floatingAdElement = floatingAd.querySelector('.adsbygoogle');
+    if (floatingAdElement && !floatingAdElement.dataset.adsbygoogleStatus) {
       try {
-        // Inicializa o anúncio flutuante
         (adsbygoogle = window.adsbygoogle || []).push({});
-        console.log('✅ Anúncio flutuante exibido');
+        console.log('✅ Anúncio flutuante AdSense inicializado');
       } catch (error) {
-        console.error('❌ Erro ao inicializar anúncio flutuante:', error);
+        console.warn('⚠️ Erro ao inicializar anúncio flutuante:', error);
       }
     }
-  }, 5000);
 
-  // Evento para fechar o anúncio
-  closeBtn.addEventListener('click', () => {
+    // Auto-fechar após delay (opcional)
+    if (AD_CONFIG.enableAutoClose) {
+      autoCloseTimer = setTimeout(() => {
+        hideFloatingAd();
+        console.log('⏱️ Anúncio flutuante fechado automaticamente');
+      }, AD_CONFIG.floatingCloseDelay);
+    }
+  }
+
+  function hideFloatingAd() {
+    if (!floatingAd) return;
+    
     floatingAd.style.display = 'none';
-    adClosed = true;
-    console.log('🚫 Anúncio flutuante fechado pelo usuário');
+    floatingAdClosed = true;
+    
+    if (autoCloseTimer) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
+    }
+    
+    console.log('❌ Anúncio flutuante fechado');
+  }
+
+  function scheduleFloatingAd() {
+    if (!AD_CONFIG.enableFloating) return;
+
+    // Primeira exibição após delay inicial
+    floatingAdTimer = setTimeout(() => {
+      showFloatingAd();
+
+      // Reexibir periodicamente se o usuário fechar
+      const reShowInterval = setInterval(() => {
+        if (floatingAdClosed) {
+          floatingAdClosed = false;
+          showFloatingAd();
+        }
+      }, AD_CONFIG.floatingShowInterval);
+
+      // Salva referência para limpeza se necessário
+      window.floatingAdInterval = reShowInterval;
+    }, AD_CONFIG.floatingDelay);
+  }
+
+  // Evento de fechar anúncio flutuante
+  if (closeFloatingBtn) {
+    closeFloatingBtn.addEventListener('click', () => {
+      hideFloatingAd();
+    });
+  }
+
+  // ========================================
+  // MONITORAMENTO DE BLOQUEADORES DE ANÚNCIO
+  // ========================================
+  function detectAdBlocker() {
+    // Verifica se AdSense está carregado
+    const adsbygoogleLoaded = typeof window.adsbygoogle !== 'undefined';
+    
+    if (!adsbygoogleLoaded) {
+      console.warn('⚠️ AdSense pode estar bloqueado ou não carregado');
+      return true;
+    }
+
+    // Verifica se há elementos de anúncio visíveis
+    const adElements = document.querySelectorAll('.adsbygoogle');
+    let hasVisibleAd = false;
+
+    adElements.forEach(ad => {
+      const rect = ad.getBoundingClientRect();
+      if (rect.height > 0 && rect.width > 0) {
+        hasVisibleAd = true;
+      }
+    });
+
+    if (!hasVisibleAd && adElements.length > 0) {
+      console.warn('⚠️ Nenhum anúncio visível detectado');
+    }
+
+    return !hasVisibleAd && adElements.length > 0;
+  }
+
+  // ========================================
+  // ANALYTICS E TRACKING (OPCIONAL)
+  // ========================================
+  function trackAdInteraction(action, label) {
+    // Integração com Google Analytics (se disponível)
+    if (typeof gtag !== 'undefined') {
+      gtag('event', action, {
+        'event_category': 'Ads',
+        'event_label': label
+      });
+    }
+    console.log(`📊 Track: ${action} - ${label}`);
+  }
+
+  // ========================================
+  // RESPONSIVE ADS REFRESH
+  // ========================================
+  let lastWidth = window.innerWidth;
+
+  function handleResize() {
+    const currentWidth = window.innerWidth;
+    
+    // Recarrega anúncios se mudança significativa de largura
+    if (Math.abs(currentWidth - lastWidth) > 100) {
+      console.log('📱 Resize detectado, anúncios podem ser atualizados');
+      lastWidth = currentWidth;
+      
+      // Aqui você pode implementar lógica de refresh se necessário
+      // Nota: AdSense geralmente lida com isso automaticamente
+    }
+  }
+
+  // Debounce para resize
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(handleResize, 250);
   });
 
-  // Opcional: Fecha automaticamente após 30 segundos se não for fechado
-  setTimeout(() => {
-    if (!adClosed) {
-      floatingAd.style.display = 'none';
-      console.log('⏱️ Anúncio flutuante fechado automaticamente');
-    }
-  }, 30000);
-}
+  // ========================================
+  // INICIALIZAÇÃO PRINCIPAL
+  // ========================================
+  function init() {
+    console.log('🚀 Inicializando sistema de anúncios...');
 
-// Função auxiliar para recarregar anúncios (útil para SPAs)
-function reloadAds() {
-  try {
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    console.log('🔄 Anúncios recarregados');
-  } catch (error) {
-    console.error('❌ Erro ao recarregar anúncios:', error);
+    // Aguarda o carregamento do AdSense
+    setTimeout(() => {
+      initializeAds();
+      
+      // Detecta bloqueador (opcional)
+      setTimeout(() => {
+        const isBlocked = detectAdBlocker();
+        if (isBlocked) {
+          console.log('🛡️ Possível bloqueador de anúncios detectado');
+        } else {
+          console.log('✅ Sistema de anúncios funcionando normalmente');
+        }
+      }, 2000);
+    }, 1000);
+
+    // Agenda anúncio flutuante
+    scheduleFloatingAd();
+
+    // Track impressão inicial
+    trackAdInteraction('page_load', 'ads_initialized');
   }
-}
 
-// Exporta funções para uso global se necessário
-window.reloadAds = reloadAds;
-*/
-<!-- ============================================ -->
+  // Inicia o sistema
+  init();
+
+  // ========================================
+  // EXPORTA FUNÇÕES PÚBLICAS (OPCIONAL)
+  // ========================================
+  window.AdsManager = {
+    showFloating: showFloatingAd,
+    hideFloating: hideFloatingAd,
+    refresh: initializeAds,
+    config: AD_CONFIG
+  };
+
+  console.log('✅ ads.js carregado com sucesso');
+});
+
+// ========================================
+// FALLBACK PARA ANÚNCIOS NÃO CARREGADOS
+// ========================================
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const adElements = document.querySelectorAll('.adsbygoogle');
+    
+    adElements.forEach((ad, index) => {
+      // Verifica se o anúncio foi preenchido
+      const isEmpty = ad.innerHTML.trim() === '';
+      const hasNoHeight = ad.offsetHeight === 0;
+      
+      if (isEmpty || hasNoHeight) {
+        console.warn(`⚠️ Anúncio ${index + 1} pode não ter carregado corretamente`);
+        
+        // Opcional: adiciona placeholder ou mensagem
+        // ad.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">Anúncio</div>';
+      }
+    });
+  }, 3000);
+});
