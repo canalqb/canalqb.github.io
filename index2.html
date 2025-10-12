@@ -1,22 +1,307 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Gerador de Private Keys Bitcoin — CanalQb</title>
-  
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   
-  <!-- CSS Principal -->
-  <link href="css/styles.css" rel="stylesheet">
-  
-  <!-- CSS da Publicidade -->
-  <link href="css/ads.css" rel="stylesheet">
-  
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+    }
+
+    .container-main {
+      margin: 2rem auto;
+      max-width: 1000px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #2d3748;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Canvas com precisão corrigida */
+    .canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    #grid {
+      border: 3px solid #2d3748;
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: block;
+      /* Tamanho fixo para melhor precisão */
+      width: 512px;
+      height: 512px;
+      touch-action: none;
+    }
+
+    .range-indicator {
+      text-align: center;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      border-radius: 8px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .range-indicator span {
+      color: #667eea;
+      font-size: 1.1rem;
+    }
+
+    .control-section {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #4a5568;
+      margin-bottom: 1rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .range-btn {
+      padding: 8px 4px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #4a5568;
+    }
+
+    .range-btn:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    .range-btn.active {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-color: #667eea;
+    }
+
+    .main-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    .btn-custom {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #48bb78, #38a169);
+      color: white;
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+    }
+
+    .btn-start:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(72, 187, 120, 0.5);
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, #f56565, #e53e3e);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
+    }
+
+    .btn-stop:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 101, 101, 0.5);
+    }
+
+    .btn-clear, .btn-random {
+      background: white;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-clear:hover, .btn-random:hover {
+      border-color: #667eea;
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .btn-custom:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .speed-control input[type="range"] {
+      width: 200px;
+      height: 6px;
+      border-radius: 3px;
+      background: #e2e8f0;
+      outline: none;
+    }
+
+    .speed-control input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .option-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      color: #2d3748;
+    }
+
+    .option-label input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .output-section {
+      margin: 2rem 0;
+    }
+
+    .output-label {
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .output-box {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      resize: vertical;
+      background: #f7fafc;
+      color: #2d3748;
+      transition: all 0.3s ease;
+    }
+
+    .output-box:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: #718096;
+      font-size: 0.9rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      #grid {
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        aspect-ratio: 1;
+      }
+
+      .button-grid {
+        grid-template-columns: repeat(8, 1fr);
+      }
+
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg shadow-sm">
@@ -26,17 +311,6 @@
       </a>
     </div>
   </nav>
-
-  <!-- Anúncio Banner Topo -->
-  <div class="ad-banner-top">
-    <div class="ad-label">Publicidade</div>
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="1111111111"
-         data-ad-format="horizontal"
-         data-full-width-responsive="true"></ins>
-  </div>
 
   <div class="container-main p-4">
     <header>
@@ -103,17 +377,6 @@
         </div>
       </div>
 
-      <!-- Anúncio In-Feed (entre conteúdo) -->
-      <div class="my-4 text-center">
-        <div class="ad-label mb-2">Publicidade</div>
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-format="fluid"
-             data-ad-layout-key="-6t+ed+2i-1n-4w"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="2222222222"></ins>
-      </div>
-
       <div class="output-section">
         <div class="mb-3">
           <label class="output-label">🔑 Private Key HEX (64 caracteres)</label>
@@ -136,26 +399,326 @@
     </footer>
   </div>
 
-  <!-- Anúncio Flutuante (será criado pelo JS) -->
-  <div id="floatingAd" class="ad-floating" style="display: none;">
-    <div class="ad-floating-header">
-      <span class="ad-floating-label">📢 Publicidade</span>
-      <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">✕</button>
-    </div>
-    <div class="ad-floating-content">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-           data-ad-slot="3333333333"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-    </div>
-  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const SIZE = 16;
+      const canvas = document.getElementById('grid');
+      const ctx = canvas.getContext('2d');
 
-  <!-- JavaScript Principal -->
-  <script src="js/auto16.js"></script>
-  
-  <!-- JavaScript da Publicidade -->
-  <script src="js/ads.js"></script>
+      // Controles
+      const startBtn = document.getElementById('startBtn');
+      const stopBtn = document.getElementById('stopBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const randBtn = document.getElementById('randBtn');
+      const speedInput = document.getElementById('speed');
+      const speedLabel = document.getElementById('speedLabel');
+      const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
+      const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
+      const hexBox = document.getElementById('hexBox');
+      const wifBox = document.getElementById('wifBox');
+      const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
+      const heightButtonsDiv = document.getElementById('heightButtons');
+      const baseButtonsDiv = document.getElementById('baseButtons');
+
+      let altura = 1;
+      let base = SIZE;
+      let gridState = new Array(SIZE * SIZE).fill(false);
+      let stateCounter = 0n;
+      let running = false;
+      let timeoutId = null;
+
+      // Calcula tamanho da célula baseado nas dimensões REAIS do canvas
+      function getCellSize() {
+        return canvas.width / SIZE;
+      }
+
+      // Cria botões para altura e base
+      function createRangeButtons() {
+        heightButtonsDiv.innerHTML = '';
+        baseButtonsDiv.innerHTML = '';
+
+        for (let h = 1; h <= SIZE; h++) {
+          const btn = document.createElement('button');
+          btn.textContent = h;
+          btn.className = 'range-btn';
+          btn.dataset.h = h;
+          btn.addEventListener('click', () => {
+            if (running) return;
+            altura = h;
+            if (base < altura) base = altura;
+            updateRangeButtons();
+            drawGrid();
+          });
+          heightButtonsDiv.appendChild(btn);
+        }
+
+        for (let b = 1; b <= SIZE; b++) {
+          const btn = document.createElement('button');
+          btn.textContent = b;
+          btn.className = 'range-btn';
+          btn.dataset.b = b;
+          btn.addEventListener('click', () => {
+            if (running) return;
+            base = b;
+            if (base < altura) altura = base;
+            updateRangeButtons();
+            drawGrid();
+          });
+          baseButtonsDiv.appendChild(btn);
+        }
+
+        updateRangeButtons();
+      }
+
+      function updateRangeButtons() {
+        heightButtonsDiv.querySelectorAll('button').forEach(btn => {
+          const h = parseInt(btn.dataset.h, 10);
+          btn.classList.toggle('active', h === altura);
+        });
+
+        baseButtonsDiv.querySelectorAll('button').forEach(btn => {
+          const b = parseInt(btn.dataset.b, 10);
+          btn.classList.toggle('active', b === base);
+        });
+
+        document.getElementById('activeRangeLabel').textContent = `${altura} até ${base}`;
+      }
+
+      function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const CELL_SIZE = getCellSize();
+
+        // Desenha células
+        for (let y = 0; y < SIZE; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            const idx = y * SIZE + x;
+            ctx.fillStyle = gridState[idx] ? '#48bb78' : '#ffffff';
+            ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          }
+        }
+
+        // Destaca faixa ativa
+        ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+        const yStart = (altura - 1) * CELL_SIZE;
+        const heightPx = (base - altura + 1) * CELL_SIZE;
+        ctx.fillRect(0, yStart, SIZE * CELL_SIZE, heightPx);
+
+        // Borda da faixa ativa
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(0, yStart, SIZE * CELL_SIZE, heightPx);
+      }
+
+      function gridToHex() {
+        const bits = [];
+        for (let y = 0; y < SIZE; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            bits.push(gridState[y * SIZE + x] ? '1' : '0');
+          }
+        }
+        const bytes = [];
+        for (let i = 0; i < bits.length; i += 8) {
+          const byteStr = bits.slice(i, i + 8).join('');
+          bytes.push(parseInt(byteStr, 2));
+        }
+        return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      async function sha256(buf) {
+        const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+        return new Uint8Array(hashBuf);
+      }
+
+      const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+      function base58Encode(buffer) {
+        let intVal = 0n;
+        for (const b of buffer) {
+          intVal = (intVal << 8n) + BigInt(b);
+        }
+        let s = '';
+        while (intVal > 0n) {
+          const mod = intVal % 58n;
+          intVal /= 58n;
+          s = BASE58_ALPHABET[Number(mod)] + s;
+        }
+        for (const b of buffer) {
+          if (b === 0) s = '1' + s;
+          else break;
+        }
+        return s;
+      }
+
+      function hexStringToUint8Array(hex) {
+        const arr = new Uint8Array(hex.length / 2);
+        for (let i = 0; i < hex.length; i += 2) {
+          arr[i / 2] = parseInt(hex.substr(i, 2), 16);
+        }
+        return arr;
+      }
+
+      async function privateKeyToWIF(hexKey, compressed = true) {
+        const keyBytes = hexStringToUint8Array(hexKey);
+        let payload;
+        if (compressed) {
+          payload = new Uint8Array(1 + 32 + 1);
+          payload[0] = 0x80;
+          payload.set(keyBytes, 1);
+          payload[33] = 0x01;
+        } else {
+          payload = new Uint8Array(1 + 32);
+          payload[0] = 0x80;
+          payload.set(keyBytes, 1);
+        }
+        const h1 = await sha256(payload);
+        const h2 = await sha256(h1);
+        const checksum = h2.slice(0, 4);
+
+        const full = new Uint8Array(payload.length + 4);
+        full.set(payload, 0);
+        full.set(checksum, payload.length);
+
+        return base58Encode(full);
+      }
+
+      async function updateKeyOutputs() {
+        const hex = gridToHex();
+        const wifC = await privateKeyToWIF(hex, true);
+        const wifU = await privateKeyToWIF(hex, false);
+
+        hexBox.value += hex + '\n';
+        hexBox.scrollTop = hexBox.scrollHeight;
+        wifBox.value += wifC + '\n';
+        wifBox.scrollTop = wifBox.scrollHeight;
+        wifBoxUncompressed.value += wifU + '\n';
+        wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
+      }
+
+      function randomizeRange() {
+        for (let y = altura - 1; y <= base - 1; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            gridState[y * SIZE + x] = Math.random() < 0.5;
+          }
+        }
+        drawGrid();
+        updateKeyOutputs();
+      }
+
+      function clearAll() {
+        gridState.fill(false);
+        stateCounter = 0n;
+        drawGrid();
+        hexBox.value = '';
+        wifBox.value = '';
+        wifBoxUncompressed.value = '';
+      }
+
+      function getMaxCounter() {
+        const numRows = base - altura + 1;
+        return 1n << BigInt(numRows * SIZE);
+      }
+
+      function setGridFromCounter(cnt) {
+        const numRows = base - altura + 1;
+        const totalBits = numRows * SIZE;
+        for (let i = 0; i < totalBits; i++) {
+          const bit = (cnt >> BigInt(totalBits - 1 - i)) & 1n;
+          const rowOffset = Math.floor(i / SIZE);
+          const col = i % SIZE;
+          const y = (altura - 1) + rowOffset;
+          gridState[y * SIZE + col] = bit === 1n;
+        }
+        drawGrid();
+      }
+
+      function step() {
+        if (!running) return;
+
+        stateCounter++;
+
+        if (stateCounter >= getMaxCounter()) {
+          running = false;
+          clearTimeout(timeoutId);
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          return;
+        }
+
+        setGridFromCounter(stateCounter);
+
+        if (randomizeOnStepCheckbox.checked) {
+          randomizeRange();
+        } else {
+          drawGrid();
+          updateKeyOutputs();
+        }
+
+        timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
+      }
+
+      // CORREÇÃO DO CLIQUE - Agora com precisão perfeita
+      canvas.addEventListener('click', e => {
+        if (running) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const CELL_SIZE = getCellSize();
+        
+        // Calcula posição considerando o tamanho real do canvas na tela
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        const canvasX = (e.clientX - rect.left) * scaleX;
+        const canvasY = (e.clientY - rect.top) * scaleY;
+        
+        const x = Math.floor(canvasX / CELL_SIZE);
+        const y = Math.floor(canvasY / CELL_SIZE);
+
+        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
+
+        if (toggleOnClickCheckbox.checked) {
+          const idx = y * SIZE + x;
+          gridState[idx] = !gridState[idx];
+          drawGrid();
+          updateKeyOutputs();
+        }
+      });
+
+      // Inicialização
+      createRangeButtons();
+      drawGrid();
+
+      startBtn.addEventListener('click', () => {
+        if (running) return;
+        running = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        step();
+      });
+
+      stopBtn.addEventListener('click', () => {
+        running = false;
+        clearTimeout(timeoutId);
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      });
+
+      clearBtn.addEventListener('click', () => {
+        if (running) return;
+        clearAll();
+      });
+
+      randBtn.addEventListener('click', () => {
+        if (running) return;
+        randomizeRange();
+      });
+
+      speedInput.addEventListener('input', () => {
+        speedLabel.textContent = `${speedInput.value} ms`;
+      });
+    });
+  </script>
 </body>
 </html>
