@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     baseButtonsDiv.innerHTML = '';
 
     // Criar botões de altura (linha superior) - de 1 até SIZE-1
-    for (let h = 1; h <= SIZE - 1; h++) {
+    for (let h = 1; h <= SIZE; h++) {
       const btn = document.createElement('button');
       btn.textContent = h;
       btn.className = 'btn btn-sm btn-outline-primary size-btn';
@@ -56,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
       heightButtonsDiv.appendChild(btn);
     }
 
-    // Criar botões de base (linha inferior) - de 2 até SIZE
-    for (let b = 2; b <= SIZE; b++) {
+    // Criar botões de base (linha inferior) - de 1 até SIZE
+    for (let b = 1; b <= SIZE; b++) {
       const btn = document.createElement('button');
       btn.textContent = b;
       btn.className = 'btn btn-sm btn-outline-primary size-btn';
