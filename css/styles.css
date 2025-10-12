@@ -295,11 +295,20 @@ h1 {
   overflow: hidden;
   animation: slideIn 0.5s ease-out;
 }
-
+ 
 textarea[readonly] {
-  user-select: none;  /* evita seleção do texto */
-  pointer-events: none; /* bloqueia clique e foco */
+  user-select: none;          /* evita seleção do texto */
+  pointer-events: none;       /* bloqueia clique e foco */
+  
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE e Edge */
+  overflow: auto;             /* mantém scroll funcional */
 }
+
+textarea[readonly]::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Opera */
+}
+
 
 @keyframes slideIn {
   from {
