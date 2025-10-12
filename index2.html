@@ -111,5 +111,31 @@
 
   <!-- auto16.js (carregado no final) -->
   <script src="js/auto16.js"></script>
+  <script>
+(function () {
+  const canvas = document.getElementById('grid');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    const containerWidth = canvas.parentElement.clientWidth;
+    const size = Math.min(containerWidth, 512);
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Redesenhar conteúdo aqui, se necessário
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('load', resizeCanvas);
+})();
+</script>
+
 </body>
 </html>
