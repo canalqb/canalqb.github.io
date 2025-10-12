@@ -1,107 +1,166 @@
-<style>
-/* ==============================================
+/* =====================================================
    CanalQb - Gerador de Private Keys Bitcoin
-   Estilo moderno, responsivo e sem overflow
-   ============================================== */
+   Autor: Rodrigo Carlos Moraes
+   -----------------------------------------------------
+   Estilo moderno, limpo e responsivo (Bootstrap-like)
+   ===================================================== */
 
 :root {
   --green: #008000;
   --dark-green: #006400;
-  --bg-light: #fafafa;
-  --bg-white: #ffffff;
-  --gray: #666;
-  --border: #ccc;
+  --bg: #ffffff;
+  --light-gray: #f5f5f5;
 }
 
+/* ---------- Reset e estrutura geral ---------- */
 * {
   box-sizing: border-box;
 }
 
-html, body {
+body {
   margin: 0;
-  padding: 0;
-  max-width: 100%;
-  overflow-x: hidden;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: var(--bg-light);
+  background: var(--bg);
   color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
+/* Container principal */
 .container-main {
-  max-width: 980px;
-  width: 95%;
-  margin: 20px auto;
-  background: var(--bg-white);
-  padding: 20px;
+  width: 90%;
+  max-width: 1100px;
+  background: #fff;
+  border: 2px solid var(--green);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgb(0 0 0 / 0.05);
-  border: 1px solid var(--border);
+  padding: 20px;
+  margin: 30px 0;
+  box-shadow: 0 0 10px rgb(0 128 0 / 0.1);
+}
+
+/* Cabeçalho */
+header {
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
 }
 
 header h1 {
-  font-size: 1.5rem;
+  margin: 0;
+  font-size: 1.8rem;
   color: var(--dark-green);
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.navbar {
-  background: #f8f8f8;
-  border-bottom: 1px solid var(--border);
+/* Navbar simples */
+nav.navbar {
+  width: 100%;
+  background: #f1f1f1;
+  border-bottom: 1px solid #ddd;
   padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
 }
 
-.navbar .navbar-brand {
-  font-weight: bold;
-  font-size: 1.25rem;
+nav.navbar a.navbar-brand {
+  font-weight: 700;
   color: var(--green);
   text-decoration: none;
+  font-size: 1.25rem;
 }
 
-.navbar .navbar-brand:hover {
+nav.navbar a.navbar-brand:hover {
   color: var(--dark-green);
 }
 
+/* Canvas grid */
 #grid {
-  display: block;
-  margin: 0 auto;
   border: 2px solid var(--green);
-  background: var(--bg-white);
-  cursor: pointer;
+  background: #fff;
   image-rendering: pixelated;
-
-  /* Responsivo */
-  width: 100%;
-  max-width: 512px;
-  aspect-ratio: 1 / 1;
-  height: auto;
+  cursor: pointer;
+  display: block;
+  width: 512px;
+  height: 512px;
+  margin: 0 auto 15px auto;
 }
 
+/* Indicador altura ativa */
 .row-indicator {
   font-size: 0.9rem;
-  color: var(--gray);
+  color: #666;
   text-align: center;
-  margin-top: 0.5rem;
+  margin-bottom: 15px;
 }
 
+/* Controles - botões */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+button, .btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--dark-green);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  user-select: none;
+}
+
+button:hover, .btn:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+button:disabled {
+  background: #ccc;
+  color: #666;
+  border-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* Velocidade e radios alinhados */
+.controls > div {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.controls label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+/* Height buttons */
 .height-panel {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: 10px;
 }
 
 .height-panel button {
   min-width: 40px;
   padding: 6px 10px;
-  font-weight: 600;
-  background: #fff;
   border: 2px solid var(--green);
-  border-radius: 6px;
+  background: #fff;
   color: var(--dark-green);
+  font-weight: 600;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .height-panel button:hover {
@@ -115,115 +174,64 @@ header h1 {
   cursor: default;
 }
 
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.controls .btn {
-  padding: 8px 14px;
-  font-weight: bold;
-  background: #fff;
-  border: 2px solid var(--green);
-  color: var(--dark-green);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.controls .btn:hover {
-  background: var(--green);
-  color: #fff;
-}
-
-.controls .btn:disabled {
-  background: #ccc;
-  color: #666;
-  border-color: #aaa;
-  cursor: not-allowed;
-}
-
-.controls input[type="range"] {
-  width: 200px;
-  vertical-align: middle;
-}
-
-.controls label {
-  margin-right: 10px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.form-check-label {
-  font-size: 0.85rem;
-  margin-left: 5px;
-}
-
-.logs {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.logs > div {
-  flex: 1;
-  min-width: 260px;
-}
-
-.section-label {
-  font-weight: bold;
-  font-size: 0.95rem;
-  margin-bottom: 0.25rem;
-  display: inline-block;
-}
-
+/* Textareas logs */
 .logbox {
   width: 100%;
-  height: 120px;
+  height: 160px;
+  margin-top: 8px;
+  padding: 10px;
   font-family: monospace;
   font-size: 0.9rem;
   border: 2px solid var(--green);
-  background: #f9fff9;
-  color: #003300;
-  padding: 10px;
   border-radius: 6px;
+  background: #f9fff9;
+  color: #004400;
   resize: vertical;
   overflow-y: auto;
   white-space: pre-wrap;
 }
 
+/* Logs container */
+.logs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.logs > div {
+  flex: 1;
+  min-width: 280px;
+}
+
+/* Footer */
 footer {
-  text-align: center;
-  color: var(--gray);
-  font-size: 0.85rem;
-  margin-top: 2rem;
+  width: 100%;
+  background: #fff;
   border-top: 1px solid #ddd;
-  padding-top: 1rem;
+  padding: 15px 10px;
+  text-align: center;
+  color: #555;
+  font-size: 0.9rem;
+  border-radius: 0 0 10px 10px;
+  margin-top: 40px;
 }
 
 footer a {
   color: var(--green);
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 footer a:hover {
   color: var(--dark-green);
 }
 
-/* Responsividade adicional */
-@media (max-width: 600px) {
-  .controls {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .logbox {
-    height: 100px;
+/* Responsividade */
+@media (max-width: 900px) {
+  #grid {
+    width: 320px !important;
+    height: 320px !important;
   }
 
   .logs {
@@ -235,4 +243,3 @@ footer a:hover {
     padding: 15px;
   }
 }
-</style>
