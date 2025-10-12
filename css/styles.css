@@ -1,248 +1,146 @@
-/* =====================================================
-   CanalQb - Gerador de Private Keys Bitcoin
-   Autor: Rodrigo Carlos Moraes
-   -----------------------------------------------------
-   Estilo moderno, limpo e responsivo (Bootstrap-like)
-   ===================================================== */
-
-:root {
-  --green: #008000;
-  --dark-green: #006400;
-  --bg: #ffffff;
-  --light-gray: #f5f5f5;
-}
-
-/* ---------- Reset e estrutura geral ---------- */
+/* Reset básico */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
-  color: #000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+  padding: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background: #f7f9fc;
+  color: #333;
 }
 
-/* Container principal */
-.container-main {
-  width: 90%;
-  max-width: 1100px;
-  background: #fff;
-  border: 2px solid var(--green);
-  border-radius: 10px;
-  padding: 20px;
-  margin: 30px 0;
-  box-shadow: 0 0 10px rgb(0 128 0 / 0.1);
-}
-
-/* Cabeçalho */
-header {
-  text-align: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 20px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  color: var(--dark-green);
-  font-weight: 700;
-}
-
-/* Navbar simples */
-nav.navbar {
-  width: 100%;
-  background: #f1f1f1;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-}
-
-nav.navbar a.navbar-brand {
-  font-weight: 700;
-  color: var(--green);
-  text-decoration: none;
-  font-size: 1.25rem;
-}
-
-nav.navbar a.navbar-brand:hover {
-  color: var(--dark-green);
-}
-
-/* Canvas grid */
-#grid {
-  width: 100%;
-  max-width: 512px;
-  height: auto;
-  display: block;
-  aspect-ratio: 1 / 1;
-  border: 2px solid var(--green);
-  background: #fff;
-  image-rendering: pixelated;
-  cursor: pointer;
-  margin: 0 auto 15px auto;
-}
-
-
-/* Indicador altura ativa */
-.row-indicator {
-  font-size: 0.9rem;
-  color: #666;
+h1 {
   text-align: center;
   margin-bottom: 15px;
 }
 
-/* Controles - botões */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 25px;
+/* Container principal para centralizar e limitar largura */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-button, .btn {
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: 2px solid var(--green);
-  background: #fff;
-  color: var(--dark-green);
-  font-weight: 700;
+/* Canvas responsivo e limpo */
+#grid {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1; /* deixa quadrado */
+  border: 2px solid #333;
+  background-color: #fff;
+  display: block;
+  margin: 10px auto 20px;
+  touch-action: manipulation; /* melhora toque em mobile */
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
   user-select: none;
 }
 
-button:hover, .btn:hover {
-  background: var(--green);
-  color: #fff;
+/* Botões gerais */
+button {
+  cursor: pointer;
+  border: 1.5px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  padding: 6px 12px;
+  font-size: 1rem;
+  border-radius: 4px;
+  margin: 2px;
+  transition: background-color 0.2s, color 0.2s;
+  user-select: none;
+}
+
+button:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
 }
 
 button:disabled {
-  background: #ccc;
-  color: #666;
-  border-color: #aaa;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* Velocidade e radios alinhados */
-.controls > div {
-  margin-top: 10px;
-  text-align: center;
+/* Botões ativos e selecionados */
+button.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
 }
 
-.controls label {
-  margin-right: 15px;
-  cursor: pointer;
+/* Botões pequenos para altura/base */
+.size-btn {
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  min-width: 32px;
 }
 
-/* Height buttons */
-.height-panel {
+/* Grupos de botões alinhados horizontalmente */
+#heightButtons,
+#baseButtons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  gap: 4px;
 }
 
-.height-panel button {
-  min-width: 40px;
-  padding: 6px 10px;
-  border: 2px solid var(--green);
-  background: #fff;
-  color: var(--dark-green);
+/* Controle de velocidade */
+#speedLabel {
   font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  margin-left: 8px;
 }
 
-.height-panel button:hover {
-  background: var(--green);
-  color: #fff;
+/* Inputs range */
+input[type="range"] {
+  vertical-align: middle;
+  width: 150px;
+  margin-left: 10px;
 }
 
-.height-panel button.active {
-  background: var(--dark-green);
-  color: #fff;
-  cursor: default;
-}
-
-/* Textareas logs */
-.logbox {
+/* Textareas para saída */
+textarea {
   width: 100%;
-  height: 160px;
-  margin-top: 8px;
-  padding: 10px;
+  max-width: 900px;
+  height: 120px;
+  margin-top: 10px;
+  padding: 8px;
   font-family: monospace;
   font-size: 0.9rem;
-  border: 2px solid var(--green);
-  border-radius: 6px;
-  background: #f9fff9;
-  color: #004400;
+  border: 1.5px solid #ccc;
+  border-radius: 4px;
   resize: vertical;
+  background-color: #fff;
+  color: #222;
   overflow-y: auto;
-  white-space: pre-wrap;
 }
 
-/* Logs container */
-.logs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 20px;
+/* Labels para checkboxes e radios com melhor espaçamento */
+label {
+  margin-right: 12px;
+  cursor: pointer;
+  user-select: none;
 }
 
-.logs > div {
-  flex: 1;
-  min-width: 280px;
-}
-
-/* Footer */
-footer {
-  width: 100%;
-  background: #fff;
-  border-top: 1px solid #ddd;
-  padding: 15px 10px;
+/* Área de controles */
+.controls-group {
+  margin-bottom: 15px;
   text-align: center;
-  color: #555;
-  font-size: 0.9rem;
-  border-radius: 0 0 10px 10px;
-  margin-top: 40px;
 }
 
-footer a {
-  color: var(--green);
-  text-decoration: none;
-  font-weight: 700;
-}
-
-footer a:hover {
-  color: var(--dark-green);
-}
-
-/* Responsividade */
-@media (max-width: 900px) {
+/* Mobile adjustments */
+@media (max-width: 480px) {
   #grid {
-    width: 320px !important;
-    height: 320px !important;
+    max-width: 95vw;
   }
-
-  .logs {
-    flex-direction: column;
+  input[type="range"] {
+    width: 120px;
   }
-
-  .container-main {
-    width: 95%;
-    padding: 15px;
+  button {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+  }
+  textarea {
+    height: 100px;
   }
 }
