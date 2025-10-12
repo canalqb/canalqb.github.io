@@ -31,46 +31,57 @@ document.addEventListener('DOMContentLoaded', () => {
     return canvas.width / SIZE;
   }
 
-  function setupCopyAndSaveButtons(id, label) {
-    const textarea = document.getElementById(id);
-    const container = textarea.parentElement;
-
-    const btnGroup = document.createElement('div');
-    btnGroup.style.display = 'flex';
-    btnGroup.style.gap = '10px';
-    btnGroup.style.marginBottom = '10px';
+  // Função atualizada com verificação de conteúdo antes de copiar/salvar
+  function setupCopyAndSaveButtons(id, label = '') {
+    const textArea = document.getElementById(id);
+    const container = textArea.parentElement;
 
     const copyBtn = document.createElement('button');
-    copyBtn.className = 'btn btn-sm btn-outline-secondary';
-    copyBtn.innerText = `📋 Copiar ${label}`;
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(textarea.value)
-        .then(() => alert(`${label} copiado para a área de transferência!`))
-        .catch(() => alert(`Erro ao copiar ${label}`));
-    };
+    copyBtn.textContent = '📋 Copiar';
+    copyBtn.className = 'btn btn-sm btn-outline-primary me-2';
+    copyBtn.addEventListener('click', () => {
+      const content = textArea.value.trim();
+      if (!content) {
+        alert(`⚠️ Nada para copiar em ${label || id}.`);
+        return;
+      }
+      navigator.clipboard.writeText(content)
+        .then(() => alert(`✅ Copiado com sucesso: ${label || id}`))
+        .catch(() => alert('❌ Erro ao copiar'));
+    });
 
     const saveBtn = document.createElement('button');
-    saveBtn.className = 'btn btn-sm btn-outline-primary';
-    saveBtn.innerText = `💾 Salvar ${label}`;
-    saveBtn.onclick = () => {
-      const blob = new Blob([textarea.value], { type: 'text/plain' });
+    saveBtn.textContent = '💾 Salvar';
+    saveBtn.className = 'btn btn-sm btn-outline-success';
+    saveBtn.addEventListener('click', () => {
+      const content = textArea.value.trim();
+      if (!content) {
+        alert(`⚠️ Nada para salvar em ${label || id}.`);
+        return;
+      }
+      const blob = new Blob([content], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `${id}.txt`;
+      link.download = `${label || id}.txt`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    };
+    });
 
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'mt-2 d-flex';
     btnGroup.appendChild(copyBtn);
     btnGroup.appendChild(saveBtn);
-    container.insertBefore(btnGroup, textarea);
+
+    container.appendChild(btnGroup);
   }
 
+  // Função para desenhar a grade e os números das linhas e colunas
   function drawGrid() {
     const CELL_SIZE = getCellSize();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Desenha células
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
@@ -81,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Destaque faixa de altura/base
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -89,8 +101,28 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
     ctx.strokeRect(0, yStart, canvas.width, heightPx);
+
+    // Configura estilo texto para numeração
+    ctx.fillStyle = '#333';
+    ctx.font = `${Math.floor(CELL_SIZE / 2)}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Números das colunas no topo (de 1 até SIZE)
+    for (let x = 0; x < SIZE; x++) {
+      const posX = x * CELL_SIZE + CELL_SIZE / 2;
+      ctx.fillText((x + 1).toString(), posX, CELL_SIZE / 4);
+    }
+
+    // Números das linhas na direita (de 1 até SIZE)
+    ctx.textAlign = 'left';
+    for (let y = 0; y < SIZE; y++) {
+      const posY = y * CELL_SIZE + CELL_SIZE / 2;
+      ctx.fillText((y + 1).toString(), canvas.width - CELL_SIZE / 4, posY);
+    }
   }
 
+  // Criação dos botões para altura e base
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
@@ -288,4 +320,3 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCopyAndSaveButtons('wifBox', 'WIF Comprimido');
   setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Comprimido');
 });
- 
