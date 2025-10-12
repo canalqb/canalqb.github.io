@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
   const ctx = canvas.getContext('2d');
 
-  // UI Elements
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
   const randBtn = document.getElementById('randBtn');
   const speedInput = document.getElementById('speed');
   const speedLabel = document.getElementById('speedLabel');
+
   const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
   const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
 
@@ -25,30 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
 
-  const heightButtonsDiv = document.getElementById('heightButtons');
-  const baseButtonsDiv = document.getElementById('baseButtons');
+  // Adiciona linha ao textarea, foca e rola até ela
+  function appendLineAndFocus(ta, line, { selectLine = false, smooth = false } = {}) { 
+    const newline = ta.value.length ? '\n' + line : line;
+    ta.value += newline;
 
-  // Estado da aplicação
-  let altura = 1;
-  let base = SIZE;
-  let gridState = new Array(SIZE * SIZE).fill(false);
-  let stateCounter = 0n;
-  let running = false;
-  let timeoutId = null;
-
-  // ---------- Funções auxiliares ----------
-
-  // Adiciona linha ao textarea, foca e rola para ela
-  function appendLineAndFocus(ta, line, { selectLine = false, smooth = false } = {}) {
-    const prefix = ta.value.length ? '\n' : '';
-    ta.value += prefix + line;
-
-    const end = ta.value.length;
-    const start = end - line.length;
+    const lineEnd = ta.value.length;
+    const lineStart = lineEnd - line.length;
 
     ta.focus();
-    if (selectLine) ta.setSelectionRange(start, end);
-    else ta.setSelectionRange(end, end);
+
+    if (selectLine) {
+      ta.setSelectionRange(lineStart, lineEnd);
+    } else {
+      ta.setSelectionRange(lineEnd, lineEnd);
+    }
 
     requestAnimationFrame(() => {
       if (smooth && 'scrollTo' in ta) {
@@ -59,7 +50,56 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---------- Grid e desenho ----------
+  const heightButtonsDiv = document.getElementById('heightButtons');
+  const baseButtonsDiv = document.getElementById('baseButtons');
+
+  let altura = 1;
+  let base = SIZE;
+
+  let gridState = new Array(SIZE * SIZE).fill(false);
+  let stateCounter = 0n;
+  let running = false;
+  let timeoutId = null;
+
+  function getCellSize() {
+    return CELL_SIZE;
+  }
+
+  function setupCopyAndSaveButtons(id, label) {
+    const textarea = document.getElementById(id);
+    const container = textarea.parentElement;
+
+    const btnGroup = document.createElement('div');
+    btnGroup.style.display = 'flex';
+    btnGroup.style.gap = '10px';
+    btnGroup.style.marginBottom = '10px';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-sm btn-outline-secondary';
+    copyBtn.innerText = `📋 Copiar ${label}`;
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(textarea.value)
+        .then(() => alert(`${label} copiado para a área de transferência!`))
+        .catch(() => alert(`Erro ao copiar ${label}`));
+    };
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn btn-sm btn-outline-primary';
+    saveBtn.innerText = `💾 Salvar ${label}`;
+    saveBtn.onclick = () => {
+      const blob = new Blob([textarea.value], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${id}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    btnGroup.appendChild(copyBtn);
+    btnGroup.appendChild(saveBtn);
+    container.insertBefore(btnGroup, textarea);
+  }
 
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -68,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
-    // Números colunas topo
     ctx.textAlign = 'center';
     for (let x = 0; x < SIZE; x++) {
       const posX = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
@@ -76,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillText((x + 1).toString(), posX, posY);
     }
 
-    // Números linhas à esquerda e intervalos à direita (de baixo para cima)
     for (let y = 0; y < SIZE; y++) {
       const posY = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
 
@@ -87,14 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const linhasContadas = SIZE - y;
       const powStart = (linhasContadas - 1) * SIZE;
       const powEnd = linhasContadas * SIZE - 1;
-      ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, posY);
+      const intervalo = `2^${powStart}..2^${powEnd}`;
+      ctx.fillText(intervalo, MARGIN_LEFT + SIZE * CELL_SIZE + 10, posY);
     }
 
-    // Células da matriz
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
-        ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
+        ctx.fillStyle = gridState[idx] ? '#48bb78' : '#ffffff';
         ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         ctx.strokeStyle = '#e2e8f0';
@@ -102,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Destaque faixa entre altura e base
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -112,8 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = 3;
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
   }
-
-  // ---------- Controle da faixa ----------
 
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
@@ -151,17 +186,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateRangeButtons() {
-    heightButtonsDiv.querySelectorAll('button').forEach(btn =>
-      btn.classList.toggle('active', parseInt(btn.textContent) === altura)
-    );
-    baseButtonsDiv.querySelectorAll('button').forEach(btn =>
-      btn.classList.toggle('active', parseInt(btn.textContent) === base)
-    );
+    heightButtonsDiv.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent) === altura);
+    });
+    baseButtonsDiv.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent) === base);
+    });
 
     document.getElementById('activeRangeLabel').textContent = `${altura} até ${base}`;
   }
-
-  // ---------- Conversões e cálculos ----------
 
   function gridToHex() {
     const bits = gridState.map(cell => (cell ? '1' : '0')).join('');
@@ -197,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
   function base58Encode(buffer) {
     let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
     let result = '';
@@ -212,8 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return result;
   }
 
-  // ---------- Atualizações da UI ----------
-
+  // Atualização completa: atualiza textarea e ajusta foco, seleção e scroll
   async function updateOutput() {
     const hex = gridToHex();
     const wif = await privateKeyToWIF(hex, true);
@@ -222,6 +253,17 @@ document.addEventListener('DOMContentLoaded', () => {
     appendLineAndFocus(hexBox, hex, { selectLine: true, smooth: true });
     appendLineAndFocus(wifBox, wif, { selectLine: true, smooth: true });
     appendLineAndFocus(wifBoxUncompressed, wifU, { selectLine: true, smooth: true });
+  }
+
+  // Atualiza os valores das caixas sem mexer no foco, seleção ou scroll (para clique no canvas)
+  async function updateOutputSimple() {
+    const hex = gridToHex();
+    const wif = await privateKeyToWIF(hex, true);
+    const wifU = await privateKeyToWIF(hex, false);
+
+    hexBox.value = hex;
+    wifBox.value = wif;
+    wifBoxUncompressed.value = wifU;
   }
 
   function clearAll() {
@@ -243,11 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateOutput();
   }
 
-  // ---------- Lógica de execução ----------
-
   function step() {
     if (!running) return;
-
     stateCounter++;
     const max = 1n << BigInt((base - altura + 1) * SIZE);
     if (stateCounter >= max) {
@@ -287,8 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
     stopBtn.disabled = true;
   }
 
-  // ---------- Eventos ----------
-
   canvas.addEventListener('click', e => {
     if (running || !toggleOnClickCheckbox.checked) return;
 
@@ -306,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const idx = cellY * SIZE + cellX;
       gridState[idx] = !gridState[idx];
       drawGrid();
-      updateOutput();
+      updateOutputSimple(); // atualiza textareas sem alterar foco
     }
   });
 
@@ -322,48 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
     speedLabel.textContent = `${speedInput.value} ms`;
   });
 
-  // ---------- Inicialização ----------
-
   createRangeButtons();
   drawGrid();
   setupCopyAndSaveButtons('hexBox', 'HEX');
   setupCopyAndSaveButtons('wifBox', 'WIF Comprimido');
   setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Comprimido');
-
-  // Configura botões de copiar e salvar para textareas
-  function setupCopyAndSaveButtons(id, label) {
-    const textarea = document.getElementById(id);
-    const container = textarea.parentElement;
-
-    const btnGroup = document.createElement('div');
-    btnGroup.style.display = 'flex';
-    btnGroup.style.gap = '10px';
-    btnGroup.style.marginBottom = '10px';
-
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'btn btn-sm btn-outline-secondary';
-    copyBtn.innerText = `📋 Copiar ${label}`;
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(textarea.value)
-        .then(() => alert(`${label} copiado para a área de transferência!`))
-        .catch(() => alert(`Erro ao copiar ${label}`));
-    };
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'btn btn-sm btn-outline-primary';
-    saveBtn.innerText = `💾 Salvar ${label}`;
-    saveBtn.onclick = () => {
-      const blob = new Blob([textarea.value], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${id}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-
-    btnGroup.appendChild(copyBtn);
-    btnGroup.appendChild(saveBtn);
-    container.insertBefore(btnGroup, textarea);
-  }
 });
