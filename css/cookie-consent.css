@@ -12,6 +12,10 @@
   color: #2d3748;
   z-index: 9999;
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+  /* Transição para suavizar a ocultação */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Mensagem */
@@ -38,13 +42,11 @@
   transition: background-color 0.3s ease;
 }
 
-.cookie-buttons button:hover {
-  background-color: #4338ca;
-}
-
+.cookie-buttons button:hover,
 .cookie-buttons button:focus {
-  outline: 2px solid #c3dafe;
-  outline-offset: 2px;
+  background-color: #4338ca;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.5);
 }
 
 /* Seção de configurações */
@@ -70,17 +72,26 @@
   align-items: center;
   margin-bottom: 10px;
   font-size: 14px;
+  cursor: pointer; /* melhora a UX */
 }
 
 .cookie-settings input[type="checkbox"] {
   margin-right: 10px;
   width: 16px;
   height: 16px;
+  cursor: pointer;
 }
 
 /* Esconde elementos (para toggle) */
 .hidden {
-  display: none;
+  /* Usando opacity + visibility para evitar "piscadas" */
+  opacity: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  position: fixed !important; /* retira do fluxo para não interferir */
+  bottom: -9999px !important;
 }
 
 /* Responsividade */
