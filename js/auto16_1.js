@@ -266,17 +266,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
       }
-    } else if (mode === 'vertical') {
-      // Preenchimento vertical invertido: direita → esquerda, base → altura
+    } else if (mode === 'vertical') { 
+      // Preenchimento vertical correto: começa coluna mais à direita,
+      // preenche de baixo (base) até cima (altura)
       let bitIndex = 0;
-      for (let col = SIZE - 1; col >= 0; col--) {
-        for (let row = base - 1; row >= altura - 1; row--) {
-          if (bitIndex >= bits.length) break;
+      for (let col = SIZE - 1; col >= 0; col--) { // direita para esquerda
+        for (let row = base - 1; row >= altura - 1; row--) { // base até altura (baixo para cima)
           const idx = row * SIZE + col;
           gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
+          if (bitIndex >= bits.length) break;
         }
+        if (bitIndex >= bits.length) break;
       }
+    }
+
     }
   
     if (randomizeOnStepCheckbox.checked) {
