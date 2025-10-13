@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseButtonsDiv = document.getElementById('baseButtons');
 
   // Estado do grid e controle
-  let altura = 1;   // linha superior da faixa (1-based)
+  let altura = 12;   // linha superior da faixa (1-based)
   let base = SIZE;  // linha inferior da faixa (1-based)
   let gridState = new Array(SIZE * SIZE).fill(false);
   let stateCounter = 0n;
