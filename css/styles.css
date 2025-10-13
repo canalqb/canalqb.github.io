@@ -325,3 +325,34 @@ textarea[readonly]::-webkit-scrollbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+
+/* Estilo para alinhar opções lado a lado */
+.control-section .d-flex {
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.option-card {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.option-card:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.option-card input {
+  margin-right: 8px;
+  accent-color: #667eea;
+}
