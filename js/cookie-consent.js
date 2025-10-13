@@ -7,10 +7,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const customizeBtn = document.getElementById('customize-cookies');
   const saveSettingsBtn = document.getElementById('save-cookie-settings');
 
-  if (!localStorage.getItem('cookieConsent')) {
-    banner.style.display = 'block';
-  } else {
+  // Se já consentiu, esconde o banner imediatamente
+  if (localStorage.getItem('cookieConsent')) {
+    banner.classList.add('hidden');
     loadConsentedScripts();
+  } else {
+    banner.classList.remove('hidden');
   }
 
   acceptBtn.onclick = () => {
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     localStorage.setItem('cookieConsent', JSON.stringify(consentData));
     updateGoogleConsent(consentData);
     loadConsentedScripts();
-    banner.style.display = 'none';
+    banner.classList.add('hidden');
   }
 
   function updateGoogleConsent(consent) {
@@ -64,18 +66,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const consent = JSON.parse(localStorage.getItem('cookieConsent') || '{}');
 
     if (consent.analytics) {
-      // Inicialize o Google Analytics, se necessário
       console.log('Google Analytics ativado.');
-      // Exemplo: gtag('config', 'UA-XXXXXXXXX-X');
-      // Ou carregar scripts adicionais aqui
+      // gtag('config', 'UA-XXXXXXXXX-X'); // seu código GA aqui, se tiver
     } else {
       console.log('Google Analytics desativado.');
     }
 
     if (consent.ads) {
-      // Inicialize scripts de anúncios
       console.log('Anúncios ativados.');
-      // Por exemplo, forçar carregamento dos anúncios do Google AdSense:
       (adsbygoogle = window.adsbygoogle || []).push({});
     } else {
       console.log('Anúncios desativados.');
