@@ -1,3 +1,6 @@
+/* ========================
+   Base e Reset
+======================== */
 * {
   box-sizing: border-box;
 }
@@ -10,12 +13,17 @@ body {
   min-height: 100vh;
 }
 
+/* ========================
+   Navegação
+======================== */
 .navbar {
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px);
 }
 
-/* Anúncio no topo */
+/* ========================
+   Anúncio Superior
+======================== */
 .ad-banner-top {
   background: rgba(255, 255, 255, 0.9);
   padding: 10px;
@@ -31,12 +39,16 @@ body {
   letter-spacing: 1px;
 }
 
+/* ========================
+   Conteúdo Principal
+======================== */
 .container-main {
   margin: 2rem auto;
   max-width: 1000px;
   background: white;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 2rem;
 }
 
 h1 {
@@ -53,26 +65,17 @@ h1 {
   margin-bottom: 2rem;
 }
 
+/* ========================
+   Canvas Wrapper e Grid
+======================== */
 .canvas-wrapper {
-  display: flex;
-  justify-content: center;
-  margin: 1.5rem auto; /* Centraliza o wrapper */
   position: relative;
   width: 100%;
-  max-width: 500px; /* Limite máximo para o wrapper em telas maiores */
-  padding-bottom: 177.77%; /* Proporção 9:16 (altura / largura) */
+  max-width: 500px;
+  margin: 1.5rem auto;
+  padding-bottom: 100%; /* Proporção 1:1 (ajuste conforme necessário) */
   height: 0;
   overflow: hidden;
-}
-
-@media (max-width: 768px) {
-  .canvas-wrapper {
-    max-width: 90%; /* Ajusta a largura máxima para telas menores */
-  }
-  .container-main {
-    margin: 1rem auto; /* Reduz margem em telas menores */
-    padding: 1rem; /* Reduz padding em telas menores */
-  }
 }
 
 #grid {
@@ -81,16 +84,19 @@ h1 {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Garante que o conteúdo do canvas seja exibido corretamente */
+  background: #fff;
   border: 3px solid #2d3748;
   border-radius: 8px;
-  background: #fff;
+  object-fit: contain;
   cursor: crosshair;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: block;
   touch-action: none;
 }
 
+/* ========================
+   Indicador de Intervalo
+======================== */
 .range-indicator {
   text-align: center;
   margin: 1rem 0;
@@ -106,6 +112,9 @@ h1 {
   font-size: 1.1rem;
 }
 
+/* ========================
+   Seções de Controle
+======================== */
 .control-section {
   background: #f7fafc;
   border-radius: 12px;
@@ -122,6 +131,9 @@ h1 {
   margin-bottom: 1rem;
 }
 
+/* ========================
+   Botões de Intervalo
+======================== */
 .button-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
@@ -137,8 +149,8 @@ h1 {
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
   color: #4a5568;
+  transition: all 0.2s ease;
 }
 
 .range-btn:hover {
@@ -153,6 +165,9 @@ h1 {
   border-color: #667eea;
 }
 
+/* ========================
+   Botões Principais
+======================== */
 .main-controls {
   display: flex;
   flex-wrap: wrap;
@@ -165,10 +180,10 @@ h1 {
   padding: 10px 24px;
   border-radius: 8px;
   font-weight: 600;
-  border: none;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1rem;
+  border: none;
 }
 
 .btn-start {
@@ -193,13 +208,15 @@ h1 {
   box-shadow: 0 6px 16px rgba(245, 101, 101, 0.5);
 }
 
-.btn-clear, .btn-random {
+.btn-clear,
+.btn-random {
   background: white;
   color: #4a5568;
   border: 2px solid #e2e8f0;
 }
 
-.btn-clear:hover, .btn-random:hover {
+.btn-clear:hover,
+.btn-random:hover {
   border-color: #667eea;
   color: #667eea;
   transform: translateY(-2px);
@@ -211,6 +228,9 @@ h1 {
   transform: none !important;
 }
 
+/* ========================
+   Controle de Velocidade
+======================== */
 .speed-control {
   display: flex;
   align-items: center;
@@ -239,6 +259,9 @@ h1 {
   cursor: pointer;
 }
 
+/* ========================
+   Opções Extras
+======================== */
 .options-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -247,27 +270,34 @@ h1 {
 }
 
 .option-card {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 2px solid #e2e8f0;
-}
-
-.option-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   font-weight: 500;
   color: #2d3748;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.option-label input {
+.option-card:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.option-card input {
+  margin-right: 8px;
   width: 20px;
   height: 20px;
+  accent-color: #667eea;
   cursor: pointer;
 }
 
+/* ========================
+   Área de Saída
+======================== */
 .output-section {
   margin: 2rem 0;
 }
@@ -285,13 +315,13 @@ h1 {
   width: 100%;
   height: 120px;
   padding: 12px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
   font-family: 'Courier New', monospace;
   font-size: 0.85rem;
-  resize: vertical;
   background: #f7fafc;
   color: #2d3748;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  resize: vertical;
   transition: all 0.3s ease;
 }
 
@@ -301,7 +331,21 @@ h1 {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* Anúncio Flutuante */
+textarea[readonly] {
+  user-select: none;
+  pointer-events: none;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+textarea[readonly]::-webkit-scrollbar {
+  display: none;
+}
+
+/* ========================
+   Anúncio Flutuante
+======================== */
 .ad-floating {
   position: fixed;
   bottom: 20px;
@@ -315,21 +359,16 @@ h1 {
   overflow: hidden;
   animation: slideIn 0.5s ease-out;
 }
- 
-textarea[readonly] {
-  user-select: none;          /* evita seleção do texto */
-  pointer-events: none;       /* bloqueia clique e foco */
-  
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE e Edge */
-  overflow: auto;             /* mantém scroll funcional */
+
+.ad-floating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-textarea[readonly]::-webkit-scrollbar {
-  display: none;              /* Chrome, Safari, Opera */
-}
-
-
+/* ========================
+   Animações
+======================== */
 @keyframes slideIn {
   from {
     transform: translateX(400px);
@@ -341,38 +380,16 @@ textarea[readonly]::-webkit-scrollbar {
   }
 }
 
-.ad-floating-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ========================
+   Responsividade
+======================== */
+@media (max-width: 768px) {
+  .canvas-wrapper {
+    max-width: 90%;
+  }
 
-
-/* Estilo para alinhar opções lado a lado */
-.control-section .d-flex {
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-.option-card {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 16px;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  color: #2d3748;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.option-card:hover {
-  border-color: #667eea;
-  background: #f0f4ff;
-}
-
-.option-card input {
-  margin-right: 8px;
-  accent-color: #667eea;
+  .container-main {
+    margin: 1rem auto;
+    padding: 1rem;
+  }
 }
