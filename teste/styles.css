@@ -173,13 +173,15 @@ h1 {
   box-shadow: 0 6px 16px rgba(245, 101, 101, 0.5);
 }
 
-.btn-clear, .btn-random {
+.btn-clear,
+.btn-random {
   background: white;
   color: #4a5568;
   border: 2px solid #e2e8f0;
 }
 
-.btn-clear:hover, .btn-random:hover {
+.btn-clear:hover,
+.btn-random:hover {
   border-color: #667eea;
   color: #667eea;
   transform: translateY(-2px);
@@ -211,6 +213,7 @@ h1 {
 }
 
 .speed-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
   appearance: none;
   width: 18px;
   height: 18px;
@@ -231,6 +234,22 @@ h1 {
   padding: 1rem;
   border-radius: 8px;
   border: 2px solid #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  color: #2d3748;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-card:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.option-card input {
+  margin-right: 8px;
+  accent-color: #667eea;
 }
 
 .option-label {
@@ -295,20 +314,6 @@ h1 {
   overflow: hidden;
   animation: slideIn 0.5s ease-out;
 }
- 
-textarea[readonly] {
-  user-select: none;          /* evita seleção do texto */
-  pointer-events: none;       /* bloqueia clique e foco */
-  
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE e Edge */
-  overflow: auto;             /* mantém scroll funcional */
-}
-
-textarea[readonly]::-webkit-scrollbar {
-  display: none;              /* Chrome, Safari, Opera */
-}
-
 
 @keyframes slideIn {
   from {
@@ -325,34 +330,25 @@ textarea[readonly]::-webkit-scrollbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
 
-
-/* Estilo para alinhar opções lado a lado */
+/* Alinhamento flexível dentro da control-section */
 .control-section .d-flex {
+  display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
 }
 
-.option-card {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 16px;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  color: #2d3748;
-  transition: all 0.2s ease;
-  cursor: pointer;
+textarea[readonly] {
+  user-select: none;          /* evita seleção do texto */
+  pointer-events: none;       /* bloqueia clique e foco */
+
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE e Edge */
+  overflow: auto;             /* mantém scroll funcional */
 }
 
-.option-card:hover {
-  border-color: #667eea;
-  background: #f0f4ff;
-}
-
-.option-card input {
-  margin-right: 8px;
-  accent-color: #667eea;
+textarea[readonly]::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Opera */
 }
