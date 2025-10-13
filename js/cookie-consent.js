@@ -10,30 +10,30 @@ document.addEventListener('DOMContentLoaded', function () {
   // Verifica se o usuário já deu consentimento
   if (!localStorage.getItem('cookieConsent')) {
     banner.style.display = 'block';
+  } else {
+    loadConsentedScripts();
   }
 
   acceptBtn.onclick = () => {
-    localStorage.setItem(
-      'cookieConsent',
-      JSON.stringify({
-        functional: true,
-        analytics: true,
-        ads: true
-      })
-    );
+    const consentData = {
+      functional: true,
+      analytics: true,
+      ads: true
+    };
+    localStorage.setItem('cookieConsent', JSON.stringify(consentData));
+    updateGoogleConsent(consentData);
     loadConsentedScripts();
     banner.style.display = 'none';
   };
 
   rejectBtn.onclick = () => {
-    localStorage.setItem(
-      'cookieConsent',
-      JSON.stringify({
-        functional: false,
-        analytics: false,
-        ads: false
-      })
-    );
+    const consentData = {
+      functional: false,
+      analytics: false,
+      ads: false
+    };
+    localStorage.setItem('cookieConsent', JSON.stringify(consentData));
+    updateGoogleConsent(consentData);
     banner.style.display = 'none';
   };
 
@@ -42,43 +42,33 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   saveSettingsBtn.onclick = () => {
-    const functional = document.getElementById('functional-cookies').checked;
-    const analytics = document.getElementById('analytics-cookies').checked;
-    const ads = document.getElementById('ads-cookies').checked;
+    const consentData = {
+      functional: document.getElementById('functional-cookies').checked,
+      analytics: document.getElementById('analytics-cookies').checked,
+      ads: document.getElementById('ads-cookies').checked
+    };
 
-    localStorage.setItem(
-      'cookieConsent',
-      JSON.stringify({ functional, analytics, ads })
-    );
-
+    localStorage.setItem('cookieConsent', JSON.stringify(consentData));
+    updateGoogleConsent(consentData);
     loadConsentedScripts();
     banner.style.display = 'none';
   };
 
+  function updateGoogleConsent(consent) {
+    if (typeof gtag !== 'function') return;
+
+    gtag('consent', 'update', {
+      ad_storage: consent.ads ? 'granted' : 'denied',
+      analytics_storage: consent.analytics ? 'granted' : 'denied'
+    });
+  }
+
   function loadConsentedScripts() {
     const consent = JSON.parse(localStorage.getItem('cookieConsent') || '{}');
 
-    if (consent.analytics) {
-      // Exemplo: carregando Google Analytics
-      const ga = document.createElement('script');
-      ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
-      ga.async = true;
-      document.head.appendChild(ga);
+    // Carrega scripts adicionais apenas se necessário
+    // Neste caso, estamos usando o GTM que já carrega tudo baseado no consentimento via gtag
 
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
-    }
-
-    if (consent.ads) {
-      // Exemplo: permitir anúncios personalizados (AdSense já está no HTML)
-      // Google cuida do consentimento se você usa o modo de consentimento (Consent Mode v2)
-    }
-  }
-
-  // Se já houver consentimento, carrega scripts permitidos
-  if (localStorage.getItem('cookieConsent')) {
-    loadConsentedScripts();
+    // Se você estiver usando algo fora do GTM, pode carregar manualmente aqui
   }
 });
