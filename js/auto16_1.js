@@ -246,26 +246,28 @@ document.addEventListener('DOMContentLoaded', () => {
   async function step() {
     if (!running) return;
     stateCounter++;
-
+  
     const rowsCount = base - altura + 1;
     const totalCells = rowsCount * SIZE;
     const max = 1n << BigInt(totalCells);
-
+  
     if (stateCounter >= max) {
       stop();
       return;
     }
-
+  
     const bits = stateCounter.toString(2).padStart(totalCells, '0');
     const mode = getSelectedMode();
-
+  
     if (mode === 'sequential') {
+      // Preenchimento sequencial padrão (linha a linha, da esquerda pra direita)
       for (let i = 0; i < bits.length; i++) {
         const y = altura - 1 + Math.floor(i / SIZE);
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
       }
-    } else if (mode === 'vertical') { 
+    } else if (mode === 'vertical') {
+      // Preenchimento vertical invertido: direita → esquerda, base → altura
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
@@ -276,17 +278,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-
-
+  
     if (randomizeOnStepCheckbox.checked) {
       await randomizeRange();
     } else {
       drawGrid();
       await updateOutput();
     }
-
+  
     timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
   }
+
 
   // Controla início e parada do passo automático
   function start() {
