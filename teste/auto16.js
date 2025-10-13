@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const MARGIN_TOP = 30;
   const MARGIN_RIGHT = 130;
 
-  // DOM
+  // DOM elementos
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
   const startBtn = document.getElementById('startBtn');
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseButtonsDiv = document.getElementById('baseButtons');
   const extraLineButtonsDiv = document.getElementById('extraLineButtons');
 
-  // Estado
+  // Estado interno
   let altura = 12;
   let base = 16;
   let extraLine = 1;
@@ -33,13 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let running = false;
   let timeoutId = null;
 
-  // Canvas setup
+  // Ajusta canvas
   canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
 
+  // ---------------- Funções auxiliares ----------------
+
   function updateRangeLabel() {
     const label = document.getElementById('activeRangeLabel');
-    if (label) label.textContent = `${altura} até ${base}, linha extra: ${extraLine}`;
+    if (label) {
+      label.textContent = `${altura} até ${base} (linha extra: ${extraLine})`;
+    }
   }
 
   function drawGrid() {
@@ -48,14 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
-    // Cabeçalho colunas (topo)
+    // Cabeçalho das colunas
     ctx.textAlign = 'center';
     for (let x = 0; x < SIZE; x++) {
       const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
 
-    // Números linhas e intervalos (laterais)
+    // Números das linhas e intervalos
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
       ctx.textAlign = 'right';
@@ -67,22 +71,34 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
 
-    // Células do grid
+    // Desenha cada célula
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
         if (y === extraLine - 1) {
+          // Estamos na linha extra — destacar se selecionada ou não
           ctx.fillStyle = extraLineSelection[x] ? '#f6ad55' : '#fff5e6';
         } else {
+          // linha comum
           ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
         }
-        ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.fillRect(
+          MARGIN_LEFT + x * CELL_SIZE,
+          MARGIN_TOP + y * CELL_SIZE,
+          CELL_SIZE,
+          CELL_SIZE
+        );
         ctx.strokeStyle = '#e2e8f0';
-        ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.strokeRect(
+          MARGIN_LEFT + x * CELL_SIZE,
+          MARGIN_TOP + y * CELL_SIZE,
+          CELL_SIZE,
+          CELL_SIZE
+        );
       }
     }
 
-    // Destaques faixa altura-base
+    // Destaque da faixa entre altura e base
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -91,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = 3;
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
 
-    // Destaque faixa extraLine
+    // Destaque da linha extra
     ctx.fillStyle = 'rgba(244, 180, 0, 0.3)';
     const yExtra = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
     ctx.fillRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
@@ -106,19 +122,14 @@ document.addEventListener('DOMContentLoaded', () => {
     extraLineButtonsDiv.innerHTML = '';
 
     for (let i = 1; i <= SIZE; i++) {
-      const hBtn = createRangeButton(i, 'altura');
-      heightButtonsDiv.appendChild(hBtn);
-
-      const bBtn = createRangeButton(i, 'base');
-      baseButtonsDiv.appendChild(bBtn);
-
-      const eBtn = createRangeButton(i, 'extraLine');
-      extraLineButtonsDiv.appendChild(eBtn);
+      heightButtonsDiv.appendChild(makeRangeBtn(i, 'altura'));
+      baseButtonsDiv.appendChild(makeRangeBtn(i, 'base'));
+      extraLineButtonsDiv.appendChild(makeRangeBtn(i, 'extraLine'));
     }
     updateRangeButtons();
   }
 
-  function createRangeButton(value, type) {
+  function makeRangeBtn(value, type) {
     const btn = document.createElement('button');
     btn.textContent = value;
     btn.className = 'range-btn';
@@ -136,11 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (extraLine > base) extraLine = base;
       } else if (type === 'extraLine') {
         if (value < altura) {
-          alert('Faixa extra não pode ser menor que a altura');
+          alert('Linha extra não pode ser menor que a altura');
           return;
         }
         if (value > base) {
-          alert('Faixa extra não pode ser maior que a base');
+          alert('Linha extra não pode ser maior que a base');
           return;
         }
         extraLine = value;
@@ -152,20 +163,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateRangeButtons() {
-    [...heightButtonsDiv.children].forEach(btn => {
+    Array.from(heightButtonsDiv.children).forEach(btn => {
       btn.classList.toggle('active', Number(btn.textContent) === altura);
     });
-    [...baseButtonsDiv.children].forEach(btn => {
+    Array.from(baseButtonsDiv.children).forEach(btn => {
       btn.classList.toggle('active', Number(btn.textContent) === base);
     });
-    [...extraLineButtonsDiv.children].forEach(btn => {
+    Array.from(extraLineButtonsDiv.children).forEach(btn => {
       btn.classList.toggle('active', Number(btn.textContent) === extraLine);
     });
     updateRangeLabel();
   }
 
   function gridToHex() {
-    const bits = gridState.map(c => c ? '1' : '0').join('');
+    const bits = gridState.map(c => (c ? '1' : '0')).join('');
     const hex = [];
     for (let i = 0; i < bits.length; i += 8) {
       const byte = parseInt(bits.slice(i, i + 8), 2);
@@ -193,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const hash2 = await sha256(hash1);
     const checksum = hash2.slice(0, 4);
     const fullPayload = new Uint8Array([...payload, ...checksum]);
-
     return base58Encode(fullPayload);
   }
 
@@ -217,15 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const hex = gridToHex();
     const wif = await privateKeyToWIF(hex, true);
     const wifU = await privateKeyToWIF(hex, false);
-
     appendLineNoScroll(hexBox, hex);
     appendLineNoScroll(wifBox, wif);
     appendLineNoScroll(wifBoxUncompressed, wifU);
   }
 
   function appendLineNoScroll(textarea, line) {
-    const hadContent = textarea.value.length > 0;
-    textarea.value += (hadContent ? '\n' : '') + line;
+    const had = textarea.value.length > 0;
+    textarea.value += (had ? '\n' : '') + line;
     textarea.scrollTop = textarea.scrollHeight;
   }
 
@@ -251,7 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getSelectedMode() {
     const radios = document.querySelectorAll('input[name="mode"]');
-    for (const r of radios) if (r.checked) return r.value;
+    for (const r of radios) {
+      if (r.checked) return r.value;
+    }
     return 'sequential';
   }
 
@@ -259,23 +270,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!running) return;
     stateCounter++;
 
-    const selectedCellsCount = extraLineSelection.filter(Boolean).length;
-    if (selectedCellsCount === 0) {
-      alert('Selecione pelo menos uma célula na faixa extra para participar do contador.');
+    const selCount = extraLineSelection.filter(Boolean).length;
+    if (selCount === 0) {
+      alert('Selecione pelo menos uma célula na linha extra para participar.');
       stop();
       return;
     }
 
     const rowsCount = base - altura + 1;
-    const totalCells = rowsCount * selectedCellsCount;
-    const max = 1n << BigInt(totalCells);
-
+    const totalCells = BigInt(rowsCount * selCount);
+    const max = 1n << totalCells;
     if (stateCounter >= max) {
       stop();
       return;
     }
 
-    const bits = stateCounter.toString(2).padStart(totalCells, '0');
+    const bits = stateCounter.toString(2).padStart(Number(totalCells), '0');
     const mode = getSelectedMode();
 
     if (mode === 'sequential') {
@@ -327,16 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
     stopBtn.disabled = true;
   }
 
-  canvas.addEventListener('click', async (e) => {
+  canvas.addEventListener('click', async (ev) => {
     if (running || !toggleOnClickCheckbox.checked) return;
-
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-
-    const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
-    const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
-
+    const x = Math.floor(((ev.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor(((ev.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
     if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
       if (y === extraLine - 1) {
         extraLineSelection[x] = !extraLineSelection[x];
@@ -362,29 +369,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!running) randomizeRange();
   };
 
-  function setupCopyAndSaveButtons(id, label) {
-    const textarea = document.getElementById(id);
-    const container = textarea.parentElement;
-
-    const btnGroup = document.createElement('div');
-    btnGroup.style.display = 'flex';
-    btnGroup.style.gap = '10px';
-    btnGroup.style.marginBottom = '10px';
+  function setupCopySave(id, label) {
+    const ta = document.getElementById(id);
+    const container = ta.parentElement;
+    const grp = document.createElement('div');
+    grp.style.display = 'flex';
+    grp.style.gap = '10px';
+    grp.style.marginBottom = '10px';
 
     const copyBtn = document.createElement('button');
     copyBtn.className = 'btn btn-sm btn-outline-secondary';
     copyBtn.innerText = `📋 Copiar ${label}`;
     copyBtn.onclick = () => {
-      navigator.clipboard.writeText(textarea.value)
-        .then(() => alert(`${label} copiado para a área de transferência!`))
-        .catch(() => alert(`Erro ao copiar ${label}`));
+      navigator.clipboard.writeText(ta.value).then(() => {
+        alert(`${label} copiado!`);
+      }).catch(() => {
+        alert(`Erro ao copiar ${label}`);
+      });
     };
 
     const saveBtn = document.createElement('button');
     saveBtn.className = 'btn btn-sm btn-outline-primary';
     saveBtn.innerText = `💾 Salvar ${label}`;
     saveBtn.onclick = () => {
-      const blob = new Blob([textarea.value], { type: 'text/plain' });
+      const blob = new Blob([ta.value], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = `${id}.txt`;
@@ -393,15 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.removeChild(link);
     };
 
-    btnGroup.appendChild(copyBtn);
-    btnGroup.appendChild(saveBtn);
-    container.insertBefore(btnGroup, textarea);
+    grp.appendChild(copyBtn);
+    grp.appendChild(saveBtn);
+    container.insertBefore(grp, ta);
   }
 
-  // Inicializa
-  setupCopyAndSaveButtons('hexBox', 'Hex');
-  setupCopyAndSaveButtons('wifBox', 'WIF');
-  setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Compactado');
+  // Inicialização
+  setupCopySave('hexBox', 'Hex');
+  setupCopySave('wifBox', 'WIF');
+  setupCopySave('wifBoxUncompressed', 'WIF Não Compactado');
 
   createRangeButtons();
   drawGrid();
