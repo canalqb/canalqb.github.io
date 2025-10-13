@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
       }
-    } else if (mode === 'vertical') {
+    } else if (mode === 'vertical') { 
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
@@ -276,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+
 
     if (randomizeOnStepCheckbox.checked) {
       await randomizeRange();
