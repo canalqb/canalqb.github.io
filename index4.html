@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gerador de Private Keys Bitcoin — CanalQb</title>
 
-  <!-- AdSense Meta -->
+  <!-- Google AdSense -->
   <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
 
   <!-- Bootstrap CSS -->
@@ -19,22 +19,11 @@
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
-
-    // Consentimento negado por padrão (modo de consentimento do Google)
     gtag('consent', 'default', {
       ad_storage: 'denied',
       analytics_storage: 'denied'
     });
   </script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('consent', 'default', {
-    'ad_storage': 'denied',
-    'analytics_storage': 'denied'
-  });
-</script>
-
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -42,16 +31,14 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NLMLKHPS');
   </script>
-  <!-- End Google Tag Manager -->
-
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
+
+  <!-- GTM noscript -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
     height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
-  <!-- End Google Tag Manager (noscript) -->
 
   <nav class="navbar navbar-expand-lg shadow-sm">
     <div class="container">
@@ -61,7 +48,7 @@
     </div>
   </nav>
 
-  <!-- Anúncio Banner Topo -->
+  <!-- Anúncio Topo -->
   <div class="ad-banner-top">
     <div class="ad-label">Publicidade</div>
     <ins
@@ -105,40 +92,34 @@
       </div>
 
       <div class="control-section">
-        <div class="speed-control">
+        <div class="speed-control mb-3">
           <label for="speed" style="font-weight: 600;">⚡ Velocidade:</label>
-          <!-- <input type="range" id="speed" min="50" max="2000" step="50" value="500" /> -->
           <input type="range" id="speed" min="1" max="1000" step="1" value="500" />
-
           <span id="speedLabel" style="font-weight: 700; color: #667eea;">500 ms</span>
         </div>
- 
-        <div class="option-card">
-          <label class="option-label">
+
+        <!-- Opções de controle lado a lado -->
+        <div class="d-flex flex-wrap gap-2 my-3">
+          <label class="option-card">
             <input type="radio" name="mode" value="sequential" checked />
             <span>📊 Sequencial (H)</span>
           </label>
-        </div>
-        <div class="option-card">
-          <label class="option-label">
+
+          <label class="option-card">
             <input type="radio" name="mode" value="vertical" />
             <span>📊 Sequencial (V)</span>
           </label>
-        </div>
-        <div class="option-card">
-          <label class="option-label">
+
+          <label class="option-card">
             <input type="checkbox" id="toggleOnClick" checked />
             <span>👆 Clique alterna célula</span>
           </label>
-        </div>
-        <div class="option-card">
-          <label class="option-label">
+
+          <label class="option-card">
             <input type="checkbox" id="randomizeStatesOnStep" />
             <span>🔄 Aleatorizar no passo</span>
           </label>
         </div>
-      </div>
-
       </div>
 
       <div class="output-section">
@@ -176,22 +157,22 @@
       <nav class="footer-nav container">
         <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
           <li><a href="#about">About</a></li>
-          <li><a href="#privacy-preferences">Gestão de Preferências de Privacidade</a></li>
+          <li><a href="#privacy-preferences">Gestão de Preferências</a></li>
           <li><a href="#cookie-consent">Consentimento de Cookies</a></li>
           <li><a href="#user-rights">Direitos do Usuário</a></li>
           <li><a href="#dmca">DMCA</a></li>
           <li><a href="#sitemap">Sitemap</a></li>
           <li><a href="#data-transparency">Transparência de Dados</a></li>
-          <li><a href="#no-sale-policy">Política de Não Venda de Dados</a></li>
-          <li><a href="#monetization-statement">Declaração de Monetização</a></li>
-          <li><a href="#copyright-policy">Política de Direitos Autorais</a></li>
-          <li><a href="#disclaimer">Disclaimer - Isenção de responsabilidade</a></li>
-          <li><a href="#cookie-policy">Política de cookies</a></li>
-          <li><a href="#app-privacy-policy">Política de privacidade de aplicativos</a></li>
+          <li><a href="#no-sale-policy">Não Venda de Dados</a></li>
+          <li><a href="#monetization-statement">Monetização</a></li>
+          <li><a href="#copyright-policy">Direitos Autorais</a></li>
+          <li><a href="#disclaimer">Disclaimer</a></li>
+          <li><a href="#cookie-policy">Política de Cookies</a></li>
+          <li><a href="#app-privacy-policy">Privacidade de Aplicativos</a></li>
           <li><a href="#page-transparency">Transparência da Página</a></li>
           <li><a href="#sobre">Sobre</a></li>
-          <li><a href="#terms-of-use">Termo de uso</a></li>
-          <li><a href="#privacy-policy">Política de Privacidade</a></li>
+          <li><a href="#terms-of-use">Termo de Uso</a></li>
+          <li><a href="#privacy-policy">Privacidade</a></li>
           <li><a href="#contacts">Contatos</a></li>
         </ul>
       </nav>
@@ -220,12 +201,12 @@
     </div>
   </div>
 
-  <!-- Scripts principais -->
+  <!-- Scripts -->
   <script src="js/auto16_1.js"></script>
   <script src="js/ads.js"></script>
   <script src="js/cookie-consent.js"></script>
 
-  <!-- Cookie Consent Banner -->
+  <!-- Cookie Consent -->
   <div id="cookie-consent-banner" class="cookie-consent">
     <div class="cookie-message">
       <p>
@@ -244,7 +225,7 @@
       <h4>Gerenciar preferências de cookies</h4>
       <label><input type="checkbox" disabled checked /> Necessários</label><br />
       <label><input type="checkbox" id="functional-cookies" /> Funcionais</label><br />
-      <label><input type="checkbox" id="analytics-cookies" /> Desempenho/Analytics</label><br />
+      <label><input type="checkbox" id="analytics-cookies" /> Analytics</label><br />
       <label><input type="checkbox" id="ads-cookies" /> Publicidade personalizada</label><br />
       <button id="save-cookie-settings">Salvar preferências</button>
     </div>
