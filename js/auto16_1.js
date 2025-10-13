@@ -283,32 +283,52 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --------------------------------------
-  // Passo da matriz - incrementa estado binário
+  // Passo da matriz - incrementa estado binário 
   function step() {
     if (!running) return;
     stateCounter++;
-    const max = 1n << BigInt((base - altura + 1) * SIZE);
+  
+    const rowsCount = base - altura + 1;
+    const totalCells = rowsCount * SIZE;
+    const max = 1n << BigInt(totalCells);
     if (stateCounter >= max) {
       stop();
       return;
     }
-
-    const bits = stateCounter.toString(2).padStart((base - altura + 1) * SIZE, '0');
-    for (let i = 0; i < bits.length; i++) {
-      const y = altura - 1 + Math.floor(i / SIZE);
-      const x = i % SIZE;
-      gridState[y * SIZE + x] = bits[i] === '1';
+  
+    const bits = stateCounter.toString(2).padStart(totalCells, '0');
+    const mode = getSelectedMode();
+  
+    if (mode === 'sequential') {
+      // Horizontal (linha por linha, esquerda para direita)
+      for (let i = 0; i < bits.length; i++) {
+        const y = altura - 1 + Math.floor(i / SIZE);
+        const x = i % SIZE;
+        gridState[y * SIZE + x] = bits[i] === '1';
+      }
+    } else if (mode === 'vertical') {
+      // Vertical (coluna por coluna, da direita para esquerda, de baixo para cima)
+      let bitIndex = 0;
+      for (let col = SIZE - 1; col >= 0; col--) {
+        for (let row = base - 1; row >= altura - 1; row--) {
+          if (bitIndex >= bits.length) break;
+          const idx = row * SIZE + col;
+          gridState[idx] = bits[bitIndex] === '1';
+          bitIndex++;
+        }
+      }
     }
-
+  
     if (randomizeOnStepCheckbox.checked) {
       randomizeRange();
     } else {
       drawGrid();
       updateOutput();
     }
-
+  
     timeoutId = setTimeout(step, parseInt(speedInput.value));
   }
+
 
   // --------------------------------------
   // Inicia e para step automático
