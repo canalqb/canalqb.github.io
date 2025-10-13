@@ -15,6 +15,22 @@ body {
   backdrop-filter: blur(10px);
 }
 
+/* Anúncio no topo */
+.ad-banner-top {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ad-label {
+  font-size: 0.75rem;
+  color: #718096;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .container-main {
   margin: 2rem auto;
   max-width: 1000px;
@@ -203,15 +219,6 @@ h1 {
   cursor: pointer;
 }
 
-.speed-control input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #667eea;
-  cursor: pointer;
-  border: none;
-}
-
 .options-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -274,28 +281,78 @@ h1 {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-footer {
-  text-align: center;
-  padding: 1.5rem;
-  color: #718096;
-  font-size: 0.9rem;
-  border-top: 1px solid #e2e8f0;
-  margin-top: 2rem;
+/* Anúncio Flutuante */
+.ad-floating {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  max-width: 350px;
+  min-width: 280px;
+  overflow: hidden;
+  animation: slideIn 0.5s ease-out;
+}
+ 
+textarea[readonly] {
+  user-select: none;          /* evita seleção do texto */
+  pointer-events: none;       /* bloqueia clique e foco */
+  
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE e Edge */
+  overflow: auto;             /* mantém scroll funcional */
 }
 
-@media (max-width: 768px) {
-  #grid {
-    width: 100%;
-    max-width: 450px;
-    height: auto;
-    aspect-ratio: 1;
-  }
+textarea[readonly]::-webkit-scrollbar {
+  display: none;              /* Chrome, Safari, Opera */
+}
 
-  .button-grid {
-    grid-template-columns: repeat(8, 1fr);
-  }
 
-  .options-grid {
-    grid-template-columns: 1fr;
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
   }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.ad-floating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+
+/* Estilo para alinhar opções lado a lado */
+.control-section .d-flex {
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.option-card {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.option-card:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.option-card input {
+  margin-right: 8px;
+  accent-color: #667eea;
 }
