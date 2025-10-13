@@ -38,19 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let running = false;
   let timeoutId = null;
 
-  // --------------------------------------
-  // Função para adicionar linha ao textarea
-  // Rolagem interna do textarea acompanha, mas NÃO foca e NÃO altera scroll da página
+  // Função para adicionar linha ao textarea sem alterar scroll da página
   function appendLineNoScrollPage(ta, line) {
     const hadContent = ta.value.length > 0;
     ta.value += (hadContent ? '\n' : '') + line;
-
-    // Rola scroll interno do textarea para mostrar o final
-    ta.scrollTop = ta.scrollHeight;
+    ta.scrollTop = ta.scrollHeight; // Rola para o fim do textarea
   }
 
-  // --------------------------------------
-  // Setup dos botões de copiar e salvar para textareas
+  // Setup botões copiar e salvar para textareas
   function setupCopyAndSaveButtons(id, label) {
     const textarea = document.getElementById(id);
     const container = textarea.parentElement;
@@ -87,8 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     container.insertBefore(btnGroup, textarea);
   }
 
-  // --------------------------------------
-  // Desenha o grid com margens e números
+  // Desenha o grid com margens, números e células
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -96,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
-    // Colunas no topo
+    // Cabeçalho das colunas
     ctx.textAlign = 'center';
     for (let x = 0; x < SIZE; x++) {
       const posX = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
@@ -104,15 +98,15 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillText((x + 1).toString(), posX, posY);
     }
 
-    // Linhas à esquerda e intervalos à direita
+    // Números das linhas e intervalos
     for (let y = 0; y < SIZE; y++) {
       const posY = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
 
-      // Número da linha à esquerda
+      // Número linha à esquerda
       ctx.textAlign = 'right';
       ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, posY);
 
-      // Intervalo à direita (potências de 2)
+      // Intervalos à direita
       ctx.textAlign = 'left';
       const linhasContadas = SIZE - y;
       const powStart = (linhasContadas - 1) * SIZE;
@@ -133,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Highlight da faixa selecionada
+    // Destaque faixa selecionada
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -144,13 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
   }
 
-  // --------------------------------------
   // Cria botões para escolher faixa altura/base
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
 
     for (let i = 1; i <= SIZE; i++) {
+      // Botão altura
       const hBtn = document.createElement('button');
       hBtn.textContent = i;
       hBtn.className = 'range-btn';
@@ -164,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       heightButtonsDiv.appendChild(hBtn);
 
+      // Botão base
       const bBtn = document.createElement('button');
       bBtn.textContent = i;
       bBtn.className = 'range-btn';
@@ -181,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRangeButtons();
   }
 
-  // Atualiza o visual dos botões faixa
+  // Atualiza visual dos botões faixa
   function updateRangeButtons() {
     heightButtonsDiv.querySelectorAll('button').forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === altura);
@@ -190,10 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.toggle('active', parseInt(btn.textContent) === base);
     });
 
-    document.getElementById('activeRangeLabel').textContent = `${altura} até ${base}`;
+    const activeRangeLabel = document.getElementById('activeRangeLabel');
+    if (activeRangeLabel) {
+      activeRangeLabel.textContent = `${altura} até ${base}`;
+    }
   }
 
-  // --------------------------------------
   // Converte grid para hex string
   function gridToHex() {
     const bits = gridState.map(cell => (cell ? '1' : '0')).join('');
@@ -205,9 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return hex.join('');
   }
 
-  // --------------------------------------
-  // Funções SHA-256, hex to bytes, WIF e base58
-
+  // SHA-256, hex para bytes, WIF e base58
   async function sha256(buffer) {
     const hash = await crypto.subtle.digest('SHA-256', buffer);
     return new Uint8Array(hash);
@@ -237,9 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
     let result = '';
     while (intVal > 0) {
-      result = BASE58[intVal % 58n] + result;
+      result = BASE58[Number(intVal % 58n)] + result;
       intVal /= 58n;
     }
+    // Preserve leading zeros
     for (let b of buffer) {
       if (b === 0) result = '1' + result;
       else break;
@@ -247,8 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return result;
   }
 
-  // --------------------------------------
-  // Atualiza os outputs textareas (sem mudar foco e sem scroll da página)
+  // Atualiza os outputs sem alterar foco/scroll da página
   async function updateOutput() {
     const hex = gridToHex();
     const wif = await privateKeyToWIF(hex, true);
@@ -259,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
     appendLineNoScrollPage(wifBoxUncompressed, wifU);
   }
 
-  // --------------------------------------
   // Limpa matriz e textareas
   function clearAll() {
     gridState.fill(false);
@@ -270,44 +264,54 @@ document.addEventListener('DOMContentLoaded', () => {
     wifBoxUncompressed.value = '';
   }
 
-  // --------------------------------------
   // Preenche randomicamente faixa selecionada
-  function randomizeRange() {
+  async function randomizeRange() {
     for (let y = altura - 1; y < base; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = Math.random() < 0.5;
       }
     }
     drawGrid();
-    updateOutput();
+    await updateOutput();
   }
 
-  // --------------------------------------
+  // Função para obter modo selecionado (adapte se houver UI)
+  function getSelectedMode() {
+    // Exemplo: implementar radio buttons com name "mode"
+    const radios = document.querySelectorAll('input[name="mode"]');
+    for (const radio of radios) {
+      if (radio.checked) return radio.value;
+    }
+    // Padrão para 'sequential' se nada selecionado
+    return 'sequential';
+  }
+
   // Passo da matriz - incrementa estado binário 
-  function step() {
+  async function step() {
     if (!running) return;
     stateCounter++;
-  
+
     const rowsCount = base - altura + 1;
     const totalCells = rowsCount * SIZE;
     const max = 1n << BigInt(totalCells);
+
     if (stateCounter >= max) {
       stop();
       return;
     }
-  
+
     const bits = stateCounter.toString(2).padStart(totalCells, '0');
     const mode = getSelectedMode();
-  
+
     if (mode === 'sequential') {
-      // Horizontal (linha por linha, esquerda para direita)
+      // Linha por linha, esquerda para direita
       for (let i = 0; i < bits.length; i++) {
         const y = altura - 1 + Math.floor(i / SIZE);
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
       }
     } else if (mode === 'vertical') {
-      // Vertical (coluna por coluna, da direita para esquerda, de baixo para cima)
+      // Coluna por coluna, direita para esquerda, de baixo para cima
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
@@ -318,19 +322,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-  
+
     if (randomizeOnStepCheckbox.checked) {
-      randomizeRange();
+      await randomizeRange();
     } else {
       drawGrid();
-      updateOutput();
+      await updateOutput();
     }
-  
-    timeoutId = setTimeout(step, parseInt(speedInput.value));
+
+    timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
   }
 
-
-  // --------------------------------------
   // Inicia e para step automático
   function start() {
     if (running) return;
@@ -347,8 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopBtn.disabled = true;
   }
 
-  // --------------------------------------
-  // Toggle da célula clicando no canvas (sem alterar scroll da página)
+  // Toggle célula clicando no canvas (sem alterar scroll da página)
   canvas.addEventListener('click', async (e) => {
     if (running || !toggleOnClickCheckbox.checked) return;
 
@@ -356,18 +357,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
-    // Calcula a célula clicada com arredondamento para inteiro
-    const x = Math.floor((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE;
-    const y = Math.floor((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE;
-    const cellX = Math.floor(x);
-    const cellY = Math.floor(y);
+    // Corrigido cálculo para pegar célula clicada corretamente
+    const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
 
-    if (cellX >= 0 && cellX < SIZE && cellY >= 0 && cellY < SIZE) {
-      const idx = cellY * SIZE + cellX;
+    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
+      const idx = y * SIZE + x;
       gridState[idx] = !gridState[idx];
       drawGrid();
 
-      // Atualiza textareas sem mexer no foco e no scroll da página
       const hex = gridToHex();
       const wif = await privateKeyToWIF(hex, true);
       const wifU = await privateKeyToWIF(hex, false);
@@ -378,7 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --------------------------------------
   // Botões UI
   startBtn.addEventListener('click', start);
   stopBtn.addEventListener('click', stop);
@@ -392,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
     speedLabel.textContent = `${speedInput.value} ms`;
   });
 
-  // --------------------------------------
   // Inicialização
   createRangeButtons();
   drawGrid();
