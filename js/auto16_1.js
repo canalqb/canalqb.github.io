@@ -177,19 +177,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Atualiza visual dos botões faixa
-  function updateRangeButtons() {
+  function updateRangeButtons() { 
     heightButtonsDiv.querySelectorAll('button').forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === altura);
     });
     baseButtonsDiv.querySelectorAll('button').forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === base);
     });
-
+  
     const activeRangeLabel = document.getElementById('activeRangeLabel');
     if (activeRangeLabel) {
       activeRangeLabel.textContent = `${altura} até ${base}`;
     }
   }
+
 
   // Converte grid para hex string
   function gridToHex() {
