@@ -96,36 +96,24 @@
         <div class="section-title mt-3">📍 Selecionar Base (Linha Final)</div>
         <div id="baseButtons" class="button-grid"></div>
       </div>
-
+ 
+      <!-- Dentro de <main>, substitua a seção dos botões principais -->
       <div class="main-controls">
-        <button id="startBtn" class="btn-custom btn-start">▶ Iniciar</button>
+        <button id="startBtn" class="btn-custom btn-start">📊 Sequencial (H)</button>
         <button id="stopBtn" class="btn-custom btn-stop" disabled>⏸ Parar</button>
         <button id="clearBtn" class="btn-custom btn-clear">🗑 Limpar</button>
-        <button id="randBtn" class="btn-custom btn-random">🎲 Aleatorizar</button>
+        <button id="randBtn" class="btn-custom btn-random">📊 Sequencial (V)</button>
       </div>
-
+      
+      <!-- Depois disso, mantenha apenas os checkboxes úteis -->
       <div class="control-section">
         <div class="speed-control">
           <label for="speed" style="font-weight: 600;">⚡ Velocidade:</label>
-          <!-- <input type="range" id="speed" min="50" max="2000" step="50" value="500" /> -->
           <input type="range" id="speed" min="1" max="1000" step="1" value="500" />
-
           <span id="speedLabel" style="font-weight: 700; color: #667eea;">500 ms</span>
         </div>
-
+      
         <div class="options-grid">
-          <div class="option-card">
-            <label class="option-label">
-              <input type="radio" name="mode" value="sequential" checked />
-              <span>📊 Sequencial</span>
-            </label>
-          </div>
-          <div class="option-card">
-            <label class="option-label">
-              <input type="radio" name="mode" value="random" />
-              <span>🎰 Aleatório</span>
-            </label>
-          </div>
           <div class="option-card">
             <label class="option-label">
               <input type="checkbox" id="toggleOnClick" checked />
@@ -140,6 +128,7 @@
           </div>
         </div>
       </div>
+
 
       <div class="output-section">
         <div class="mb-3 output-group">
