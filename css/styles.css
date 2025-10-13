@@ -73,7 +73,7 @@ h1 {
   width: 100%;
   max-width: 500px;
   margin: 1.5rem auto;
-  padding-bottom: 100%; /* Proporção 1:1 (ajuste conforme necessário) */
+  padding-bottom: 50%; /* Ajustado para refletir altura do grid (50%) */
   height: 0;
   overflow: hidden;
 }
@@ -83,7 +83,7 @@ h1 {
   top: 0;
   left: 0;
   width: 100%;
-  height: 50%;
+  height: 100%; /* Grid ocupa toda altura do wrapper */
   background: #fff;
   border: 3px solid #2d3748;
   border-radius: 8px;
