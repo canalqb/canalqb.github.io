@@ -307,19 +307,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const y = altura - 1 + Math.floor(i / SIZE);
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
-      }
+      } 
     } else if (mode === 'vertical') {
-      // Coluna por coluna, da direita para esquerda
-      // Em cada coluna, de baixo (base) para cima (altura)
+      // CORRETO: coluna por coluna (direita para esquerda), de baixo para cima
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
           if (bitIndex >= bits.length) break;
-          gridState[row * SIZE + col] = bits[bitIndex] === '1';
+          const idx = row * SIZE + col;
+          gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
         }
       }
     }
+
 
     if (randomizeOnStepCheckbox.checked) {
       await randomizeRange();
