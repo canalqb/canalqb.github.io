@@ -5,109 +5,241 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gerador de Private Keys Bitcoin — CanalQb</title>
 
-  <!-- Bootstrap (apenas CSS) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- AdSense Meta -->
+  <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
 
-  <style>
-    body { background:#fafafa; }
-    #grid { cursor:pointer; border:1px solid #ccc; background:#fff; display:block; margin:0 auto; }
-    .logbox { width:100%; height:60px; font-family:monospace; resize:vertical; }
-    .section-label { font-weight:600; }
-    .size-btn { min-width:56px; margin:4px; }
-    .controls .btn { margin:4px; }
-    .row-indicator { font-size:0.95rem; color:#666; }
-    .height-panel { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; }
-    footer { font-size:0.9rem; color:#666; margin-top:1.5rem; }
-    .container-main { max-width:980px; margin:18px auto; }
-  </style>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Estilos personalizados -->
+  <link href="css/styles.css?v=1.0" rel="stylesheet" />
+  <link href="css/cookie-consent.css" rel="stylesheet" />
+
+  <!-- Google Tag Manager -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+
+    // Consentimento negado por padrão (modo de consentimento do Google)
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied'
+    });
+  </script>
+
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NLMLKHPS');
+  </script>
+  <!-- End Google Tag Manager -->
+
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <nav class="navbar navbar-expand-lg shadow-sm">
     <div class="container">
-      <a class="navbar-brand fw-bold text-success" href="http://canalqb.blogspot.com/">CanalQb</a>
-      <div class="ms-auto d-flex gap-3 align-items-center">
-        <div class="text-muted small">Publicidade</div>
-        <div class="bg-light border rounded px-3 py-1 small">[ Anúncio 728x90 ]</div>
-      </div>
+      <a class="navbar-brand fw-bold" style="color: #667eea;" href="http://canalqb.blogspot.com/">
+        🔐 CanalQb
+      </a>
     </div>
   </nav>
 
-  <div class="container container-main bg-white p-4 shadow-sm rounded">
+  <!-- Anúncio Banner Topo -->
+  <div class="ad-banner-top">
+    <div class="ad-label">Publicidade</div>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-3614622181047762"
+      data-ad-slot="1111111111"
+      data-ad-format="horizontal"
+      data-full-width-responsive="true"
+    ></ins>
+  </div>
+
+  <div class="container-main p-4">
     <header>
-      <h1 class="h4">Gerador de Private Keys Bitcoin</h1>
+      <h1>Gerador de Private Keys Bitcoin</h1>
+      <p class="subtitle">Ferramenta interativa para geração de chaves privadas usando matriz 16×16</p>
     </header>
 
-    <main class="mt-3">
-      <p class="text-muted">Ferramenta para geração de chaves privadas Bitcoin em HEX e WIF usando uma matriz 16×16.</p>
+    <main>
+      <div class="canvas-wrapper">
+        <canvas id="grid" width="700" height="600"></canvas>
+      </div>
 
-      <div class="text-center mb-3">
-        <h6 class="text-success mb-2">Grade (clique para alternar célula)</h6>
-        <canvas id="grid" width="512" height="512"></canvas>
-        <div class="row-indicator mt-2">
-          Altura ativa: <span id="activeHeightLabel">16</span> (clique nos botões abaixo)
+      <div class="range-indicator">
+        Faixa ativa: Linha <span id="activeRangeLabel">1 até 16</span>
+      </div>
+
+      <div class="control-section">
+        <div class="section-title">🎯 Selecionar Altura (Linha Inicial)</div>
+        <div id="heightButtons" class="button-grid"></div>
+
+        <div class="section-title mt-3">📍 Selecionar Base (Linha Final)</div>
+        <div id="baseButtons" class="button-grid"></div>
+      </div>
+
+      <div class="main-controls">
+        <button id="startBtn" class="btn-custom btn-start">▶ Iniciar</button>
+        <button id="stopBtn" class="btn-custom btn-stop" disabled>⏸ Parar</button>
+        <button id="clearBtn" class="btn-custom btn-clear">🗑 Limpar</button>
+        <button id="randBtn" class="btn-custom btn-random">🎲 Aleatorizar</button>
+      </div>
+
+      <div class="control-section">
+        <div class="speed-control">
+          <label for="speed" style="font-weight: 600;">⚡ Velocidade:</label>
+          <!-- <input type="range" id="speed" min="50" max="2000" step="50" value="500" /> -->
+          <input type="range" id="speed" min="1" max="1000" step="1" value="500" />
+
+          <span id="speedLabel" style="font-weight: 700; color: #667eea;">500 ms</span>
+        </div>
+
+        <div class="options-grid">
+          <div class="option-card">
+            <label class="option-label">
+              <input type="radio" name="mode" value="sequential" checked />
+              <span>📊 Sequencial</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="radio" name="mode" value="random" />
+              <span>🎰 Aleatório</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="checkbox" id="toggleOnClick" checked />
+              <span>👆 Clique alterna célula</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="checkbox" id="randomizeStatesOnStep" />
+              <span>🔄 Aleatorizar no passo</span>
+            </label>
+          </div>
         </div>
       </div>
 
-      <!-- Altura e Base -->
-      <div class="text-center mb-3">
-        <div class="d-inline-block p-3 border rounded bg-light">
-          <div class="mb-2 small fw-bold">Selecionar Altura (linha superior da área ativa):</div>
-          <div id="heightButtons" class="height-panel mb-3"></div>
+      <div class="output-section">
+        <div class="mb-3 output-group">
+          <label class="output-label">🔑 Private Key HEX (64 caracteres)</label>
+          <textarea id="hexBox" class="output-box" readonly></textarea>
+        </div>
 
-          <div class="mb-2 small fw-bold">Selecionar Base (linha inferior da área ativa):</div>
-          <div id="baseButtons" class="height-panel"></div>
+        <div class="mb-3 output-group">
+          <label class="output-label">💼 WIF Comprimido</label>
+          <textarea id="wifBox" class="output-box" readonly></textarea>
+        </div>
+
+        <div class="mb-3 output-group">
+          <label class="output-label">📦 WIF Não Comprimido</label>
+          <textarea id="wifBoxUncompressed" class="output-box" readonly></textarea>
         </div>
       </div>
 
-      <div class="controls text-center mb-3">
-        <button id="startBtn" class="btn btn-success">Iniciar</button>
-        <button id="stopBtn" class="btn btn-danger" disabled>Parar</button>
-        <button id="clearBtn" class="btn btn-secondary">Limpar</button>
-        <button id="randBtn" class="btn btn-outline-secondary">Aleatorizar</button>
-
-        <div class="mt-3">
-          <label for="speed">Velocidade: <span id="speedLabel">500</span> ms</label>
-          <input type="range" id="speed" min="50" max="2000" step="50" value="500">
-        </div>
-
-        <div class="mt-3">
-          <label class="me-3"><input type="radio" name="mode" value="sequential" checked> Sequencial</label>
-          <label><input type="radio" name="mode" value="random"> Aleatório</label>
-        </div>
-
-        <div class="form-check form-switch mt-3 d-inline-block ms-3">
-          <input class="form-check-input" type="checkbox" id="toggleOnClick" checked>
-          <label class="form-check-label" for="toggleOnClick">Clique alterna célula</label>
-        </div>
-
-        <div class="form-check form-switch mt-3 d-inline-block ms-3">
-          <input class="form-check-input" type="checkbox" id="randomizeStatesOnStep">
-          <label class="form-check-label" for="randomizeStatesOnStep">Aleatorizar no passo</label>
-        </div>
-      </div>
-
-      <div class="logs">
-        <div class="mb-2">
-          <label for="hexBox" class="section-label">Private Key HEX (32 bytes / 64 hex chars)</label>
-          <textarea id="hexBox" class="logbox" readonly></textarea>
-        </div>
-        <div class="mb-2">
-          <label for="wifBox" class="section-label">WIF (Comprimido)</label>
-          <textarea id="wifBox" class="logbox" readonly></textarea>
-        </div>
-        <div class="mb-2">
-          <label for="wifBoxUncompressed" class="section-label">WIF (Não Comprimido)</label>
-          <textarea id="wifBoxUncompressed" class="logbox" readonly></textarea>
-        </div>
+      <!-- Anúncio In-Feed -->
+      <div class="my-4 text-center">
+        <div class="ad-label mb-2">Publicidade</div>
+        <ins
+          class="adsbygoogle"
+          style="display:block"
+          data-ad-format="fluid"
+          data-ad-layout-key="-6t+ed+2i-1n-4w"
+          data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="2222222222"
+        ></ins>
       </div>
     </main>
 
-    <footer class="mt-3 text-center">
-      © CanalQb — Rodrigo Carlos Moraes — Gerador de private keys para o puzzle 1000 bitcoins
+    <footer class="site-footer mt-5 pt-4 border-top">
+      <nav class="footer-nav container">
+        <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
+          <li><a href="#about">About</a></li>
+          <li><a href="#privacy-preferences">Gestão de Preferências de Privacidade</a></li>
+          <li><a href="#cookie-consent">Consentimento de Cookies</a></li>
+          <li><a href="#user-rights">Direitos do Usuário</a></li>
+          <li><a href="#dmca">DMCA</a></li>
+          <li><a href="#sitemap">Sitemap</a></li>
+          <li><a href="#data-transparency">Transparência de Dados</a></li>
+          <li><a href="#no-sale-policy">Política de Não Venda de Dados</a></li>
+          <li><a href="#monetization-statement">Declaração de Monetização</a></li>
+          <li><a href="#copyright-policy">Política de Direitos Autorais</a></li>
+          <li><a href="#disclaimer">Disclaimer - Isenção de responsabilidade</a></li>
+          <li><a href="#cookie-policy">Política de cookies</a></li>
+          <li><a href="#app-privacy-policy">Política de privacidade de aplicativos</a></li>
+          <li><a href="#page-transparency">Transparência da Página</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#terms-of-use">Termo de uso</a></li>
+          <li><a href="#privacy-policy">Política de Privacidade</a></li>
+          <li><a href="#contacts">Contatos</a></li>
+        </ul>
+      </nav>
+      <div class="text-center mt-3 small text-muted">
+        © 2025 CanalQb — Rodrigo Carlos Moraes<br />
+        Gerador de private keys Bitcoin - Puzzle 1000 BTC
+      </div>
     </footer>
   </div>
 
-  <!-- auto16.js (carregado no final) -->
+  <!-- Anúncio Flutuante -->
+  <div id="floatingAd" class="ad-floating" style="display: none;">
+    <div class="ad-floating-header">
+      <span class="ad-floating-label">📢 Publicidade</span>
+      <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">✕</button>
+    </div>
+    <div class="ad-floating-content">
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-3614622181047762"
+        data-ad-slot="3333333333"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      ></ins>
+    </div>
+  </div>
+
+  <!-- Scripts principais -->
   <script src="js/auto16.js"></script>
+  <script src="js/ads.js"></script>
+  <script src="js/cookie-consent.js"></script>
+
+  <!-- Cookie Consent Banner -->
+  <div id="cookie-consent-banner" class="cookie-consent">
+    <div class="cookie-message">
+      <p>
+        Usamos cookies para personalizar anúncios e melhorar sua experiência.
+        Para mais informações, leia nossa
+        <a href="/politica-de-cookies.html" target="_blank">Política de Cookies</a>.
+      </p>
+      <div class="cookie-buttons">
+        <button id="accept-cookies">Aceitar todos</button>
+        <button id="reject-cookies">Rejeitar</button>
+        <button id="customize-cookies">Personalizar</button>
+      </div>
+    </div>
+
+    <div id="cookie-settings" class="cookie-settings hidden">
+      <h4>Gerenciar preferências de cookies</h4>
+      <label><input type="checkbox" disabled checked /> Necessários</label><br />
+      <label><input type="checkbox" id="functional-cookies" /> Funcionais</label><br />
+      <label><input type="checkbox" id="analytics-cookies" /> Desempenho/Analytics</label><br />
+      <label><input type="checkbox" id="ads-cookies" /> Publicidade personalizada</label><br />
+      <button id="save-cookie-settings">Salvar preferências</button>
+    </div>
+  </div>
 </body>
 </html>
