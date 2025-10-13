@@ -1,209 +1,253 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Gerador Visual de Chave Privada Bitcoin</title>
-  <meta name="google-site-verification" content="xbqqUAyX_ZUwfEdi1Vb981vW_hBRdaYpJzJpHEAv6tY" />
-  <meta name="description" content="Gere chaves privadas de forma visual utilizando um grid 16x16 de bits.">
-  <meta name="keywords" content="Bitcoin, chave privada, gerador visual, endereço Bitcoin">
-  <meta name="author" content="MrFreeDragon (traduzido)">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gerador de Private Keys Bitcoin — CanalQb</title>
 
-  <!-- Estilo customizado -->
-  <style>
-    body {
-      background-color: #ffffff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+  <!-- AdSense Meta -->
+  <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
 
-    #MainDIV {
-      width: 80%;
-      margin: 30px auto;
-      background-color: #fff;
-      border: 2px solid green;
-      padding: 20px;
-      border-radius: 12px;
-      box-sizing: border-box;
-      text-align: center;
-    }
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    h1, h2 {
-      color: green;
-    }
+  <!-- Estilos personalizados -->
+  <link href="css/styles.css?v=1.0" rel="stylesheet" />
+  <link href="css/cookie-consent.css" rel="stylesheet" />
 
-    label {
-      font-weight: bold;
-      color: green;
-      display: block;
-      text-align: left;
-      margin: 12px 0 4px;
-    }
+  <!-- Google Tag Manager -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
 
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-      border: 2px solid green;
-      border-radius: 6px;
-      background-color: #fff;
-      color: #000;
-    }
+    // Consentimento negado por padrão (modo de consentimento do Google)
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied'
+    });
+  </script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied'
+  });
+</script>
 
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NLMLKHPS');
+  </script>
+  <!-- End Google Tag Manager -->
 
-    .btn {
-      background-color: #fff;
-      color: green;
-      border: 2px solid green;
-      padding: 10px 18px;
-      border-radius: 8px;
-      margin: 10px 6px;
-      font-weight: bold;
-      cursor: pointer;
-      display: inline-block;
-    }
-
-    .btn:hover {
-      background-color: #f0fff0;
-    }
-
-    canvas {
-      margin: 15px 0;
-      border: 2px solid green;
-    }
-
-    .textboxOnlineResult {
-      margin-top: 5px;
-    }
-
-    .field-section {
-      margin-top: 20px;
-      text-align: left;
-    }
-
-    @media (max-width: 768px) {
-      #MainDIV {
-        width: 95%;
-      }
-    }
-  </style>
-
-  <!-- Scripts necessários -->
-  <script src="js/bitcoinJS-lib.js"></script>
-  <script src="js/QRcode.js"></script>
 </head>
-
 <body>
-  <div id="MainDIV">
-    <h1>Gerador Visual de Chave Privada Bitcoin</h1>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
-    <label>Descrição:</label>
-    <textarea disabled>
-A tabela abaixo gera uma chave privada visual de 256 bits representada por um quadrado 16x16 (16 bits por linha). Use uma moeda real para gerar aleatoriamente cada bit (cara = 1, coroa = 0) ou desenhe manualmente clicando nos quadrados. A chave pública e o endereço Bitcoin são gerados automaticamente.
-    </textarea>
-
-    <div class="field-section">
-      <label>Tutoriais em vídeo:</label>
-      <p>
-        <a href="https://www.youtube.com/watch?v=WyBdYhwweaE" target="_blank">Geração com moeda</a> |
-        <a href="https://www.youtube.com/watch?v=0Ug4YBEyRFQ" target="_blank">Chave personalizada</a>
-      </p>
+  <nav class="navbar navbar-expand-lg shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" style="color: #667eea;" href="http://canalqb.blogspot.com/">
+        🔐 CanalQb
+      </a>
     </div>
+  </nav>
 
-    <label>Aviso de Segurança:</label>
-    <textarea disabled>
-Use este gerador apenas para fins educativos ou diversão. Para gerar uma chave segura, utilize uma moeda física e preencha todos os 256 bits manualmente.
-    </textarea>
+  <!-- Anúncio Banner Topo -->
+  <div class="ad-banner-top">
+    <div class="ad-label">Publicidade</div>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-3614622181047762"
+      data-ad-slot="1111111111"
+      data-ad-format="horizontal"
+      data-full-width-responsive="true"
+    ></ins>
+  </div>
 
-    <div class="field-section">
-      <label><input type="checkbox" id="ownHEX"> Visualizar minha própria chave privada HEX</label>
-      <div id="ownHEXform" style="display:none">
-        <label>Insira sua chave privada HEX:</label>
-        <input type="text" id="BTChIn" placeholder="Máx. 64 caracteres hexadecimais">
-        <a href="javascript:void(0);" class="btn" id="ownHEXbtn">Visualizar</a>
+  <div class="container-main p-4">
+    <header>
+      <h1>Gerador de Private Keys Bitcoin</h1>
+      <p class="subtitle">Ferramenta interativa para geração de chaves privadas usando matriz 16×16</p>
+    </header>
+
+    <main>
+      <div class="canvas-wrapper">
+        <canvas id="grid" width="700" height="600"></canvas>
       </div>
-    </div>
 
-    <h2>Visualização da Chave Privada (256 bits):</h2>
-    <canvas id="BTCpic" width="256" height="256"></canvas>
-
-    <div class="field-section">
-      <label>Comandos:</label>
-      <div>
-        <a href="javascript:void(0);" class="btn" id="ClearButton">Limpar Tudo</a>
-        <a href="javascript:void(0);" class="btn" id="RandButton">Chave Aleatória</a>
-        <a href="javascript:void(0);" class="btn" id="Inverse">Inverter</a>
-        <a href="javascript:void(0);" class="btn" id="Rotate">Rotacionar</a>
+      <div class="range-indicator">
+        Faixa ativa: Linha <span id="activeRangeLabel">1 até 16</span>
       </div>
-    </div>
 
-    <div class="field-section">
-      <label>Chave Privada em BIN (256 dígitos):</label>
-      <textarea id="BTCb" readonly></textarea>
+      <div class="control-section">
+        <div class="section-title">🎯 Selecionar Altura (Linha Inicial)</div>
+        <div id="heightButtons" class="button-grid"></div>
 
-      <label>Chave Privada em HEX (64 dígitos):</label>
-      <input type="text" id="BTCh" readonly>
-    </div>
+        <div class="section-title mt-3">📍 Selecionar Base (Linha Final)</div>
+        <div id="baseButtons" class="button-grid"></div>
+      </div>
 
-    <h2>Chaves Públicas e Endereços Gerados:</h2>
+      <div class="main-controls">
+        <button id="startBtn" class="btn-custom btn-start">▶ Iniciar</button>
+        <button id="stopBtn" class="btn-custom btn-stop" disabled>⏸ Parar</button>
+        <button id="clearBtn" class="btn-custom btn-clear">🗑 Limpar</button>
+        <button id="randBtn" class="btn-custom btn-random">🎲 Aleatorizar</button>
+      </div>
 
-    <label>Chave Pública (não comprimida):</label>
-    <textarea id="BTCpub" readonly></textarea>
+      <div class="control-section">
+        <div class="speed-control">
+          <label for="speed" style="font-weight: 600;">⚡ Velocidade:</label>
+          <!-- <input type="range" id="speed" min="50" max="2000" step="50" value="500" /> -->
+          <input type="range" id="speed" min="1" max="1000" step="1" value="500" />
 
-    <label>Endereço Bitcoin (não comprimido):</label>
-    <input type="text" id="BTCaddr" readonly>
-    <input type="text" id="BTCaddrCheck" readonly class="textboxOnlineResult">
-
-    <label>Chave Pública (comprimida):</label>
-    <textarea id="BTCpubC" readonly></textarea>
-
-    <label>Endereço Bitcoin (comprimido):</label>
-    <input type="text" id="BTCaddrC" readonly>
-    <input type="text" id="BTCaddrCheckC" readonly class="textboxOnlineResult">
-
-    <div class="field-section">
-      <label>Gerar formato WIF + QR Code:</label>
-      <a href="javascript:void(0);" class="btn" id="GenQRbtn">Gerar WIF & QR code</a>
-    </div>
-
-    <div id="DIVtoPrint" style="margin-top:30px">
-      <div id="ExportKey">
-        <p><strong>Sua <span style="color:orange">Chave Privada Bitcoin</span> e Endereço:</strong></p>
-
-        <label>Chave Privada HEX:</label>
-        <input type="text" id="PrivKeyExport" readonly>
-
-        <label>Chave Privada WIF:</label>
-        <input type="text" id="PrivKeyWIF" readonly>
-
-        <label>Endereço Bitcoin:</label>
-        <input type="text" id="AddressExport" readonly>
-
-        <div style="display:inline-block; width:45%">
-          <p>QR da Chave Privada</p>
-          <span id="PrivKeyQR"></span>
-        </div>
-        <div style="display:inline-block; width:45%">
-          <p>QR do Endereço</p>
-          <span id="AddressQR"></span>
+          <span id="speedLabel" style="font-weight: 700; color: #667eea;">500 ms</span>
         </div>
 
-        <div style="margin-top:20px">
-          <a href="javascript:void(0);" class="btn" id="PrintBtn">Imprimir Dados</a>
+        <div class="options-grid">
+          <div class="option-card">
+            <label class="option-label">
+              <input type="radio" name="mode" value="sequential" checked />
+              <span>📊 Sequencial</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="radio" name="mode" value="random" />
+              <span>🎰 Aleatório</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="checkbox" id="toggleOnClick" checked />
+              <span>👆 Clique alterna célula</span>
+            </label>
+          </div>
+          <div class="option-card">
+            <label class="option-label">
+              <input type="checkbox" id="randomizeStatesOnStep" />
+              <span>🔄 Aleatorizar no passo</span>
+            </label>
+          </div>
         </div>
       </div>
-    </div>
 
-    <footer style="margin-top:40px; font-size:0.9em; color:gray">
-      <p>(c) 2019 | <a href="info.txt" target="_blank">Informações</a> | <a href="archive/visualBTC.zip" download>Baixar ZIP</a> | <a href="https://github.com/MrFreeDragon/VisualBTC" target="_blank">GitHub</a></p>
-      <p>Doações: <a href="bitcoin:1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw">1SoDn3auKHVwmQKRaBgkPk2hMmXzCMcPw</a></p>
+      <div class="output-section">
+        <div class="mb-3 output-group">
+          <label class="output-label">🔑 Private Key HEX (64 caracteres)</label>
+          <textarea id="hexBox" class="output-box" readonly></textarea>
+        </div>
+
+        <div class="mb-3 output-group">
+          <label class="output-label">💼 WIF Comprimido</label>
+          <textarea id="wifBox" class="output-box" readonly></textarea>
+        </div>
+
+        <div class="mb-3 output-group">
+          <label class="output-label">📦 WIF Não Comprimido</label>
+          <textarea id="wifBoxUncompressed" class="output-box" readonly></textarea>
+        </div>
+      </div>
+
+      <!-- Anúncio In-Feed -->
+      <div class="my-4 text-center">
+        <div class="ad-label mb-2">Publicidade</div>
+        <ins
+          class="adsbygoogle"
+          style="display:block"
+          data-ad-format="fluid"
+          data-ad-layout-key="-6t+ed+2i-1n-4w"
+          data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="2222222222"
+        ></ins>
+      </div>
+    </main>
+
+    <footer class="site-footer mt-5 pt-4 border-top">
+      <nav class="footer-nav container">
+        <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
+          <li><a href="#about">About</a></li>
+          <li><a href="#privacy-preferences">Gestão de Preferências de Privacidade</a></li>
+          <li><a href="#cookie-consent">Consentimento de Cookies</a></li>
+          <li><a href="#user-rights">Direitos do Usuário</a></li>
+          <li><a href="#dmca">DMCA</a></li>
+          <li><a href="#sitemap">Sitemap</a></li>
+          <li><a href="#data-transparency">Transparência de Dados</a></li>
+          <li><a href="#no-sale-policy">Política de Não Venda de Dados</a></li>
+          <li><a href="#monetization-statement">Declaração de Monetização</a></li>
+          <li><a href="#copyright-policy">Política de Direitos Autorais</a></li>
+          <li><a href="#disclaimer">Disclaimer - Isenção de responsabilidade</a></li>
+          <li><a href="#cookie-policy">Política de cookies</a></li>
+          <li><a href="#app-privacy-policy">Política de privacidade de aplicativos</a></li>
+          <li><a href="#page-transparency">Transparência da Página</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#terms-of-use">Termo de uso</a></li>
+          <li><a href="#privacy-policy">Política de Privacidade</a></li>
+          <li><a href="#contacts">Contatos</a></li>
+        </ul>
+      </nav>
+      <div class="text-center mt-3 small text-muted">
+        © 2025 CanalQb — Rodrigo Carlos Moraes<br />
+        Gerador de private keys Bitcoin - Puzzle 1000 BTC
+      </div>
     </footer>
   </div>
 
-  <script src="js/visualPrivKeyMain.js"></script>
+  <!-- Anúncio Flutuante -->
+  <div id="floatingAd" class="ad-floating" style="display: none;">
+    <div class="ad-floating-header">
+      <span class="ad-floating-label">📢 Publicidade</span>
+      <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">✕</button>
+    </div>
+    <div class="ad-floating-content">
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-3614622181047762"
+        data-ad-slot="3333333333"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      ></ins>
+    </div>
+  </div>
+
+  <!-- Scripts principais -->
+  <script src="js/auto16.js"></script>
+  <script src="js/ads.js"></script>
+  <script src="js/cookie-consent.js"></script>
+
+  <!-- Cookie Consent Banner -->
+  <div id="cookie-consent-banner" class="cookie-consent">
+    <div class="cookie-message">
+      <p>
+        Usamos cookies para personalizar anúncios e melhorar sua experiência.
+        Para mais informações, leia nossa
+        <a href="/politica-de-cookies.html" target="_blank">Política de Cookies</a>.
+      </p>
+      <div class="cookie-buttons">
+        <button id="accept-cookies">Aceitar todos</button>
+        <button id="reject-cookies">Rejeitar</button>
+        <button id="customize-cookies">Personalizar</button>
+      </div>
+    </div>
+
+    <div id="cookie-settings" class="cookie-settings hidden">
+      <h4>Gerenciar preferências de cookies</h4>
+      <label><input type="checkbox" disabled checked /> Necessários</label><br />
+      <label><input type="checkbox" id="functional-cookies" /> Funcionais</label><br />
+      <label><input type="checkbox" id="analytics-cookies" /> Desempenho/Analytics</label><br />
+      <label><input type="checkbox" id="ads-cookies" /> Publicidade personalizada</label><br />
+      <button id="save-cookie-settings">Salvar preferências</button>
+    </div>
+  </div>
 </body>
 </html>
