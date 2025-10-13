@@ -22,11 +22,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
   const heightButtonsDiv = document.getElementById('heightButtons');
   const baseButtonsDiv = document.getElementById('baseButtons');
+  const extraLineButtonsDiv = document.getElementById('extraLineButtons'); // NOVO container para faixa extra
 
   // Estado inicial
   let altura = 12;
   let base = 16;
+  let extraLine = 1; // faixa extra para seleção de células
   let gridState = Array(SIZE * SIZE).fill(false);
+  let extraLineSelection = Array(SIZE).fill(false); // seleção das células na linha extra
   let stateCounter = 0n;
   let running = false;
   let timeoutId = null;
@@ -39,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateRangeLabel() {
     const label = document.getElementById('activeRangeLabel');
-    if (label) label.textContent = `${altura} até ${base}`;
+    if (label) label.textContent = `${altura} até ${base}, linha extra: ${extraLine}`;
   }
 
   function drawGrid() {
@@ -71,29 +74,45 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
-        ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
+
+        // Se estiver na faixa extraLine e for selecionada, destaque especial
+        if (y === extraLine - 1) {
+          ctx.fillStyle = extraLineSelection[x] ? '#f6ad55' : '#fff5e6'; // laranja claro para seleção na faixa extra
+        } else {
+          ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff'; // verde se ativo
+        }
+
         ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         ctx.strokeStyle = '#e2e8f0';
         ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
 
-    // Destaque faixa selecionada
+    // Destaque faixa selecionada altura-base
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
     ctx.fillRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
-
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
+
+    // Destaque faixa extraLine
+    ctx.fillStyle = 'rgba(244, 180, 0, 0.3)';
+    const yExtra = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+    ctx.fillRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+    ctx.strokeStyle = '#d97706';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
   }
 
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
+    extraLineButtonsDiv.innerHTML = '';
 
     for (let i = 1; i <= SIZE; i++) {
+      // Botões altura
       const hBtn = document.createElement('button');
       hBtn.textContent = i;
       hBtn.className = 'range-btn';
@@ -101,12 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!running) {
           altura = i;
           if (base < altura) base = altura;
+          if (extraLine < 1) extraLine = 1;
+          if (extraLine > base) extraLine = base; // garante faixa extra válida
           updateRangeButtons();
           drawGrid();
         }
       };
       heightButtonsDiv.appendChild(hBtn);
 
+      // Botões base
       const bBtn = document.createElement('button');
       bBtn.textContent = i;
       bBtn.className = 'range-btn';
@@ -114,11 +136,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!running) {
           base = i;
           if (base < altura) altura = base;
+          if (extraLine < 1) extraLine = 1;
+          if (extraLine > base) extraLine = base; // garante faixa extra válida
           updateRangeButtons();
           drawGrid();
         }
       };
       baseButtonsDiv.appendChild(bBtn);
+
+      // Botões faixa extra
+      const eBtn = document.createElement('button');
+      eBtn.textContent = i;
+      eBtn.className = 'range-btn';
+      eBtn.onclick = () => {
+        if (!running) {
+          if (i < altura) {
+            alert('Faixa extra não pode ser menor que a altura');
+            return;
+          }
+          if (i > base) {
+            alert('Faixa extra não pode ser maior que a base');
+            return;
+          }
+          extraLine = i;
+          updateRangeButtons();
+          drawGrid();
+        }
+      };
+      extraLineButtonsDiv.appendChild(eBtn);
     }
     updateRangeButtons();
   }
@@ -130,10 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
     [...baseButtonsDiv.children].forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === base);
     });
+    [...extraLineButtonsDiv.children].forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent) === extraLine);
+    });
     updateRangeLabel();
   }
 
   function gridToHex() {
+    // Gera o hex de todo o grid, pode ajustar se quiser só faixa selecionada
     const bits = gridState.map(c => (c ? '1' : '0')).join('');
     const hex = [];
     for (let i = 0; i < bits.length; i += 8) {
@@ -200,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function clearAll() {
     gridState.fill(false);
+    extraLineSelection.fill(false);
     stateCounter = 0n;
     drawGrid();
     hexBox.value = '';
@@ -227,8 +277,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!running) return;
     stateCounter++;
 
+    // Calcula quantas células participarão do contador
+    // Só células selecionadas na linha extra participam do contador sequencial/aleatório
+    // Calculamos totalCells como número de células selecionadas na faixa extra vezes o número de linhas da faixa altura-base
+    const selectedCellsCount = extraLineSelection.filter(Boolean).length;
+    if (selectedCellsCount === 0) {
+      alert('Selecione pelo menos uma célula na faixa extra para participar do contador.');
+      stop();
+      return;
+    }
+
     const rowsCount = base - altura + 1;
-    const totalCells = rowsCount * SIZE;
+    const totalCells = rowsCount * selectedCellsCount;
     const max = 1n << BigInt(totalCells);
 
     if (stateCounter >= max) {
@@ -239,17 +299,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const bits = stateCounter.toString(2).padStart(totalCells, '0');
     const mode = getSelectedMode();
 
+    // Distribui os bits apenas nas células selecionadas na faixa extra em cada linha da faixa altura-base
     if (mode === 'sequential') {
       // Linha a linha, esquerda para direita
-      for (let i = 0; i < bits.length; i++) {
-        const y = altura - 1 + Math.floor(i / SIZE);
-        const x = i % SIZE;
-        gridState[y * SIZE + x] = bits[i] === '1';
+      let bitIndex = 0;
+      for (let y = altura - 1; y < base; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          if (!extraLineSelection[x]) continue;
+          const idx = y * SIZE + x;
+          gridState[idx] = bits[bitIndex] === '1';
+          bitIndex++;
+        }
       }
     } else if (mode === 'vertical') {
       // Coluna a coluna da direita para esquerda, linha de baixo para cima
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
+        if (!extraLineSelection[col]) continue;
         for (let row = base - 1; row >= altura - 1; row--) {
           const idx = row * SIZE + col;
           gridState[idx] = bits[bitIndex] === '1';
@@ -294,10 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
     const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
- 
+
     if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
-      const idx = y * SIZE + x;
-      gridState[idx] = !gridState[idx];
+      if (y === extraLine - 1) {
+        // Na faixa extra: marca/desmarca célula para seleção no contador
+        extraLineSelection[x] = !extraLineSelection[x];
+      } else {
+        // Fora da faixa extra: ativa/desativa célula normal
+        const idx = y * SIZE + x;
+        gridState[idx] = !gridState[idx];
+      }
       drawGrid();
       await updateOutput();
     }
