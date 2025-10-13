@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseButtonsDiv = document.getElementById('baseButtons');
 
   // Estado do grid e controle
-  let altura = 1;
-  let base = SIZE;
+  let altura = 1;   // linha superior da faixa (1-based)
+  let base = SIZE;  // linha inferior da faixa (1-based)
   let gridState = new Array(SIZE * SIZE).fill(false);
   let stateCounter = 0n;
   let running = false;
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function appendLineNoScrollPage(ta, line) {
     const hadContent = ta.value.length > 0;
     ta.value += (hadContent ? '\n' : '') + line;
-    ta.scrollTop = ta.scrollHeight; // Rola para o fim do textarea
+    ta.scrollTop = ta.scrollHeight; // rola para fim do textarea
   }
 
   // Setup botões copiar e salvar para textareas
@@ -277,16 +277,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Função para obter modo selecionado (adapte se houver UI)
   function getSelectedMode() {
-    // Exemplo: implementar radio buttons com name "mode"
     const radios = document.querySelectorAll('input[name="mode"]');
     for (const radio of radios) {
       if (radio.checked) return radio.value;
     }
-    // Padrão para 'sequential' se nada selecionado
-    return 'sequential';
+    return 'sequential'; // padrão
   }
 
-  // Passo da matriz - incrementa estado binário 
+  // Passo da matriz - incrementa estado binário
   async function step() {
     if (!running) return;
     stateCounter++;
@@ -311,13 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
         gridState[y * SIZE + x] = bits[i] === '1';
       }
     } else if (mode === 'vertical') {
-      // Coluna por coluna, direita para esquerda, de baixo para cima
+      // Coluna por coluna, da direita para esquerda
+      // Em cada coluna, de baixo (base) para cima (altura)
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
           if (bitIndex >= bits.length) break;
-          const idx = row * SIZE + col;
-          gridState[idx] = bits[bitIndex] === '1';
+          gridState[row * SIZE + col] = bits[bitIndex] === '1';
           bitIndex++;
         }
       }
@@ -357,42 +355,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
 
-    // Corrigido cálculo para pegar célula clicada corretamente
     const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
     const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
 
-    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
+    if (x >= 0 && x < SIZE && y >= altura - 1 && y <= base - 1) {
       const idx = y * SIZE + x;
       gridState[idx] = !gridState[idx];
       drawGrid();
-
-      const hex = gridToHex();
-      const wif = await privateKeyToWIF(hex, true);
-      const wifU = await privateKeyToWIF(hex, false);
-
-      appendLineNoScrollPage(hexBox, hex);
-      appendLineNoScrollPage(wifBox, wif);
-      appendLineNoScrollPage(wifBoxUncompressed, wifU);
+      await updateOutput();
     }
   });
 
-  // Botões UI
-  startBtn.addEventListener('click', start);
-  stopBtn.addEventListener('click', stop);
-  clearBtn.addEventListener('click', () => {
-    if (!running) clearAll();
-  });
-  randBtn.addEventListener('click', () => {
-    if (!running) randomizeRange();
-  });
+  // Atualiza label de velocidade
   speedInput.addEventListener('input', () => {
-    speedLabel.textContent = `${speedInput.value} ms`;
+    speedLabel.textContent = speedInput.value + ' ms';
   });
 
-  // Inicialização
+  // Botões principais
+  startBtn.onclick = start;
+  stopBtn.onclick = stop;
+  clearBtn.onclick = () => {
+    if (!running) {
+      clearAll();
+    }
+  };
+  randBtn.onclick = () => {
+    if (!running) {
+      randomizeRange();
+    }
+  };
+
+  // Setup copy e save buttons
+  setupCopyAndSaveButtons('hexBox', 'Hex');
+  setupCopyAndSaveButtons('wifBox', 'WIF');
+  setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Compactado');
+
+  // Inicializa botões faixa e grid
   createRangeButtons();
   drawGrid();
-  setupCopyAndSaveButtons('hexBox', 'HEX');
-  setupCopyAndSaveButtons('wifBox', 'WIF Comprimido');
-  setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Comprimido');
+  speedLabel.textContent = speedInput.value + ' ms';
 });
