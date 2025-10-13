@@ -247,10 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
         gridState[y * SIZE + x] = bits[i] === '1';
       }
     } else if (mode === 'vertical') {
-      // Coluna a coluna da direita para esquerda, linha de baixo para cima
+      // Coluna a coluna da direita para esquerda, linha de cima para baixo
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
-        for (let row = base - 1; row >= altura - 1; row--) {
+        for (let row = altura - 1; row <= base - 1; row++) {
           const idx = row * SIZE + col;
           gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
