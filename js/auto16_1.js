@@ -32,8 +32,25 @@ document.addEventListener('DOMContentLoaded', () => {
   let timeoutId = null;
 
   // Define tamanho do canvas
+  // Define tamanho do canvas
+  // Para melhor adaptação em telas menores, o tamanho será ajustado via CSS.
+  // Manter um tamanho base para o cálculo interno.
   canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
+
+  // Ajustar o canvas para ser responsivo e manter a proporção 9:16 em telas menores
+  // A lógica de redimensionamento será tratada principalmente via CSS e viewport meta tag.
+  // No entanto, para garantir que o conteúdo do canvas seja desenhado corretamente,
+  // podemos ajustar as dimensões internas do canvas para uma proporção ideal
+  // e deixar o CSS lidar com o escalonamento visual.
+  // Por exemplo, para 9:16, se a largura for 560, a altura ideal seria (560 * 16) / 9 = 995.5
+  // Isso faria o canvas muito grande. O ideal é que o CSS controle o tamanho visual
+  // e o JS garanta que o desenho interno seja claro.
+  // Para o problema de estourar a tela, o CSS já foi ajustado para max-width: 100% e height: auto.
+  // A proporção 9:16 deve ser aplicada ao elemento pai ou ao canvas via CSS para ser eficaz.
+  // Por enquanto, manter as dimensões internas calculadas e confiar no CSS para o layout.
+  // Se o problema persistir, será necessário recalcular CELL_SIZE ou SIZE dinamicamente
+  // com base na largura do viewport, ou usar um wrapper com aspect-ratio no CSS.
 
   // --- FUNÇÕES ---
 
@@ -250,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Coluna a coluna da direita para esquerda, linha de cima para baixo
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
-        for (let row = altura - 1; row <= base - 1; row++) {
+        for (let row = base - 1; row >= altura - 1; row--) {
           const idx = row * SIZE + col;
           gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
