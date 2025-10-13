@@ -37,16 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- FUNÇÕES ---
 
-  // Função para atualizar label da faixa selecionada
   function updateRangeLabel() {
     const label = document.getElementById('activeRangeLabel');
     if (label) label.textContent = `${altura} até ${base}`;
   }
 
-  // Desenha todo o grid, números, intervalos e faixa selecionada
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     ctx.font = '12px Arial';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
@@ -61,12 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Números linhas e intervalos (laterais)
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
-
-      // Número linha à esquerda
       ctx.textAlign = 'right';
       ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
-
-      // Intervalo à direita
       ctx.textAlign = 'left';
       const linhasContadas = SIZE - y;
       const powStart = (linhasContadas - 1) * SIZE;
@@ -80,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const idx = y * SIZE + x;
         ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
         ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
         ctx.strokeStyle = '#e2e8f0';
         ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
@@ -97,13 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
   }
 
-  // Cria botões para selecionar altura e base da faixa
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
 
     for (let i = 1; i <= SIZE; i++) {
-      // Botão altura
       const hBtn = document.createElement('button');
       hBtn.textContent = i;
       hBtn.className = 'range-btn';
@@ -117,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       heightButtonsDiv.appendChild(hBtn);
 
-      // Botão base
       const bBtn = document.createElement('button');
       bBtn.textContent = i;
       bBtn.className = 'range-btn';
@@ -134,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRangeButtons();
   }
 
-  // Atualiza estado visual dos botões de faixa
   function updateRangeButtons() {
     [...heightButtonsDiv.children].forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === altura);
@@ -145,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRangeLabel();
   }
 
-  // Converte grid para string hexadecimal
   function gridToHex() {
     const bits = gridState.map(c => (c ? '1' : '0')).join('');
     const hex = [];
@@ -156,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return hex.join('');
   }
 
-  // Helpers para criptografia e encoding WIF/base58
   async function sha256(buffer) {
     const hash = await crypto.subtle.digest('SHA-256', buffer);
     return new Uint8Array(hash);
@@ -196,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return result;
   }
 
-  // Atualiza valores de saída sem alterar scroll/foco da página
   async function updateOutput() {
     const hex = gridToHex();
     const wif = await privateKeyToWIF(hex, true);
@@ -207,14 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
     appendLineNoScrollPage(wifBoxUncompressed, wifU);
   }
 
-  // Append em textarea sem afetar scroll da página
   function appendLineNoScrollPage(ta, line) {
     const hadContent = ta.value.length > 0;
     ta.value += (hadContent ? '\n' : '') + line;
     ta.scrollTop = ta.scrollHeight;
   }
 
-  // Limpa grid e textareas
   function clearAll() {
     gridState.fill(false);
     stateCounter = 0n;
@@ -224,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
     wifBoxUncompressed.value = '';
   }
 
-  // Preenche faixa selecionada com valores aleatórios
   async function randomizeRange() {
     for (let y = altura - 1; y < base; y++) {
       for (let x = 0; x < SIZE; x++) {
@@ -235,43 +217,40 @@ document.addEventListener('DOMContentLoaded', () => {
     await updateOutput();
   }
 
-  // Retorna modo selecionado na UI (sequencial ou vertical)
   function getSelectedMode() {
     const radios = document.querySelectorAll('input[name="mode"]');
     for (const r of radios) if (r.checked) return r.value;
     return 'sequential';
   }
 
-  // Passo automático do grid (incrementa estado binário)
   async function step() {
     if (!running) return;
     stateCounter++;
-  
+
     const rowsCount = base - altura + 1;
     const totalCells = rowsCount * SIZE;
     const max = 1n << BigInt(totalCells);
-  
+
     if (stateCounter >= max) {
       stop();
       return;
     }
-  
+
     const bits = stateCounter.toString(2).padStart(totalCells, '0');
     const mode = getSelectedMode();
-  
+
     if (mode === 'sequential') {
-      // Preenchimento sequencial padrão (linha a linha, da esquerda pra direita)
+      // Linha a linha, esquerda para direita
       for (let i = 0; i < bits.length; i++) {
         const y = altura - 1 + Math.floor(i / SIZE);
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
       }
-    } else if (mode === 'vertical') { 
-      // Preenchimento vertical correto: começa coluna mais à direita,
-      // preenche de baixo (base) até cima (altura)
+    } else if (mode === 'vertical') {
+      // Coluna a coluna da direita para esquerda, linha de baixo para cima
       let bitIndex = 0;
-      for (let col = SIZE - 1; col >= 0; col--) { // direita para esquerda
-        for (let row = base - 1; row >= altura - 1; row--) { // base até altura (baixo para cima)
+      for (let col = SIZE - 1; col >= 0; col--) {
+        for (let row = base - 1; row >= altura - 1; row--) {
           const idx = row * SIZE + col;
           gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
@@ -281,20 +260,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    }
-  
     if (randomizeOnStepCheckbox.checked) {
       await randomizeRange();
     } else {
       drawGrid();
       await updateOutput();
     }
-  
+
     timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
   }
 
-
-  // Controla início e parada do passo automático
   function start() {
     if (running) return;
     running = true;
@@ -310,7 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
     stopBtn.disabled = true;
   }
 
-  // Manipula clique no canvas para alternar célula (se permitido)
   canvas.addEventListener('click', async (e) => {
     if (running || !toggleOnClickCheckbox.checked) return;
 
@@ -329,12 +303,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Atualiza label de velocidade conforme slider
   speedInput.addEventListener('input', () => {
     speedLabel.textContent = `${speedInput.value} ms`;
   });
 
-  // Configura botões principais
   startBtn.onclick = start;
   stopBtn.onclick = stop;
   clearBtn.onclick = () => {
@@ -344,7 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!running) randomizeRange();
   };
 
-  // Setup botões copiar/salvar para textareas
   function setupCopyAndSaveButtons(id, label) {
     const textarea = document.getElementById(id);
     const container = textarea.parentElement;
