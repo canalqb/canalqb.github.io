@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const customizeBtn = document.getElementById('customize-cookies');
   const saveSettingsBtn = document.getElementById('save-cookie-settings');
 
-  // Verifica se o usuário já deu consentimento
   if (!localStorage.getItem('cookieConsent')) {
     banner.style.display = 'block';
   } else {
@@ -20,10 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
       analytics: true,
       ads: true
     };
-    localStorage.setItem('cookieConsent', JSON.stringify(consentData));
-    updateGoogleConsent(consentData);
-    loadConsentedScripts();
-    banner.style.display = 'none';
+    saveConsentAndApply(consentData);
   };
 
   rejectBtn.onclick = () => {
@@ -32,9 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
       analytics: false,
       ads: false
     };
-    localStorage.setItem('cookieConsent', JSON.stringify(consentData));
-    updateGoogleConsent(consentData);
-    banner.style.display = 'none';
+    saveConsentAndApply(consentData);
   };
 
   customizeBtn.onclick = () => {
@@ -47,12 +41,15 @@ document.addEventListener('DOMContentLoaded', function () {
       analytics: document.getElementById('analytics-cookies').checked,
       ads: document.getElementById('ads-cookies').checked
     };
+    saveConsentAndApply(consentData);
+  };
 
+  function saveConsentAndApply(consentData) {
     localStorage.setItem('cookieConsent', JSON.stringify(consentData));
     updateGoogleConsent(consentData);
     loadConsentedScripts();
     banner.style.display = 'none';
-  };
+  }
 
   function updateGoogleConsent(consent) {
     if (typeof gtag !== 'function') return;
@@ -66,9 +63,22 @@ document.addEventListener('DOMContentLoaded', function () {
   function loadConsentedScripts() {
     const consent = JSON.parse(localStorage.getItem('cookieConsent') || '{}');
 
-    // Carrega scripts adicionais apenas se necessário
-    // Neste caso, estamos usando o GTM que já carrega tudo baseado no consentimento via gtag
+    if (consent.analytics) {
+      // Inicialize o Google Analytics, se necessário
+      console.log('Google Analytics ativado.');
+      // Exemplo: gtag('config', 'UA-XXXXXXXXX-X');
+      // Ou carregar scripts adicionais aqui
+    } else {
+      console.log('Google Analytics desativado.');
+    }
 
-    // Se você estiver usando algo fora do GTM, pode carregar manualmente aqui
+    if (consent.ads) {
+      // Inicialize scripts de anúncios
+      console.log('Anúncios ativados.');
+      // Por exemplo, forçar carregamento dos anúncios do Google AdSense:
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    } else {
+      console.log('Anúncios desativados.');
+    }
   }
 });
