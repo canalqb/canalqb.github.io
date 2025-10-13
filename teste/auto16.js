@@ -26,23 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Estado interno
   let altura = 12;
   let base = 16;
-  let extraLine = 1;
+  let extraLine = 0; // 0 = desabilitada
   let gridState = new Array(SIZE * SIZE).fill(false);
   let extraLineSelection = new Array(SIZE).fill(false);
   let stateCounter = 0n;
   let running = false;
   let timeoutId = null;
 
-  // Ajusta canvas
   canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
-
-  // ---------------- Funções auxiliares ----------------
 
   function updateRangeLabel() {
     const label = document.getElementById('activeRangeLabel');
     if (label) {
-      label.textContent = `${altura} até ${base} (linha extra: ${extraLine})`;
+      const linhaExtraTexto = extraLine > 0 ? extraLine : 'nenhuma';
+      label.textContent = `${altura} até ${base} (linha extra: ${linhaExtraTexto})`;
     }
   }
 
@@ -71,15 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
 
-    // Desenha cada célula
+    // Desenha células
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
-        if (y === extraLine - 1) {
-          // Estamos na linha extra — destacar se selecionada ou não
+        if (y + 1 === extraLine) {
           ctx.fillStyle = extraLineSelection[x] ? '#f6ad55' : '#fff5e6';
         } else {
-          // linha comum
           ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
         }
         ctx.fillRect(
@@ -98,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Destaque da faixa entre altura e base
+    // Faixa de destaque
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -107,13 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = 3;
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
 
-    // Destaque da linha extra
-    ctx.fillStyle = 'rgba(244, 180, 0, 0.3)';
-    const yExtra = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
-    ctx.fillRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
-    ctx.strokeStyle = '#d97706';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+    // Destaque da linha extra (se houver)
+    if (extraLine > 0) {
+      ctx.fillStyle = 'rgba(244, 180, 0, 0.3)';
+      const yExtra = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+      ctx.fillRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+    }
   }
 
   function createRangeButtons() {
@@ -124,8 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 1; i <= SIZE; i++) {
       heightButtonsDiv.appendChild(makeRangeBtn(i, 'altura'));
       baseButtonsDiv.appendChild(makeRangeBtn(i, 'base'));
+    }
+
+    // Botão "sem linha extra"
+    const noLineBtn = makeRangeBtn(0, 'extraLine');
+    noLineBtn.textContent = 'Nenhuma';
+    extraLineButtonsDiv.appendChild(noLineBtn);
+
+    // Somente linhas antes da altura
+    for (let i = 1; i < altura; i++) {
       extraLineButtonsDiv.appendChild(makeRangeBtn(i, 'extraLine'));
     }
+
     updateRangeButtons();
   }
 
@@ -138,40 +146,38 @@ document.addEventListener('DOMContentLoaded', () => {
       if (type === 'altura') {
         altura = value;
         if (base < altura) base = altura;
-        if (extraLine < 1) extraLine = 1;
-        if (extraLine > base) extraLine = base;
+        if (extraLine >= altura && extraLine <= base) extraLine = 0;
       } else if (type === 'base') {
         base = value;
         if (base < altura) altura = base;
-        if (extraLine < 1) extraLine = 1;
-        if (extraLine > base) extraLine = base;
+        if (extraLine >= altura && extraLine <= base) extraLine = 0;
       } else if (type === 'extraLine') {
-        if (value < altura) {
-          alert('Linha extra não pode ser menor que a altura');
+        if (value === 0) {
+          extraLine = 0;
+          extraLineSelection.fill(false);
+        } else if (value >= altura && value <= base) {
+          alert('Linha extra deve estar fora do intervalo de altura e base.');
           return;
+        } else {
+          extraLine = value;
         }
-        if (value > base) {
-          alert('Linha extra não pode ser maior que a base');
-          return;
-        }
-        extraLine = value;
       }
-      updateRangeButtons();
+      createRangeButtons();
       drawGrid();
     });
     return btn;
   }
 
   function updateRangeButtons() {
-    Array.from(heightButtonsDiv.children).forEach(btn => {
-      btn.classList.toggle('active', Number(btn.textContent) === altura);
-    });
-    Array.from(baseButtonsDiv.children).forEach(btn => {
-      btn.classList.toggle('active', Number(btn.textContent) === base);
-    });
-    Array.from(extraLineButtonsDiv.children).forEach(btn => {
-      btn.classList.toggle('active', Number(btn.textContent) === extraLine);
-    });
+    Array.from(heightButtonsDiv.children).forEach(btn =>
+      btn.classList.toggle('active', Number(btn.textContent) === altura)
+    );
+    Array.from(baseButtonsDiv.children).forEach(btn =>
+      btn.classList.toggle('active', Number(btn.textContent) === base)
+    );
+    Array.from(extraLineButtonsDiv.children).forEach(btn =>
+      btn.classList.toggle('active', Number(btn.textContent) === extraLine)
+    );
     updateRangeLabel();
   }
 
@@ -270,16 +276,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!running) return;
     stateCounter++;
 
-    const selCount = extraLineSelection.filter(Boolean).length;
-    if (selCount === 0) {
-      alert('Selecione pelo menos uma célula na linha extra para participar.');
+    if (extraLine === 0 || extraLineSelection.filter(Boolean).length === 0) {
+      alert('Selecione pelo menos uma célula na linha extra (fora do intervalo) para participar.');
       stop();
       return;
     }
 
+    const selCount = extraLineSelection.filter(Boolean).length;
     const rowsCount = base - altura + 1;
     const totalCells = BigInt(rowsCount * selCount);
     const max = 1n << totalCells;
+
     if (stateCounter >= max) {
       stop();
       return;
@@ -324,6 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function start() {
     if (running) return;
+    stateCounter = 0n;
     running = true;
     startBtn.disabled = true;
     stopBtn.disabled = false;
@@ -345,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const x = Math.floor(((ev.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
     const y = Math.floor(((ev.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
     if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
-      if (y === extraLine - 1) {
+      if (y + 1 === extraLine) {
         extraLineSelection[x] = !extraLineSelection[x];
       } else {
         const idx = y * SIZE + x;
