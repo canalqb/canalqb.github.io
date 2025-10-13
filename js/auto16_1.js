@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
     const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
 
-    if (x >= 0 && x < SIZE && y >= altura - 1 && y <= base - 1) {
+    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
       const idx = y * SIZE + x;
       gridState[idx] = !gridState[idx];
       drawGrid();
