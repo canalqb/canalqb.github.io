@@ -1,395 +1,245 @@
-/* ========================
-   Base e Reset
-======================== */
+/* =====================================================
+   CanalQb - Gerador de Private Keys Bitcoin
+   Autor: Rodrigo Carlos Moraes
+   -----------------------------------------------------
+   Estilo moderno, limpo e responsivo (Bootstrap-like)
+   ===================================================== */
+
+:root {
+  --green: #008000;
+  --dark-green: #006400;
+  --bg: #ffffff;
+  --light-gray: #f5f5f5;
+}
+
+/* ---------- Reset e estrutura geral ---------- */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-height: 100vh;
 }
 
-/* ========================
-   Navegação
-======================== */
-.navbar {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(10px);
-}
-
-/* ========================
-   Anúncio Superior
-======================== */
-.ad-banner-top {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.ad-label {
-  font-size: 0.75rem;
-  color: #718096;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* ========================
-   Conteúdo Principal
-======================== */
+/* Container principal */
 .container-main {
-  margin: 2rem auto;
-  max-width: 1000px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  padding: 2rem;
-}
-
-h1 {
-  color: #2d3748;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  text-align: center;
-  color: #718096;
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
-}
-
-/* ========================
-   Canvas Wrapper e Grid
-======================== */
-.canvas-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  margin: 1.5rem auto;
-  padding-bottom: 50%; /* Ajustado para refletir altura do grid (50%) */
-  height: 0;
-  overflow: hidden;
-}
-
-#grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* Grid ocupa toda altura do wrapper */
+  width: 90%;
+  max-width: 1100px;
   background: #fff;
-  border: 3px solid #2d3748;
-  border-radius: 8px;
-  object-fit: contain;
-  cursor: crosshair;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: block;
-  touch-action: none;
+  border: 2px solid var(--green);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 30px 0;
+  box-shadow: 0 0 10px rgb(0 128 0 / 0.1);
 }
 
-/* ========================
-   Indicador de Intervalo
-======================== */
-.range-indicator {
+/* Cabeçalho */
+header {
   text-align: center;
-  margin: 1rem 0;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #667eea15, #764ba215);
-  border-radius: 8px;
-  font-weight: 600;
-  color: #2d3748;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
 }
 
-.range-indicator span {
-  color: #667eea;
-  font-size: 1.1rem;
-}
-
-/* ========================
-   Seções de Controle
-======================== */
-.control-section {
-  background: #f7fafc;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-}
-
-.section-title {
-  font-size: 0.9rem;
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--dark-green);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #4a5568;
-  margin-bottom: 1rem;
 }
 
-/* ========================
-   Botões de Intervalo
-======================== */
-.button-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-  gap: 6px;
-  margin-bottom: 1rem;
+/* Navbar simples */
+nav.navbar {
+  width: 100%;
+  background: #f1f1f1;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
 }
 
-.range-btn {
-  padding: 8px 4px;
-  border: 2px solid #e2e8f0;
-  background: white;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.9rem;
+nav.navbar a.navbar-brand {
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  font-size: 1.25rem;
+}
+
+nav.navbar a.navbar-brand:hover {
+  color: var(--dark-green);
+}
+
+/* Canvas grid */
+#grid {
+  border: 2px solid var(--green);
+  background: #fff;
+  image-rendering: pixelated;
   cursor: pointer;
-  color: #4a5568;
-  transition: all 0.2s ease;
+  display: block;
+  width: 512px;
+  height: 512px;
+  margin: 0 auto 15px auto;
 }
 
-.range-btn:hover {
-  border-color: #667eea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+/* Indicador altura ativa */
+.row-indicator {
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
-.range-btn.active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  border-color: #667eea;
-}
-
-/* ========================
-   Botões Principais
-======================== */
-.main-controls {
+/* Controles - botões */
+.controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
-  margin: 1.5rem 0;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
-.btn-custom {
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.btn-start {
-  background: linear-gradient(135deg, #48bb78, #38a169);
-  color: white;
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
-}
-
-.btn-start:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(72, 187, 120, 0.5);
-}
-
-.btn-stop {
-  background: linear-gradient(135deg, #f56565, #e53e3e);
-  color: white;
-  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
-}
-
-.btn-stop:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(245, 101, 101, 0.5);
-}
-
-.btn-clear,
-.btn-random {
-  background: white;
-  color: #4a5568;
-  border: 2px solid #e2e8f0;
-}
-
-.btn-clear:hover,
-.btn-random:hover {
-  border-color: #667eea;
-  color: #667eea;
-  transform: translateY(-2px);
-}
-
-.btn-custom:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* ========================
-   Controle de Velocidade
-======================== */
-.speed-control {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 1rem 0;
-  padding: 1rem;
-  background: white;
-  border-radius: 8px;
-}
-
-.speed-control input[type="range"] {
-  width: 200px;
-  height: 6px;
-  border-radius: 3px;
-  background: #e2e8f0;
-  outline: none;
-}
-
-.speed-control input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #667eea;
-  cursor: pointer;
-}
-
-/* ========================
-   Opções Extras
-======================== */
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.option-card {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 16px;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  color: #2d3748;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.option-card:hover {
-  border-color: #667eea;
-  background: #f0f4ff;
-}
-
-.option-card input {
-  margin-right: 8px;
-  width: 20px;
-  height: 20px;
-  accent-color: #667eea;
-  cursor: pointer;
-}
-
-/* ========================
-   Área de Saída
-======================== */
-.output-section {
-  margin: 2rem 0;
-}
-
-.output-label {
+button, .btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--dark-green);
   font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.output-box {
-  width: 100%;
-  height: 120px;
-  padding: 12px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  background: #f7fafc;
-  color: #2d3748;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  resize: vertical;
-  transition: all 0.3s ease;
-}
-
-.output-box:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-textarea[readonly] {
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
   user-select: none;
-  pointer-events: none;
-  overflow: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
-textarea[readonly]::-webkit-scrollbar {
-  display: none;
+button:hover, .btn:hover {
+  background: var(--green);
+  color: #fff;
 }
 
-/* ========================
-   Anúncio Flutuante
-======================== */
-.ad-floating {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  max-width: 350px;
-  min-width: 280px;
-  overflow: hidden;
-  animation: slideIn 0.5s ease-out;
+button:disabled {
+  background: #ccc;
+  color: #666;
+  border-color: #aaa;
+  cursor: not-allowed;
 }
 
-.ad-floating-header {
+/* Velocidade e radios alinhados */
+.controls > div {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.controls label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+/* Height buttons */
+.height-panel {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
 }
 
-/* ========================
-   Animações
-======================== */
-@keyframes slideIn {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+.height-panel button {
+  min-width: 40px;
+  padding: 6px 10px;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--dark-green);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* ========================
-   Responsividade
-======================== */
-@media (max-width: 768px) {
-  .canvas-wrapper {
-    max-width: 90%;
+.height-panel button:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+.height-panel button.active {
+  background: var(--dark-green);
+  color: #fff;
+  cursor: default;
+}
+
+/* Textareas logs */
+.logbox {
+  width: 100%;
+  height: 160px;
+  margin-top: 8px;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  border: 2px solid var(--green);
+  border-radius: 6px;
+  background: #f9fff9;
+  color: #004400;
+  resize: vertical;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+/* Logs container */
+.logs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.logs > div {
+  flex: 1;
+  min-width: 280px;
+}
+
+/* Footer */
+footer {
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 15px 10px;
+  text-align: center;
+  color: #555;
+  font-size: 0.9rem;
+  border-radius: 0 0 10px 10px;
+  margin-top: 40px;
+}
+
+footer a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+footer a:hover {
+  color: var(--dark-green);
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  #grid {
+    width: 320px !important;
+    height: 320px !important;
+  }
+
+  .logs {
+    flex-direction: column;
   }
 
   .container-main {
-    margin: 1rem auto;
-    padding: 1rem;
+    width: 95%;
+    padding: 15px;
   }
 }
