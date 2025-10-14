@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const CELL_SIZE = 20;
   const MARGIN_LEFT = 30;
   const MARGIN_TOP = 30;
-  // const MARGIN_RIGHT = 130;
   const MARGIN_RIGHT = 0;
 
   // Elementos DOM
@@ -27,19 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Estado inicial
   let altura = 13;
   let base = 16;
-  let gridState = Array(SIZE * SIZE).fill(false);
+  let gridState = new Array(SIZE * SIZE).fill(false);
   let stateCounter = 0n;
   let running = false;
   let timeoutId = null;
   let extraLineEnabled = false;
   let extraLine = null;
-  let extraLineCells = Array(SIZE).fill(false);
+  let extraLineCells = new Array(SIZE).fill(false);
 
   // Define tamanho do canvas
-  // canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
   canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + 1;
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE + 1;
-
 
   // --- FUNÇÕES ---
 
@@ -60,18 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
- 
-    // Números linhas e intervalos (laterais)
+
+    // Números linhas (laterais)
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
       ctx.textAlign = 'right';
       ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
-      ctx.textAlign = 'left';
-      // Removido texto das potências de 2
-      // const linhasContadas = SIZE - y;
-      // const powStart = (linhasContadas - 1) * SIZE;
-      // const powEnd = linhasContadas * SIZE - 1;
-      // ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
 
     // Células do grid
@@ -151,10 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateRangeButtons() {
     [...heightButtonsDiv.children].forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.textContent) === altura);
+      btn.classList.toggle('active', parseInt(btn.textContent, 10) === altura);
     });
     [...baseButtonsDiv.children].forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.textContent) === base);
+      btn.classList.toggle('active', parseInt(btn.textContent, 10) === base);
     });
     updateRangeLabel();
     updateExtraLineOptions();
@@ -188,7 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (extraLine !== null && !availableLines.includes(extraLine)) {
       extraLine = null;
       extraLineEnabled = false;
-      document.getElementById('enableExtraLine').checked = false;
+      const enableExtraLineCheckbox = document.getElementById('enableExtraLine');
+      if (enableExtraLineCheckbox) enableExtraLineCheckbox.checked = false;
       updateExtraLineUI();
     }
   }
@@ -197,11 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cellsContainer = document.getElementById('extraLineCells');
     const extraLineSelect = document.getElementById('extraLineSelect');
 
-    if (extraLineEnabled) {
-      extraLineSelect.disabled = false;
-    } else {
-      extraLineSelect.disabled = true;
-    }
+    if (!cellsContainer || !extraLineSelect) return;
+
+    extraLineSelect.disabled = !extraLineEnabled;
 
     if (extraLineEnabled && extraLine !== null) {
       cellsContainer.style.display = 'block';
@@ -215,6 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateExtraLineCellsUI() {
     const cellsContainer = document.getElementById('extraLineCells');
+    if (!cellsContainer) return;
+
     cellsContainer.innerHTML = '<div class="section-title" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Selecione as células da linha extra:</div>';
 
     const gridDiv = document.createElement('div');
@@ -222,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (let i = 0; i < SIZE; i++) {
       const cellBtn = document.createElement('button');
-      cellBtn.textContent = i + 1;
+      cellBtn.textContent = (i + 1).toString();
       cellBtn.className = 'extra-cell-btn';
       cellBtn.classList.toggle('active', extraLineCells[i]);
       cellBtn.onclick = () => {
@@ -241,14 +233,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function gridToHex() {
     const bits = gridState.map(c => (c ? '1' : '0')).join('');
     const bigIntValue = BigInt('0b' + bits);
-    return bigIntValue.toString(16).padStart(SIZE * SIZE / 4, '0');
+    // Pad com zeros para garantir tamanho correto
+    return bigIntValue.toString(16).padStart((SIZE * SIZE) / 4, '0');
   }
 
   function updateOutput() {
     const hex = gridToHex();
     hexBox.value = hex.toUpperCase();
 
-    // Placeholder para geração WIF — implementar lógica se necessário
+    // Placeholder para WIF — implementar se necessário
     wifBox.value = 'Não implementado';
     wifBoxUncompressed.value = 'Não implementado';
   }
@@ -274,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     drawGrid();
-    await updateOutput();
+    updateOutput();
   }
 
   function stop() {
@@ -289,7 +282,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function step() {
     const rowsCount = base - altura + 1;
-    const activeCellsInExtra = extraLineEnabled && extraLine !== null ? extraLineCells.filter(c => c).length : 0;
+    const activeCellsInExtra = extraLineEnabled && extraLine !== null
+      ? extraLineCells.filter(c => c).length
+      : 0;
     const totalCells = rowsCount * SIZE + activeCellsInExtra;
     const max = 1n << BigInt(totalCells);
 
@@ -315,8 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    let bitIndex = 0;
     if (mode === 'sequential') {
-      let bitIndex = 0;
       for (let y = altura - 1; y <= base - 1; y++) {
         for (let x = 0; x < SIZE; x++) {
           gridState[y * SIZE + x] = bits[bitIndex] === '1';
@@ -325,24 +320,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (extraLineEnabled && extraLine !== null) {
         for (let x = 0; x < SIZE; x++) {
-          if (extraLineCells[x] && bitIndex < bits.length) {
+          if (extraLineCells[x]) {
             gridState[(extraLine - 1) * SIZE + x] = bits[bitIndex] === '1';
             bitIndex++;
           }
         }
       }
     } else if (mode === 'vertical') {
-      let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
-          const idx = row * SIZE + col;
           if (bitIndex >= bits.length) break;
+          const idx = row * SIZE + col;
           gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
         }
         if (bitIndex >= bits.length) break;
       }
-      if (extraLineEnabled && extraLine !== null && bitIndex < bits.length) {
+      if (extraLineEnabled && extraLine !== null) {
         for (let x = SIZE - 1; x >= 0; x--) {
           if (extraLineCells[x] && bitIndex < bits.length) {
             gridState[(extraLine - 1) * SIZE + x] = bits[bitIndex] === '1';
@@ -356,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await randomizeRange();
     } else {
       drawGrid();
-      await updateOutput();
+      updateOutput();
     }
 
     stateCounter++;
@@ -373,26 +367,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- EVENTOS ---
 
-  canvas.addEventListener('click', e => { 
+  canvas.addEventListener('click', e => {
     if (!toggleOnClickCheckbox.checked || running) return;
-  
+
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-  
+
     const mouseX = (e.clientX - rect.left) * scaleX;
     const mouseY = (e.clientY - rect.top) * scaleY;
-  
+
     const x = Math.floor((mouseX - MARGIN_LEFT) / CELL_SIZE);
     const y = Math.floor((mouseY - MARGIN_TOP) / CELL_SIZE);
-  
+
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
-  
+
     gridState[y * SIZE + x] = !gridState[y * SIZE + x];
     drawGrid();
     updateOutput();
   });
-
 
   startBtn.onclick = () => {
     if (running) return;
@@ -434,24 +427,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Nenhuma ação imediata necessária
   };
 
-  // Extra line controls
+  // Controles da linha extra
   const enableExtraLineCheckbox = document.getElementById('enableExtraLine');
   const extraLineSelect = document.getElementById('extraLineSelect');
 
-  enableExtraLineCheckbox.onchange = () => {
-    extraLineEnabled = enableExtraLineCheckbox.checked;
-    if (!extraLineEnabled) {
-      extraLine = null;
-      extraLineCells.fill(false);
-    }
-    updateExtraLineUI();
-  };
+  if (enableExtraLineCheckbox) {
+    enableExtraLineCheckbox.onchange = () => {
+      extraLineEnabled = enableExtraLineCheckbox.checked;
+      if (!extraLineEnabled) {
+        extraLine = null;
+        extraLineCells.fill(false);
+      }
+      updateExtraLineUI();
+    };
+  }
 
-  extraLineSelect.onchange = () => {
-    extraLine = parseInt(extraLineSelect.value) || null;
-    extraLineCells.fill(false);
-    updateExtraLineUI();
-  };
+  if (extraLineSelect) {
+    extraLineSelect.onchange = () => {
+      extraLine = parseInt(extraLineSelect.value, 10) || null;
+      extraLineCells.fill(false);
+      updateExtraLineUI();
+    };
+  }
 
   // --- INICIALIZAÇÃO ---
 
