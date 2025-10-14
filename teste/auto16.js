@@ -1,75 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- CONSTANTES E CONFIGURAÇÕES ---
+  // Configurações do grid e canvas
   const SIZE = 16;
   const CELL_SIZE = 25;
   const MARGIN_LEFT = 30;
   const MARGIN_TOP = 30;
   const MARGIN_RIGHT = 130;
 
-  // --- ELEMENTOS DOM ---
+  // Elementos DOM
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
-
   const startBtn = document.getElementById('startBtn');
   const stopBtn = document.getElementById('stopBtn');
   const clearBtn = document.getElementById('clearBtn');
   const randBtn = document.getElementById('randBtn');
-
   const speedInput = document.getElementById('speed');
   const speedLabel = document.getElementById('speedLabel');
-
   const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
   const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
-
   const hexBox = document.getElementById('hexBox');
   const wifBox = document.getElementById('wifBox');
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-
   const heightButtonsDiv = document.getElementById('heightButtons');
   const baseButtonsDiv = document.getElementById('baseButtons');
 
-  // --- VARIÁVEIS DE ESTADO ---
-  let altura = 12;       // linha inicial do intervalo (1-based)
-  let base = 16;         // linha final do intervalo (1-based)
+  // Variável para linha extra (fora do intervalo altura-base)
+  let extraLine = null; // null = nenhuma linha extra selecionada
+  let extraLineCells = Array(SIZE).fill(false); // estado das células da linha extra
 
-  let gridState = Array(SIZE * SIZE).fill(false); // estado booleano de cada célula no grid
-
-  let stateCounter = 0n;  // contador bigInt para passos da sequência
-
+  // Estado inicial
+  let altura = 12;
+  let base = 16;
+  let gridState = Array(SIZE * SIZE).fill(false);
+  let stateCounter = 0n;
   let running = false;
   let timeoutId = null;
 
-  // Linha extra (opcional)
-  let extraLine = null;                // número da linha extra (1-based), ou null
-  let extraLineSelectedCells = new Set(); // células selecionadas na linha extra (conjunto de x)
-
-  // --- CONFIGURAÇÃO DO CANVAS ---
+  // Define tamanho do canvas
   canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
 
   // --- FUNÇÕES ---
 
-  // Atualiza o texto do intervalo selecionado
   function updateRangeLabel() {
     const label = document.getElementById('activeRangeLabel');
     if (label) label.textContent = `${altura} até ${base}`;
   }
 
-  // Desenha todo o grid
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.font = '12px Arial';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
-    // Cabeçalho colunas
+    // Cabeçalho colunas (topo)
     ctx.textAlign = 'center';
     for (let x = 0; x < SIZE; x++) {
       const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
 
-    // Números linhas e faixa de potências
+    // Números linhas e intervalos (laterais)
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
       ctx.textAlign = 'right';
@@ -85,22 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
         const idx = y * SIZE + x;
-
-        // Cores diferentes para linha extra e linhas normais
-        if (extraLine !== null && y === (extraLine - 1)) {
-          // Linha extra: laranja se selecionada, branco se não
-          ctx.fillStyle = extraLineSelectedCells.has(x) ? '#f6ad55' : '#fff';
-        } else {
-          ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
-        }
-
+        ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
         ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         ctx.strokeStyle = '#e2e8f0';
         ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
 
-    // Destaque faixa intervalo selecionado (altura..base)
+    // Destaque faixa selecionada
     ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
@@ -110,16 +92,26 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.lineWidth = 3;
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
 
-    // Destaque linha extra se selecionada
+    // Desenhar a linha extra, se existir
     if (extraLine !== null) {
-      const extraY = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
-      ctx.strokeStyle = '#f6ad55';
+      const yExtra = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+      ctx.fillStyle = 'rgba(234, 102, 102, 0.2)';
+      ctx.fillRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+
+      ctx.strokeStyle = '#ea6666';
       ctx.lineWidth = 3;
-      ctx.strokeRect(MARGIN_LEFT, extraY, SIZE * CELL_SIZE, CELL_SIZE);
+      ctx.strokeRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+
+      // Desenhar células da linha extra (com estado extraLineCells)
+      for (let x = 0; x < SIZE; x++) {
+        ctx.fillStyle = extraLineCells[x] ? '#f56565' : '#fff';
+        ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, yExtra, CELL_SIZE, CELL_SIZE);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, yExtra, CELL_SIZE, CELL_SIZE);
+      }
     }
   }
 
-  // Cria botões para selecionar altura e base
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
@@ -133,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
           altura = i;
           if (base < altura) base = altura;
           updateRangeButtons();
+          updateExtraLineOptions();
           drawGrid();
         }
       };
@@ -146,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
           base = i;
           if (base < altura) altura = base;
           updateRangeButtons();
+          updateExtraLineOptions();
           drawGrid();
         }
       };
@@ -154,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRangeButtons();
   }
 
-  // Atualiza destaque dos botões de altura e base
   function updateRangeButtons() {
     [...heightButtonsDiv.children].forEach(btn => {
       btn.classList.toggle('active', parseInt(btn.textContent) === altura);
@@ -165,9 +158,48 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRangeLabel();
   }
 
-  // Função para converter grid para hexadecimal
+  // Atualiza as opções do seletor de linha extra (fora do intervalo altura-base)
+  function updateExtraLineOptions() {
+    const select = document.getElementById('extraLineSelector');
+    if (!select) return;
+    select.innerHTML = '<option value="">Nenhuma</option>';
+    for (let i = 1; i <= SIZE; i++) {
+      if (i < altura || i > base) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        select.appendChild(option);
+      }
+    }
+    // Reset se extraLine não válido
+    if (extraLine !== null && (extraLine < altura || extraLine > base) === false) {
+      extraLine = null;
+      extraLineCells.fill(false);
+      select.value = '';
+    } else {
+      select.value = extraLine || '';
+    }
+  }
+
   function gridToHex() {
-    const bits = gridState.map(c => (c ? '1' : '0')).join('');
+    const bitsArray = [];
+
+    // faixa altura..base
+    for (let y = altura - 1; y < base; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        bitsArray.push(gridState[y * SIZE + x] ? '1' : '0');
+      }
+    }
+
+    // linha extra (se existir)
+    if (extraLine !== null) {
+      for (let x = 0; x < SIZE; x++) {
+        bitsArray.push(extraLineCells[x] ? '1' : '0');
+      }
+    }
+
+    const bits = bitsArray.join('');
+
     const hex = [];
     for (let i = 0; i < bits.length; i += 8) {
       const byte = parseInt(bits.slice(i, i + 8), 2);
@@ -176,284 +208,307 @@ document.addEventListener('DOMContentLoaded', () => {
     return hex.join('');
   }
 
-  // SHA-256 usando Web Crypto API
   async function sha256(buffer) {
     const hash = await crypto.subtle.digest('SHA-256', buffer);
     return new Uint8Array(hash);
   }
 
-  // Converte hexadecimal para bytes
   function hexToBytes(hex) {
     return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
   }
 
-  // Converte chave privada hex para WIF
   async function privateKeyToWIF(hex, compressed = true) {
     const key = hexToBytes(hex);
     const prefix = [0x80];
     const suffix = compressed ? [0x01] : [];
-    const payload = new Uint8Array([...prefix, ...key, ...suffix]);
 
-    const hash1 = await sha256(payload);
-    const hash2 = await sha256(hash1);
+    const keyWithPrefixSuffix = new Uint8Array(prefix.length + key.length + suffix.length);
+    keyWithPrefixSuffix.set(prefix, 0);
+    keyWithPrefixSuffix.set(key, prefix.length);
+    keyWithPrefixSuffix.set(suffix, prefix.length + key.length);
+
+    const hash1 = await sha256(keyWithPrefixSuffix.buffer);
+    const hash2 = await sha256(hash1.buffer);
+
     const checksum = hash2.slice(0, 4);
-    const fullPayload = new Uint8Array([...payload, ...checksum]);
+    const finalKey = new Uint8Array(keyWithPrefixSuffix.length + 4);
+    finalKey.set(keyWithPrefixSuffix, 0);
+    finalKey.set(checksum, keyWithPrefixSuffix.length);
 
-    return base58Encode(fullPayload);
+    return base58Encode(finalKey);
   }
 
-  // Base58 Alphabet
-  const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
-  // Codifica um Uint8Array em base58
+  // Base58 encoding (Bitcoin style)
   function base58Encode(buffer) {
-    let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
+    const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    let x = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
     let result = '';
-    while (intVal > 0) {
-      result = BASE58[Number(intVal % 58n)] + result;
-      intVal /= 58n;
+    while (x > 0) {
+      const mod = x % 58n;
+      x /= 58n;
+      result = alphabet[Number(mod)] + result;
     }
-    for (const b of buffer) {
-      if (b === 0) result = '1' + result;
-      else break;
+    // Encode leading zeros
+    for (let i = 0; i < buffer.length && buffer[i] === 0; i++) {
+      result = '1' + result;
     }
     return result;
   }
 
-  // Atualiza caixas de saída (hex, WIF)
   async function updateOutput() {
-    const hexStr = gridToHex();
-    hexBox.value = hexStr;
+    const hex = gridToHex();
+    hexBox.textContent = hex;
 
-    wifBox.value = await privateKeyToWIF(hexStr, true);
-    wifBoxUncompressed.value = await privateKeyToWIF(hexStr, false);
+    if (hex.length === 64) { // 256 bits hex
+      const wifCompressed = await privateKeyToWIF(hex, true);
+      const wifUncompressed = await privateKeyToWIF(hex, false);
+      wifBox.textContent = wifCompressed;
+      wifBoxUncompressed.textContent = wifUncompressed;
+    } else {
+      wifBox.textContent = '';
+      wifBoxUncompressed.textContent = '';
+    }
   }
 
-  // Gera configuração aleatória para o intervalo selecionado
+  // Alterna o estado da célula clicada no grid
+  function toggleCell(x, y) {
+    const idx = y * SIZE + x;
+    gridState[idx] = !gridState[idx];
+  }
+
+  // Alterna o estado da célula na linha extra
+  function toggleExtraCell(x) {
+    extraLineCells[x] = !extraLineCells[x];
+  }
+
+  // Função de passo que atualiza o estado de acordo com o modo
+  async function step() {
+    if (running === false) return;
+
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'sequential';
+    const randomizeOnStep = randomizeOnStepCheckbox.checked;
+
+    // Concatena bits do grid selecionado + linha extra
+    const bitsArray = [];
+
+    // Faixa altura..base
+    for (let y = altura - 1; y < base; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        bitsArray.push(gridState[y * SIZE + x] ? '1' : '0');
+      }
+    }
+
+    // Linha extra (se existir)
+    if (extraLine !== null) {
+      for (let x = 0; x < SIZE; x++) {
+        bitsArray.push(extraLineCells[x] ? '1' : '0');
+      }
+    }
+
+    const bits = bitsArray.join('');
+    stateCounter++;
+
+    if (mode === 'sequential') {
+      // Atualiza bits para o próximo valor do stateCounter
+      const newBits = stateCounter.toString(2).padStart(bits.length, '0').slice(-bits.length);
+
+      for (let i = 0; i < newBits.length; i++) {
+        const lineIndex = Math.floor(i / SIZE);
+        const x = i % SIZE;
+
+        if (lineIndex < (base - altura + 1)) {
+          const y = altura - 1 + lineIndex;
+          gridState[y * SIZE + x] = newBits[i] === '1';
+        } else {
+          // Linha extra
+          if (extraLine !== null) {
+            const extraIndex = lineIndex - (base - altura + 1);
+            if (extraIndex === 0) {
+              extraLineCells[x] = newBits[i] === '1';
+            }
+          }
+        }
+      }
+    } else if (mode === 'vertical') {
+      // Varre colunas da direita para a esquerda, linhas de baixo para cima
+      let bitIndex = 0;
+
+      for (let col = SIZE - 1; col >= 0; col--) {
+        for (let row = base - 1; row >= altura - 1; row--) {
+          if (bitIndex >= bits.length) break;
+          gridState[row * SIZE + col] = bits[bitIndex] === '1';
+          bitIndex++;
+        }
+      }
+
+      // Linha extra
+      if (extraLine !== null) {
+        const yExtra = extraLine - 1;
+        for (let col = SIZE - 1; col >= 0; col--) {
+          if (bitIndex >= bits.length) break;
+          extraLineCells[col] = bits[bitIndex] === '1';
+          bitIndex++;
+        }
+      }
+    } else if (mode === 'randomize') {
+      // Randomiza a faixa e linha extra (se existir)
+      for (let y = altura - 1; y < base; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          gridState[y * SIZE + x] = Math.random() < 0.5;
+        }
+      }
+      if (extraLine !== null) {
+        for (let x = 0; x < SIZE; x++) {
+          extraLineCells[x] = Math.random() < 0.5;
+        }
+      }
+    }
+
+    if (randomizeOnStep) {
+      // Se marcado, randomiza após o passo
+      for (let y = altura - 1; y < base; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          gridState[y * SIZE + x] = Math.random() < 0.5;
+        }
+      }
+      if (extraLine !== null) {
+        for (let x = 0; x < SIZE; x++) {
+          extraLineCells[x] = Math.random() < 0.5;
+        }
+      }
+    }
+
+    drawGrid();
+    await updateOutput();
+
+    timeoutId = setTimeout(step, 1000 / speedInput.value);
+  }
+
+  // Limpa o grid e reseta contadores
+  function clearGrid() {
+    gridState.fill(false);
+    extraLineCells.fill(false);
+    stateCounter = 0n;
+    drawGrid();
+    updateOutput();
+  }
+
+  // Randomiza o intervalo e linha extra
   async function randomizeRange() {
     for (let y = altura - 1; y < base; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = Math.random() < 0.5;
       }
     }
+    if (extraLine !== null) {
+      for (let x = 0; x < SIZE; x++) {
+        extraLineCells[x] = Math.random() < 0.5;
+      }
+    }
     drawGrid();
     await updateOutput();
   }
 
-  // Inicia a execução sequencial
-  function start() {
-    if (running) return;
-    running = true;
-    stateCounter = 0n;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    step();
-  }
+  // --- EVENTOS ---
 
-  // Para a execução
-  function stop() {
-    running = false;
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    if (timeoutId) clearTimeout(timeoutId);
-  }
-
-  // Passo único na sequência (modo sequencial e vertical)
-  async function step() {
-    if (!running) return;
-
-    // Calcula total de células no intervalo + selecionadas na linha extra
-    const rowsCount = base - altura + 1;
-    const totalCells = rowsCount * SIZE + extraLineSelectedCells.size;
-
-    // Limite máximo para o contador
-    const max = 1n << BigInt(totalCells);
-
-    if (stateCounter >= max) {
-      stop();
-      return;
-    }
-
-    const bits = stateCounter.toString(2).padStart(Number(totalCells), '0');
-
-    // Obter modo selecionado (default 'sequential')
-    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'sequential';
-
-    let bitIndex = 0;
-
-    if (mode === 'sequential') {
-      // Preenche o intervalo altura..base linha a linha
-      for (let i = 0; i < rowsCount * SIZE; i++) {
-        const y = altura - 1 + Math.floor(i / SIZE);
-        const x = i % SIZE;
-        gridState[y * SIZE + x] = bits[bitIndex] === '1';
-        bitIndex++;
-      }
-      // Depois preenche células da linha extra selecionadas
-      if (extraLine !== null) {
-        for (const x of extraLineSelectedCells) {
-          const idx = (extraLine - 1) * SIZE + x;
-          gridState[idx] = bits[bitIndex] === '1';
-          bitIndex++;
-        }
-      }
-    } else if (mode === 'vertical') {
-      // Coluna a coluna da direita para esquerda, linha de baixo para cima, intervalo
-      for (let col = SIZE - 1; col >= 0; col--) {
-        for (let row = base - 1; row >= altura - 1; row--) {
-          gridState[row * SIZE + col] = bits[bitIndex] === '1';
-          bitIndex++;
-        }
-      }
-      // Células da linha extra selecionadas
-      if (extraLine !== null) {
-        for (const x of extraLineSelectedCells) {
-          const idx = (extraLine - 1) * SIZE + x;
-          gridState[idx] = bits[bitIndex] === '1';
-          bitIndex++;
-        }
-      }
-    }
-
-    if (randomizeOnStepCheckbox.checked) {
-      await randomizeRange();
-    } else {
-      drawGrid();
-      await updateOutput();
-    }
-
-    stateCounter++;
-    timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
-  }
-
-  // Limpa o grid (todas células desligadas)
-  async function clearGrid() {
-    if (running) return;
-    gridState.fill(false);
-    extraLineSelectedCells.clear();
-    drawGrid();
-    await updateOutput();
-  }
-
-  // Randomiza o grid inteiro (todas células)
-  async function randomizeGrid() {
-    if (running) return;
-    for (let i = 0; i < gridState.length; i++) {
-      gridState[i] = Math.random() < 0.5;
-    }
-    extraLineSelectedCells.clear();
-    drawGrid();
-    await updateOutput();
-  }
-
-  // Evento clique no canvas para alternar células
-  canvas.addEventListener('click', async (e) => {
-    if (running || !toggleOnClickCheckbox.checked) return;
+  canvas.addEventListener('click', e => {
+    if (running && toggleOnClickCheckbox.checked === false) return;
 
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+    const xPix = e.clientX - rect.left - MARGIN_LEFT;
+    const yPix = e.clientY - rect.top - MARGIN_TOP;
 
-    const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
-    const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
+    if (xPix < 0 || yPix < 0) return;
+
+    const x = Math.floor(xPix / CELL_SIZE);
+    const y = Math.floor(yPix / CELL_SIZE);
 
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
 
-    // Se clicou na linha extra selecionada, alterna seleção da célula da linha extra
+    // Se clicou na linha extra, alterna células na extraLineCells
     if (extraLine !== null && y === (extraLine - 1)) {
-      if (extraLineSelectedCells.has(x)) extraLineSelectedCells.delete(x);
-      else extraLineSelectedCells.add(x);
+      toggleExtraCell(x);
       drawGrid();
-    } else {
-      // Caso contrário, alterna célula no grid normal
-      const idx = y * SIZE + x;
-      gridState[idx] = !gridState[idx];
+      updateOutput();
+      return;
+    }
+
+    // Se clicou dentro da faixa normal
+    if (y >= (altura - 1) && y <= (base - 1)) {
+      toggleCell(x, y);
       drawGrid();
-      await updateOutput();
+      updateOutput();
     }
   });
 
-  // --- CONTROLES DE LINHA EXTRA ---
-
-  // Cria seletor de linha extra e botão para limpar seleção
-  function createExtraLineControls() {
-    const container = document.createElement('div');
-    container.style.margin = '10px 0';
-
-    const label = document.createElement('label');
-    label.textContent = 'Linha Extra (opcional): ';
-    container.appendChild(label);
-
-    const select = document.createElement('select');
-    select.id = 'extraLineSelect';
-
-    // Opção nenhuma
-    const noneOption = document.createElement('option');
-    noneOption.value = '';
-    noneOption.textContent = 'Nenhuma';
-    select.appendChild(noneOption);
-
-    // Opções 1 até SIZE
-    for (let i = 1; i <= SIZE; i++) {
-      const opt = document.createElement('option');
-      opt.value = i.toString();
-      opt.textContent = i.toString();
-      select.appendChild(opt);
+  startBtn.onclick = () => {
+    if (!running) {
+      running = true;
+      stateCounter = 0n;
+      step();
     }
+  };
 
-    container.appendChild(select);
+  stopBtn.onclick = () => {
+    running = false;
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
 
-    // Botão limpar seleção da linha extra
-    const clearBtn = document.createElement('button');
-    clearBtn.textContent = 'Limpar seleção linha extra';
-    clearBtn.style.marginLeft = '10px';
-    container.appendChild(clearBtn);
+  clearBtn.onclick = () => {
+    if (!running) {
+      clearGrid();
+    }
+  };
 
-    // Insere antes dos botões base (ou em outro local)
-    baseButtonsDiv.parentElement.insertBefore(container, baseButtonsDiv);
+  randBtn.onclick = () => {
+    if (!running) {
+      randomizeRange();
+    }
+  };
 
-    // Eventos
-    select.addEventListener('change', () => {
-      if (running) return;
-      const val = select.value;
-      if (val === '') {
-        extraLine = null;
-        extraLineSelectedCells.clear();
-      } else {
-        extraLine = parseInt(val);
-        extraLineSelectedCells.clear();
-      }
-      drawGrid();
-    });
+  speedInput.oninput = () => {
+    speedLabel.textContent = speedInput.value;
+  };
 
-    clearBtn.addEventListener('click', () => {
-      if (running) return;
-      extraLineSelectedCells.clear();
-      drawGrid();
-    });
-  }
-
-  // --- INICIALIZAÇÃO ---
-
-  // Cria botões e controles
+  // Criar botões de intervalo
   createRangeButtons();
-  createExtraLineControls();
-  updateRangeLabel();
+
+  // Criar seletor linha extra no container
+  const extraLineContainer = document.createElement('div');
+  extraLineContainer.id = 'extraLineSelectorContainer';
+  extraLineContainer.style.margin = '10px 0';
+  extraLineContainer.innerHTML = `
+    <label for="extraLineSelector">Linha Extra (fora da faixa altura-base): </label>
+    <select id="extraLineSelector">
+      <option value="">Nenhuma</option>
+    </select>
+  `;
+  document.getElementById('rangeSelectors').appendChild(extraLineContainer);
+
+  updateExtraLineOptions();
+
+  const extraLineSelector = document.getElementById('extraLineSelector');
+  extraLineSelector.addEventListener('change', () => {
+    if (running) {
+      alert('Pare a execução para mudar a linha extra.');
+      extraLineSelector.value = extraLine || '';
+      return;
+    }
+    const val = extraLineSelector.value;
+    if (val === '') {
+      extraLine = null;
+      extraLineCells.fill(false);
+    } else {
+      extraLine = parseInt(val);
+      extraLineCells.fill(false);
+    }
+    drawGrid();
+  });
+
+  // Inicializar grid e saída
   drawGrid();
   updateOutput();
-
-  // Atualiza label de velocidade
-  speedInput.addEventListener('input', () => {
-    speedLabel.textContent = `${speedInput.value} ms`;
-  });
-  speedLabel.textContent = `${speedInput.value} ms`;
-
-  // Botões start/stop/clear/random
-  startBtn.addEventListener('click', () => start());
-  stopBtn.addEventListener('click', () => stop());
-  clearBtn.addEventListener('click', () => clearGrid());
-  randBtn.addEventListener('click', () => randomizeGrid());
-
-  // Desabilita stopBtn no início
-  stopBtn.disabled = true;
 });
