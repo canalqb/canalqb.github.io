@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Configurações do grid e canvas
   const SIZE = 16;
-  const CELL_SIZE = 25;
+  const CELL_SIZE = 20;
   const MARGIN_LEFT = 30;
   const MARGIN_TOP = 30;
-  const MARGIN_RIGHT = 130;
+  // const MARGIN_RIGHT = 130;
+  const MARGIN_RIGHT = 0;
 
   // Elementos DOM
   const canvas = document.getElementById('grid');
@@ -35,8 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let extraLineCells = Array(SIZE).fill(false);
 
   // Define tamanho do canvas
-  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
-  canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
+  // canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
+  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + 1;
+  canvas.height = MARGIN_TOP + SIZE * CELL_SIZE + 1;
+
 
   // --- FUNÇÕES ---
 
@@ -47,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '12px Arial';
+    ctx.font = '8px Arial';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
@@ -57,17 +60,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
-
+ 
     // Números linhas e intervalos (laterais)
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
       ctx.textAlign = 'right';
       ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
       ctx.textAlign = 'left';
-      const linhasContadas = SIZE - y;
-      const powStart = (linhasContadas - 1) * SIZE;
-      const powEnd = linhasContadas * SIZE - 1;
-      ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
+      // Removido texto das potências de 2
+      // const linhasContadas = SIZE - y;
+      // const powStart = (linhasContadas - 1) * SIZE;
+      // const powEnd = linhasContadas * SIZE - 1;
+      // ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
 
     // Células do grid
@@ -369,17 +373,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- EVENTOS ---
 
-  canvas.addEventListener('click', e => {
+  canvas.addEventListener('click', e => { 
     if (!toggleOnClickCheckbox.checked || running) return;
+  
     const rect = canvas.getBoundingClientRect();
-    const x = Math.floor((e.clientX - rect.left - MARGIN_LEFT) / CELL_SIZE);
-    const y = Math.floor((e.clientY - rect.top - MARGIN_TOP) / CELL_SIZE);
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+  
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY = (e.clientY - rect.top) * scaleY;
+  
+    const x = Math.floor((mouseX - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor((mouseY - MARGIN_TOP) / CELL_SIZE);
+  
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
-
+  
     gridState[y * SIZE + x] = !gridState[y * SIZE + x];
     drawGrid();
     updateOutput();
   });
+
 
   startBtn.onclick = () => {
     if (running) return;
