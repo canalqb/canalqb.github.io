@@ -369,17 +369,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- EVENTOS ---
 
-  canvas.addEventListener('click', e => {
+  canvas.addEventListener('click', e => { 
     if (!toggleOnClickCheckbox.checked || running) return;
+  
     const rect = canvas.getBoundingClientRect();
-    const x = Math.floor((e.clientX - rect.left - MARGIN_LEFT) / CELL_SIZE);
-    const y = Math.floor((e.clientY - rect.top - MARGIN_TOP) / CELL_SIZE);
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+  
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY = (e.clientY - rect.top) * scaleY;
+  
+    const x = Math.floor((mouseX - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor((mouseY - MARGIN_TOP) / CELL_SIZE);
+  
     if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
-
+  
     gridState[y * SIZE + x] = !gridState[y * SIZE + x];
     drawGrid();
     updateOutput();
   });
+
 
   startBtn.onclick = () => {
     if (running) return;
