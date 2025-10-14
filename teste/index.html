@@ -16,66 +16,90 @@
     </div>
   </nav>
 
-  <div class="container py-4">
-    <h1 class="mb-3">Gerador de Private Keys Bitcoin</h1>
-    <p class="text-muted">Geração interativa de chaves privadas com matriz 16x16</p>
+  <main class="container py-4" role="main" aria-label="Gerador de Private Keys Bitcoin">
+    <h1 class="mb-3 text-center">Gerador de Private Keys Bitcoin</h1>
+    <p class="text-muted text-center">Geração interativa de chaves privadas com matriz 16x16</p>
 
-    <div class="canvas-wrapper mb-4">
-      <canvas id="grid"></canvas>
-    </div>
+    <section class="canvas-wrapper mb-4" aria-label="Área do grid interativo">
+      <canvas id="grid" aria-describedby="gridDesc" tabindex="0"></canvas>
+      <div id="gridDesc" class="visually-hidden">
+        Grid 16 por 16 para geração interativa de chaves privadas. Use controles abaixo para manipular.
+      </div>
+    </section>
 
-    <div class="mb-3 fw-semibold">
-      Faixa ativa: Linha <span id="activeRangeLabel">12 até 16, linha extra: 1</span>
-    </div>
+    <p class="mb-3 fw-semibold text-center">
+      Faixa ativa: Linha <span id="activeRangeLabel" aria-live="polite">12 até 16, linha extra: 1</span>
+    </p>
 
-    <div class="mb-3">
-      <div class="fw-bold">🎯 Selecionar Altura (Linha Inicial)</div>
-      <div id="heightButtons" class="button-grid"></div>
-    </div>
-    
-    <div class="mb-3">
-      <div class="fw-bold">📍 Selecionar Base (Linha Final)</div>
-      <div id="baseButtons" class="button-grid"></div>
-    </div>
-    
-    <div class="section-title mt-3">➕ Linha Extra (Usada na geração)</div>
-    <div id="extraLineButtons" class="button-grid mb-4"></div>
+    <section class="mb-3" aria-labelledby="heightLabel">
+      <h2 id="heightLabel" class="fw-bold fs-5 mb-2">🎯 Selecionar Altura (Linha Inicial)</h2>
+      <div id="heightButtons" class="button-grid" role="group" aria-label="Seleção de altura (linha inicial)"></div>
+    </section>
 
-    <div class="mb-4 d-flex flex-wrap gap-2">
-      <button id="startBtn" class="btn btn-success">▶ Iniciar</button>
-      <button id="stopBtn" class="btn btn-warning" disabled>⏸ Parar</button>
-      <button id="clearBtn" class="btn btn-danger">🗑 Limpar</button>
-      <button id="randBtn" class="btn btn-secondary">🎲 Aleatorizar</button>
-    </div>
+    <section class="mb-3" aria-labelledby="baseLabel">
+      <h2 id="baseLabel" class="fw-bold fs-5 mb-2">📍 Selecionar Base (Linha Final)</h2>
+      <div id="baseButtons" class="button-grid" role="group" aria-label="Seleção de base (linha final)"></div>
+    </section>
 
-    <div class="mb-4">
-      <label for="speed" class="form-label fw-bold">⚡ Velocidade:</label>
-      <input type="range" id="speed" min="1" max="1000" value="500" class="form-range" />
-      <span id="speedLabel">500 ms</span>
-    </div>
+    <section aria-labelledby="extraLineLabel" class="mb-4">
+      <h2 id="extraLineLabel" class="section-title">➕ Linha Extra (Usada na geração)</h2>
+      <div id="extraLineButtons" class="button-grid" role="group" aria-label="Seleção de linha extra"></div>
+    </section>
 
-    <div class="mb-4 d-flex flex-wrap gap-3">
-      <label><input type="radio" name="mode" value="sequential" checked /> 📊 Sequencial</label>
-      <label><input type="radio" name="mode" value="vertical" /> ↕️ Vertical</label>
-      <label><input type="checkbox" id="toggleOnClick" checked /> 👆 Clique alterna célula</label>
-      <label><input type="checkbox" id="randomizeStatesOnStep" /> 🔄 Aleatorizar no passo</label>
-    </div>
+    <section class="mb-4 d-flex flex-wrap gap-2 justify-content-center" aria-label="Controles principais">
+      <button id="startBtn" class="btn btn-success btn-custom" aria-pressed="false">▶ Iniciar</button>
+      <button id="stopBtn" class="btn btn-warning btn-custom" disabled aria-pressed="false">⏸ Parar</button>
+      <button id="clearBtn" class="btn btn-danger btn-custom">🗑 Limpar</button>
+      <button id="randBtn" class="btn btn-secondary btn-custom">🎲 Aleatorizar</button>
+    </section>
 
-    <div class="mb-3">
-      <label for="hexBox" class="form-label">🔑 Chave Privada (HEX)</label>
-      <textarea id="hexBox" class="form-control" rows="2" readonly></textarea>
-    </div>
+    <section class="mb-4" aria-labelledby="speedLabel">
+      <label for="speed" id="speedLabel" class="form-label fw-bold">⚡ Velocidade:</label>
+      <input type="range" id="speed" min="1" max="1000" value="500" class="form-range" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-describedby="speedValue" />
+      <span id="speedValue" aria-live="polite" class="d-block mt-1 text-center">500 ms</span>
+    </section>
 
-    <div class="mb-3">
-      <label for="wifBox" class="form-label">💼 WIF Comprimido</label>
-      <textarea id="wifBox" class="form-control" rows="2" readonly></textarea>
-    </div>
+    <section class="mb-4 d-flex flex-wrap gap-3 justify-content-center" aria-label="Modo de operação e opções">
+      <fieldset>
+        <legend class="fw-bold">Modo de Operação</legend>
+        <label class="d-flex align-items-center gap-2" for="modeSequential">
+          <input type="radio" id="modeSequential" name="mode" value="sequential" checked />
+          📊 Sequencial
+        </label>
+        <label class="d-flex align-items-center gap-2" for="modeVertical">
+          <input type="radio" id="modeVertical" name="mode" value="vertical" />
+          ↕️ Vertical
+        </label>
+      </fieldset>
 
-    <div class="mb-3">
-      <label for="wifBoxUncompressed" class="form-label">📦 WIF Não Comprimido</label>
-      <textarea id="wifBoxUncompressed" class="form-control" rows="2" readonly></textarea>
-    </div>
-  </div>
+      <fieldset>
+        <legend class="fw-bold">Opções</legend>
+        <label class="d-flex align-items-center gap-2" for="toggleOnClick">
+          <input type="checkbox" id="toggleOnClick" checked />
+          👆 Clique alterna célula
+        </label>
+        <label class="d-flex align-items-center gap-2" for="randomizeStatesOnStep">
+          <input type="checkbox" id="randomizeStatesOnStep" />
+          🔄 Aleatorizar no passo
+        </label>
+      </fieldset>
+    </section>
+
+    <section class="mb-3" aria-labelledby="hexBoxLabel">
+      <label for="hexBox" id="hexBoxLabel" class="form-label fw-bold">🔑 Chave Privada (HEX)</label>
+      <textarea id="hexBox" class="form-control output-box" rows="2" readonly aria-readonly="true" tabindex="-1"></textarea>
+    </section>
+
+    <section class="mb-3" aria-labelledby="wifBoxLabel">
+      <label for="wifBox" id="wifBoxLabel" class="form-label fw-bold">💼 WIF Comprimido</label>
+      <textarea id="wifBox" class="form-control output-box" rows="2" readonly aria-readonly="true" tabindex="-1"></textarea>
+    </section>
+
+    <section class="mb-3" aria-labelledby="wifBoxUncompressedLabel">
+      <label for="wifBoxUncompressed" id="wifBoxUncompressedLabel" class="form-label fw-bold">📦 WIF Não Comprimido</label>
+      <textarea id="wifBoxUncompressed" class="form-control output-box" rows="2" readonly aria-readonly="true" tabindex="-1"></textarea>
+    </section>
+  </main>
 
   <script src="auto16.js"></script>
 </body>
