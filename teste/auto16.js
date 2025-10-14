@@ -1,334 +1,534 @@
-// auto16.js
+document.addEventListener('DOMContentLoaded', () => {
+  // Configurações do grid e canvas
+  const SIZE = 16;
+  const CELL_SIZE = 25;
+  const MARGIN_LEFT = 30;
+  const MARGIN_TOP = 30;
+  const MARGIN_RIGHT = 130;
 
-// Configurações iniciais
-const canvas = document.getElementById('grid');
-const ctx = canvas.getContext('2d');
-const cellSize = 32; // tamanho da célula em pixels (512px / 16 = 32px)
+  // Elementos DOM
+  const canvas = document.getElementById('grid');
+  const ctx = canvas.getContext('2d');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const randBtn = document.getElementById('randBtn');
+  const speedInput = document.getElementById('speed');
+  const speedLabel = document.getElementById('speedLabel');
+  const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
+  const randomizeOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
+  const hexBox = document.getElementById('hexBox');
+  const wifBox = document.getElementById('wifBox');
+  const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
+  const heightButtonsDiv = document.getElementById('heightButtons');
+  const baseButtonsDiv = document.getElementById('baseButtons');
 
-// Estado do grid e configurações
-const GRID_SIZE = 16;
-let rows = 12;          // Altura inicial padrão
-let cols = 16;          // Base inicial padrão
-let extraLine = 1;      // Linha extra padrão
-let isRunning = false;
-let speed = 500;        // velocidade em ms
+  // Estado inicial
+  let altura = 12;
+  let base = 16;
+  let gridState = Array(SIZE * SIZE).fill(false);
+  let stateCounter = 0n;
+  let running = false;
+  let timeoutId = null;
+  let extraLineEnabled = false;
+  let extraLine = null;
+  let extraLineCells = Array(SIZE).fill(false);
 
-// Matrizes e estados das células
-let gridData = [];
-let intervalId = null;
+  // Define tamanho do canvas
+  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
+  canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
 
-// Elementos DOM
-const heightButtonsContainer = document.getElementById('heightButtons');
-const baseButtonsContainer = document.getElementById('baseButtons');
-const extraLineButtonsContainer = document.getElementById('extraLineButtons');
+  // --- FUNÇÕES ---
 
-const startBtn = document.getElementById('startBtn');
-const stopBtn = document.getElementById('stopBtn');
-const clearBtn = document.getElementById('clearBtn');
-const randBtn = document.getElementById('randBtn');
-
-const speedInput = document.getElementById('speed');
-const speedLabel = document.getElementById('speedLabel');
-
-const activeRangeLabel = document.getElementById('activeRangeLabel');
-
-const hexBox = document.getElementById('hexBox');
-const wifBox = document.getElementById('wifBox');
-const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-
-const toggleOnClickCheckbox = document.getElementById('toggleOnClick');
-const randomizeStatesOnStepCheckbox = document.getElementById('randomizeStatesOnStep');
-
-const modeRadios = document.querySelectorAll('input[name="mode"]');
-
-// Inicialização
-
-// Cria botões para seleção de altura (1 a 16)
-function createHeightButtons() {
-  for (let i = 1; i <= GRID_SIZE; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.className = 'range-btn';
-    btn.dataset.rows = i;
-    btn.type = 'button';
-    btn.addEventListener('click', () => {
-      setRows(i);
-    });
-    heightButtonsContainer.appendChild(btn);
+  function updateRangeLabel() {
+    const label = document.getElementById('activeRangeLabel');
+    if (label) label.textContent = `${altura} até ${base}`;
   }
-}
 
-// Cria botões para seleção de base (1 a 16)
-function createBaseButtons() {
-  for (let i = 1; i <= GRID_SIZE; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.className = 'range-btn';
-    btn.dataset.cols = i;
-    btn.type = 'button';
-    btn.addEventListener('click', () => {
-      setCols(i);
-    });
-    baseButtonsContainer.appendChild(btn);
+  function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '12px Arial';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#333';
+
+    // Cabeçalho colunas (topo)
+    ctx.textAlign = 'center';
+    for (let x = 0; x < SIZE; x++) {
+      const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
+      ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
+    }
+
+    // Números linhas e intervalos (laterais)
+    for (let y = 0; y < SIZE; y++) {
+      const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
+      ctx.textAlign = 'right';
+      ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
+      ctx.textAlign = 'left';
+      const linhasContadas = SIZE - y;
+      const powStart = (linhasContadas - 1) * SIZE;
+      const powEnd = linhasContadas * SIZE - 1;
+      ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
+    }
+
+    // Células do grid
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const idx = y * SIZE + x;
+        ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
+        ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+      }
+    }
+
+    // Destaque faixa selecionada
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+    const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
+    const heightPx = (base - altura + 1) * CELL_SIZE;
+    ctx.fillRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
+
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
+
+    // Destaque linha extra se habilitada
+    if (extraLineEnabled && extraLine !== null) {
+      ctx.fillStyle = 'rgba(244, 114, 182, 0.2)';
+      const yExtra = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+      ctx.fillRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+
+      ctx.strokeStyle = '#ec4899';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(MARGIN_LEFT, yExtra, SIZE * CELL_SIZE, CELL_SIZE);
+
+      // Destaque células selecionadas da linha extra
+      for (let x = 0; x < SIZE; x++) {
+        if (extraLineCells[x]) {
+          ctx.fillStyle = 'rgba(244, 114, 182, 0.4)';
+          ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE + 2, yExtra + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+        }
+      }
+    }
   }
-}
 
-// Cria botões para seleção da linha extra (0 a 16)
-function createExtraLineButtons() {
-  for (let i = 0; i <= GRID_SIZE; i++) {
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.className = 'range-btn';
-    btn.dataset.extra = i;
-    btn.type = 'button';
-    btn.addEventListener('click', () => {
-      setExtraLine(i);
-    });
-    extraLineButtonsContainer.appendChild(btn);
+  function createRangeButtons() {
+    heightButtonsDiv.innerHTML = '';
+    baseButtonsDiv.innerHTML = '';
+
+    for (let i = 1; i <= SIZE; i++) {
+      const hBtn = document.createElement('button');
+      hBtn.textContent = i;
+      hBtn.className = 'range-btn';
+      hBtn.onclick = () => {
+        if (!running) {
+          altura = i;
+          if (base < altura) base = altura;
+          updateRangeButtons();
+          drawGrid();
+        }
+      };
+      heightButtonsDiv.appendChild(hBtn);
+
+      const bBtn = document.createElement('button');
+      bBtn.textContent = i;
+      bBtn.className = 'range-btn';
+      bBtn.onclick = () => {
+        if (!running) {
+          base = i;
+          if (base < altura) altura = base;
+          updateRangeButtons();
+          drawGrid();
+        }
+      };
+      baseButtonsDiv.appendChild(bBtn);
+    }
+    updateRangeButtons();
   }
-}
 
-// Atualiza o texto e botões para seleção de altura
-function setRows(newRows) {
-  rows = newRows;
-  updateActiveButtons(heightButtonsContainer, rows, 'rows');
-  updateActiveRangeLabel();
-  resetGrid();
-  renderGrid();
-}
+  function updateRangeButtons() {
+    [...heightButtonsDiv.children].forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent) === altura);
+    });
+    [...baseButtonsDiv.children].forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent) === base);
+    });
+    updateRangeLabel();
+    updateExtraLineOptions();
+  }
 
-// Atualiza o texto e botões para seleção de base
-function setCols(newCols) {
-  cols = newCols;
-  updateActiveButtons(baseButtonsContainer, cols, 'cols');
-  updateActiveRangeLabel();
-  resetGrid();
-  renderGrid();
-}
+  function getAvailableExtraLines() {
+    const lines = [];
+    for (let i = 1; i <= SIZE; i++) {
+      if (i < altura || i > base) {
+        lines.push(i);
+      }
+    }
+    return lines;
+  }
 
-// Atualiza a linha extra selecionada
-function setExtraLine(newExtra) {
-  extraLine = newExtra;
-  updateActiveButtons(extraLineButtonsContainer, extraLine, 'extra');
-}
+  function updateExtraLineOptions() {
+    const extraLineSelect = document.getElementById('extraLineSelect');
+    if (!extraLineSelect) return;
 
-// Marca o botão ativo e desmarca os outros
-function updateActiveButtons(container, activeValue, dataAttribute) {
-  const buttons = container.querySelectorAll('button.range-btn');
-  buttons.forEach(btn => {
-    const val = parseInt(btn.dataset[dataAttribute]);
-    if (val === activeValue) {
-      btn.classList.add('active');
-      btn.setAttribute('aria-pressed', 'true');
+    const availableLines = getAvailableExtraLines();
+    extraLineSelect.innerHTML = '<option value="">Selecione uma linha</option>';
+    
+    availableLines.forEach(line => {
+      const option = document.createElement('option');
+      option.value = line;
+      option.textContent = `Linha ${line}`;
+      if (extraLine === line) option.selected = true;
+      extraLineSelect.appendChild(option);
+    });
+
+    if (extraLine !== null && !availableLines.includes(extraLine)) {
+      extraLine = null;
+      extraLineEnabled = false;
+      document.getElementById('enableExtraLine').checked = false;
+      updateExtraLineUI();
+    }
+  }
+
+  function updateExtraLineUI() {
+    const cellsContainer = document.getElementById('extraLineCells');
+    const extraLineSelect = document.getElementById('extraLineSelect');
+    
+    if (extraLineEnabled && extraLine !== null) {
+      cellsContainer.style.display = 'block';
+      extraLineSelect.disabled = false;
+      updateExtraLineCellsUI();
     } else {
-      btn.classList.remove('active');
-      btn.setAttribute('aria-pressed', 'false');
-    }
-  });
-}
-
-// Atualiza o texto que mostra a faixa ativa e linha extra
-function updateActiveRangeLabel() {
-  activeRangeLabel.textContent = `Linha ${rows} até ${cols}, linha extra: ${extraLine}`;
-}
-
-// Inicializa a matriz com 0 (desligado)
-function resetGrid() {
-  gridData = [];
-  for (let r = 0; r < GRID_SIZE; r++) {
-    const row = [];
-    for (let c = 0; c < GRID_SIZE; c++) {
-      row.push(false);
-    }
-    gridData.push(row);
-  }
-  updateOutputFields();
-}
-
-// Desenha a matriz no canvas
-function renderGrid() {
-  canvas.width = GRID_SIZE * cellSize;
-  canvas.height = GRID_SIZE * cellSize;
-
-  // Fundo branco
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Desenha células
-  for (let r = 0; r < GRID_SIZE; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      const isActive = gridData[r][c];
-      // Define cor da célula
-      if (isActive) {
-        ctx.fillStyle = '#667eea';
-      } else {
-        ctx.fillStyle = '#e2e8f0';
-      }
-      ctx.fillRect(c * cellSize, r * cellSize, cellSize - 1, cellSize - 1); // com gap de 1 px
-
-      // Delimitar as células em borda
-      ctx.strokeStyle = '#2d3748';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(c * cellSize, r * cellSize, cellSize, cellSize);
-    }
-  }
-}
-
-// Alterna o estado da célula clicada
-function toggleCell(x, y) {
-  if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) return;
-  gridData[y][x] = !gridData[y][x];
-  renderGrid();
-  updateOutputFields();
-}
-
-// Converte o estado atual da matriz para um valor hexadecimal simplificado (exemplo)
-function gridToHex() {
-  // Exemplo simples: transforma as linhas entre rows e cols em bits numa string hex
-  let bits = '';
-
-  // Limitar entre rows e cols para evitar erro
-  let startRow = Math.min(rows, cols);
-  let endRow = Math.max(rows, cols);
-
-  for (let r = startRow - 1; r < endRow; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      bits += gridData[r][c] ? '1' : '0';
-    }
-  }
-
-  // Também usar a extraLine
-  if (extraLine > 0 && extraLine <= GRID_SIZE) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      bits += gridData[extraLine - 1][c] ? '1' : '0';
-    }
-  }
-
-  // Converte bits para hex
-  let hex = '';
-  for (let i = 0; i < bits.length; i += 4) {
-    let chunk = bits.substr(i, 4);
-    let val = parseInt(chunk, 2);
-    hex += val.toString(16);
-  }
-  return hex.toUpperCase();
-}
-
-// Atualiza os campos de saída com as chaves (aqui só hex, a transformação WIF é complexa)
-function updateOutputFields() {
-  const hex = gridToHex();
-
-  hexBox.value = hex;
-  // Placeholder para WIF (comprimido e não comprimido)
-  wifBox.value = 'WIF (comprimido) — em desenvolvimento';
-  wifBoxUncompressed.value = 'WIF (não comprimido) — em desenvolvimento';
-}
-
-// Gera grid aleatório
-function randomizeGrid() {
-  for (let r = 0; r < GRID_SIZE; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      gridData[r][c] = Math.random() > 0.5;
-    }
-  }
-  renderGrid();
-  updateOutputFields();
-}
-
-// Função para atualizar o grid a cada passo (sequencial ou vertical)
-function stepGrid() {
-  // Exemplo simples: alterna algumas células nas linhas selecionadas para demonstrar passo
-  for (let r = rows - 1; r < cols; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      if (randomizeStatesOnStepCheckbox.checked) {
-        gridData[r][c] = Math.random() > 0.5;
-      } else {
-        gridData[r][c] = !gridData[r][c]; // alterna o estado
+      cellsContainer.style.display = 'none';
+      if (!extraLineEnabled) {
+        extraLineSelect.disabled = true;
       }
     }
+    drawGrid();
   }
-  renderGrid();
-  updateOutputFields();
-}
 
-// Inicia a animação/passo automático
-function start() {
-  if (isRunning) return;
-  isRunning = true;
-  startBtn.disabled = true;
-  stopBtn.disabled = false;
-
-  intervalId = setInterval(stepGrid, speed);
-}
-
-// Para a animação
-function stop() {
-  if (!isRunning) return;
-  isRunning = false;
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
-
-  clearInterval(intervalId);
-}
-
-// Limpa a matriz
-function clear() {
-  stop();
-  resetGrid();
-  renderGrid();
-}
-
-// Atualiza a velocidade conforme o input range
-function updateSpeed(newSpeed) {
-  speed = newSpeed;
-  speedLabel.textContent = `${speed} ms`;
-  if (isRunning) {
-    stop();
-    start();
+  function updateExtraLineCellsUI() {
+    const cellsContainer = document.getElementById('extraLineCells');
+    cellsContainer.innerHTML = '<div class="section-title" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Selecione as células da linha extra:</div>';
+    
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'extra-line-cells-grid';
+    
+    for (let i = 0; i < SIZE; i++) {
+      const cellBtn = document.createElement('button');
+      cellBtn.textContent = i + 1;
+      cellBtn.className = 'extra-cell-btn';
+      cellBtn.classList.toggle('active', extraLineCells[i]);
+      cellBtn.onclick = () => {
+        if (!running) {
+          extraLineCells[i] = !extraLineCells[i];
+          updateExtraLineCellsUI();
+          drawGrid();
+        }
+      };
+      gridDiv.appendChild(cellBtn);
+    }
+    
+    cellsContainer.appendChild(gridDiv);
   }
-}
 
-// Captura clique no canvas para alternar célula se ativo
-function onCanvasClick(event) {
-  if (!toggleOnClickCheckbox.checked) return;
+  function gridToHex() {
+    const bits = gridState.map(c => (c ? '1' : '0')).join('');
+    const hex = [];
+    for (let i = 0; i < bits.length; i += 8) {
+      const byte = parseInt(bits.slice(i, i + 8), 2);
+      hex.push(byte.toString(16).padStart(2, '0'));
+    }
+    return hex.join('');
+  }
 
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((event.clientX - rect.left) / cellSize);
-  const y = Math.floor((event.clientY - rect.top) / cellSize);
+  async function sha256(buffer) {
+    const hash = await crypto.subtle.digest('SHA-256', buffer);
+    return new Uint8Array(hash);
+  }
 
-  toggleCell(x, y);
-}
+  function hexToBytes(hex) {
+    return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
+  }
 
-// Inicialização ao carregar página
-function init() {
-  createHeightButtons();
-  createBaseButtons();
-  createExtraLineButtons();
+  async function privateKeyToWIF(hex, compressed = true) {
+    const key = hexToBytes(hex);
+    const prefix = [0x80];
+    const suffix = compressed ? [0x01] : [];
+    const payload = new Uint8Array([...prefix, ...key, ...suffix]);
 
-  // Set valores padrões e botões ativos
-  setRows(rows);
-  setCols(cols);
-  setExtraLine(extraLine);
+    const hash1 = await sha256(payload);
+    const hash2 = await sha256(hash1);
+    const checksum = hash2.slice(0, 4);
+    const fullPayload = new Uint8Array([...payload, ...checksum]);
 
-  resetGrid();
-  renderGrid();
+    return base58Encode(fullPayload);
+  }
 
-  updateSpeed(speed);
+  const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
-  // Event listeners
-  startBtn.addEventListener('click', start);
-  stopBtn.addEventListener('click', stop);
-  clearBtn.addEventListener('click', clear);
-  randBtn.addEventListener('click', () => {
-    randomizeGrid();
+  function base58Encode(buffer) {
+    let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
+    let result = '';
+    while (intVal > 0) {
+      result = BASE58[Number(intVal % 58n)] + result;
+      intVal /= 58n;
+    }
+    for (const b of buffer) {
+      if (b === 0) result = '1' + result;
+      else break;
+    }
+    return result;
+  }
+
+  async function updateOutput() {
+    const hex = gridToHex();
+    const wif = await privateKeyToWIF(hex, true);
+    const wifU = await privateKeyToWIF(hex, false);
+
+    appendLineNoScrollPage(hexBox, hex);
+    appendLineNoScrollPage(wifBox, wif);
+    appendLineNoScrollPage(wifBoxUncompressed, wifU);
+  }
+
+  function appendLineNoScrollPage(ta, line) {
+    const hadContent = ta.value.length > 0;
+    ta.value += (hadContent ? '\n' : '') + line;
+    ta.scrollTop = ta.scrollHeight;
+  }
+
+  function clearAll() {
+    gridState.fill(false);
+    stateCounter = 0n;
+    drawGrid();
+    hexBox.value = '';
+    wifBox.value = '';
+    wifBoxUncompressed.value = '';
+  }
+
+  async function randomizeRange() {
+    for (let y = altura - 1; y < base; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        gridState[y * SIZE + x] = Math.random() < 0.5;
+      }
+    }
+    // Aleatoriza também a linha extra se habilitada
+    if (extraLineEnabled && extraLine !== null) {
+      for (let x = 0; x < SIZE; x++) {
+        if (extraLineCells[x]) {
+          gridState[(extraLine - 1) * SIZE + x] = Math.random() < 0.5;
+        }
+      }
+    }
+    drawGrid();
+    await updateOutput();
+  }
+
+  function getSelectedMode() {
+    const radios = document.querySelectorAll('input[name="mode"]');
+    for (const r of radios) if (r.checked) return r.value;
+    return 'sequential';
+  }
+
+  async function step() {
+    if (!running) return;
+    stateCounter++;
+
+    const rowsCount = base - altura + 1;
+    const activeCellsInExtra = extraLineEnabled && extraLine !== null ? extraLineCells.filter(c => c).length : 0;
+    const totalCells = rowsCount * SIZE + activeCellsInExtra;
+    const max = 1n << BigInt(totalCells);
+
+    if (stateCounter >= max) {
+      stop();
+      return;
+    }
+
+    const bits = stateCounter.toString(2).padStart(totalCells, '0');
+    const mode = getSelectedMode();
+
+    // Limpa células da faixa principal
+    for (let y = altura - 1; y <= base - 1; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        gridState[y * SIZE + x] = false;
+      }
+    }
+    // Limpa células da linha extra
+    if (extraLineEnabled && extraLine !== null) {
+      for (let x = 0; x < SIZE; x++) {
+        gridState[(extraLine - 1) * SIZE + x] = false;
+      }
+    }
+
+    if (mode === 'sequential') {
+      // Linha a linha, esquerda para direita (faixa principal)
+      let bitIndex = 0;
+      for (let y = altura - 1; y <= base - 1; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          gridState[y * SIZE + x] = bits[bitIndex] === '1';
+          bitIndex++;
+        }
+      }
+      // Adiciona células da linha extra
+      if (extraLineEnabled && extraLine !== null) {
+        for (let x = 0; x < SIZE; x++) {
+          if (extraLineCells[x] && bitIndex < bits.length) {
+            gridState[(extraLine - 1) * SIZE + x] = bits[bitIndex] === '1';
+            bitIndex++;
+          }
+        }
+      }
+    } else if (mode === 'vertical') {
+      // Coluna a coluna da direita para esquerda (faixa principal)
+      let bitIndex = 0;
+      for (let col = SIZE - 1; col >= 0; col--) {
+        for (let row = base - 1; row >= altura - 1; row--) {
+          const idx = row * SIZE + col;
+          gridState[idx] = bits[bitIndex] === '1';
+          bitIndex++;
+          if (bitIndex >= bits.length) break;
+        }
+        if (bitIndex >= bits.length) break;
+      }
+      // Adiciona células da linha extra (da direita para esquerda)
+      if (extraLineEnabled && extraLine !== null && bitIndex < bits.length) {
+        for (let x = SIZE - 1; x >= 0; x--) {
+          if (extraLineCells[x] && bitIndex < bits.length) {
+            gridState[(extraLine - 1) * SIZE + x] = bits[bitIndex] === '1';
+            bitIndex++;
+          }
+        }
+      }
+    }
+
+    if (randomizeOnStepCheckbox.checked) {
+      await randomizeRange();
+    } else {
+      drawGrid();
+      await updateOutput();
+    }
+
+    timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    step();
+  }
+
+  function stop() {
+    running = false;
+    clearTimeout(timeoutId);
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  }
+
+  canvas.addEventListener('click', async (e) => {
+    if (running || !toggleOnClickCheckbox.checked) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
+ 
+    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
+      const idx = y * SIZE + x;
+      gridState[idx] = !gridState[idx];
+      drawGrid();
+      await updateOutput();
+    }
   });
 
-  speedInput.addEventListener('input', (e) => {
-    updateSpeed(parseInt(e.target.value));
+  speedInput.addEventListener('input', () => {
+    speedLabel.textContent = `${speedInput.value} ms`;
   });
 
-  canvas.addEventListener('click', onCanvasClick);
-}
+  startBtn.onclick = start;
+  stopBtn.onclick = stop;
+  clearBtn.onclick = () => {
+    if (!running) clearAll();
+  };
+  randBtn.onclick = () => {
+    if (!running) randomizeRange();
+  };
 
-// Run init after DOM loaded
-window.addEventListener('DOMContentLoaded', init);
+  function setupCopyAndSaveButtons(id, label) {
+    const textarea = document.getElementById(id);
+    const container = textarea.parentElement;
+
+    const btnGroup = document.createElement('div');
+    btnGroup.style.display = 'flex';
+    btnGroup.style.gap = '10px';
+    btnGroup.style.marginBottom = '10px';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-sm btn-outline-secondary';
+    copyBtn.innerText = `📋 Copiar ${label}`;
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(textarea.value)
+        .then(() => alert(`${label} copiado para a área de transferência!`))
+        .catch(() => alert(`Erro ao copiar ${label}`));
+    };
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn btn-sm btn-outline-primary';
+    saveBtn.innerText = `💾 Salvar ${label}`;
+    saveBtn.onclick = () => {
+      const blob = new Blob([textarea.value], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${id}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    btnGroup.appendChild(copyBtn);
+    btnGroup.appendChild(saveBtn);
+    container.insertBefore(btnGroup, textarea);
+  }
+
+  // Inicializações
+  setupCopyAndSaveButtons('hexBox', 'Hex');
+  setupCopyAndSaveButtons('wifBox', 'WIF');
+  setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Compactado');
+
+  // Configuração linha extra
+  const enableExtraLineCheckbox = document.getElementById('enableExtraLine');
+  const extraLineSelect = document.getElementById('extraLineSelect');
+
+  enableExtraLineCheckbox.addEventListener('change', (e) => {
+    if (!running) {
+      extraLineEnabled = e.target.checked;
+      if (!extraLineEnabled) {
+        extraLine = null;
+        extraLineSelect.value = '';
+        extraLineCells.fill(false);
+      }
+      updateExtraLineUI();
+      drawGrid();
+    } else {
+      e.target.checked = extraLineEnabled;
+    }
+  });
+
+  extraLineSelect.addEventListener('change', (e) => {
+    if (!running) {
+      extraLine = e.target.value ? parseInt(e.target.value) : null;
+      extraLineCells.fill(false);
+      updateExtraLineUI();
+      drawGrid();
+    } else {
+      e.target.value = extraLine || '';
+    }
+  });
+
+  createRangeButtons();
+  updateExtraLineOptions();
+  drawGrid();
+  speedLabel.textContent = `${speedInput.value} ms`;
+});
