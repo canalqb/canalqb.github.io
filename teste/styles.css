@@ -157,10 +157,10 @@ h1 {
   border-color: #ec4899;
 }
 
-/* GRADE DAS CÉLULAS EXTRAS */
+/* GRADE DAS CÉLULAS EXTRAS */ 
 .extra-line-cells-grid {
   display: grid;
-  grid-template-columns: repeat(16, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* deixa responsivo */
   gap: 6px;
   margin-top: 10px;
 }
