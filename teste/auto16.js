@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const baseButtonsDiv = document.getElementById('baseButtons');
 
   // Estado inicial
-  let altura = 12;
+  let altura = 13;
   let base = 16;
   let gridState = Array(SIZE * SIZE).fill(false);
   let stateCounter = 0n;
