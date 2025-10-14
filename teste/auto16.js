@@ -193,16 +193,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const cellsContainer = document.getElementById('extraLineCells');
     const extraLineSelect = document.getElementById('extraLineSelect');
     
+    
+    if (extraLineEnabled) {
+      extraLineSelect.disabled = false;
+    } else {
+      extraLineSelect.disabled = true;
+    }
+    
+    // Mostrar ou esconder os botões das células extras
     if (extraLineEnabled && extraLine !== null) {
       cellsContainer.style.display = 'block';
-      extraLineSelect.disabled = false;
       updateExtraLineCellsUI();
     } else {
       cellsContainer.style.display = 'none';
-      if (!extraLineEnabled) {
-        extraLineSelect.disabled = true;
-      }
     }
+
     drawGrid();
   }
 
