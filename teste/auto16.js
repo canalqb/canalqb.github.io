@@ -236,105 +236,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function gridToHex() {
     const bits = gridState.map(c => (c ? '1' : '0')).join('');
-    const hex = [];
-    for (let i = 0; i < bits.length; i += 8) {
-      const byte = parseInt(bits.slice(i, i + 8), 2);
-      hex.push(byte.toString(16).padStart(2, '0'));
-    }
-    return hex.join('');
+    const bigIntValue = BigInt('0b' + bits);
+    return bigIntValue.toString(16).padStart(SIZE * SIZE / 4, '0');
   }
 
-  async function sha256(buffer) {
-    const hash = await crypto.subtle.digest('SHA-256', buffer);
-    return new Uint8Array(hash);
-  }
-
-  function hexToBytes(hex) {
-    return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
-  }
-
-  async function privateKeyToWIF(hex, compressed = true) {
-    const key = hexToBytes(hex);
-    const prefix = [0x80];
-    const suffix = compressed ? [0x01] : [];
-    const payload = new Uint8Array([...prefix, ...key, ...suffix]);
-
-    const hash1 = await sha256(payload);
-    const hash2 = await sha256(hash1);
-    const checksum = hash2.slice(0, 4);
-    const fullPayload = new Uint8Array([...payload, ...checksum]);
-
-    return base58Encode(fullPayload);
-  }
-
-  const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
-  function base58Encode(buffer) {
-    let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
-    let result = '';
-    while (intVal > 0) {
-      result = BASE58[Number(intVal % 58n)] + result;
-      intVal /= 58n;
-    }
-    for (const b of buffer) {
-      if (b === 0) result = '1' + result;
-      else break;
-    }
-    return result;
-  }
-
-  async function updateOutput() {
+  function updateOutput() {
     const hex = gridToHex();
-    const wif = await privateKeyToWIF(hex, true);
-    const wifU = await privateKeyToWIF(hex, false);
+    hexBox.value = hex.toUpperCase();
 
-    appendLineNoScrollPage(hexBox, hex);
-    appendLineNoScrollPage(wifBox, wif);
-    appendLineNoScrollPage(wifBoxUncompressed, wifU);
+    // Placeholder para geração WIF — implementar lógica se necessário
+    wifBox.value = 'Não implementado';
+    wifBoxUncompressed.value = 'Não implementado';
   }
 
-  function appendLineNoScrollPage(ta, line) {
-    const hadContent = ta.value.length > 0;
-    ta.value += (hadContent ? '\n' : '') + line;
-    ta.scrollTop = ta.scrollHeight;
-  }
-
-  function clearAll() {
-    gridState.fill(false);
-    stateCounter = 0n;
+  function randomizeGrid() {
+    if (running) return;
+    for (let i = 0; i < gridState.length; i++) {
+      gridState[i] = Math.random() < 0.5;
+    }
     drawGrid();
-    hexBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
+    updateOutput();
   }
 
   async function randomizeRange() {
-    for (let y = altura - 1; y < base; y++) {
+    for (let y = altura - 1; y <= base - 1; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = Math.random() < 0.5;
       }
     }
     if (extraLineEnabled && extraLine !== null) {
       for (let x = 0; x < SIZE; x++) {
-        if (extraLineCells[x]) {
-          gridState[(extraLine - 1) * SIZE + x] = Math.random() < 0.5;
-        }
+        if (extraLineCells[x]) gridState[(extraLine - 1) * SIZE + x] = Math.random() < 0.5;
       }
     }
     drawGrid();
     await updateOutput();
   }
 
-  function getSelectedMode() {
-    const radios = document.querySelectorAll('input[name="mode"]');
-    for (const r of radios) if (r.checked) return r.value;
-    return 'sequential';
+  function stop() {
+    running = false;
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
   }
 
   async function step() {
-    if (!running) return;
-    stateCounter++;
-
     const rowsCount = base - altura + 1;
     const activeCellsInExtra = extraLineEnabled && extraLine !== null ? extraLineCells.filter(c => c).length : 0;
     const totalCells = rowsCount * SIZE + activeCellsInExtra;
@@ -348,13 +297,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const bits = stateCounter.toString(2).padStart(totalCells, '0');
     const mode = getSelectedMode();
 
-    // Limpa células da faixa principal
+    // Limpa faixa principal
     for (let y = altura - 1; y <= base - 1; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = false;
       }
     }
-    // Limpa células da linha extra
+
+    // Limpa linha extra
     if (extraLineEnabled && extraLine !== null) {
       for (let x = 0; x < SIZE; x++) {
         gridState[(extraLine - 1) * SIZE + x] = false;
@@ -362,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (mode === 'sequential') {
-      // Linha a linha, esquerda para direita (faixa principal)
       let bitIndex = 0;
       for (let y = altura - 1; y <= base - 1; y++) {
         for (let x = 0; x < SIZE; x++) {
@@ -370,7 +319,6 @@ document.addEventListener('DOMContentLoaded', () => {
           bitIndex++;
         }
       }
-      // Adiciona células da linha extra
       if (extraLineEnabled && extraLine !== null) {
         for (let x = 0; x < SIZE; x++) {
           if (extraLineCells[x] && bitIndex < bits.length) {
@@ -380,18 +328,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } else if (mode === 'vertical') {
-      // Coluna a coluna da direita para esquerda (faixa principal)
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
           const idx = row * SIZE + col;
+          if (bitIndex >= bits.length) break;
           gridState[idx] = bits[bitIndex] === '1';
           bitIndex++;
-          if (bitIndex >= bits.length) break;
         }
         if (bitIndex >= bits.length) break;
       }
-      // Adiciona células da linha extra (da direita para esquerda)
       if (extraLineEnabled && extraLine !== null && bitIndex < bits.length) {
         for (let x = SIZE - 1; x >= 0; x--) {
           if (extraLineCells[x] && bitIndex < bits.length) {
@@ -409,6 +355,96 @@ document.addEventListener('DOMContentLoaded', () => {
       await updateOutput();
     }
 
+    stateCounter++;
     timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
   }
-    
+
+  function getSelectedMode() {
+    const modeRadios = document.getElementsByName('mode');
+    for (const radio of modeRadios) {
+      if (radio.checked) return radio.value;
+    }
+    return 'sequential';
+  }
+
+  // --- EVENTOS ---
+
+  canvas.addEventListener('click', e => {
+    if (!toggleOnClickCheckbox.checked || running) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor((e.clientY - rect.top - MARGIN_TOP) / CELL_SIZE);
+    if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
+
+    gridState[y * SIZE + x] = !gridState[y * SIZE + x];
+    drawGrid();
+    updateOutput();
+  });
+
+  startBtn.onclick = () => {
+    if (running) return;
+    running = true;
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    stateCounter = 0n;
+    step();
+  };
+
+  stopBtn.onclick = () => {
+    stop();
+  };
+
+  clearBtn.onclick = () => {
+    if (running) return;
+    gridState.fill(false);
+    drawGrid();
+    updateOutput();
+  };
+
+  randBtn.onclick = () => {
+    randomizeGrid();
+  };
+
+  speedInput.oninput = () => {
+    speedLabel.textContent = `${speedInput.value} ms`;
+    if (running) {
+      clearTimeout(timeoutId);
+      step();
+    }
+  };
+
+  toggleOnClickCheckbox.onchange = () => {
+    drawGrid();
+  };
+
+  randomizeOnStepCheckbox.onchange = () => {
+    // Nenhuma ação imediata necessária
+  };
+
+  // Extra line controls
+  const enableExtraLineCheckbox = document.getElementById('enableExtraLine');
+  const extraLineSelect = document.getElementById('extraLineSelect');
+
+  enableExtraLineCheckbox.onchange = () => {
+    extraLineEnabled = enableExtraLineCheckbox.checked;
+    if (!extraLineEnabled) {
+      extraLine = null;
+      extraLineCells.fill(false);
+    }
+    updateExtraLineUI();
+  };
+
+  extraLineSelect.onchange = () => {
+    extraLine = parseInt(extraLineSelect.value) || null;
+    extraLineCells.fill(false);
+    updateExtraLineUI();
+  };
+
+  // --- INICIALIZAÇÃO ---
+
+  createRangeButtons();
+  updateRangeLabel();
+  drawGrid();
+  updateOutput();
+  updateExtraLineUI();
+});
