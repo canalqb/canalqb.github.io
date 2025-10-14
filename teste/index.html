@@ -23,7 +23,7 @@
     <section class="canvas-wrapper mb-4" aria-label="Área do grid interativo">
       <canvas id="grid" aria-describedby="gridDesc" tabindex="0"></canvas>
       <div id="gridDesc" class="visually-hidden">
-        Grid 16 por 16 para geração interativa de chaves privadas. Use controles abaixo para manipular.
+        Grid 16 por 16 para geração interativa de chaves privadas. Use os controles abaixo para manipular.
       </div>
     </section>
 
@@ -31,21 +31,31 @@
       Faixa ativa: Linha <span id="activeRangeLabel" aria-live="polite">12 até 16, linha extra: 1</span>
     </p>
 
-    <section class="mb-3" aria-labelledby="heightLabel">
-      <h2 id="heightLabel" class="fw-bold fs-5 mb-2">🎯 Selecionar Altura (Linha Inicial)</h2>
-      <div id="heightButtons" class="button-grid" role="group" aria-label="Seleção de altura (linha inicial)"></div>
-    </section>
+    <!-- NOVA ESTRUTURA UNIFICADA DE CONTROLES -->
+    <div class="control-section mb-4">
+      <h2 class="section-title">🎯 Selecionar Altura (Linha Inicial)</h2>
+      <div id="heightButtons" class="button-grid"></div>
 
-    <section class="mb-3" aria-labelledby="baseLabel">
-      <h2 id="baseLabel" class="fw-bold fs-5 mb-2">📍 Selecionar Base (Linha Final)</h2>
-      <div id="baseButtons" class="button-grid" role="group" aria-label="Seleção de base (linha final)"></div>
-    </section>
+      <h2 class="section-title mt-3">📍 Selecionar Base (Linha Final)</h2>
+      <div id="baseButtons" class="button-grid"></div>
 
-    <section aria-labelledby="extraLineLabel" class="mb-4">
-      <h2 id="extraLineLabel" class="section-title">➕ Linha Extra (Usada na geração)</h2>
-      <div id="extraLineButtons" class="button-grid" role="group" aria-label="Seleção de linha extra"></div>
-    </section>
+      <h2 class="section-title mt-4">✨ Linha Extra (Opcional)</h2>
+      <div class="mb-3">
+        <label class="option-card d-flex align-items-center gap-2">
+          <input type="checkbox" id="enableExtraLine" />
+          <span>🔄 Habilitar linha adicional fora da faixa</span>
+        </label>
+      </div>
+      <div class="mb-3">
+        <label for="extraLineSelect" class="form-label fw-semibold">Escolher linha extra:</label>
+        <select id="extraLineSelect" class="form-select" disabled>
+          <option value="">Selecione uma linha</option>
+        </select>
+      </div>
+      <div id="extraLineCells" style="display:none;"></div>
+    </div>
 
+    <!-- CONTROLES PRINCIPAIS -->
     <section class="mb-4 d-flex flex-wrap gap-2 justify-content-center" aria-label="Controles principais">
       <button id="startBtn" class="btn btn-success btn-custom" aria-pressed="false">▶ Iniciar</button>
       <button id="stopBtn" class="btn btn-warning btn-custom" disabled aria-pressed="false">⏸ Parar</button>
@@ -53,12 +63,15 @@
       <button id="randBtn" class="btn btn-secondary btn-custom">🎲 Aleatorizar</button>
     </section>
 
+    <!-- CONTROLE DE VELOCIDADE -->
     <section class="mb-4" aria-labelledby="speedLabel">
       <label for="speed" id="speedLabel" class="form-label fw-bold">⚡ Velocidade:</label>
-      <input type="range" id="speed" min="1" max="1000" value="500" class="form-range" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-describedby="speedValue" />
+      <input type="range" id="speed" min="1" max="1000" value="500" class="form-range" 
+        aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-describedby="speedValue" />
       <span id="speedValue" aria-live="polite" class="d-block mt-1 text-center">500 ms</span>
     </section>
 
+    <!-- MODO DE OPERAÇÃO E OPÇÕES -->
     <section class="mb-4 d-flex flex-wrap gap-3 justify-content-center" aria-label="Modo de operação e opções">
       <fieldset>
         <legend class="fw-bold">Modo de Operação</legend>
@@ -85,6 +98,7 @@
       </fieldset>
     </section>
 
+    <!-- SAÍDA DE CHAVES -->
     <section class="mb-3" aria-labelledby="hexBoxLabel">
       <label for="hexBox" id="hexBoxLabel" class="form-label fw-bold">🔑 Chave Privada (HEX)</label>
       <textarea id="hexBox" class="form-control output-box" rows="2" readonly aria-readonly="true" tabindex="-1"></textarea>
