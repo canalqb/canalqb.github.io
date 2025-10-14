@@ -236,15 +236,81 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pad com zeros para garantir tamanho correto
     return bigIntValue.toString(16).padStart((SIZE * SIZE) / 4, '0');
   }
+// Base58 alphabet
+const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
-  function updateOutput() {
-    const hex = gridToHex();
-    hexBox.value = hex.toUpperCase();
-
-    // Placeholder para WIF — implementar se necessário
-    wifBox.value = 'Não implementado';
-    wifBoxUncompressed.value = 'Não implementado';
+function base58Encode(buffer) {
+  let num = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
+  let encoded = '';
+  while (num > 0) {
+    const remainder = num % 58n;
+    num = num / 58n;
+    encoded = BASE58[Number(remainder)] + encoded;
   }
+  // Leading zeros
+  for (const b of buffer) {
+    if (b === 0) encoded = '1' + encoded;
+    else break;
+  }
+  return encoded;
+}
+
+function sha256(buffer) {
+  return crypto.subtle.digest('SHA-256', buffer);
+}
+
+async function doubleSha256(buffer) {
+  const first = await sha256(buffer);
+  return sha256(first);
+}
+
+async function hexToWIF(hex, compressed = true) {
+  // hex é a chave privada em hex (64 caracteres)
+  if (hex.length !== 64) return 'Hex inválido';
+
+  const privKeyBytes = Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
+  const prefix = new Uint8Array([0x80]); // prefixo para mainnet private key
+
+  let keyWithPrefix;
+  if (compressed) {
+    keyWithPrefix = new Uint8Array(prefix.length + privKeyBytes.length + 1);
+    keyWithPrefix.set(prefix, 0);
+    keyWithPrefix.set(privKeyBytes, prefix.length);
+    keyWithPrefix[prefix.length + privKeyBytes.length] = 0x01; // byte de compressão
+  } else {
+    keyWithPrefix = new Uint8Array(prefix.length + privKeyBytes.length);
+    keyWithPrefix.set(prefix, 0);
+    keyWithPrefix.set(privKeyBytes, prefix.length);
+  }
+
+  const hash = await doubleSha256(keyWithPrefix.buffer);
+  const hashArray = new Uint8Array(hash);
+  const checksum = hashArray.slice(0, 4);
+
+  const wifBytes = new Uint8Array(keyWithPrefix.length + 4);
+  wifBytes.set(keyWithPrefix, 0);
+  wifBytes.set(checksum, keyWithPrefix.length);
+
+  return base58Encode(wifBytes);
+}
+
+async function updateOutput() {
+  const hex = gridToHex();
+  hexBox.value = hex.toUpperCase();
+
+  // Geração WIF
+  wifBox.value = 'Gerando...';
+  wifBoxUncompressed.value = 'Gerando...';
+
+  try {
+    wifBox.value = await hexToWIF(hex, true);
+    wifBoxUncompressed.value = await hexToWIF(hex, false);
+  } catch (e) {
+    wifBox.value = 'Erro';
+    wifBoxUncompressed.value = 'Erro';
+  }
+}
+
 
   function randomizeGrid() {
     if (running) return;
