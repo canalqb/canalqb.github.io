@@ -23,13 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const heightButtonsDiv = document.getElementById('heightButtons');
   const baseButtonsDiv = document.getElementById('baseButtons');
 
-  // Novo elemento para exibir soma decimal das potências (adicionado dinamicamente)
-  const decimalSumDisplay = document.createElement('div');
-  decimalSumDisplay.style.marginTop = '10px';
-  decimalSumDisplay.style.fontWeight = 'bold';
-  decimalSumDisplay.textContent = 'Soma das potências ativas: 0';
-  hexBox.parentElement.appendChild(decimalSumDisplay);
-
   // Estado inicial
   let altura = 12;
   let base = 16;
@@ -132,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (base < altura) base = altura;
           updateRangeButtons();
           drawGrid();
-          updateDecimalSumDisplay(); // Atualiza soma quando muda faixa
         }
       };
       heightButtonsDiv.appendChild(hBtn);
@@ -146,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (base < altura) altura = base;
           updateRangeButtons();
           drawGrid();
-          updateDecimalSumDisplay(); // Atualiza soma quando muda faixa
         }
       };
       baseButtonsDiv.appendChild(bBtn);
@@ -181,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const availableLines = getAvailableExtraLines();
     extraLineSelect.innerHTML = '<option value="">Selecione uma linha</option>';
-    
+
     availableLines.forEach(line => {
       const option = document.createElement('option');
       option.value = line;
@@ -201,13 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateExtraLineUI() {
     const cellsContainer = document.getElementById('extraLineCells');
     const extraLineSelect = document.getElementById('extraLineSelect');
-    
+
     if (extraLineEnabled) {
       extraLineSelect.disabled = false;
     } else {
       extraLineSelect.disabled = true;
     }
-    
+
     if (extraLineEnabled && extraLine !== null) {
       cellsContainer.style.display = 'block';
       updateExtraLineCellsUI();
@@ -221,10 +212,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateExtraLineCellsUI() {
     const cellsContainer = document.getElementById('extraLineCells');
     cellsContainer.innerHTML = '<div class="section-title" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Selecione as células da linha extra:</div>';
-    
+
     const gridDiv = document.createElement('div');
     gridDiv.className = 'extra-line-cells-grid';
-    
+
     for (let i = 0; i < SIZE; i++) {
       const cellBtn = document.createElement('button');
       cellBtn.textContent = i + 1;
@@ -235,12 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
           extraLineCells[i] = !extraLineCells[i];
           updateExtraLineCellsUI();
           drawGrid();
-          updateDecimalSumDisplay(); // Atualiza soma quando muda linha extra
         }
       };
       gridDiv.appendChild(cellBtn);
     }
-    
+
     cellsContainer.appendChild(gridDiv);
   }
 
@@ -301,15 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
     appendLineNoScrollPage(hexBox, hex);
     appendLineNoScrollPage(wifBox, wif);
     appendLineNoScrollPage(wifBoxUncompressed, wifU);
-    updateDecimalSumDisplay(); // Atualiza soma decimal após saída
   }
- 
+
   function appendLineNoScrollPage(ta, line) {
     const hadContent = ta.value.length > 0;
     ta.value += (hadContent ? '\n' : '') + line;
     ta.scrollTop = ta.scrollHeight;
   }
-  
+
   function clearAll() {
     gridState.fill(false);
     stateCounter = 0n;
@@ -318,14 +307,13 @@ document.addEventListener('DOMContentLoaded', () => {
     wifBox.value = '';
     wifBoxUncompressed.value = '';
   }
-  
+
   async function randomizeRange() {
     for (let y = altura - 1; y < base; y++) {
       for (let x = 0; x < SIZE; x++) {
         gridState[y * SIZE + x] = Math.random() < 0.5;
       }
     }
-    // Aleatoriza também a linha extra se habilitada
     if (extraLineEnabled && extraLine !== null) {
       for (let x = 0; x < SIZE; x++) {
         if (extraLineCells[x]) {
@@ -336,51 +324,91 @@ document.addEventListener('DOMContentLoaded', () => {
     drawGrid();
     await updateOutput();
   }
-  
-  // Função para converter grid para hexadecimal (mantida)
-  
-  // Função para calcular SHA-256 (mantida)
-  
-  // Função para converter chave privada em WIF (mantida)
-  
-  // Função base58Encode (mantida)
-  
-  async function updateOutput() {
-    const hex = gridToHex();
-    const wif = await privateKeyToWIF(hex, true);
-    const wifU = await privateKeyToWIF(hex, false);
-  
-    // Limpa os textareas antes de adicionar conteúdo novo
-    hexBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
-  
-    // Exibir hex normalmente
-    appendLineNoScrollPage(hexBox, hex);
-  
-    // Exibir WIF compactado e não compactado
-    appendLineNoScrollPage(wifBox, wif);
-    appendLineNoScrollPage(wifBoxUncompressed, wifU);
-  
-    // Adicionar informação das potências
-    // Montar lista de potências da faixa selecionada
-    const potencias = [];
-    for (let y = altura; y <= base; y++) {
-      const linhasContadas = SIZE - (y - 1);
-      const powStart = BigInt(linhasContadas - 1) * BigInt(SIZE);
-      const powEnd = BigInt(linhasContadas) * BigInt(SIZE) - 1n;
-      potencias.push(`Linha ${y}: 2^${powStart} .. 2^${powEnd}`);
-    }
-  
-    // Linha extra se habilitada
-    if (extraLineEnabled && extraLine !== null) {
-      const linhasContadasExtra = SIZE - (extraLine - 1);
-      const powStartExtra = BigInt(linhasContadasExtra - 1) * BigInt(SIZE);
-      const powEndExtra = BigInt(linhasContadasExtra) * BigInt(SIZE) - 1n;
-      potencias.push(`Linha extra ${extraLine}: 2^${powStartExtra} .. 2^${powEndExtra}`);
-    }
-  
-    // Adiciona as potências no fim do hexBox para referência
-    appendLineNoScrollPage(hexBox, '\n--- Potências das linhas selecionadas ---');
-    potencias.forEach(pot => appendLineNoScrollPage(hexBox, pot));
+
+  function getSelectedMode() {
+    const radios = document.querySelectorAll('input[name="mode"]');
+    for (const r of radios) if (r.checked) return r.value;
+    return 'sequential';
   }
+
+  async function step() {
+    if (!running) return;
+    stateCounter++;
+
+    const rowsCount = base - altura + 1;
+    const activeCellsInExtra = extraLineEnabled && extraLine !== null ? extraLineCells.filter(c => c).length : 0;
+    const totalCells = rowsCount * SIZE + activeCellsInExtra;
+    const max = 1n << BigInt(totalCells);
+
+    if (stateCounter >= max) {
+      stop();
+      return;
+    }
+
+    const bits = stateCounter.toString(2).padStart(totalCells, '0');
+    const mode = getSelectedMode();
+
+    // Limpa células da faixa principal
+    for (let y = altura - 1; y <= base - 1; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        gridState[y * SIZE + x] = false;
+      }
+    }
+    // Limpa células da linha extra
+    if (extraLineEnabled && extraLine !== null) {
+      for (let x = 0; x < SIZE; x++) {
+        gridState[(extraLine - 1) * SIZE + x] = false;
+      }
+    }
+
+    if (mode === 'sequential') {
+      // Linha a linha, esquerda para direita (faixa principal)
+      let bitIndex = 0;
+      for (let y = altura - 1; y <= base - 1; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          gridState[y * SIZE + x] = bits[bitIndex] === '1';
+          bitIndex++;
+        }
+      }
+      // Adiciona células da linha extra
+      if (extraLineEnabled && extraLine !== null) {
+        for (let x = 0; x < SIZE; x++) {
+          if (extraLineCells[x] && bitIndex < bits.length) {
+            gridState[(extraLine - 1) * SIZE + x] = bits[bitIndex] === '1';
+            bitIndex++;
+          }
+        }
+      }
+    } else if (mode === 'vertical') {
+      // Coluna a coluna da direita para esquerda (faixa principal)
+      let bitIndex = 0;
+      for (let col = SIZE - 1; col >= 0; col--) {
+        for (let row = base - 1; row >= altura - 1; row--) {
+          const idx = row * SIZE + col;
+          gridState[idx] = bits[bitIndex] === '1';
+          bitIndex++;
+          if (bitIndex >= bits.length) break;
+        }
+        if (bitIndex >= bits.length) break;
+      }
+      // Adiciona células da linha extra (da direita para esquerda)
+      if (extraLineEnabled && extraLine !== null && bitIndex < bits.length) {
+        for (let x = SIZE - 1; x >= 0; x--) {
+          if (extraLineCells[x] && bitIndex < bits.length) {
+            gridState[(extraLine - 1) * SIZE + x] = bits[bitIndex] === '1';
+            bitIndex++;
+          }
+        }
+      }
+    }
+
+    if (randomizeOnStepCheckbox.checked) {
+      await randomizeRange();
+    } else {
+      drawGrid();
+      await updateOutput();
+    }
+
+    timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
+  }
+    
