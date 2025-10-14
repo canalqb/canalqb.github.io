@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- CONFIGURAÇÕES DO GRID ---
+  // Configurações do grid e canvas
   const SIZE = 16;
   const CELL_SIZE = 25;
   const MARGIN_LEFT = 30;
   const MARGIN_TOP = 30;
   const MARGIN_RIGHT = 130;
 
-  // --- ELEMENTOS DOM ---
+  // Elementos DOM
   const canvas = document.getElementById('grid');
   const ctx = canvas.getContext('2d');
   const startBtn = document.getElementById('startBtn');
@@ -22,43 +22,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
   const heightButtonsDiv = document.getElementById('heightButtons');
   const baseButtonsDiv = document.getElementById('baseButtons');
+
+  // Novos elementos para linha extra
   const enableExtraLineCheckbox = document.getElementById('enableExtraLine');
   const extraLineSelect = document.getElementById('extraLineSelect');
+  const extraLineColsContainer = document.getElementById('extraLineColsContainer');
 
-  // --- ESTADO ---
+  // Estado inicial
   let altura = 12;
   let base = 16;
-  let extraLine = null;
+  let extraLine = null;  // linha extra selecionada ou null
+  let extraLineColumns = new Set(); // colunas selecionadas na linha extra
   let gridState = Array(SIZE * SIZE).fill(false);
   let stateCounter = 0n;
   let running = false;
   let timeoutId = null;
 
-  // --- CANVAS ---
+  // Configurações iniciais do canvas
   canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
 
+  // Inicialmente desabilitar select e esconder container de colunas da linha extra
+  extraLineSelect.disabled = true;
+  extraLineColsContainer.style.display = 'none';
+
+  // --- FUNÇÕES AUXILIARES ---
+
+  function updateRangeLabel() {
+    const label = document.getElementById('activeRangeLabel');
+    if (label) label.textContent = `${altura} até ${base}`;
+  }
+
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     ctx.font = '12px Arial';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
-    // Cabeçalho das colunas
+    // Cabeçalho colunas (topo)
     ctx.textAlign = 'center';
     for (let x = 0; x < SIZE; x++) {
       const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
 
-    // Linhas e intervalos laterais
+    // Números das linhas e intervalos laterais
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
       ctx.textAlign = 'right';
       ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
       ctx.textAlign = 'left';
-      const powStart = (SIZE - 1 - y) * SIZE;
-      const powEnd = powStart + SIZE - 1;
+      const linhasContadas = SIZE - y;
+      const powStart = (linhasContadas - 1) * SIZE;
+      const powEnd = linhasContadas * SIZE - 1;
       ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
 
@@ -73,28 +90,41 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Destaque da faixa selecionada
+    // Destaque da faixa selecionada (altura até base)
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
     const heightPx = (base - altura + 1) * CELL_SIZE;
-    ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
     ctx.fillRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
     ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 3;
     ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
 
-    // Destaque da linha extra
+    // Destaque linha extra selecionada (só fora da faixa)
     if (enableExtraLineCheckbox.checked && extraLine !== null) {
       if (extraLine < altura || extraLine > base) {
-        const y = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+        const yPos = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+
+        // Destaque linha inteira em cor suave
         ctx.fillStyle = 'rgba(236, 72, 153, 0.15)';
-        ctx.fillRect(MARGIN_LEFT, y, SIZE * CELL_SIZE, CELL_SIZE);
+        ctx.fillRect(MARGIN_LEFT, yPos, SIZE * CELL_SIZE, CELL_SIZE);
         ctx.strokeStyle = '#ec4899';
         ctx.lineWidth = 2;
-        ctx.strokeRect(MARGIN_LEFT, y, SIZE * CELL_SIZE, CELL_SIZE);
+        ctx.strokeRect(MARGIN_LEFT, yPos, SIZE * CELL_SIZE, CELL_SIZE);
+
+        // Destaque nas colunas selecionadas na linha extra
+        extraLineColumns.forEach(col => {
+          const xPos = MARGIN_LEFT + (col - 1) * CELL_SIZE;
+          ctx.fillStyle = 'rgba(236, 72, 153, 0.3)';
+          ctx.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
+          ctx.strokeStyle = '#ec4899';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
+        });
       }
     }
   }
 
+  // Continua...
   function createRangeButtons() {
     heightButtonsDiv.innerHTML = '';
     baseButtonsDiv.innerHTML = '';
@@ -128,221 +158,224 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       baseButtonsDiv.appendChild(bBtn);
     }
-
     updateRangeButtons();
   }
 
   function updateRangeButtons() {
-    [...heightButtonsDiv.children].forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.textContent) === altura);
+    Array.from(heightButtonsDiv.children).forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent, 10) === altura);
     });
-    [...baseButtonsDiv.children].forEach(btn => {
-      btn.classList.toggle('active', parseInt(btn.textContent) === base);
+    Array.from(baseButtonsDiv.children).forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.textContent, 10) === base);
     });
     updateRangeLabel();
   }
 
-  function updateRangeLabel() {
-    const label = document.getElementById('activeRangeLabel');
-    if (label) label.textContent = `${altura} até ${base}`;
-  }
-
+  // Atualiza as opções da linha extra (select e colunas)
   function updateExtraLineOptions() {
-    const options = [];
-
-    for (let i = 1; i <= SIZE; i++) {
-      if (i < altura || i > base) {
-        options.push(i);
-      }
-    }
-
-    extraLineSelect.innerHTML = '';
-
-    if (options.length === 0) {
-      const opt = document.createElement('option');
-      opt.textContent = 'Nenhuma linha disponível';
-      opt.disabled = true;
-      extraLineSelect.appendChild(opt);
-      extraLineSelect.disabled = true;
-      extraLine = null;
-    } else {
-      for (const line of options) {
-        const opt = document.createElement('option');
-        opt.value = line;
-        opt.textContent = `Linha ${line}`;
-        extraLineSelect.appendChild(opt);
-      }
+    if (enableExtraLineCheckbox.checked) {
       extraLineSelect.disabled = false;
-      extraLine = parseInt(extraLineSelect.value);
-    }
+      extraLineColsContainer.style.display = 'block';
 
-    drawGrid();
+      // Preenche select com números de linhas, excluindo a faixa altura-base
+      extraLineSelect.innerHTML = '<option value="">-- selecione a linha --</option>';
+      for (let i = 1; i <= SIZE; i++) {
+        if (i < altura || i > base) {
+          const opt = document.createElement('option');
+          opt.value = i;
+          opt.textContent = i;
+          extraLineSelect.appendChild(opt);
+        }
+      }
+      // Seleciona valor atual se existir e ainda válido
+      if (extraLine && (extraLine < altura || extraLine > base)) {
+        extraLineSelect.value = extraLine;
+      } else {
+        extraLine = null;
+        extraLineSelect.value = '';
+        extraLineColumns.clear();
+      }
+
+      updateExtraLineColsUI();
+    } else {
+      extraLineSelect.disabled = true;
+      extraLineColsContainer.style.display = 'none';
+      extraLine = null;
+      extraLineColumns.clear();
+    }
   }
+
+  // Cria e atualiza checkboxes para colunas na linha extra
+  function updateExtraLineColsUI() {
+    extraLineColsContainer.innerHTML = '';
+    if (!extraLine) return;
+
+    const label = document.createElement('div');
+    label.textContent = `Selecione colunas para incluir na linha extra ${extraLine}:`;
+    label.style.marginBottom = '6px';
+    extraLineColsContainer.appendChild(label);
+
+    for (let col = 1; col <= SIZE; col++) {
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `extraLineCol_${col}`;
+      checkbox.value = col;
+      checkbox.checked = extraLineColumns.has(col);
+      checkbox.style.marginRight = '4px';
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          extraLineColumns.add(col);
+        } else {
+          extraLineColumns.delete(col);
+        }
+        drawGrid();
+      });
+
+      const cbLabel = document.createElement('label');
+      cbLabel.htmlFor = checkbox.id;
+      cbLabel.textContent = col;
+      cbLabel.style.marginRight = '10px';
+
+      extraLineColsContainer.appendChild(checkbox);
+      extraLineColsContainer.appendChild(cbLabel);
+    }
+  }
+
+  // Event listeners para linha extra
 
   enableExtraLineCheckbox.addEventListener('change', () => {
-    if (enableExtraLineCheckbox.checked) {
-      updateExtraLineOptions();
-    } else {
-      extraLine = null;
-      extraLineSelect.innerHTML = '';
-      extraLineSelect.disabled = true;
-      drawGrid();
-    }
+    updateExtraLineOptions();
+    drawGrid();
   });
 
   extraLineSelect.addEventListener('change', () => {
-    extraLine = parseInt(extraLineSelect.value);
+    const val = extraLineSelect.value;
+    extraLine = val ? parseInt(val, 10) : null;
+    extraLineColumns.clear(); // Limpa seleção de colunas ao trocar linha extra
+    updateExtraLineColsUI();
     drawGrid();
   });
 
-  canvas.addEventListener('click', async (e) => {
-    if (running || !toggleOnClickCheckbox.checked) return;
+  // Continua...
+  // Guarda colunas selecionadas para a linha extra
+  const extraLineColumns = new Set();
 
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+  function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
-    const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
-    const linhaNum = y + 1;
+    ctx.font = '12px Arial';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#333';
 
-    const dentro = linhaNum >= altura && linhaNum <= base;
-    const ehExtra = enableExtraLineCheckbox.checked && linhaNum === extraLine;
-
-    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE && (dentro || ehExtra)) {
-      const idx = y * SIZE + x;
-      gridState[idx] = !gridState[idx];
-      drawGrid();
-      await updateOutput();
+    // Cabeçalho colunas (topo)
+    ctx.textAlign = 'center';
+    for (let x = 0; x < SIZE; x++) {
+      const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
+      ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
-  });
-  
-  function gridToHex() {
-    const bits = gridState.map(c => (c ? '1' : '0')).join('');
-    const hex = [];
-    for (let i = 0; i < bits.length; i += 8) {
-      const byte = parseInt(bits.slice(i, i + 8), 2);
-      hex.push(byte.toString(16).padStart(2, '0'));
+
+    // Números das linhas e intervalos laterais
+    for (let y = 0; y < SIZE; y++) {
+      const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
+      ctx.textAlign = 'right';
+      ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
+      ctx.textAlign = 'left';
+      const linhasContadas = SIZE - y;
+      const powStart = (linhasContadas - 1) * SIZE;
+      const powEnd = linhasContadas * SIZE - 1;
+      ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
-    return hex.join('');
-  }
 
-  function hexToBytes(hex) {
-    return Uint8Array.from(hex.match(/.{2}/g).map(b => parseInt(b, 16)));
-  }
-
-  async function sha256(buffer) {
-    const hash = await crypto.subtle.digest('SHA-256', buffer);
-    return new Uint8Array(hash);
-  }
-
-  const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
-  function base58Encode(buffer) {
-    let intVal = BigInt('0x' + [...buffer].map(b => b.toString(16).padStart(2, '0')).join(''));
-    let result = '';
-    while (intVal > 0) {
-      result = BASE58[Number(intVal % 58n)] + result;
-      intVal /= 58n;
-    }
-    for (const b of buffer) {
-      if (b === 0) result = '1' + result;
-      else break;
-    }
-    return result;
-  }
-
-  async function privateKeyToWIF(hex, compressed = true) {
-    const keyBytes = hexToBytes(hex);
-    const prefix = [0x80];
-    const suffix = compressed ? [0x01] : [];
-    const payload = new Uint8Array([...prefix, ...keyBytes, ...suffix]);
-    const hash1 = await sha256(payload);
-    const hash2 = await sha256(hash1);
-    const checksum = hash2.slice(0, 4);
-    const fullPayload = new Uint8Array([...payload, ...checksum]);
-    return base58Encode(fullPayload);
-  }
-
-  async function updateOutput() {
-    const hex = gridToHex();
-    const wif = await privateKeyToWIF(hex, true);
-    const wifU = await privateKeyToWIF(hex, false);
-    appendLineNoScrollPage(hexBox, hex);
-    appendLineNoScrollPage(wifBox, wif);
-    appendLineNoScrollPage(wifBoxUncompressed, wifU);
-  }
-
-  function appendLineNoScrollPage(ta, line) {
-    const had = ta.value.length > 0;
-    ta.value += (had ? '\n' : '') + line;
-    ta.scrollTop = ta.scrollHeight;
-  }
-
-  function clearAll() {
-    gridState.fill(false);
-    stateCounter = 0n;
-    drawGrid();
-    hexBox.value = '';
-    wifBox.value = '';
-    wifBoxUncompressed.value = '';
-  }
-
-  async function randomizeRange() {
-    for (let y = altura - 1; y < base; y++) {
+    // Células do grid
+    for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {
-        const linhaNum = y + 1;
-        if (!(enableExtraLineCheckbox.checked && extraLine === linhaNum)) {
-          gridState[y * SIZE + x] = Math.random() < 0.5;
-        }
+        const idx = y * SIZE + x;
+        ctx.fillStyle = gridState[idx] ? '#48bb78' : '#fff';
+        ctx.fillRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.strokeRect(MARGIN_LEFT + x * CELL_SIZE, MARGIN_TOP + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
-    drawGrid();
-    await updateOutput();
-  }
 
-  function getSelectedMode() {
-    const radios = document.querySelectorAll('input[name="mode"]');
-    for (const r of radios) {
-      if (r.checked) return r.value;
+    // Destaque da faixa selecionada (altura até base)
+    ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+    const yStart = MARGIN_TOP + (altura - 1) * CELL_SIZE;
+    const heightPx = (base - altura + 1) * CELL_SIZE;
+    ctx.fillRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(MARGIN_LEFT, yStart, SIZE * CELL_SIZE, heightPx);
+
+    // Destaque da linha extra, apenas colunas selecionadas
+    if (enableExtraLineCheckbox.checked && extraLine !== null && extraLineColumns.size > 0) {
+      const extraY = MARGIN_TOP + (extraLine - 1) * CELL_SIZE;
+      extraLineColumns.forEach(col => {
+        const colIdx = col - 1;
+        ctx.fillStyle = 'rgba(236, 72, 153, 0.15)';
+        ctx.fillRect(MARGIN_LEFT + colIdx * CELL_SIZE, extraY, CELL_SIZE, CELL_SIZE);
+        ctx.strokeStyle = '#ec4899';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(MARGIN_LEFT + colIdx * CELL_SIZE, extraY, CELL_SIZE, CELL_SIZE);
+      });
     }
-    return 'sequential';
   }
 
   async function step() {
     if (!running) return;
     stateCounter++;
 
-    const linhasValidas = Array.from({ length: SIZE }, (_, i) => i + 1)
-      .filter(l => l >= altura && l <= base && l !== extraLine);
-    const totalBits = BigInt(linhasValidas.length * SIZE);
-    const max = 1n << totalBits;
+    const rowsCount = base - altura + 1;
+    const totalCells = BigInt(rowsCount * SIZE + (extraLineColumns.size));
+
+    const max = 1n << totalCells;
 
     if (stateCounter >= max) {
       stop();
       return;
     }
 
-    const bits = stateCounter.toString(2).padStart(Number(totalBits), '0');
+    const bits = stateCounter.toString(2).padStart(Number(totalCells), '0');
     const mode = getSelectedMode();
 
+    // Preenche faixa principal
+    let bitIndex = 0;
+
     if (mode === 'sequential') {
-      let bitIndex = 0;
-      for (const linha of linhasValidas) {
+      // Linha por linha, da faixa
+      for (let y = altura - 1; y < base; y++) {
         for (let x = 0; x < SIZE; x++) {
-          const idx = (linha - 1) * SIZE + x;
-          gridState[idx] = bits[bitIndex++] === '1';
+          const idx = y * SIZE + x;
+          gridState[idx] = (bits[bitIndex] === '1');
+          bitIndex++;
         }
       }
+      // Agora preenche a linha extra, só colunas selecionadas
+      if (enableExtraLineCheckbox.checked && extraLine !== null && extraLineColumns.size > 0) {
+        const y = extraLine - 1;
+        extraLineColumns.forEach(col => {
+          const idx = y * SIZE + (col - 1);
+          gridState[idx] = (bits[bitIndex] === '1');
+          bitIndex++;
+        });
+      }
     } else {
-      // Modo vertical
-      let bitIndex = 0;
-      for (let col = 0; col < SIZE; col++) {
-        for (let l = 0; l < linhasValidas.length; l++) {
-          const row = linhasValidas[l];
-          const idx = (row - 1) * SIZE + col;
-          gridState[idx] = bits[bitIndex++] === '1';
+      // vertical mode: coluna por coluna na faixa principal
+      for (let col = SIZE - 1; col >= 0; col--) {
+        for (let row = base - 1; row >= altura - 1; row--) {
+          const idx = row * SIZE + col;
+          gridState[idx] = (bits[bitIndex] === '1');
+          bitIndex++;
         }
+      }
+      // colunas da linha extra
+      if (enableExtraLineCheckbox.checked && extraLine !== null && extraLineColumns.size > 0) {
+        const y = extraLine - 1;
+        extraLineColumns.forEach(col => {
+          const idx = y * SIZE + (col - 1);
+          gridState[idx] = (bits[bitIndex] === '1');
+          bitIndex++;
+        });
       }
     }
 
@@ -353,76 +386,27 @@ document.addEventListener('DOMContentLoaded', () => {
       await updateOutput();
     }
 
-    timeoutId = setTimeout(step, parseInt(speedInput.value));
+    timeoutId = setTimeout(step, parseInt(speedInput.value, 10));
   }
 
-  function start() {
-    if (running) return;
-    running = true;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    step();
-  }
+  canvas.addEventListener('click', async (e) => {
+    if (running || !toggleOnClickCheckbox.checked) return;
 
-  function stop() {
-    running = false;
-    clearTimeout(timeoutId);
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-  }
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
-  function setupCopyAndSaveButtons(id, label) {
-    const textarea = document.getElementById(id);
-    const container = textarea.parentElement;
+    const x = Math.floor(((e.clientX - rect.left) * scaleX - MARGIN_LEFT) / CELL_SIZE);
+    const y = Math.floor(((e.clientY - rect.top) * scaleY - MARGIN_TOP) / CELL_SIZE);
 
-    const btnGroup = document.createElement('div');
-    btnGroup.style.display = 'flex';
-    btnGroup.style.gap = '10px';
-    btnGroup.style.marginBottom = '10px';
+    const linhaNum = y + 1;
+    const dentro = (linhaNum >= altura && linhaNum <= base);
+    const ehExtra = (enableExtraLineCheckbox.checked && extraLine === linhaNum && extraLineColumns.has(x + 1));
 
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'btn btn-sm btn-outline-secondary';
-    copyBtn.innerText = `📋 Copiar ${label}`;
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(textarea.value)
-        .then(() => alert(`${label} copiado para a área de transferência!`))
-        .catch(() => alert(`Erro ao copiar ${label}`));
-    };
-
-    const saveBtn = document.createElement('button');
-    saveBtn.className = 'btn btn-sm btn-outline-primary';
-    saveBtn.innerText = `💾 Salvar ${label}`;
-    saveBtn.onclick = () => {
-      const blob = new Blob([textarea.value], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${id}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-
-    btnGroup.appendChild(copyBtn);
-    btnGroup.appendChild(saveBtn);
-    container.insertBefore(btnGroup, textarea);
-  }
-
-  // --- EVENTOS E INICIALIZAÇÃO FINAL ---
-  speedInput.addEventListener('input', () => {
-    speedLabel.textContent = `${speedInput.value} ms`;
+    if (x >= 0 && x < SIZE && y >= 0 && y < SIZE && (dentro || ehExtra)) {
+      const idx = y * SIZE + x;
+      gridState[idx] = !gridState[idx];
+      drawGrid();
+      await updateOutput();
+    }
   });
-
-  startBtn.onclick = start;
-  stopBtn.onclick = stop;
-  clearBtn.onclick = () => { if (!running) clearAll(); };
-  randBtn.onclick = () => { if (!running) randomizeRange(); };
-
-  setupCopyAndSaveButtons('hexBox', 'Hex');
-  setupCopyAndSaveButtons('wifBox', 'WIF');
-  setupCopyAndSaveButtons('wifBoxUncompressed', 'WIF Não Compactado');
-
-  createRangeButtons();
-  updateExtraLineOptions();
-  drawGrid();
-  speedLabel.textContent = `${speedInput.value} ms`;
-});
