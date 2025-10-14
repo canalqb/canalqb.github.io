@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Define tamanho do canvas
   // canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
-  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE;
+  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + 1;
+  canvas.height = MARGIN_TOP + SIZE * CELL_SIZE + 1;
 
-  canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
 
   // --- FUNÇÕES ---
 
