@@ -57,17 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const px = MARGIN_LEFT + x * CELL_SIZE + CELL_SIZE / 2;
       ctx.fillText((x + 1).toString(), px, MARGIN_TOP / 2);
     }
-
+ 
     // Números linhas e intervalos (laterais)
     for (let y = 0; y < SIZE; y++) {
       const py = MARGIN_TOP + y * CELL_SIZE + CELL_SIZE / 2;
       ctx.textAlign = 'right';
       ctx.fillText((y + 1).toString(), MARGIN_LEFT - 5, py);
       ctx.textAlign = 'left';
-      const linhasContadas = SIZE - y;
-      const powStart = (linhasContadas - 1) * SIZE;
-      const powEnd = linhasContadas * SIZE - 1;
-      ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
+      // Removido texto das potências de 2
+      // const linhasContadas = SIZE - y;
+      // const powStart = (linhasContadas - 1) * SIZE;
+      // const powEnd = linhasContadas * SIZE - 1;
+      // ctx.fillText(`2^${powStart}..2^${powEnd}`, MARGIN_LEFT + SIZE * CELL_SIZE + 10, py);
     }
 
     // Células do grid
