@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Configurações do grid e canvas
   const SIZE = 16;
-  const CELL_SIZE = 25;
+  const CELL_SIZE = 20;
   const MARGIN_LEFT = 30;
   const MARGIN_TOP = 30;
   // const MARGIN_RIGHT = 130;
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '12px Arial';
+    ctx.font = '8px Arial';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#333';
 
