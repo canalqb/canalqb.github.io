@@ -115,9 +115,20 @@ h1 {
 /* BOTÕES DE INTERVALO */
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+  grid-template-columns: repeat(8, 1fr); /* desktop: 8 colunas */
   gap: 6px;
-  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .button-grid {
+    grid-template-columns: repeat(4, 1fr); /* celular: 4 colunas */
+  }
+}
+
+@media (max-width: 350px) {
+  .button-grid {
+    grid-template-columns: repeat(2, 1fr); /* celular muito pequeno: 2 colunas */
+  }
 }
 
 .range-btn,
