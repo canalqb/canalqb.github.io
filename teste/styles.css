@@ -1,3 +1,4 @@
+/* Reset e box-sizing */
 * {
   box-sizing: border-box;
 }
@@ -8,51 +9,42 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+  color: #2d3748;
+  line-height: 1.5;
 }
 
+/* Navbar */
 .navbar {
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(10px);
 }
 
-/* Anúncio no topo */
-.ad-banner-top {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.ad-label {
-  font-size: 0.75rem;
-  color: #718096;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.container-main {
-  margin: 2rem auto;
+/* Container principal */
+.container {
   max-width: 1000px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Títulos */
+h1, h2, .section-title {
+  color: #2d3748;
+  font-weight: 700;
 }
 
 h1 {
-  color: #2d3748;
-  font-weight: 700;
   text-align: center;
   margin-bottom: 0.5rem;
 }
 
-.subtitle {
+p.text-muted {
   text-align: center;
   color: #718096;
   font-size: 0.95rem;
   margin-bottom: 2rem;
 }
 
+/* Canvas e wrapper */
 .canvas-wrapper {
   display: flex;
   justify-content: center;
@@ -65,45 +57,21 @@ h1 {
   background: #fff;
   cursor: crosshair;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: block;
-  width: 512px;
-  height: 512px;
+  width: 100%;
+  max-width: 512px;
+  height: auto;
+  aspect-ratio: 1 / 1; /* Mantém proporção quadrada */
   touch-action: none;
 }
 
-.range-indicator {
-  text-align: center;
-  margin: 1rem 0;
-  padding: 0.75rem;
-  background: linear-gradient(135deg, #667eea15, #764ba215);
-  border-radius: 8px;
-  font-weight: 600;
-  color: #2d3748;
-}
-
-.range-indicator span {
+/* Texto dinâmico */
+#activeRangeLabel,
+#speedValue {
   color: #667eea;
-  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-.control-section {
-  background: #f7fafc;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-}
-
-.section-title {
-  font-size: 0.9rem; 
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #4a5568; 
-  font-weight: bold;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-}
- 
-
+/* Grids de botões */
 .button-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
@@ -121,21 +89,27 @@ h1 {
   cursor: pointer;
   transition: all 0.2s ease;
   color: #4a5568;
+  user-select: none;
 }
 
-.range-btn:hover {
+.range-btn:hover,
+.range-btn:focus-visible {
   border-color: #667eea;
+  outline: none;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
 }
 
-.range-btn.active {
+.range-btn.active,
+.range-btn[aria-pressed="true"] {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border-color: #667eea;
 }
 
-.main-controls {
+/* Controles principais */
+.main-controls,
+.mb-4.d-flex.flex-wrap.gap-2.justify-content-center {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -151,6 +125,7 @@ h1 {
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1rem;
+  user-select: none;
 }
 
 .btn-start {
@@ -159,9 +134,11 @@ h1 {
   box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
 }
 
-.btn-start:hover:not(:disabled) {
+.btn-start:hover:not(:disabled),
+.btn-start:focus-visible:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(72, 187, 120, 0.5);
+  outline: none;
 }
 
 .btn-stop {
@@ -170,9 +147,11 @@ h1 {
   box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
 }
 
-.btn-stop:hover:not(:disabled) {
+.btn-stop:hover:not(:disabled),
+.btn-stop:focus-visible:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(245, 101, 101, 0.5);
+  outline: none;
 }
 
 .btn-clear,
@@ -183,10 +162,13 @@ h1 {
 }
 
 .btn-clear:hover,
-.btn-random:hover {
+.btn-clear:focus-visible,
+.btn-random:hover,
+.btn-random:focus-visible {
   border-color: #667eea;
   color: #667eea;
   transform: translateY(-2px);
+  outline: none;
 }
 
 .btn-custom:disabled {
@@ -195,26 +177,28 @@ h1 {
   transform: none !important;
 }
 
-.speed-control {
+/* Controle de velocidade */
+.speed-control,
+#speed {
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  margin: 1rem 0;
-  padding: 1rem;
-  background: white;
-  border-radius: 8px;
 }
 
-.speed-control input[type="range"] {
-  width: 200px;
+#speed {
   height: 6px;
   border-radius: 3px;
   background: #e2e8f0;
-  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  flex-grow: 1;
 }
 
-.speed-control input[type="range"]::-webkit-slider-thumb {
+#speed::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 18px;
@@ -222,66 +206,50 @@ h1 {
   border-radius: 50%;
   background: #667eea;
   cursor: pointer;
+  border: none;
+  margin-top: -6px; /* centralizar no track */
 }
 
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.option-card {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 2px solid #e2e8f0;
-  display: inline-flex;
-  align-items: center;
-  font-weight: 500;
-  color: #2d3748;
+#speed::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #667eea;
   cursor: pointer;
-  transition: all 0.2s ease;
+  border: none;
 }
 
-.option-card:hover {
-  border-color: #667eea;
-  background: #f0f4ff;
+/* Opções e modo */
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
-.option-card input {
-  margin-right: 8px;
-  accent-color: #667eea;
+legend {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
-.option-label {
+fieldset label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   cursor: pointer;
   font-weight: 500;
   color: #2d3748;
+  user-select: none;
 }
 
-.option-label input {
+fieldset input[type="radio"],
+fieldset input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  accent-color: #667eea;
 }
 
-.output-section {
-  margin: 2rem 0;
-}
-
-.output-label {
-  font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
+/* Output boxes */
 .output-box {
   width: 100%;
   height: 120px;
@@ -293,16 +261,42 @@ h1 {
   resize: vertical;
   background: #f7fafc;
   color: #2d3748;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: text;
 }
 
-.output-box:focus {
+.output-box:focus-visible {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
-/* Anúncio Flutuante */
+/* Evitar seleção e foco em textarea readonly */
+textarea[readonly] {
+  user-select: none;
+  pointer-events: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: auto;
+}
+
+textarea[readonly]::-webkit-scrollbar {
+  display: none;
+}
+
+/* Visually hidden (para descrições de acessibilidade) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  border: 0 !important;
+}
+
+/* Anúncio flutuante */
 .ad-floating {
   position: fixed;
   bottom: 20px;
@@ -334,30 +328,19 @@ h1 {
   align-items: center;
 }
 
-/* Alinhamento flexível dentro da control-section */
-.control-section .d-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  #grid {
+    max-width: 100%;
+    height: auto;
+  }
 
-textarea[readonly] {
-  user-select: none;          /* evita seleção do texto */
-  pointer-events: none;       /* bloqueia clique e foco */
+  .button-grid {
+    grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+  }
 
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE e Edge */
-  overflow: auto;             /* mantém scroll funcional */
-}
-
-textarea[readonly]::-webkit-scrollbar {
-  display: none;              /* Chrome, Safari, Opera */
-}
-
-
-/* Exemplo CSS adicional opcional */
-.range-btn.active {
-  background-color: #667eea;
-  color: white;
+  .btn-custom {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
 }
