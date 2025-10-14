@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const CELL_SIZE = 25;
   const MARGIN_LEFT = 30;
   const MARGIN_TOP = 30;
-  const MARGIN_RIGHT = 130;
+  // const MARGIN_RIGHT = 130;
+  const MARGIN_RIGHT = 0;
 
   // Elementos DOM
   const canvas = document.getElementById('grid');
@@ -35,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let extraLineCells = Array(SIZE).fill(false);
 
   // Define tamanho do canvas
-  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
+  // canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
+  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE;
+
   canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
 
   // --- FUNÇÕES ---
