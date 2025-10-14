@@ -360,4 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
   createRangeButtons();
   drawGrid();
   speedLabel.textContent = `${speedInput.value} ms`;
+
+  // Habilitar/desabilitar o select de linha extra baseado no checkbox
+  const enableExtraLineCheckbox = document.getElementById('enableExtraLine');
+  const extraLineSelect = document.getElementById('extraLineSelect');
+
+  enableExtraLineCheckbox.addEventListener('change', function () {
+    if (this.checked) {
+      extraLineSelect.disabled = false;
+    } else {
+      extraLineSelect.disabled = true;
+    }
+  });
 });
