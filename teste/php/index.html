@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>PHP em WASM — Emulação no cliente</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 1rem; }
+    pre { background:#f5f5f5; padding:1rem; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <h1>PHP em WASM (cliente)</h1>
+  <p id="status">Carregando runtime PHP...</p>
+  <div id="content"></div>
+
+  <!-- 
+    Insira aqui o loader JS gerado pelo build WASM. 
+    Por exemplo: <script src="php.js"></script>
+    Esse loader deve definir globalmente um objeto Module com FS e callMain.
+  -->
+  <script src="php.js"></script>
+
+  <script>
+  (async () => {
+    const statusEl = document.getElementById('status');
+    const contentEl = document.getElementById('content');
+
+    // Helper para atualizar status
+    function status(text) {
+      statusEl.textContent = text;
+      console.debug('[php-wasm]', text);
+    }
+
+    // --- 1) aguardar inicialização do Module (API típica Emscripten)
+    // Muitos builds expõem um Promise ou função de inicialização; aqui assumimos que
+    // `Module` está disponível e que podemos aguardar Module.ready (ajuste se seu build usar outro nome).
+    status('Inicializando runtime WASM do PHP...');
+    if (typeof Module === 'undefined') {
+      contentEl.innerHTML = '<strong>Erro:</strong> php.js não foi carregado. Coloque o loader gerado (php.js) ao lado deste arquivo.';
+      return;
+    }
+
+    // Se o build expuser uma Promise (ex.: Module.ready), aguarde-a; caso contrário, seguimos.
+    if (Module['ready'] && typeof Module['ready'].then === 'function') {
+      await Module.ready;
+    }
+
+    status('Runtime pronto. Buscando arquivo PHP (texto) e executando...');
+
+    // --- 2) buscar o arquivo PHP (publicado como texto - ex: index.phpsrc)
+    // Atenção: use .phpsrc ou .txt para que o hosting não tente processar .php
+    const phpSourcePathOnServer = '/index.phpsrc'; // ajuste conforme seu arquivo
+    let phpText;
+    try {
+      const r = await fetch(phpSourcePathOnServer, {cache: 'no-store'});
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      phpText = await r.text();
+    } catch (err) {
+      contentEl.innerHTML = `<strong>Erro ao buscar ${phpSourcePathOnServer}:</strong> ${err.message}`;
+      return;
+    }
+
+    // --- 3) montar FS virtual e escrever arquivo
+    try {
+      // criar diretório /www se necessário
+      try { Module.FS.mkdir('/www'); } catch(e) {}
+      // gravar script PHP no FS virtual do WASM
+      Module.FS.writeFile('/www/index.php', phpText);
+    } catch (err) {
+      contentEl.innerHTML = `<strong>Erro ao escrever no FS do WASM:</strong> ${err.message}`;
+      return;
+    }
+
+    // --- 4) preparar captura de stdout/stderr
+    let stdout = '';
+    let stderr = '';
+    const origPrint = Module.print || function(){};
+    const origErr = Module.printErr || function(){};
+
+    Module.print = (s) => {
+      // Emscripten normalmente fornece strings sem newline final; ajustamos
+      stdout += (s == null ? '' : s.toString()) + '\n';
+    };
+    Module.printErr = (s) => {
+      stderr += (s == null ? '' : s.toString()) + '\n';
+    };
+
+    // --- 5) executar: php -f /www/index.php
+    status('Executando /www/index.php com interpretador PHP (WASM)...');
+    try {
+      // callMain aceita um array de argv como em CLI
+      // Ajuste se seu build usa outro método (por ex. Module.run or Module.ccall)
+      if (typeof Module.callMain === 'function') {
+        Module.callMain(['-f', '/www/index.php']);
+      } else if (typeof Module.run === 'function') {
+        Module.run(['-f', '/www/index.php']);
+      } else {
+        throw new Error('API de execução do runtime WASM não encontrada (procure callMain/run)');
+      }
+    } catch (err) {
+      // erros do interpretador podem aparecer aqui; capture stderr também
+      console.error('Erro durante execução:', err);
+    } finally {
+      // restaurar
+      Module.print = origPrint;
+      Module.printErr = origErr;
+    }
+
+    // --- 6) mostrar resultado (stdout)
+    status('Execução finalizada.');
+    // A saída do PHP normalmente inclui headers + corpo quando usado como CGI. 
+    // Se você apenas usou echo/print, stdout conterá o HTML diretamente.
+    if (stderr) {
+      // mostrar também mensagens de erro
+      contentEl.innerHTML = `<h2>Saída (stdout)</h2><pre>${escapeHtml(stdout)}</pre>
+                             <h3>Erros (stderr)</h3><pre>${escapeHtml(stderr)}</pre>`;
+    } else {
+      // inserir direto como HTML se for HTML válido (atenção XSS: é seu próprio código)
+      contentEl.innerHTML = stdout;
+    }
+
+    // util
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+  })();
+  </script>
+</body>
+</html>
