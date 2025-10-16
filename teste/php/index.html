@@ -5,7 +5,7 @@
   <title>PHP WASM - Exemplo básico</title>
   <style>
     body { font-family: monospace; padding: 1rem; background: #222; color: #eee; }
-    pre { background: #111; padding: 1rem; border-radius: 6px; }
+    pre { background: #111; padding: 1rem; border-radius: 6px; white-space: pre-wrap; }
   </style>
 </head>
 <body>
@@ -29,7 +29,7 @@
         output.textContent += 'Erro: ' + e.detail + '\n';
       });
 
-      // Busca o arquivo PHP da pasta phps
+      // 1. Buscar o arquivo PHP no servidor real, dentro da pasta phps
       const response = await fetch('phps/infophp.php');
       if (!response.ok) {
         output.textContent += `Erro ao carregar infophp.php: ${response.statusText}`;
@@ -37,13 +37,19 @@
       }
       const phpCode = await response.text();
 
-      // Grava o arquivo no FS virtual do PHP WASM
-      await php.FS.writeFile('/infophp.php', phpCode);
+      // 2. Montar o arquivo dentro do sistema de arquivos virtual, na mesma pasta '/phps'
+      await php.mount({
+        '/phps': {
+          'infophp.php': phpCode
+        }
+      });
 
-      output.textContent += 'Arquivo PHP carregado no FS virtual.\nExecutando...\n\n';
+      output.textContent += 'Arquivo PHP montado no FS virtual.\nExecutando...\n\n';
 
-      // Executa o script PHP pelo caminho no FS virtual
-      await php.run(['/infophp.php']);
+      // 3. Executar o arquivo pelo caminho no FS virtual (igual ao montado)
+      await php.run(['/phps/infophp.php']);
+
+      output.textContent += '\nExecução finalizada.';
     }
 
     main();
