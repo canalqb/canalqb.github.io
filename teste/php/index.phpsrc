@@ -1,0 +1,5 @@
+<?php
+echo "<h2>Bem-vindo</h2>";
+echo "<p>Data do servidor (emulado): " . date('Y-m-d H:i:s') . "</p>";
+// você pode usar várias funções do PHP se seu build suportar
+?>
