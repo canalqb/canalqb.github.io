@@ -15,9 +15,42 @@
 
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="anuncio.css" />
-</head>
+  <link href="../css/cookie-consent.css" rel="stylesheet" />
+	<!-- Google AdSense -->
+  <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
+  <head>
+    
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Tag Manager -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied'
+    });
+  </script>
+  <script>
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];
+      w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer' ? '&l='+l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NLMLKHPS');
+  </script>
+	  
+  </head>
 
 <body>
+	  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
   <div id="container" class="container-fluid">
 
     <!-- Header -->
@@ -189,13 +222,75 @@
 
     <!-- Rodapé -->
     <footer class="text-center mt-4 mb-4">
-      <p>
-        Desenvolvido por Rodrigo Moraes -
-        <a href="https://canalqb.blogspot.com" target="_blank" rel="noopener noreferrer">@CanalQb</a>
-      </p>
+      <nav class="footer-nav container">
+        <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
+          <li><a href="#about">About</a></li>
+          <li><a href="#privacy-preferences">Gestão de Preferências</a></li>
+          <li><a href="#cookie-consent">Consentimento de Cookies</a></li>
+          <li><a href="#user-rights">Direitos do Usuário</a></li>
+          <li><a href="#dmca">DMCA</a></li>
+          <li><a href="#sitemap">Sitemap</a></li>
+          <li><a href="#data-transparency">Transparência de Dados</a></li>
+          <li><a href="#no-sale-policy">Não Venda de Dados</a></li>
+          <li><a href="#monetization-statement">Monetização</a></li>
+          <li><a href="#copyright-policy">Direitos Autorais</a></li>
+          <li><a href="#disclaimer">Disclaimer</a></li>
+          <li><a href="#cookie-policy">Política de Cookies</a></li>
+          <li><a href="#app-privacy-policy">Privacidade de Aplicativos</a></li>
+          <li><a href="#page-transparency">Transparência da Página</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#terms-of-use">Termo de Uso</a></li>
+          <li><a href="#privacy-policy">Privacidade</a></li>
+          <li><a href="#contacts">Contatos</a></li>
+        </ul>
+      </nav>
     </footer>
   </div>
+  <!-- Anúncio Flutuante -->
+  <div id="floatingAd" class="ad-floating" style="display:none;">
+    <div class="ad-floating-header d-flex justify-content-between align-items-center">
+      <span class="ad-floating-label">📢 Publicidade</span>
+      <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">✕</button>
+    </div>
+    <div class="ad-floating-content">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-3614622181047762"
+        data-ad-slot="3333333333"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    </div>
+  </div>
 
+  <!-- Scripts -->
+  <script src="js/auto16.js"></script>
+  <script src="js/ads.js"></script>
+  <script src="js/cookie-consent.js"></script>
+
+  <!-- Cookie Consent -->
+  <div id="cookie-consent-banner" class="cookie-consent">
+    <div class="cookie-message">
+      <p>
+        Usamos cookies para personalizar anúncios e melhorar sua experiência.
+        Para mais informações, leia nossa
+        <a href="/politica-de-cookies.html" target="_blank" rel="noopener noreferrer">Política de Cookies</a>.
+      </p>
+      <div class="cookie-buttons d-flex gap-2">
+        <button id="accept-cookies" class="btn btn-primary btn-sm">Aceitar todos</button>
+        <button id="reject-cookies" class="btn btn-secondary btn-sm">Rejeitar</button>
+        <button id="customize-cookies" class="btn btn-outline-primary btn-sm">Personalizar</button>
+      </div>
+    </div>
+
+    <div id="cookie-settings" class="cookie-settings d-none mt-3">
+      <h4>Gerenciar preferências de cookies</h4>
+      <label><input type="checkbox" disabled checked /> Necessários</label><br />
+      <label><input type="checkbox" id="functional-cookies" /> Funcionais</label><br />
+      <label><input type="checkbox" id="analytics-cookies" /> Analytics</label><br />
+      <label><input type="checkbox" id="ads-cookies" /> Publicidade personalizada</label><br />
+      <button id="save-cookie-settings" class="btn btn-primary btn-sm mt-2">Salvar preferências</button>
+    </div>
+	  
   <!-- Scripts -->
 	<script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script> 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
