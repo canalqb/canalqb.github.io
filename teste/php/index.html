@@ -2,14 +2,14 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>PHP WASM - Exemplo com Logs</title>
+  <title>PHP WASM - Executar PHP remoto</title>
   <style>
     body { font-family: monospace; background: #222; color: #eee; padding: 1rem; }
     pre { background: #111; padding: 1rem; border-radius: 6px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
   </style>
 </head>
 <body>
-  <h1>Executando PHP WASM - Versão do PHP (com logs)</h1>
+  <h1>Executando PHP WASM e mostrando resultado do PHP remoto</h1>
   <pre id="output">Carregando...</pre>
 
   <script type="module">
@@ -34,7 +34,6 @@
         log('[PHP ERROR] ' + e.detail);
       });
 
-      // Carrega o arquivo PHP
       try {
         log('Buscando phps/infophp.php ...');
         const response = await fetch('phps/infophp.php');
@@ -43,23 +42,25 @@
           return;
         }
         const phpCode = await response.text();
-        log('Arquivo PHP carregado via fetch:');
-        log('------------------------------------');
+        log('Arquivo PHP carregado:');
+        log('--------------------');
         log(phpCode);
-        log('------------------------------------');
+        log('--------------------');
 
         php.addEventListener('ready', async () => {
           log('PHP WASM está pronto.');
           try {
-            log('Gravando arquivo /infophp.php no FS virtual...');
+            // Grava o arquivo PHP no FS virtual
             await php.writeFile('/infophp.php', phpCode);
-            log('Arquivo gravado.');
+            log('Arquivo PHP gravado no FS virtual.');
 
-            log('Executando /infophp.php ...');
-            await php.run(['/infophp.php']);
+            // Executa o arquivo PHP com o argumento correto
+            log('Executando arquivo PHP /infophp.php ...');
+            await php.run(['-f', '/infophp.php']);
+
             log('Execução finalizada.');
           } catch (err) {
-            log('Erro fatal durante execução: ' + err.message);
+            log('Erro fatal: ' + err.message);
             console.error(err);
           }
         });
