@@ -4,33 +4,37 @@ const output = document.getElementById('app');
 let phpOutput = '';
 const php = new PhpWeb();
 
-// Captura saída padrão do PHP
 php.addEventListener('output', e => {
   phpOutput += e.detail + '\n';
 });
 
-// Quando o PHP estiver pronto...
-php.addEventListener('ready', async () => {
-  output.innerHTML = 'Executando PHP...';
+php.addEventListener('error', e => {
+  phpOutput += '[PHP ERROR] ' + e.detail + '\n';
+});
 
-  // ✅ Executa o index.php após garantir que todos os arquivos estão carregados
+php.addEventListener('ready', async () => {
+  output.textContent = 'Executando PHP...';
+
   try {
-    await php.run(`<?php include "/index.php"; ?>`);
+    // Executa o index.php, que faz os includes internos
+    await php.run('<?php include "/index.php"; ?>');
     output.innerHTML = phpOutput;
   } catch (err) {
-    output.textContent = 'Erro ao executar PHP: ' + err.message;
+    output.textContent = 'Erro na execução do PHP: ' + err.message;
   }
 });
 
-// ✅ Antes de executar, carregue TODOS os arquivos PHP no FS virtual
-const phpFiles = ['index.php', 'head.php', 'nav.php', 'main.php', 'footer.php'];
+(async () => {
+  // Carregar todos os arquivos PHP para o FS virtual do PHP WASM
+  const phpFiles = ['index.php', 'head.php', 'nav.php', 'main.php', 'footer.php'];
 
-for (const file of phpFiles) {
-  const res = await fetch('phps/' + file);
-  if (!res.ok) {
-    output.textContent = `Erro ao carregar ${file}: ${res.statusText}`;
-    throw new Error(`Erro ao carregar ${file}`);
+  for (const file of phpFiles) {
+    const res = await fetch('phps/' + file);
+    if (!res.ok) {
+      output.textContent = `Erro ao carregar ${file}: ${res.statusText}`;
+      return;
+    }
+    const content = await res.text();
+    await php.writeFile('/' + file, content);
   }
-  const content = await res.text();
-  await php.writeFile('/' + file, content);
-}
+})();
