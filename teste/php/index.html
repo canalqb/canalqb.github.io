@@ -2,14 +2,27 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>PHP WASM - Executar PHP remoto</title>
+  <title>PHP WASM - Execução de Código PHP Externo</title>
   <style>
-    body { font-family: monospace; background: #222; color: #eee; padding: 1rem; }
-    pre { background: #111; padding: 1rem; border-radius: 6px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+    body {
+      font-family: monospace;
+      background: #121212;
+      color: #eee;
+      padding: 2rem;
+    }
+    pre {
+      background: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body>
-  <h1>Executando PHP WASM e mostrando resultado do PHP remoto</h1>
+  <h1>Executando PHP WASM - Versão do PHP</h1>
   <pre id="output">Carregando...</pre>
 
   <script type="module">
@@ -17,58 +30,53 @@
 
     async function main() {
       const output = document.getElementById('output');
-      function log(text) {
-        output.textContent += text + '\n';
-        console.log(text);
-      }
+      const log = (msg) => {
+        output.textContent += msg + '\n';
+        console.log(msg);
+      };
 
       log('Inicializando PHP WASM...');
 
       const php = new PhpWeb();
 
+      // Captura saída padrão do PHP
       php.addEventListener('output', e => {
         log('[PHP OUTPUT] ' + e.detail);
       });
 
+      // Captura erros do PHP
       php.addEventListener('error', e => {
         log('[PHP ERROR] ' + e.detail);
       });
 
+      // Busca código PHP externo
+      let phpCode = '';
       try {
-        log('Buscando phps/infophp.php ...');
+        log('Carregando arquivo phps/infophp.php ...');
         const response = await fetch('phps/infophp.php');
         if (!response.ok) {
           log(`Erro ao carregar infophp.php: ${response.status} ${response.statusText}`);
           return;
         }
-        const phpCode = await response.text();
-        log('Arquivo PHP carregado:');
-        log('--------------------');
-        log(phpCode);
-        log('--------------------');
-
-        php.addEventListener('ready', async () => {
-          log('PHP WASM está pronto.');
-          try {
-            // Grava o arquivo PHP no FS virtual
-            await php.writeFile('/infophp.php', phpCode);
-            log('Arquivo PHP gravado no FS virtual.');
-
-            // Executa o arquivo PHP com o argumento correto
-            log('Executando arquivo PHP /infophp.php ...');
-            await php.run(['-f', '/infophp.php']);
-
-            log('Execução finalizada.');
-          } catch (err) {
-            log('Erro fatal: ' + err.message);
-            console.error(err);
-          }
-        });
-
-      } catch (fetchError) {
-        log('Erro no fetch do arquivo PHP: ' + fetchError.message);
-        console.error(fetchError);
+        phpCode = await response.text();
+        log('Código PHP carregado com sucesso:\n----------------------\n' + phpCode + '\n----------------------');
+      } catch (err) {
+        log('Erro ao buscar arquivo PHP: ' + err.message);
+        return;
       }
+
+      // Espera o PHP WASM estar pronto
+      php.addEventListener('ready', async () => {
+        log('PHP WASM inicializado.');
+        try {
+          log('Executando código PHP...');
+          await php.run(phpCode);
+          log('Execução concluída.');
+        } catch (err) {
+          log('Erro durante execução do PHP: ' + err.message);
+          console.error(err);
+        }
+      });
     }
 
     main();
