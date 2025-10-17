@@ -29,7 +29,7 @@
         output.textContent += 'Erro: ' + e.detail + '\n';
       });
 
-      // 1. Buscar o arquivo PHP no servidor real, dentro da pasta phps
+      // Busca o arquivo PHP no servidor real, dentro da pasta phps
       const response = await fetch('phps/infophp.php');
       if (!response.ok) {
         output.textContent += `Erro ao carregar infophp.php: ${response.statusText}`;
@@ -37,19 +37,24 @@
       }
       const phpCode = await response.text();
 
-      // 2. Montar o arquivo dentro do sistema de arquivos virtual, na mesma pasta '/phps'
-      await php.mount({
-        '/phps': {
-          'infophp.php': phpCode
+      // Espera o PHP WASM ficar pronto antes de manipular o FS virtual
+      php.addEventListener('ready', async () => {
+        output.textContent += 'PHP WASM está pronto.\n';
+
+        try {
+          // Grava o arquivo no FS virtual
+          php.FS.writeFile('/infophp.php', phpCode);
+          output.textContent += 'Arquivo PHP gravado no FS virtual.\nExecutando...\n\n';
+
+          // Executa o arquivo PHP pelo caminho no FS virtual
+          await php.run(['/infophp.php']);
+
+          output.textContent += '\nExecução finalizada.';
+        } catch (err) {
+          output.textContent += 'Erro fatal: ' + err.message + '\n';
+          console.error(err);
         }
       });
-
-      output.textContent += 'Arquivo PHP montado no FS virtual.\nExecutando...\n\n';
-
-      // 3. Executar o arquivo pelo caminho no FS virtual (igual ao montado)
-      await php.run(['/phps/infophp.php']);
-
-      output.textContent += '\nExecução finalizada.';
     }
 
     main();
