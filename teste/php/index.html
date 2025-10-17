@@ -1,85 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>PHP WASM - Execução de Código PHP Externo</title>
-  <style>
-    body {
-      font-family: monospace;
-      background: #121212;
-      color: #eee;
-      padding: 2rem;
-    }
-    pre {
-      background: #1e1e1e;
-      padding: 1rem;
-      border-radius: 8px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>CanalQb - Suporte PHP no Github</title>
+<style>
+body {
+font-family: monospace;
+background: #121212;
+color: #eee;
+padding: 2rem;
+}
+pre {
+background: #1e1e1e;
+padding: 1rem;
+border-radius: 8px;
+white-space: pre-wrap;
+word-break: break-word;
+max-height: 400px;
+overflow-y: auto;
+}
+</style>
 </head>
 <body>
-  <h1>Executando PHP WASM - Versão do PHP</h1>
-  <pre id="output">Carregando...</pre>
+<h1>Executando PHP - Versão do PHP</h1>
+<pre id="output">Carregando...</pre>
 
-  <script type="module">
-    import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
+<script type="module">
+import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-@0.0.9-alpha-20/PhpWeb.mjs';
 
-    async function main() {
-      const output = document.getElementById('output');
-      const log = (msg) => {
-        output.textContent += msg + '\n';
-        console.log(msg);
-      };
+async function main() {
+const output = document.getElementById('output');
+const log = (msg) => {
+output.textContent += msg + '\n';
+console.log(msg);
+};
 
-      log('Inicializando PHP WASM...');
+log('Inicializando PHP ...');
 
-      const php = new PhpWeb();
+const php = new PhpWeb();
 
-      // Captura saída padrão do PHP
-      php.addEventListener('output', e => {
-        log('[PHP OUTPUT] ' + e.detail);
-      });
+// Captura saída padrão do PHP
+php.addEventListener('output', e => {
+log('[PHP OUTPUT] ' + e.detail);
+});
 
-      // Captura erros do PHP
-      php.addEventListener('error', e => {
-        log('[PHP ERROR] ' + e.detail);
-      });
+// Captura erros do PHP
+php.addEventListener('error', e => {
+log('[PHP ERROR] ' + e.detail);
+});
 
-      // Busca código PHP externo
-      let phpCode = '';
-      try {
-        log('Carregando arquivo phps/infophp.php ...');
-        const response = await fetch('phps/infophp.php');
-        if (!response.ok) {
-          log(`Erro ao carregar infophp.php: ${response.status} ${response.statusText}`);
-          return;
-        }
-        phpCode = await response.text();
-        log('Código PHP carregado com sucesso:\n----------------------\n' + phpCode + '\n----------------------');
-      } catch (err) {
-        log('Erro ao buscar arquivo PHP: ' + err.message);
-        return;
-      }
+// Busca código PHP externo
+let phpCode = '';
+try {
+log('Carregando arquivo phps/infophp.php ...');
+const response = await fetch('phps/infophp.php');
+if (!response.ok) {
+log(`Erro ao carregar infophp.php: ${response.status} ${response.statusText}`);
+return;
+}
+phpCode = await response.text();
+log('Código PHP carregado com sucesso:\n----------------------\n' + phpCode + '\n----------------------');
+} catch (err) {
+log('Erro ao buscar arquivo PHP: ' + err.message);
+return;
+}
 
-      // Espera o PHP WASM estar pronto
-      php.addEventListener('ready', async () => {
-        log('PHP WASM inicializado.');
-        try {
-          log('Executando código PHP...');
-          await php.run(phpCode);
-          log('Execução concluída.');
-        } catch (err) {
-          log('Erro durante execução do PHP: ' + err.message);
-          console.error(err);
-        }
-      });
-    }
+// Espera o PHPestar pronto
+php.addEventListener('ready', async () => {
+log('PHPinicializado.');
+try {
+log('Executando código PHP...');
+await php.run(phpCode);
+log('Execução concluída.');
+} catch (err) {
+log('Erro durante execução do PHP: ' + err.message);
+console.error(err);
+}
+});
+}
 
-    main();
-  </script>
+main();
+</script>
 </body>
 </html>
