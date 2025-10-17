@@ -1,85 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>CanalQb - Suporte PHP no Github</title>
-<style>
-body {
-font-family: monospace;
-background: #121212;
-color: #eee;
-padding: 2rem;
-}
-pre {
-background: #1e1e1e;
-padding: 1rem;
-border-radius: 8px;
-white-space: pre-wrap;
-word-break: break-word;
-max-height: 400px;
-overflow-y: auto;
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>CanalQb - Suporte PHP no GitHub</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #121212;
+      color: #eee;
+      padding: 2rem;
+    }
+
+    #log {
+      background: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 2rem;
+    }
+
+    #output {
+      background: #fff;
+      color: #000;
+      padding: 1rem;
+      border-radius: 8px;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+  </style>
 </head>
 <body>
-<h1>Executando PHP - Versão do PHP</h1>
-<pre id="output">Carregando...</pre>
+  <h1>Executando PHP WASM - Saída do <code>phpinfo()</code></h1>
 
-<script type="module">
-import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
+  <div id="log">Carregando...</div>
+  <hr />
+  <div id="output">Saída do PHP será renderizada aqui...</div>
 
-async function main() {
-const output = document.getElementById('output');
-const log = (msg) => {
-output.textContent += msg + '\n';
-console.log(msg);
-};
+  <script type="module">
+    import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
 
-log('Inicializando PHP ...');
+    async function main() {
+      const logBox = document.getElementById('log');
+      const outputBox = document.getElementById('output');
 
-const php = new PhpWeb();
+      const log = (msg) => {
+        logBox.textContent += msg + '\n';
+        console.log(msg);
+      };
 
-// Captura saída padrão do PHP
-php.addEventListener('output', e => {
-log('[PHP OUTPUT] ' + e.detail);
-});
+      log('Inicializando PHP ...');
 
-// Captura erros do PHP
-php.addEventListener('error', e => {
-log('[PHP ERROR] ' + e.detail);
-});
+      const php = new PhpWeb();
+      let phpOutput = '';
 
-// Busca código PHP externo
-let phpCode = '';
-try {
-log('Carregando arquivo phps/infophp.php ...');
-const response = await fetch('phps/infophp.php');
-if (!response.ok) {
-log(`Erro ao carregar infophp.php: ${response.status} ${response.statusText}`);
-return;
-}
-phpCode = await response.text();
-log('Código PHP carregado com sucesso:\n----------------------\n' + phpCode + '\n----------------------');
-} catch (err) {
-log('Erro ao buscar arquivo PHP: ' + err.message);
-return;
-}
+      php.addEventListener('output', e => {
+        phpOutput += e.detail + '\n';
+      });
 
-// Espera o PHPestar pronto
-php.addEventListener('ready', async () => {
-log('PHPinicializado.');
-try {
-log('Executando código PHP...');
-await php.run(phpCode);
-log('Execução concluída.');
-} catch (err) {
-log('Erro durante execução do PHP: ' + err.message);
-console.error(err);
-}
-});
-}
+      php.addEventListener('error', e => {
+        log('[PHP ERROR] ' + e.detail);
+      });
 
-main();
-</script>
+      // Carregar código PHP
+      let phpCode = '';
+      try {
+        log('Carregando arquivo phps/infophp.php ...');
+        const response = await fetch('phps/infophp.php');
+        if (!response.ok) {
+          log(`Erro ao carregar infophp.php: ${response.status} ${response.statusText}`);
+          return;
+        }
+        phpCode = await response.text();
+        log('Código PHP carregado:\n----------------------\n' + phpCode + '\n----------------------');
+      } catch (err) {
+        log('Erro ao buscar arquivo PHP: ' + err.message);
+        return;
+      }
+
+      php.addEventListener('ready', async () => {
+        log('PHP WASM inicializado.');
+        try {
+          log('Executando código PHP...');
+          await php.run(phpCode);
+          log('Execução concluída.');
+
+          // Renderiza a saída HTML do phpinfo()
+          outputBox.innerHTML = phpOutput;
+        } catch (err) {
+          log('Erro durante execução do PHP: ' + err.message);
+          console.error(err);
+        }
+      });
+    }
+
+    main();
+  </script>
 </body>
 </html>
