@@ -1,13 +1,13 @@
 <?php
-include "head.php";
+include "/head.php";
 ?>
 <body>
-  <?php include "nav.php"; ?>
+  <?php include "/nav.php"; ?>
 
   <main>
-    <?php include "main.php"; ?>
+    <?php include "/main.php"; ?>
   </main>
 
-  <?php include "footer.php"; ?>
+  <?php include "/footer.php"; ?>
 </body>
 </html>
