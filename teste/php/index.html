@@ -7,26 +7,6 @@
 <body>
   <div id="output">Carregando PHP...</div>
 
-  <script type="module">
-    import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
-
-    const output = document.getElementById('output');
-    let phpCode = '';
-    let phpOutput = '';
-
-    const php = new PhpWeb();
-
-    php.addEventListener('output', e => {
-      phpOutput += e.detail + '\n';
-    });
-
-    php.addEventListener('ready', async () => {
-      await php.run(phpCode);
-      output.innerHTML = phpOutput;
-    });
-
-    const response = await fetch('phps/infophp.php');
-    phpCode = await response.text();
-  </script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
