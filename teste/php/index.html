@@ -1,11 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Site em PHP CanalQb</title>
+<meta charset="UTF-8" />
+<title>Carregando PHP-WASM</title>
+<style>
+  body { font-family: monospace; background: #121212; color: #eee; padding: 1rem; }
+  pre { white-space: pre-wrap; word-break: break-word; }
+</style>
 </head>
 <body>
-  <div id="app">Carregando site...</div>
-  <script type="module" src="main.js"></script>
+  <h1>Carregando página PHP via PHP-WASM</h1>
+  <pre id="output">Inicializando...</pre>
+
+<script type="module">
+import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
+
+async function main() {
+  const output = document.getElementById('output');
+  const log = (msg) => {
+    output.textContent += msg + '\n';
+    console.log(msg);
+  };
+
+  log('Inicializando PHP-WASM...');
+
+  const php = new PhpWeb();
+
+  php.addEventListener('output', e => log('[PHP] ' + e.detail));
+  php.addEventListener('error', e => log('[PHP ERRO] ' + e.detail));
+
+  // Aguarda PHP estar pronto
+  php.addEventListener('ready', async () => {
+    log('PHP-WASM pronto! Montando arquivos...');
+
+    const files = ['index.php', 'head.php', 'nav.php', 'main.php', 'footer.php'];
+
+    try {
+      for (const file of files) {
+        log(`Buscando phps/${file} ...`);
+        const resp = await fetch('phps/' + file);
+        if (!resp.ok) throw new Error(`Erro ao buscar ${file}: ${resp.statusText}`);
+        const text = await resp.text();
+        log(`Gravando /${file} no FS virtual`);
+        await php.writeFile('/' + file, text);
+      }
+
+      log('Executando /index.php ...\n');
+      await php.run('/index.php');
+
+      log('\nExecução finalizada.');
+
+    } catch (err) {
+      log('Erro: ' + err.message);
+    }
+  });
+}
+
+main();
+</script>
 </body>
 </html>
