@@ -1,11 +1,9 @@
-<?php
-include '/head.php';
-?>
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<?php include 'head.php'; ?>
 <body>
-<?php
-include '/nav.php';
-include '/main.php';
-include '/footer.php';
-?>
+<?php include 'nav.php'; ?>
+<?php include 'main.php'; ?>
+<?php include 'footer.php'; ?>
 </body>
+</html>
