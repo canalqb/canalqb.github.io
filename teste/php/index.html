@@ -12,53 +12,49 @@
   <h1>Executando PHP WASM - Versão do PHP</h1>
   <pre id="output">Carregando...</pre>
 
-<script type="module">
-  import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
+  <script type="module">
+    import { PhpWeb } from 'https://cdn.jsdelivr.net/npm/php-wasm@0.0.9-alpha-20/PhpWeb.mjs';
 
-  async function main() {
-    const output = document.getElementById('output');
-    output.textContent = 'Inicializando PHP WASM...\n';
+    async function main() {
+      const output = document.getElementById('output');
+      output.textContent = 'Inicializando PHP WASM...\n';
 
-    const php = new PhpWeb();
+      const php = new PhpWeb();
 
-    php.addEventListener('output', e => {
-      output.textContent += e.detail;
-    });
+      php.addEventListener('output', e => {
+        output.textContent += e.detail;
+      });
 
-    php.addEventListener('error', e => {
-      output.textContent += 'Erro: ' + e.detail + '\n';
-    });
+      php.addEventListener('error', e => {
+        output.textContent += 'Erro: ' + e.detail + '\n';
+      });
 
-    // Busca o arquivo PHP no servidor real
-    const response = await fetch('phps/infophp.php');
-    if (!response.ok) {
-      output.textContent += `Erro ao carregar infophp.php: ${response.statusText}`;
-      return;
-    }
-    const phpCode = await response.text();
-
-    php.addEventListener('ready', async () => {
-      output.textContent += 'PHP WASM está pronto.\n';
-
-      try {
-        // Agora o FS está disponível
-        php.FS.writeFile('/infophp.php', phpCode);
-
-        output.textContent += 'Arquivo PHP gravado no FS virtual.\nExecutando...\n\n';
-
-        // Executa o script PHP pelo caminho virtual
-        await php.run(['/infophp.php']);
-
-        output.textContent += '\nExecução finalizada.';
-      } catch (err) {
-        output.textContent += 'Erro fatal: ' + err.message + '\n';
-        console.error(err);
+      const response = await fetch('phps/infophp.php');
+      if (!response.ok) {
+        output.textContent += `Erro ao carregar infophp.php: ${response.statusText}`;
+        return;
       }
-    });
-  }
+      const phpCode = await response.text();
 
-  main();
-</script>
+      php.addEventListener('ready', async () => {
+        output.textContent += 'PHP WASM está pronto.\n';
 
+        try {
+          await php.writeFile('/infophp.php', phpCode);
+
+          output.textContent += 'Arquivo PHP gravado no FS virtual.\nExecutando...\n\n';
+
+          await php.run(['/infophp.php']);
+
+          output.textContent += '\nExecução finalizada.';
+        } catch (err) {
+          output.textContent += 'Erro fatal: ' + err.message + '\n';
+          console.error(err);
+        }
+      });
+    }
+
+    main();
+  </script>
 </body>
 </html>
