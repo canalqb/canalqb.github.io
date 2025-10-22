@@ -1,54 +1,86 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
+  <!-- Charset e viewport -->
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gerador de Private Keys Bitcoin — CanalQb</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <!-- Google AdSense -->
+  <!-- Título da página -->
+  <title>Gerador de Private Keys Bitcoin - Interativo e Educativo</title>
+
+  <!-- Descrição para SEO -->
+  <meta name="description" content="Ferramenta educacional e interativa para gerar chaves privadas de Bitcoin com segurança. Inclui opções de WIF comprimido e não comprimido." />
+
+  <!-- Indexação e rastreamento -->
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="bingbot" content="index, follow" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://canalqb.blogspot.com/" />
+
+  <!-- AdSense -->
   <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
-  <head>
-    
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BZWL6E0Y4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-6BZWL6E0Y4');
-</script>
+  <!-- Tags sociais (Open Graph / Facebook) -->
+  <meta property="og:title" content="Gerador de Private Keys Bitcoin" />
+  <meta property="og:description" content="Gere chaves privadas com controle, segurança e interatividade." />
+  <meta property="og:url" content="https://canalqb.blogspot.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYNov9r11-xNVahQVl3eORQxNOYZqjSe28LBZtrJ0OrPkFFNI_ffb8STCtnoftk07uHNbRjdwsRlIPF7Y51H3eDzmeWCT2FmsBmHucCN7SlTVWuHvFmajRzJcUk7gzDsv-tkPlhLuc-yjJAdHNmNE04n9EnEguP7yzVLXI7jUl1OU7XLKGob74olcy6zyV/s2560/CanalQb%20-%20FaucetPay%20-%20Python.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Gerador de Private Keys Bitcoin" />
+  <meta name="twitter:description" content="Ferramenta educacional para geração de chaves privadas." />
+  <meta name="twitter:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYNov9r11-xNVahQVl3eORQxNOYZqjSe28LBZtrJ0OrPkFFNI_ffb8STCtnoftk07uHNbRjdwsRlIPF7Y51H3eDzmeWCT2FmsBmHucCN7SlTVWuHvFmajRzJcUk7gzDsv-tkPlhLuc-yjJAdHNmNE04n9EnEguP7yzVLXI7jUl1OU7XLKGob74olcy6zyV/s2560/CanalQb%20-%20FaucetPay%20-%20Python.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <!-- Font Awesome (ícones) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous" />
 
-  <!-- Estilos personalizados -->
-  <link href="css/styles.css?v=1.0" rel="stylesheet" />
-  <link href="css/cookie-consent.css" rel="stylesheet" />
+  <!-- Seus estilos personalizados -->
+  <link rel="stylesheet" href="css/styles.css?v=1.0" />
+  <link rel="stylesheet" href="css/cookie-consent.css?v=1.0" />
 
-  <!-- Google Tag Manager -->
+  <!-- Google Tag Manager (Consent Mode + GTAG) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('consent', 'default', {
       ad_storage: 'denied',
-      analytics_storage: 'denied'
+      analytics_storage: 'denied',
+      wait_for_update: 500
     });
   </script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6BZWL6E0Y4"></script>
+  <script>
+    gtag('js', new Date());
+    gtag('config', 'G-6BZWL6E0Y4');
+  </script>
+
+  <!-- Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){
       w[l]=w[l]||[];
       w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-      var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer' ? '&l='+l : '';
-      j.async = true;
-      j.src = 'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
       f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NLMLKHPS');
   </script>
 </head>
+
 <body>
 
   <!-- Google Tag Manager (noscript) -->
