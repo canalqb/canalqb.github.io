@@ -219,6 +219,39 @@
       </div>
     </footer>
   </main>
+<!-- Banner de consentimento de cookies -->
+<div id="cookie-consent-banner" role="region" aria-label="Banner de Consentimento de Cookies" style="display:none;" class="cookie-banner p-3 border rounded bg-light fixed-bottom">
+  <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+    <div>
+      <p class="mb-0">
+        Usamos cookies para melhorar sua experiência. Você pode aceitar todos, rejeitar não essenciais ou personalizar suas preferências.
+      </p>
+    </div>
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+      <button id="accept-cookies" class="btn btn-primary btn-sm" aria-label="Aceitar todos os cookies">Aceitar Todos</button>
+      <button id="reject-cookies" class="btn btn-outline-secondary btn-sm" aria-label="Rejeitar cookies não essenciais">Rejeitar</button>
+      <button id="customize-cookies" class="btn btn-link btn-sm" aria-label="Personalizar preferências de cookies">Personalizar</button>
+    </div>
+  </div>
+
+  <div id="cookie-settings" class="cookie-settings d-none mt-3 bg-white p-3 border rounded">
+    <form>
+      <div class="form-check mb-2">
+        <input type="checkbox" id="functional-cookies" class="form-check-input" checked disabled>
+        <label for="functional-cookies" class="form-check-label fw-bold">Cookies Funcionais (Necessários)</label>
+      </div>
+      <div class="form-check mb-2">
+        <input type="checkbox" id="analytics-cookies" class="form-check-input">
+        <label for="analytics-cookies" class="form-check-label">Cookies de Análise</label>
+      </div>
+      <div class="form-check mb-3">
+        <input type="checkbox" id="ads-cookies" class="form-check-input">
+        <label for="ads-cookies" class="form-check-label">Cookies de Publicidade</label>
+      </div>
+      <button type="button" id="save-cookie-settings" class="btn btn-success btn-sm">Salvar Preferências</button>
+    </form>
+  </div>
+</div>
 
   <!-- Anúncio Flutuante (exibe após consentimento) -->
   <div id="floatingAd" class="ad-floating" aria-label="Publicidade flutuante" role="region" style="display:none;">
