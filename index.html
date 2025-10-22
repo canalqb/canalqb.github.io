@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <!-- Charset e viewport -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <!-- Título da página -->
   <title>Gerador de Private Keys Bitcoin - Interativo e Educativo</title>
 
-  <!-- Descrição para SEO -->
   <meta name="description" content="Ferramenta educacional e interativa para gerar chaves privadas de Bitcoin com segurança. Inclui opções de WIF comprimido e não comprimido." />
 
-  <!-- Indexação e rastreamento -->
   <meta name="robots" content="index, follow" />
   <meta name="googlebot" content="index, follow" />
   <meta name="bingbot" content="index, follow" />
 
-  <!-- Canonical URL -->
   <link rel="canonical" href="https://canalqb.blogspot.com/" />
 
-  <!-- AdSense -->
+  <!-- AdSense account -->
   <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
 
-  <!-- Tags sociais (Open Graph / Facebook) -->
+  <!-- Open Graph -->
   <meta property="og:title" content="Gerador de Private Keys Bitcoin" />
   <meta property="og:description" content="Gere chaves privadas com controle, segurança e interatividade." />
   <meta property="og:url" content="https://canalqb.blogspot.com/" />
@@ -36,40 +31,18 @@
   <meta name="twitter:description" content="Ferramenta educacional para geração de chaves privadas." />
   <meta name="twitter:image" content="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYNov9r11-xNVahQVl3eORQxNOYZqjSe28LBZtrJ0OrPkFFNI_ffb8STCtnoftk07uHNbRjdwsRlIPF7Y51H3eDzmeWCT2FmsBmHucCN7SlTVWuHvFmajRzJcUk7gzDsv-tkPlhLuc-yjJAdHNmNE04n9EnEguP7yzVLXI7jUl1OU7XLKGob74olcy6zyV/s2560/CanalQb%20-%20FaucetPay%20-%20Python.png" />
 
-  <!-- Favicon -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-  <!-- Font Awesome (ícones) -->
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous" />
 
-  <!-- Seus estilos personalizados -->
+  <!-- Custom styles -->
   <link rel="stylesheet" href="css/styles.css?v=1.0" />
   <link rel="stylesheet" href="css/cookie-consent.css?v=1.0" />
 
-  <!-- Google Tag Manager (Consent Mode + GTAG) -->
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('consent', 'default', {
-      ad_storage: 'denied',
-      analytics_storage: 'denied',
-      wait_for_update: 500
-    });
-  </script>
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-6BZWL6E0Y4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-6BZWL6E0Y4');
-</script>
-  
   <!-- Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){
@@ -91,7 +64,7 @@
       height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
   </noscript>
 
-  <!-- Navbar principal -->
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg shadow-sm" role="navigation" aria-label="Menu principal">
     <div class="container">
       <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar CanalQb Blog">
@@ -106,7 +79,7 @@
     </div>
   </nav>
 
-  <!-- Banner de anúncio topo (carregado após consentimento) -->
+  <!-- Banner de anúncio topo (exibe após consentimento) -->
   <div id="ad-banner-top" class="ad-banner-top" aria-label="Publicidade Topo" role="region" style="display:none;">
     <div class="ad-label">Publicidade</div>
     <ins class="adsbygoogle"
@@ -150,7 +123,7 @@
       <div class="control-section mb-4" aria-label="Configurações de velocidade e modos">
         <div class="speed-control mb-3 d-flex align-items-center gap-2">
           <label for="speed" class="fw-semibold mb-0">⚡ Velocidade:</label>
-          <input type="range" id="speed" min="1" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-label="Controle de velocidade da geração"/>
+          <input type="range" id="speed" min="1" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-label="Controle de velocidade da geração" />
           <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">500 ms</span>
         </div>
 
@@ -194,17 +167,18 @@
         </div>
       </section>
 
-      <!-- Anúncio In-Feed (carregado após consentimento) -->
-      <div id="ad-infeed" class="text-center my-4" aria-label="Publicidade In-Feed" role="region" style="display:none;">
-        <div class="ad-label mb-2">Publicidade</div>
+      <!-- Anúncio In-Feed (exibe após consentimento) -->
+      <div id="ad-infeed" class="text-center my-4" aria-label="Publicidade In-Feed" role="region" style="display:block;">
         <ins class="adsbygoogle"
-          style="display:block"
-          data-ad-format="fluid"
-          data-ad-layout-key="-6t+ed+2i-1n-4w"
-          data-ad-client="ca-pub-3614622181047762"
-          data-ad-slot="2222222222"></ins>
+             style="display:block"
+             data-ad-format="autorelaxed"
+             data-ad-client="ca-pub-3614622181047762"
+             data-ad-slot="1937287877"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
-    </section>
+ 
 
     <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
       <nav class="footer-nav container" aria-label="Navegação rodapé">
@@ -236,7 +210,7 @@
     </footer>
   </main>
 
-  <!-- Anúncio Flutuante (carregado após consentimento) -->
+  <!-- Anúncio Flutuante (exibe após consentimento) -->
   <div id="floatingAd" class="ad-floating" aria-label="Publicidade flutuante" role="region" style="display:none;">
     <div class="ad-floating-header d-flex justify-content-between align-items-center">
       <span class="ad-floating-label">📢 Publicidade</span>
@@ -246,41 +220,18 @@
       <ins class="adsbygoogle"
         style="display:block"
         data-ad-client="ca-pub-3614622181047762"
-        data-ad-slot="3037141776"  <!-- seu slot vertical aqui -->
+        data-ad-slot="3037141776"
         data-ad-format="auto"
         data-full-width-responsive="true"></ins>
     </div>
   </div>
 
-
   <!-- Scripts principais -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
   <script src="js/auto16.js" defer></script>
   <script src="js/ads.js" defer></script>
   <script src="js/cookie-consent.js" defer></script>
 
-  <!-- Banner de Consentimento de Cookies -->
-  <div id="cookie-consent-banner" class="cookie-consent" role="dialog" aria-modal="true" aria-live="polite" aria-label="Banner de consentimento de cookies" style="display:none;">
-    <div class="cookie-message">
-      <p>
-        Usamos cookies para personalizar anúncios e melhorar sua experiência.
-        Para mais informações, leia nossa
-        <a href="/politica-de-cookies.html" target="_blank" rel="noopener noreferrer">Política de Cookies</a>.
-      </p>
-      <div class="cookie-buttons d-flex gap-2">
-        <button id="accept-cookies" class="btn btn-primary btn-sm" aria-label="Aceitar todos os cookies">Aceitar todos</button>
-        <button id="reject-cookies" class="btn btn-secondary btn-sm" aria-label="Rejeitar cookies opcionais">Rejeitar</button>
-        <button id="customize-cookies" class="btn btn-outline-primary btn-sm" aria-label="Personalizar cookies">Personalizar</button>
-      </div>
-    </div>
-
-    <div id="cookie-settings" class="cookie-settings d-none mt-3" aria-hidden="true">
-      <h4>Gerenciar preferências de cookies</h4>
-      <label><input type="checkbox" disabled checked /> Necessários</label><br />
-      <label><input type="checkbox" id="functional-cookies" /> Funcionais</label><br />
-      <label><input type="checkbox" id="analytics-cookies" /> Analytics</label><br />
-      <label><input type="checkbox" id="ads-cookies" /> Publicidade personalizada</label><br />
-      <button id="save-cookie-settings" class="btn btn-primary btn-sm mt-2">Salvar preferências</button>
-    </div>
-  </div>
 </body>
 </html>
