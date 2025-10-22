@@ -97,3 +97,14 @@
     max-width: none;
   }
 }
+.post-item {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  /* Outros estilos */
+}
+
+.ad-infeed-wrapper {
+  background: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
