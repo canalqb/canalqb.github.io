@@ -103,8 +103,15 @@
   /* Outros estilos */
 }
 
-.ad-infeed-wrapper {
-  background: #f9f9f9;
-  padding: 15px;
-  border: 1px solid #ccc;
+#ad-infeed {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  transition: visibility 0s linear 0.3s, height 0.3s ease;
+}
+
+#ad-infeed.visible {
+  visibility: visible;
+  height: auto;
+  transition-delay: 0s;
 }
