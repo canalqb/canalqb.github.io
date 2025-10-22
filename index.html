@@ -82,29 +82,29 @@
 </head>
 
 <body>
-
   <!-- Google Tag Manager (noscript) -->
   <noscript>
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
-      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+      height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
   </noscript>
 
-  <nav class="navbar navbar-expand-lg shadow-sm"> 
+  <!-- Navbar principal -->
+  <nav class="navbar navbar-expand-lg shadow-sm" role="navigation" aria-label="Menu principal">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">
-        <i class="fas fa-blog"></i> CanalQb
+      <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar CanalQb Blog">
+        <i class="fas fa-blog" aria-hidden="true"></i> CanalQb
       </a>
-      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer">
-        <i class="fas fa-flask"></i> Nova Versão ainda em teste
+      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer" aria-label="Nova Versão ainda em teste">
+        <i class="fas fa-flask" aria-hidden="true"></i> Nova Versão ainda em teste
       </a>
-      <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer">
-        <i class="fas fa-key"></i> Btckeygen
+      <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar Btckeygen">
+        <i class="fas fa-key" aria-hidden="true"></i> Btckeygen
       </a>
-    </div> 
+    </div>
   </nav>
 
-  <!-- Banner de anúncio topo -->
-  <div class="ad-banner-top">
+  <!-- Banner de anúncio topo (carregado após consentimento) -->
+  <div id="ad-banner-top" class="ad-banner-top" aria-label="Publicidade Topo" role="region" style="display:none;">
     <div class="ad-label">Publicidade</div>
     <ins class="adsbygoogle"
       style="display:block"
@@ -114,85 +114,85 @@
       data-full-width-responsive="true"></ins>
   </div>
 
-  <main class="container-main p-4">
+  <main class="container-main p-4" role="main">
     <header>
       <h1>Gerador de Private Keys Bitcoin</h1>
       <p class="subtitle">Ferramenta interativa para geração de chaves privadas usando matriz 16×16</p>
     </header>
 
-    <section>
+    <section aria-label="Área interativa para geração de chaves privadas">
       <div class="canvas-wrapper mb-3">
-        <canvas id="grid" width="700" height="600"></canvas>
+        <canvas id="grid" width="700" height="600" aria-label="Matriz interativa para seleção de células"></canvas>
       </div>
 
-      <div class="range-indicator mb-4">
+      <div class="range-indicator mb-4" aria-live="polite">
         Faixa ativa: Linha <span id="activeRangeLabel">1 até 16</span>
       </div>
 
-      <div class="control-section mb-4">
+      <div class="control-section mb-4" aria-label="Seleção de linhas">
         <h2 class="section-title">🎯 Selecionar Altura (Linha Inicial)</h2>
-        <div id="heightButtons" class="button-grid"></div>
+        <div id="heightButtons" class="button-grid" role="group" aria-label="Botões para selecionar altura"></div>
 
         <h2 class="section-title mt-3">📍 Selecionar Base (Linha Final)</h2>
-        <div id="baseButtons" class="button-grid"></div>
+        <div id="baseButtons" class="button-grid" role="group" aria-label="Botões para selecionar base"></div>
       </div>
 
-      <div class="main-controls mb-4 d-flex gap-2 flex-wrap">
-        <button id="startBtn" class="btn-custom btn-start">▶ Iniciar</button>
-        <button id="stopBtn" class="btn-custom btn-stop" disabled>⏸ Parar</button>
-        <button id="clearBtn" class="btn-custom btn-clear">🗑 Limpar</button>
-        <button id="randBtn" class="btn-custom btn-random">🎲 Aleatorizar</button>
+      <div class="main-controls mb-4 d-flex gap-2 flex-wrap" role="region" aria-label="Controles principais">
+        <button id="startBtn" class="btn-custom btn-start" aria-pressed="false" aria-label="Iniciar geração">▶ Iniciar</button>
+        <button id="stopBtn" class="btn-custom btn-stop" disabled aria-pressed="false" aria-label="Parar geração">⏸ Parar</button>
+        <button id="clearBtn" class="btn-custom btn-clear" aria-label="Limpar seleção">🗑 Limpar</button>
+        <button id="randBtn" class="btn-custom btn-random" aria-label="Aleatorizar matriz">🎲 Aleatorizar</button>
       </div>
 
-      <div class="control-section mb-4">
+      <div class="control-section mb-4" aria-label="Configurações de velocidade e modos">
         <div class="speed-control mb-3 d-flex align-items-center gap-2">
           <label for="speed" class="fw-semibold mb-0">⚡ Velocidade:</label>
-          <input type="range" id="speed" min="1" max="1000" step="1" value="500" />
-          <span id="speedLabel" class="fw-bold text-primary">500 ms</span>
+          <input type="range" id="speed" min="1" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-label="Controle de velocidade da geração"/>
+          <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">500 ms</span>
         </div>
 
-        <div class="d-flex flex-wrap gap-3">
+        <div class="d-flex flex-wrap gap-3" role="group" aria-label="Modos de seleção e opções adicionais">
           <label class="option-card d-flex align-items-center gap-1">
-            <input type="radio" name="mode" value="sequential" checked />
+            <input type="radio" name="mode" value="sequential" checked aria-checked="true" />
             <span>📊 Sequencial (H)</span>
           </label>
 
           <label class="option-card d-flex align-items-center gap-1">
-            <input type="radio" name="mode" value="vertical" />
+            <input type="radio" name="mode" value="vertical" aria-checked="false" />
             <span>📊 Sequencial (V)</span>
           </label>
 
           <label class="option-card d-flex align-items-center gap-1">
-            <input type="checkbox" id="toggleOnClick" checked />
+            <input type="checkbox" id="toggleOnClick" checked aria-checked="true" />
             <span>👆 Clique alterna célula</span>
           </label>
 
           <label class="option-card d-flex align-items-center gap-1">
-            <input type="checkbox" id="randomizeStatesOnStep" />
+            <input type="checkbox" id="randomizeStatesOnStep" aria-checked="false" />
             <span>🔄 Aleatorizar no passo</span>
           </label>
         </div>
       </div>
 
-      <section class="output-section mb-5">
+      <section class="output-section mb-5" aria-label="Saídas das chaves geradas">
         <div class="output-group mb-3">
           <label for="hexBox" class="output-label">🔑 Private Key HEX (64 caracteres)</label>
-          <textarea id="hexBox" class="output-box" readonly></textarea>
+          <textarea id="hexBox" class="output-box" readonly aria-readonly="true" aria-label="Chave privada em formato HEX"></textarea>
         </div>
 
         <div class="output-group mb-3">
           <label for="wifBox" class="output-label">💼 WIF Comprimido</label>
-          <textarea id="wifBox" class="output-box" readonly></textarea>
+          <textarea id="wifBox" class="output-box" readonly aria-readonly="true" aria-label="Chave privada WIF comprimida"></textarea>
         </div>
 
         <div class="output-group mb-3">
           <label for="wifBoxUncompressed" class="output-label">📦 WIF Não Comprimido</label>
-          <textarea id="wifBoxUncompressed" class="output-box" readonly></textarea>
+          <textarea id="wifBoxUncompressed" class="output-box" readonly aria-readonly="true" aria-label="Chave privada WIF não comprimida"></textarea>
         </div>
       </section>
 
-      <!-- Anúncio In-Feed -->
-      <div class="text-center my-4">
+      <!-- Anúncio In-Feed (carregado após consentimento) -->
+      <div id="ad-infeed" class="text-center my-4" aria-label="Publicidade In-Feed" role="region" style="display:none;">
         <div class="ad-label mb-2">Publicidade</div>
         <ins class="adsbygoogle"
           style="display:block"
@@ -203,8 +203,8 @@
       </div>
     </section>
 
-    <footer class="site-footer mt-5 pt-4 border-top">
-      <nav class="footer-nav container">
+    <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
+      <nav class="footer-nav container" aria-label="Navegação rodapé">
         <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
           <li><a href="#about">About</a></li>
           <li><a href="#privacy-preferences">Gestão de Preferências</a></li>
@@ -233,8 +233,8 @@
     </footer>
   </main>
 
-  <!-- Anúncio Flutuante -->
-  <div id="floatingAd" class="ad-floating" style="display:none;">
+  <!-- Anúncio Flutuante (carregado após consentimento) -->
+  <div id="floatingAd" class="ad-floating" aria-label="Publicidade flutuante" role="region" style="display:none;">
     <div class="ad-floating-header d-flex justify-content-between align-items-center">
       <span class="ad-floating-label">📢 Publicidade</span>
       <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">✕</button>
@@ -249,13 +249,13 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="js/auto16.js"></script>
-  <script src="js/ads.js"></script>
-  <script src="js/cookie-consent.js"></script>
+  <!-- Scripts principais -->
+  <script src="js/auto16.js" defer></script>
+  <script src="js/ads.js" defer></script>
+  <script src="js/cookie-consent.js" defer></script>
 
-  <!-- Cookie Consent -->
-  <div id="cookie-consent-banner" class="cookie-consent">
+  <!-- Banner de Consentimento de Cookies -->
+  <div id="cookie-consent-banner" class="cookie-consent" role="dialog" aria-modal="true" aria-live="polite" aria-label="Banner de consentimento de cookies" style="display:none;">
     <div class="cookie-message">
       <p>
         Usamos cookies para personalizar anúncios e melhorar sua experiência.
@@ -263,13 +263,13 @@
         <a href="/politica-de-cookies.html" target="_blank" rel="noopener noreferrer">Política de Cookies</a>.
       </p>
       <div class="cookie-buttons d-flex gap-2">
-        <button id="accept-cookies" class="btn btn-primary btn-sm">Aceitar todos</button>
-        <button id="reject-cookies" class="btn btn-secondary btn-sm">Rejeitar</button>
-        <button id="customize-cookies" class="btn btn-outline-primary btn-sm">Personalizar</button>
+        <button id="accept-cookies" class="btn btn-primary btn-sm" aria-label="Aceitar todos os cookies">Aceitar todos</button>
+        <button id="reject-cookies" class="btn btn-secondary btn-sm" aria-label="Rejeitar cookies opcionais">Rejeitar</button>
+        <button id="customize-cookies" class="btn btn-outline-primary btn-sm" aria-label="Personalizar cookies">Personalizar</button>
       </div>
     </div>
 
-    <div id="cookie-settings" class="cookie-settings d-none mt-3">
+    <div id="cookie-settings" class="cookie-settings d-none mt-3" aria-hidden="true">
       <h4>Gerenciar preferências de cookies</h4>
       <label><input type="checkbox" disabled checked /> Necessários</label><br />
       <label><input type="checkbox" id="functional-cookies" /> Funcionais</label><br />
@@ -278,6 +278,5 @@
       <button id="save-cookie-settings" class="btn btn-primary btn-sm mt-2">Salvar preferências</button>
     </div>
   </div>
-
 </body>
 </html>
