@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!adsbygoogleLoaded) {
       console.warn('⚠️ AdSense pode estar bloqueado ou não carregado');
+      showAdBlockWarning();  // <-- Mostra aviso
       return true;
     }
 
@@ -140,9 +141,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!hasVisibleAd && adElements.length > 0) {
       console.warn('⚠️ Nenhum anúncio visível detectado');
+      showAdBlockWarning();  // <-- Mostra aviso
     }
 
     return !hasVisibleAd && adElements.length > 0;
+  }
+
+  // ========================================
+  // AVISO DE BLOQUEADOR DE ANÚNCIOS (NOVA FUNÇÃO)
+  // ========================================
+  function showAdBlockWarning() {
+    if (document.getElementById('adBlockWarning')) return; // Evita duplicar
+
+    const warning = document.createElement('div');
+    warning.id = 'adBlockWarning';
+    warning.style.position = 'fixed';
+    warning.style.top = '0';
+    warning.style.left = '0';
+    warning.style.right = '0';
+    warning.style.backgroundColor = '#f44336'; // vermelho vibrante
+    warning.style.color = 'white';
+    warning.style.padding = '15px';
+    warning.style.textAlign = 'center';
+    warning.style.fontSize = '16px';
+    warning.style.zIndex = '9999';
+    warning.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+    warning.style.display = 'flex';
+    warning.style.justifyContent = 'space-between';
+    warning.style.alignItems = 'center';
+
+    warning.innerHTML = `
+      <span>⚠️ Detectamos que você está usando um bloqueador de anúncios. Por favor, considere desativá-lo para apoiar nosso site.</span>
+      <button id="closeAdBlockWarning" style="
+        background: transparent;
+        border: none;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        margin-left: 20px;
+      " aria-label="Fechar aviso de bloqueador de anúncios">&times;</button>
+    `;
+
+    document.body.appendChild(warning);
+
+    document.getElementById('closeAdBlockWarning').addEventListener('click', () => {
+      warning.style.display = 'none';
+    });
   }
 
   // ========================================
