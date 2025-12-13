@@ -1,0 +1,985 @@
+<!-- Google Tag Manager -->
+<script>
+  (function(w,d,s,l,i){
+    w[l]=w[l]||[];
+    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-NLMLKHPS');
+</script>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
+    height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
+</noscript>
+
+<style>
+/* Estilos base */
+.post_keygen_body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.post_keygen_navbar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 15px 0;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.post_keygen_navbar .container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.post_keygen_navbar a {
+  color: #28a745;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.post_keygen_navbar a:hover {
+  color: #1e7e34;
+  transform: translateY(-2px);
+}
+
+.post_keygen_container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  padding: 40px;
+}
+
+.post_keygen_header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 3px solid #28a745;
+}
+
+.post_keygen_header h1 {
+  color: #2c3e50;
+  font-size: 2.5em;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.post_keygen_subtitle {
+  color: #7f8c8d;
+  font-size: 1.2em;
+}
+
+/* Seção de introdução educacional */
+.post_keygen_intro {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin-bottom: 40px;
+  border-left: 5px solid #28a745;
+}
+
+.post_keygen_intro h2 {
+  color: #2c3e50;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.post_keygen_intro p {
+  color: #34495e;
+  line-height: 1.8;
+  margin-bottom: 15px;
+  font-size: 1.05em;
+}
+
+.post_keygen_intro strong {
+  color: #28a745;
+}
+
+/* Disclaimer de segurança */
+.post_keygen_warning {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+  border: 2px solid #e74c3c;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 40px;
+}
+
+.post_keygen_warning h3 {
+  color: #c0392b;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post_keygen_warning p {
+  color: #7f1d1d;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.post_keygen_warning ul {
+  margin-left: 20px;
+  color: #7f1d1d;
+}
+
+/* Canvas e área interativa */
+.post_keygen_canvas_wrapper {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#post_keygen_grid {
+  max-width: 100%;
+  height: auto;
+  border: 3px solid #28a745;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.post_keygen_range_indicator {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1em;
+  margin-bottom: 30px;
+}
+
+/* Controles */
+.post_keygen_section_title {
+  color: #2c3e50;
+  font-size: 1.4em;
+  margin: 25px 0 15px;
+  font-weight: 600;
+}
+
+.post_keygen_button_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.post_keygen_button_grid button {
+  padding: 12px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.post_keygen_button_grid button:hover {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+  transform: translateY(-2px);
+}
+
+.post_keygen_button_grid button.active {
+  background: #28a745;
+  color: white;
+  border-color: #1e7e34;
+}
+
+.post_keygen_main_controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.post_keygen_btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.post_keygen_btn_start {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.post_keygen_btn_start:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+}
+
+.post_keygen_btn_stop {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: white;
+}
+
+.post_keygen_btn_stop:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.post_keygen_btn_clear {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+}
+
+.post_keygen_btn_random {
+  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  color: white;
+}
+
+/* Controle de velocidade */
+.post_keygen_speed_control {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.post_keygen_speed_control input[type="range"] {
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #ddd;
+  outline: none;
+}
+
+.post_keygen_speed_control input[type="range"]::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #28a745;
+  cursor: pointer;
+}
+
+/* Opções de modo */
+.post_keygen_options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.post_keygen_option_card {
+  background: white;
+  border: 2px solid #ddd;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post_keygen_option_card:hover {
+  border-color: #28a745;
+  background: #f0fff4;
+}
+
+.post_keygen_option_card input {
+  cursor: pointer;
+}
+
+/* Outputs */
+.post_keygen_output_section {
+  margin-top: 40px;
+}
+
+.post_keygen_output_group {
+  margin-bottom: 25px;
+}
+
+.post_keygen_output_label {
+  display: block;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.post_keygen_output_box {
+  width: 100%;
+  min-height: 80px;
+  padding: 15px;
+  border: 2px solid #28a745;
+  border-radius: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95em;
+  background: #f8f9fa;
+  resize: vertical;
+}
+
+/* Seção educacional adicional */
+.post_keygen_education {
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 40px;
+  border-left: 5px solid #00acc1;
+}
+
+.post_keygen_education h2 {
+  color: #006064;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.post_keygen_education h3 {
+  color: #00838f;
+  font-size: 1.4em;
+  margin: 25px 0 15px;
+}
+
+.post_keygen_education p {
+  color: #004d40;
+  line-height: 1.8;
+  margin-bottom: 15px;
+}
+
+.post_keygen_education ul {
+  margin-left: 25px;
+  color: #004d40;
+}
+
+.post_keygen_education ul li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+/* FAQ */
+.post_keygen_faq {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 40px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.post_keygen_faq h2 {
+  color: #2c3e50;
+  font-size: 1.8em;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.post_keygen_faq_item {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #28a745;
+}
+
+.post_keygen_faq_item h4 {
+  color: #28a745;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.post_keygen_faq_item p {
+  color: #555;
+  line-height: 1.7;
+}
+
+/* Footer */
+.post_keygen_footer {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 3px solid #28a745;
+}
+
+.post_keygen_footer_nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.post_keygen_footer_nav a {
+  color: #28a745;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.post_keygen_footer_nav a:hover {
+  color: #1e7e34;
+  text-decoration: underline;
+}
+
+.post_keygen_footer_copy {
+  text-align: center;
+  margin-top: 20px;
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+/* Banner de anúncio */
+.post_keygen_ad_banner {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 30px 0;
+  text-align: center;
+  border: 2px dashed #ddd;
+}
+
+.post_keygen_ad_label {
+  font-size: 0.85em;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+/* Cookie banner */
+.post_keygen_cookie_banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+.post_keygen_cookie_banner button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.post_keygen_cookie_settings {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+}
+
+/* Anúncio flutuante */
+.post_keygen_ad_floating {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  max-width: 350px;
+  z-index: 9998;
+}
+
+.post_keygen_ad_floating_header {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post_keygen_ad_close_btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .post_keygen_container {
+    padding: 20px;
+  }
+  
+  .post_keygen_header h1 {
+    font-size: 1.8em;
+  }
+  
+  .post_keygen_main_controls {
+    flex-direction: column;
+  }
+  
+  .post_keygen_btn {
+    width: 100%;
+  }
+  
+  .post_keygen_button_grid {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  }
+  
+  .post_keygen_ad_floating {
+    bottom: 10px;
+    right: 10px;
+    max-width: 90%;
+  }
+}
+</style>
+
+<div class="post_keygen_body">
+  <!-- Navbar -->
+  <nav class="post_keygen_navbar" role="navigation" aria-label="Menu principal">
+    <div class="container">
+      <a href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar @CanalQb Blog">
+        <i class="fas fa-blog" aria-hidden="true"></i> @CanalQb
+      </a>
+      <a href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer" aria-label="Nova Versão ainda em teste">
+        <i class="fas fa-flask" aria-hidden="true"></i> Nova Versão ainda em teste
+      </a>
+      <a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar Btckeygen">
+        <i class="fas fa-key" aria-hidden="true"></i> Btckeygen
+      </a>
+    </div>
+  </nav>
+
+  <!-- Banner de anúncio topo -->
+  <div id="post_keygen_ad_banner_top" class="post_keygen_ad_banner" aria-label="Publicidade Topo" role="region" style="display:none;">
+    <div class="post_keygen_ad_label">Publicidade</div>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762" crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3614622181047762"
+         data-ad-slot="4371879523"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+
+  <main class="post_keygen_container" role="main">
+    <!-- Header -->
+    <header class="post_keygen_header">
+      <h1>Gerador de Private Keys Bitcoin</h1>
+      <p class="post_keygen_subtitle">Ferramenta interativa e educacional para compreensão de criptografia Bitcoin</p>
+    </header>
+
+    <!-- Seção educacional introdutória -->
+    <section class="post_keygen_intro">
+      <h2>🎓 O Que São Private Keys do Bitcoin?</h2>
+      <p>
+        Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin. Sem a private key, é impossível mover fundos de um endereço.
+      </p>
+      <p>
+        Este gerador educacional demonstra como as chaves privadas são criadas usando uma matriz interativa de 16×16 células. Cada célula pode estar em estado "ativo" (1) ou "inativo" (0), formando um número binário de 256 bits que é posteriormente convertido para formato hexadecimal (64 caracteres) e WIF (Wallet Import Format).
+      </p>
+      <p>
+        O Bitcoin utiliza a <strong>curva elíptica secp256k1</strong> para gerar pares de chaves pública-privada. A private key é um número aleatório entre 1 e aproximadamente 2²⁵⁶, o que garante um espaço de possibilidades tão vasto que torna praticamente impossível adivinhar ou gerar a mesma chave duas vezes por acaso.
+      </p>
+      <p>
+        <strong>Aplicações práticas:</strong> Desenvolvedores, estudantes de criptografia e entusiastas podem usar esta ferramenta para entender os fundamentos matemáticos do Bitcoin, testar algoritmos de geração de endereços e explorar conceitos como entropia, aleatoriedade criptográfica e funções hash.
+      </p>
+    </section>
+
+    <!-- Disclaimer de segurança -->
+    <section class="post_keygen_warning">
+      <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA</h3>
+      <p>
+        <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração. Chaves geradas em ambientes conectados à internet são consideradas comprometidas.
+      </p>
+      <p><strong>Por que isso é perigoso?</strong></p>
+      <ul>
+        <li>Qualquer código JavaScript executado no navegador pode ser interceptado</li>
+        <li>Extensões maliciosas podem capturar dados sensíveis</li>
+        <li>Conexões de rede podem ser monitoradas</li>
+        <li>Não há garantia de aleatoriedade verdadeira em geradores web</li>
+      </ul>
+      <p>
+        <strong>Para armazenamento real de Bitcoin:</strong> Use carteiras hardware (Ledger, Trezor), carteiras de papel geradas offline em computadores air-gapped, ou software de código aberto auditado pela comunidade como Electrum ou Bitcoin Core.
+      </p>
+      <p>
+        Esta ferramenta NÃO deve ser usada para criar carteiras para uso real. Qualquer fundo enviado para endereços gerados aqui pode ser perdido permanentemente.
+      </p>
+    </section>
+
+    <!-- Área interativa original -->
+    <section aria-label="Área interativa para geração de chaves privadas">
+      <div class="post_keygen_canvas_wrapper">
+        <canvas id="post_keygen_grid" width="700" height="600" aria-label="Matriz interativa para seleção de células"></canvas>
+      </div>
+
+      <div class="post_keygen_range_indicator" aria-live="polite">
+        Faixa ativa: Linha <span id="post_keygen_activeRangeLabel">1 até 16</span>
+      </div>
+
+      <div class="post_keygen_control_section">
+        <h2 class="post_keygen_section_title">🎯 Selecionar Altura (Linha Inicial)</h2>
+        <div id="post_keygen_heightButtons" class="post_keygen_button_grid" role="group" aria-label="Botões para selecionar altura"></div>
+
+        <h2 class="post_keygen_section_title">📍 Selecionar Base (Linha Final)</h2>
+        <div id="post_keygen_baseButtons" class="post_keygen_button_grid" role="group" aria-label="Botões para selecionar base"></div>
+      </div>
+
+      <div class="post_keygen_main_controls" role="region" aria-label="Controles principais">
+        <button id="post_keygen_startBtn" class="post_keygen_btn post_keygen_btn_start" aria-pressed="false" aria-label="Iniciar geração">▶ Iniciar</button>
+        <button id="post_keygen_stopBtn" class="post_keygen_btn post_keygen_btn_stop" disabled aria-pressed="false" aria-label="Parar geração">⏸ Parar</button>
+        <button id="post_keygen_clearBtn" class="post_keygen_btn post_keygen_btn_clear" aria-label="Limpar seleção">🗑 Limpar</button>
+        <button id="post_keygen_randBtn" class="post_keygen_btn post_keygen_btn_random" aria-label="Aleatorizar matriz">🎲 Aleatorizar</button>
+      </div>
+
+      <div class="post_keygen_speed_control">
+        <label for="post_keygen_speed">⚡ Velocidade:</label>
+        <input type="range" id="post_keygen_speed" min="1" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-label="Controle de velocidade da geração" />
+        <span id="post_keygen_speedLabel" aria-live="polite">500 ms</span>
+      </div>
+
+      <div class="post_keygen_options" role="group" aria-label="Modos de seleção e opções adicionais">
+        <label class="post_keygen_option_card">
+          <input type="radio" name="post_keygen_mode" value="sequential" checked aria-checked="true" />
+          <span>📊 Sequencial (H)</span>
+        </label>
+
+        <label class="post_keygen_option_card">
+          <input type="radio" name="post_keygen_mode" value="vertical" aria-checked="false" />
+          <span>📊 Sequencial (V)</span>
+        </label>
+
+        <label class="post_keygen_option_card">
+          <input type="checkbox" id="post_keygen_toggleOnClick" checked aria-checked="true" />
+          <span>👆 Clique alterna célula</span>
+        </label>
+
+        <label class="post_keygen_option_card">
+          <input type="checkbox" id="post_keygen_randomizeStatesOnStep" aria-checked="false" />
+          <span>🔄 Aleatorizar no passo</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Outputs -->
+    <section class="post_keygen_output_section" aria-label="Saídas das chaves geradas">
+      <div class="post_keygen_output_group">
+        <label for="post_keygen_hexBox" class="post_keygen_output_label">🔑 Private Key HEX (64 caracteres)</label>
+        <textarea id="post_keygen_hexBox" class="post_keygen_output_box" readonly aria-readonly="true" aria-label="Chave privada em formato HEX"></textarea>
+      </div>
+
+      <div class="post_keygen_output_group">
+        <label for="post_keygen_wifBox" class="post_keygen_output_label">💼 WIF Comprimido</label>
+        <textarea id="post_keygen_wifBox" class="post_keygen_output_box" readonly aria-readonly="true" aria-label="Chave privada WIF comprimida"></textarea>
+      </div>
+
+      <div class="post_keygen_output_group">
+        <label for="post_keygen_wifBoxUncompressed" class="post_keygen_output_label">📦 WIF Não Comprimido</label>
+        <textarea id="post_keygen_wifBoxUncompressed" class="post_keygen_output_box" readonly aria-readonly="true" aria-label="Chave privada WIF não comprimida"></textarea>
+      </div>
+    </section>
+
+    <!-- Anúncio In-Feed -->
+    <div id="post_keygen_ad_infeed" class="post_keygen_ad_banner" aria-label="Publicidade In-Feed" role="region">
+      <div class="post_keygen_ad_label">Publicidade</div>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-format="autorelaxed"
+           data-ad-client="ca-pub-3614622181047762"
+           data-ad-slot="1937287877"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Seção educacional detalhada -->
+    <section class="post_keygen_education">
+      <h2>📚 Como Funciona a Geração de Chaves Bitcoin</h2>
+      
+      <h3>1. Geração de Entropia</h3>
+      <p>
+        A segurança do Bitcoin começa com a <strong>entropia</strong> — aleatoriedade verdadeira. Uma private key segura requer 256 bits de entropia completamente aleatórios. Esta ferramenta simula esse processo através de uma matriz visual onde você pode manipular cada bit individualmente.
+      </p>
+      
+      <h3>2. Formato Hexadecimal (HEX)</h3>
+      <p>
+        O formato HEX representa a private key como 64 caracteres hexadecimais (0-9, A-F). Cada caractere hexadecimal representa 4 bits, então 64 caracteres = 256 bits. Exemplo: <code>5KJvsngHeMpm884wtkJNzQGaCErckhHJBGFsvd3VyK5qMZXj3Vi</code>
+      </p>
+      
+      <h3>3. WIF Comprimido vs Não Comprimido</h3>
+      <p>
+        <strong>WIF (Wallet Import Format)</strong> é um padrão para codificar private keys de forma mais legível e segura:
+      </p>
+      <ul>
+        <li><strong>WIF Comprimido:</strong> Começa com 'K' ou 'L', indica que a chave pública derivada deve ser comprimida (33 bytes em vez de 65)</li>
+        <li><strong>WIF Não Comprimido:</strong> Começa com '5', usa formato de chave pública não comprimida</li>
+        <li>Ambos derivam o mesmo par de chaves, mas geram endereços Bitcoin diferentes</li>
+      </ul>
+      
+      <h3>4. Curva Elíptica secp256k1</h3>
+      <p>
+        O Bitcoin usa a curva <strong>secp256k1</strong> definida pela equação y² = x³ + 7. A private key é multiplicada pelo ponto gerador da curva para produzir a chave pública. Esta operação é unidirecional: fácil de calcular, impossível de reverter.
+      </p>
+      
+      <h3>5. Derivação de Endereços</h3>
+      <p>
+        A partir da private key, o processo de derivação segue estas etapas:
+      </p>
+      <ul>
+        <li>Private Key → Chave Pública (usando secp256k1)</li>
+        <li>Chave Pública → SHA-256 → RIPEMD-160</li>
+        <li>Adiciona prefixo de versão + checksum</li>
+        <li>Codifica em Base58Check = Endereço Bitcoin</li>
+      </ul>
+    </section>
+
+    <!-- FAQ -->
+    <section class="post_keygen_faq">
+      <h2>❓ Perguntas Frequentes</h2>
+      
+      <div class="post_keygen_faq_item">
+        <h4>Posso usar esta ferramenta para criar uma carteira Bitcoin real?</h4>
+        <p>
+          <strong>NÃO!</strong> Esta é uma ferramenta exclusivamente educacional. Chaves geradas online são consideradas comprometidas e inseguras. Use sempre carteiras hardware ou software offline auditado para valores reais.
+        </p>
+      </div>
+      
+      <div class="post_keygen_faq_item">
+        <h4>Qual a diferença entre WIF comprimido e não comprimido?</h4>
+        <p>
+          Ambos representam a mesma private key, mas indicam formatos diferentes de chave pública. WIF comprimido (começa com K ou L) gera endereços menores e mais eficientes. WIF não comprimido (começa com 5) é o formato legado. Ambos são válidos, mas comprimido é o padrão moderno.
+        </p>
+      </div>
+      
+      <div class="post_keygen_faq_item">
+        <h4>O que acontece se duas pessoas gerarem a mesma private key?</h4>
+        <p>
+          A probabilidade é astronômica mente baixa (1 em 2²⁵⁶), maior que o número de átomos no universo observável. É estatisticamente impossível. Mesmo assim, a geração de chaves deve usar fontes de entropia criptograficamente seguras.
+        </p>
+      </div>
+      
+      <div class="post_keygen_faq_item">
+        <h4>Como funciona a matriz 16×16?</h4>
+        <p>
+          A matriz possui 256 células (16 linhas × 16 colunas). Cada célula representa um bit (0 ou 1). O estado completo da matriz forma um número binário de 256 bits que é convertido para HEX e WIF. Você pode clicar nas células para alternar seus estados manualmente.
+        </p>
+      </div>
+      
+      <div class="post_keygen_faq_item">
+        <h4>Esta ferramenta armazena ou transmite as chaves geradas?</h4>
+        <p>
+          Não. Todo o processamento ocorre localmente no seu navegador usando JavaScript. Nenhuma chave é enviada para servidores externos. Porém, isso não garante segurança total — extensões de navegador, malware ou código modificado poderiam interceptar dados.
+        </p>
+      </div>
+      
+      <div class="post_keygen_faq_item">
+        <h4>O que é o "Puzzle 1000 BTC"?</h4>
+        <p>
+          Refere-se a desafios criptográficos onde bitcoins foram intencionalmente enviados para endereços com chaves privadas em faixas específicas. Alguns entusiastas tentam encontrar essas chaves através de força bruta ou padrões matemáticos. Este gerador pode ser usado para explorar essas faixas educacionalmente.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="post_keygen_footer" role="contentinfo">
+      <nav class="post_keygen_footer_nav" aria-label="Navegação rodapé">
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#privacy-preferences">Gestão de Preferências</a></li>
+          <li><a href="#cookie-consent">Consentimento de Cookies</a></li>
+          <li><a href="#user-rights">Direitos do Usuário</a></li>
+          <li><a href="#dmca">DMCA</a></li>
+          <li><a href="#sitemap">Sitemap</a></li>
+          <li><a href="#data-transparency">Transparência de Dados</a></li>
+          <li><a href="#no-sale-policy">Não Venda de Dados</a></li>
+          <li><a href="#monetization-statement">Monetização</a></li>
+          <li><a href="#copyright-policy">Direitos Autorais</a></li>
+          <li><a href="#disclaimer">Disclaimer</a></li>
+          <li><a href="#cookie-policy">Política de Cookies</a></li>
+          <li><a href="#app-privacy-policy">Privacidade de Aplicativos</a></li>
+          <li><a href="#page-transparency">Transparência da Página</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#terms-of-use">Termo de Uso</a></li>
+          <li><a href="#privacy-policy">Privacidade</a></li>
+          <li><a href="#contacts">Contatos</a></li>
+        </ul>
+      </nav>
+      <div class="post_keygen_footer_copy">
+        © 2025 @CanalQb — Rodrigo Carlos Moraes<br />
+        Gerador de private keys Bitcoin - Puzzle 1000 BTC - Ferramenta Educacional
+      </div>
+    </footer>
+  </main>
+
+  <!-- Banner de consentimento de cookies -->
+  <div id="post_keygen_cookie_consent_banner" class="post_keygen_cookie_banner" role="region" aria-label="Banner de Consentimento de Cookies" style="display:none;">
+    <div class="container">
+      <div>
+        <p style="margin-bottom: 15px;">
+          Usamos cookies para melhorar sua experiência. Você pode aceitar todos, rejeitar não essenciais ou personalizar suas preferências.
+        </p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button id="post_keygen_accept_cookies" class="post_keygen_btn post_keygen_btn_start" aria-label="Aceitar todos os cookies">Aceitar Todos</button>
+        <button id="post_keygen_reject_cookies" class="post_keygen_btn post_keygen_btn_clear" aria-label="Rejeitar cookies não essenciais">Rejeitar</button>
+        <button id="post_keygen_customize_cookies" class="post_keygen_btn post_keygen_btn_random" aria-label="Personalizar preferências de cookies">Personalizar</button>
+      </div>
+    </div>
+
+    <div id="post_keygen_cookie_settings" class="post_keygen_cookie_settings" style="display: none;">
+      <form>
+        <div style="margin-bottom: 15px;">
+          <input type="checkbox" id="post_keygen_functional_cookies" checked disabled>
+          <label for="post_keygen_functional_cookies" style="font-weight: bold;">Cookies Funcionais (Necessários)</label>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <input type="checkbox" id="post_keygen_analytics_cookies">
+          <label for="post_keygen_analytics_cookies">Cookies de Análise</label>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <input type="checkbox" id="post_keygen_ads_cookies">
+          <label for="post_keygen_ads_cookies">Cookies de Publicidade</label>
+        </div>
+        <button type="button" id="post_keygen_save_cookie_settings" class="post_keygen_btn post_keygen_btn_start">Salvar Preferências</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Anúncio Flutuante -->
+  <div id="post_keygen_floatingAd" class="post_keygen_ad_floating" aria-label="Publicidade flutuante" role="region" style="display:none;">
+    <div class="post_keygen_ad_floating_header">
+      <span>📢 Publicidade</span>
+      <button class="post_keygen_ad_close_btn" id="post_keygen_closeFloatingAd" aria-label="Fechar anúncio">✕</button>
+    </div>
+    <div style="padding: 15px;">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-3614622181047762"
+        data-ad-slot="3037141776"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+  </div>
+</div>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<script>
+// Script principal do gerador de chaves (adaptado com prefixo post_keygen_)
+(function() {
+  const canvas = document.getElementById('post_keygen_grid');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  const rows = 16, cols = 16;
+  const cellW = 40, cellH = 35;
+  let grid = Array(rows).fill(null).map(() => Array(cols).fill(0));
+  let h = 0, b = 15;
+  let running = false, intervalId = null;
+  let col = 0, row = 0;
+  
+  // Funções auxiliares SHA256 e Base58
+  function sha256(m){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];let b=[];for(let i=0;i<m.length;i++)b.push(m.charCodeAt(i));b.push(0x80);while((b.length%64)!==56)b.push(0);const l=m.length*8;for(let i=7;i>=0;i--)b.push((l>>>(i*8))&0xff);let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];const rr=(n,x)=>(x>>>n)|(x<<(32-n));for(let c=0;c<b.length;c+=64){let W=[];for(let t=0;t<16;t++)W[t]=(b[c+t*4]<<24)|(b[c+t*4+1]<<16)|(b[c+t*4+2]<<8)|b[c+t*4+3];for(let t=16;t<64;t++){const s0=rr(7,W[t-15])^rr(18,W[t-15])^(W[t-15]>>>3);const s1=rr(17,W[t-2])^rr(19,W[t-2])^(W[t-2]>>>10);W[t]=(W[t-16]+s0+W[t-7]+s1)|0;}let[a,d,e,f,g,h2,i,j]=H;for(let t=0;t<64;t++){const S1=rr(6,e)^rr(11,e)^rr(25,e);const ch=(e&f)^(~e&g);const temp1=(h2+S1+ch+K[t]+W[t])|0;const S0=rr(2,a)^rr(13,a)^rr(22,a);const maj=(a&d)^(a&i)^(d&i);const temp2=(S0+maj)|0;h2=g;g=f;f=e;e=(j+temp1)|0;j=i;i=d;d=a;a=(temp1+temp2)|0;}H[0]=(H[0]+a)|0;H[1]=(H[1]+d)|0;H[2]=(H[2]+i)|0;H[3]=(H[3]+j)|0;H[4]=(H[4]+e)|0;H[5]=(H[5]+f)|0;H[6]=(H[6]+g)|0;H[7]=(H[7]+h2)|0;}let r='';for(let v of H)for(let i=28;i>=0;i-=4)r+=((v>>>i)&0xf).toString(16);return r;}
+  
+  const b58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function toBase58(h){let n=BigInt('0x'+h);let s='';while(n>0n){s=b58[Number(n%58n)]+s;n/=58n;}for(let i=0;i<h.length&&h[i]==='0'&&h[i+1]==='0';i+=2)s='1'+s;return s;}
+  
+  function hexToWIF(hx,compressed){const p=compressed?'80'+hx+'01':'80'+hx;const h1=sha256(Array.from({length:p.length/2},(v,i)=>String.fromCharCode(parseInt(p.substr(i*2,2),16))).join(''));const h2=sha256(Array.from({length:64},(v,i)=>String.fromCharCode(parseInt(h1.substr(i*2,2),16))).join(''));return toBase58(p+h2.substring(0,8));}
+  
+  // Desenhar grid
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){const x=c*cellW,y=r*cellH;ctx.fillStyle=(r>=h&&r<=b)?'#e0f7fa':'#fff';ctx.fillRect(x,y,cellW,cellH);if(grid[r][c])ctx.fillStyle='#28a745';else ctx.fillStyle='#ccc';ctx.fillRect(x+2,y+2,cellW-4,cellH-4);ctx.strokeStyle='#888';ctx.strokeRect(x,y,cellW,cellH);}}}
+  
+  // Atualizar outputs
+  function updateOutputs(){let bin='';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)bin+=grid[r][c];const hx=BigInt('0b'+bin).toString(16).padStart(64,'0');document.getElementById('post_keygen_hexBox').value=hx;document.getElementById('post_keygen_wifBox').value=hexToWIF(hx,true);document.getElementById('post_keygen_wifBoxUncompressed').value=hexToWIF(hx,false);}
+  
+  // Botões de altura/base
+  for(let i=0;i<16;i++){const hb=document.createElement('button');hb.textContent=i+1;hb.onclick=()=>{h=i;if(h>b)b=h;document.querySelectorAll('#post_keygen_heightButtons button').forEach(b=>b.classList.remove('active'));hb.classList.add('active');document.getElementById('post_keygen_activeRangeLabel').textContent=(h+1)+' até '+(b+1);draw();};document.getElementById('post_keygen_heightButtons').appendChild(hb);const bb=document.createElement('button');bb.textContent=i+1;bb.onclick=()=>{b=i;if(b<h)h=b;document.querySelectorAll('#post_keygen_baseButtons button').forEach(b=>b.classList.remove('active'));bb.classList.add('active');document.getElementById('post_keygen_activeRangeLabel').textContent=(h+1)+' até '+(b+1);draw();};document.getElementById('post_keygen_baseButtons').appendChild(bb);}
+  document.querySelectorAll('#post_keygen_heightButtons button')[0].classList.add('active');
+  document.querySelectorAll('#post_keygen_baseButtons button')[15].classList.add('active');
+  
+  // Controles
+  document.getElementById('post_keygen_startBtn').onclick=()=>{if(running)return;running=true;document.getElementById('post_keygen_startBtn').disabled=true;document.getElementById('post_keygen_stopBtn').disabled=false;const mode=document.querySelector('input[name="post_keygen_mode"]:checked').value;const rand=document.getElementById('post_keygen_randomizeStatesOnStep').checked;intervalId=setInterval(()=>{if(rand)for(let r=h;r<=b;r++)for(let c=0;c<cols;c++)grid[r][c]=Math.random()<0.5?1:0;if(mode==='sequential'){grid[row][col]=grid[row][col]?0:1;col++;if(col>=cols){col=0;row++;if(row>b){row=h;}}}else{grid[row][col]=grid[row][col]?0:1;row++;if(row>b){row=h;col++;if(col>=cols)col=0;}}draw();updateOutputs();},document.getElementById('post_keygen_speed').value);};
+  
+  document.getElementById('post_keygen_stopBtn').onclick=()=>{running=false;clearInterval(intervalId);document.getElementById('post_keygen_startBtn').disabled=false;document.getElementById('post_keygen_stopBtn').disabled=true;};
+  
+  document.getElementById('post_keygen_clearBtn').onclick=()=>{grid=Array(rows).fill(null).map(()=>Array(cols).fill(0));draw();updateOutputs();};
+  
+  document.getElementById('post_keygen_randBtn').onclick=()=>{for(let r=h;r<=b;r++)for(let c=0;c<cols;c++)grid[r][c]=Math.random()<0.5?1:0;draw();updateOutputs();};
+  
+  document.getElementById('post_keygen_speed').oninput=e=>{document.getElementById('post_keygen_speedLabel').textContent=e.target.value+' ms';if(running){clearInterval(intervalId);document.getElementById('post_keygen_startBtn').click();document.getElementById('post_keygen_stopBtn').click();document.getElementById('post_keygen_startBtn').click();}};
+  
+  canvas.onclick=e=>{if(!document.getElementById('post_keygen_toggleOnClick').checked)return;const rect=canvas.getBoundingClientRect();const x=e.clientX-rect.left;const y=e.clientY-rect.top;const c=Math.floor(x/cellW);const r=Math.floor(y/cellH);if(r>=h&&r<=b&&c>=0&&c<cols){grid[r][c]=grid[r][c]?0:1;draw();updateOutputs();}};
+  
+  draw();
+  updateOutputs();
+})();
+
+// Sistema de cookies e anúncios
+(function(){
+  const banner=document.getElementById('post_keygen_cookie_consent_banner');
+  const settings=document.getElementById('post_keygen_cookie_settings');
+  
+  if(!localStorage.getItem('cookieConsent')){
+    banner.style.display='block';
+  }else{
+    const consent=JSON.parse(localStorage.getItem('cookieConsent'));
+    if(consent.ads){
+      document.getElementById('post_keygen_ad_banner_top').style.display='block';
+      document.getElementById('post_keygen_floatingAd').style.display='block';
+    }
+  }
+  
+  document.getElementById('post_keygen_accept_cookies').onclick=()=>{
+    localStorage.setItem('cookieConsent',JSON.stringify({functional:true,analytics:true,ads:true}));
+    banner.style.display='none';
+    document.getElementById('post_keygen_ad_banner_top').style.display='block';
+    document.getElementById('post_keygen_floatingAd').style.display='block';
+  };
+  
+  document.getElementById('post_keygen_reject_cookies').onclick=()=>{
+    localStorage.setItem('cookieConsent',JSON.stringify({functional:true,analytics:false,ads:false}));
+    banner.style.display='none';
+  };
+  
+  document.getElementById('post_keygen_customize_cookies').onclick=()=>{
+    settings.style.display=settings.style.display==='none'?'block':'none';
+  };
+  
+  document.getElementById('post_keygen_save_cookie_settings').onclick=()=>{
+    const consent={
+      functional:true,
+      analytics:document.getElementById('post_keygen_analytics_cookies').checked,
+      ads:document.getElementById('post_keygen_ads_cookies').checked
+    };
+    localStorage.setItem('cookieConsent',JSON.stringify(consent));
+    banner.style.display='none';
+    if(consent.ads){
+      document.getElementById('post_keygen_ad_banner_top').style.display='block';
+      document.getElementById('post_keygen_floatingAd').style.display='block';
+    }
+  };
+  
+  document.getElementById('post_keygen_closeFloatingAd').onclick=()=>{
+    document.getElementById('post_keygen_floatingAd').style.display='none';
+  };
+})();
+</script>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" />
