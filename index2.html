@@ -1,804 +1,684 @@
-<!-- Google Tag Manager -->
-<script>
-  (function(w,d,s,l,i){
-    w[l]=w[l]||[];
-    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-    var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
-    j.async=true;
-    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-    f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-NLMLKHPS');
-</script>
-<!-- Google Tag Manager (noscript) -->
-<noscript>
-  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS"
-    height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
-</noscript>
-<!-- FontAwesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-<style>
-/* Layout principal com sidebar */
-.main-wrapper {
-  display: flex;
-  gap: 20px;
-  margin: 20px auto;
-  max-width: 1400px;
-}
-
-.sidebar {
-  width: 280px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 15px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 20px;
-  height: fit-content;
-}
-
-.sidebar h3 {
-  color: #28a745;
-  font-size: 1.3em;
-  margin-bottom: 20px;
-  border-bottom: 3px solid #28a745;
-  padding-bottom: 10px;
-}
-
-.sidebar-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar-links li {
-  margin-bottom: 12px;
-}
-
-.sidebar-links a {
-  color: #495057;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.sidebar-links a:hover {
-  background: #28a745;
-  color: #fff;
-  transform: translateX(5px);
-}
-
-.sidebar-widget {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.sidebar-widget h4 {
-  color: #28a745;
-  font-size: 1.1em;
-  margin-bottom: 15px;
-}
-
-.main-content {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Hero Section */
-.hero-section {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-  padding: 50px 30px;
-  border-radius: 20px;
-  text-align: center;
-  margin-bottom: 40px;
-  box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
-}
-
-.hero-section h1 {
-  font-size: 2.5em;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-}
-
-.hero-section .subtitle {
-  font-size: 1.2em;
-  margin-bottom: 0;
-  opacity: 0.95;
-}
-
-/* Canvas centralizado */
-.canvas-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 30px;
-  border-radius: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-#grid {
-  border: 3px solid #28a745;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-/* Indicador de faixa */
-.range-indicator {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
-  border: 2px solid #ffc107;
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  font-weight: bold;
-  color: #856404;
-  font-size: 1.1em;
-}
-
-/* Seções de controle */
-.control-card {
-  background: #fff;
-  border-radius: 15px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-left: 5px solid #28a745;
-}
-
-.control-card h2 {
-  color: #28a745;
-  font-size: 1.4em;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Botões de altura/base */
-.button-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.button-grid button {
-  padding: 12px;
-  border: 2px solid #28a745;
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  color: #28a745;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.button-grid button:hover {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-}
-
-.button-grid button.active {
-  background: #28a745;
-  color: #fff;
-}
-
-/* Controles principais */
-.main-controls-section {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  border-radius: 15px;
-  padding: 25px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.main-controls-section h2 {
-  color: #2e7d32;
-  font-size: 1.4em;
-  margin-bottom: 20px;
-}
-
-.btn-custom {
-  padding: 12px 24px;
-  font-size: 1.05em;
-  font-weight: 600;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.btn-start {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-}
-
-.btn-start:hover {
-  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3);
-}
-
-.btn-stop {
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  color: #fff;
-}
-
-.btn-stop:hover {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-}
-
-.btn-stop:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-clear {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: #fff;
-}
-
-.btn-clear:hover {
-  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-}
-
-.btn-random {
-  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
-  color: #fff;
-}
-
-.btn-random:hover {
-  background: linear-gradient(135deg, #5a32a3 0%, #4c2a8f 100%);
-}
-
-/* Controles de velocidade e opções */
-.speed-control {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.speed-control input[type="range"] {
-  flex: 1;
-  min-width: 200px;
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.option-card {
-  background: #fff;
-  padding: 15px;
-  border: 2px solid #e9ecef;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.option-card:hover {
-  border-color: #28a745;
-  background: #f8fff9;
-  transform: translateY(-2px);
-}
-
-.option-card input {
-  margin-right: 8px;
-}
-
-/* Seção de outputs */
-.outputs-section {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  border-radius: 15px;
-  padding: 30px;
-  margin: 30px 0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  border-top: 5px solid #28a745;
-}
-
-.outputs-section h2 {
-  color: #28a745;
-  font-size: 1.8em;
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-.output-group {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  border-left: 4px solid #28a745;
-}
-
-.output-label {
-  display: block;
-  font-weight: 700;
-  color: #495057;
-  margin-bottom: 12px;
-  font-size: 1.1em;
-}
-
-.output-box {
-  width: 100%;
-  min-height: 80px;
-  padding: 15px;
-  border: 2px solid #dee2e6;
-  border-radius: 8px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.95em;
-  background: #f8f9fa;
-  resize: vertical;
-  transition: all 0.3s ease;
-}
-
-.output-box:focus {
-  outline: none;
-  border-color: #28a745;
-  background: #fff;
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-}
-
-/* Separador */
-.content-divider {
-  border: none;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #28a745, transparent);
-  margin: 50px 0;
-}
-
-/* Seções educacionais */
-.edu-intro-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 35px;
-  border-radius: 15px;
-  margin: 40px 0;
-  border-left: 6px solid #28a745;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.edu-intro-section h2 {
-  color: #2c3e50;
-  font-size: 2em;
-  margin-bottom: 25px;
-}
-
-.edu-intro-section p {
-  color: #34495e;
-  line-height: 1.9;
-  margin-bottom: 18px;
-  font-size: 1.08em;
-}
-
-.edu-warning-section {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
-  border: 3px solid #e74c3c;
-  border-radius: 15px;
-  padding: 30px;
-  margin: 40px 0;
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
-}
-
-.edu-warning-section h3 {
-  color: #c0392b;
-  font-size: 1.6em;
-  margin-bottom: 20px;
-}
-
-.edu-warning-section p, .edu-warning-section ul {
-  color: #7f1d1d;
-  line-height: 1.8;
-  font-size: 1.05em;
-}
-
-.edu-content-section {
-  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-  padding: 35px;
-  border-radius: 15px;
-  margin: 40px 0;
-  border-left: 6px solid #00acc1;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.edu-content-section h2 {
-  color: #006064;
-  font-size: 2em;
-  margin-bottom: 25px;
-}
-
-.edu-content-section h3 {
-  color: #00838f;
-  font-size: 1.5em;
-  margin: 30px 0 18px;
-}
-
-.edu-content-section p {
-  color: #004d40;
-  line-height: 1.9;
-  margin-bottom: 18px;
-  font-size: 1.05em;
-}
-
-.edu-content-section ul {
-  margin-left: 30px;
-  color: #004d40;
-}
-
-.edu-content-section ul li {
-  margin-bottom: 12px;
-  line-height: 1.7;
-}
-
-.edu-content-section code {
-  background: #fff;
-  padding: 3px 8px;
-  border-radius: 4px;
-  color: #c0392b;
-  font-size: 0.95em;
-}
-
-.edu-faq-section {
-  background: #fff;
-  padding: 35px;
-  border-radius: 15px;
-  margin: 40px 0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-}
-
-.edu-faq-section h2 {
-  color: #2c3e50;
-  font-size: 2em;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.edu-faq-item {
-  margin-bottom: 25px;
-  padding: 25px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 5px solid #28a745;
-  transition: all 0.3s ease;
-}
-
-.edu-faq-item:hover {
-  background: #e8f5e9;
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.edu-faq-item h4 {
-  color: #28a745;
-  font-size: 1.3em;
-  margin-bottom: 12px;
-}
-
-.edu-faq-item p {
-  color: #555;
-  line-height: 1.8;
-  font-size: 1.05em;
-}
-
-/* Puzzle 1000 BTC Section */
-.puzzle-section {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  padding: 35px;
-  border-radius: 15px;
-  margin: 40px 0;
-  border-left: 6px solid #ff9800;
-  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
-}
-
-.puzzle-section h2 {
-  color: #e65100;
-  font-size: 2em;
-  margin-bottom: 25px;
-}
-
-.puzzle-section h3 {
-  color: #ef6c00;
-  font-size: 1.5em;
-  margin: 25px 0 15px;
-}
-
-.puzzle-section p {
-  color: #4e342e;
-  line-height: 1.9;
-  margin-bottom: 18px;
-  font-size: 1.05em;
-}
-
-.puzzle-section ul {
-  margin-left: 30px;
-  color: #4e342e;
-}
-
-.puzzle-section ul li {
-  margin-bottom: 12px;
-  line-height: 1.7;
-}
-
-.puzzle-highlight {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 20px 0;
-  border-left: 4px solid #ff9800;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* Navbar */
-.navbar {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  border-bottom: 3px solid #28a745;
-  margin-bottom: 0;
-}
-
-.navbar-brand {
-  font-size: 1.1em;
-  transition: all 0.3s ease;
-}
-
-.navbar-brand:hover {
-  transform: translateY(-2px);
-  color: #20c997 !important;
-}
-
-/* Footer */
-.site-footer {
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-  color: #ecf0f1;
-  padding: 40px 0 20px;
-  margin-top: 60px;
-}
-
-.footer-nav ul {
-  margin: 0;
-  padding: 0;
-}
-
-.footer-nav a {
-  color: #ecf0f1;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.footer-nav a:hover {
-  color: #28a745;
-  text-decoration: underline;
-}
-
-.site-footer .small {
-  color: #bdc3c7;
-}
-
-/* Cookie Banner */
-.cookie-banner {
-  background: #fff;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
-  z-index: 9999;
-}
-
-/* Anúncios */
-.ad-banner-top, #ad-infeed {
-  margin: 20px 0;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.ad-label {
-  font-size: 0.85em;
-  color: #6c757d;
-  margin-bottom: 10px;
-}
-
-/* Responsividade */
-@media (max-width: 992px) {
-  .main-wrapper {
-    flex-direction: column;
-  }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 - Puzzle 1000 BTC">
+  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC</title>
   
-  .sidebar {
-    width: 100%;
-    position: static;
-  }
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
-  .hero-section h1 {
-    font-size: 2em;
-  }
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
   
-  #grid {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 30px 20px;
-  }
-  
-  .hero-section h1 {
-    font-size: 1.6em;
-  }
-  
-  .button-grid {
-    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  }
-  
-  .main-controls-section .d-flex {
-    flex-direction: column !important;
-  }
-  
-  .btn-custom {
-    width: 100%;
-  }
-}
-</style>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg shadow-sm" role="navigation" aria-label="Menu principal">
-  <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar @CanalQb Blog">
-      <i class="fas fa-blog" aria-hidden="true"></i> @CanalQb
-    </a>
-    <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer" aria-label="Nova Versão ainda em teste">
-      <i class="fas fa-flask" aria-hidden="true"></i> Nova Versão
-    </a>
-    <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar Btckeygen">
-      <i class="fas fa-key" aria-hidden="true"></i> Btckeygen
-    </a>
-  </div>
-</nav>
-<!-- Banner de anúncio topo -->
-<div id="ad-banner-top" class="ad-banner-top" aria-label="Publicidade Topo" role="region" style="display:none;">
-  <div class="ad-label">Publicidade</div>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762" crossorigin="anonymous"></script>
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-3614622181047762"
-       data-ad-slot="4371879523"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>
-       (adsbygoogle = window.adsbygoogle || []).push({});
-  </script>
-</div>
-<div class="main-wrapper">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h3><i class="fas fa-link"></i> Links Úteis</h3>
-    <ul class="sidebar-links">
-      <li><a href="https://bitcoin.org/" target="_blank" rel="noopener noreferrer"><i class="fab fa-bitcoin"></i> Bitcoin.org</a></li>
-      <li><a href="https://github.com/bitcoin/bitcoin" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Bitcoin GitHub</a></li>
-      <li><a href="https://en.bitcoin.it/wiki/Secp256k1" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i> Curva secp256k1</a></li>
-      <li><a href="https://www.blockchain.com/explorer" target="_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> Blockchain Explorer</a></li>
-      <li><a href="https://en.bitcoin.it/wiki/Private_key" target="_blank" rel="noopener noreferrer"><i class="fas fa-key"></i> Wiki Private Keys</a></li>
-      <li><a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer"><i class="fas fa-tools"></i> BTC Keygen</a></li>
-    </ul>
-<div class="sidebar-widget">
-  <h4><i class="fas fa-info-circle"></i> Sobre o Projeto</h4>
-  <p style="font-size:0.95em;color:#6c757d;line-height:1.6;">
-    Esta ferramenta educacional demonstra visualmente como as chaves privadas Bitcoin são geradas a partir de números binários de 256 bits.
-  </p>
-</div>
-
-<div class="sidebar-widget">
-  <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
-  <p style="font-size:0.9em;color:#dc3545;line-height:1.5;">
-    <strong>Nunca</strong> use chaves geradas online para armazenar Bitcoin real. Apenas para fins educacionais.
-  </p>
-</div>
-  </aside>
-  <!-- Conteúdo Principal -->
-  <main class="main-content" role="main">
-    <!-- Hero Section -->
-    <div class="hero-section">
-      <h1>🔐 Gerador de Private Keys Bitcoin</h1>
-      <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
+  <style>
+    body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    
+    .main-wrapper { display: flex; gap: 20px; margin: 20px auto; max-width: 1400px; padding: 0 15px; }
+    .sidebar { width: 280px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 20px; height: fit-content; }
+    .sidebar h3 { color: #28a745; font-size: 1.3em; margin-bottom: 20px; border-bottom: 3px solid #28a745; padding-bottom: 10px; }
+    .sidebar-links { list-style: none; padding: 0; margin: 0; }
+    .sidebar-links li { margin-bottom: 12px; }
+    .sidebar-links a { color: #495057; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; transition: all 0.3s ease; }
+    .sidebar-links a:hover { background: #28a745; color: #fff; transform: translateX(5px); }
+    .sidebar-widget { background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .sidebar-widget h4 { color: #28a745; font-size: 1.1em; margin-bottom: 15px; }
+    .main-content { flex: 1; min-width: 0; }
+    
+    .hero-section { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: #fff; padding: 50px 30px; border-radius: 20px; text-align: center; margin-bottom: 40px; box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3); }
+    .hero-section h1 { font-size: 2.5em; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+    .hero-section .subtitle { font-size: 1.2em; margin-bottom: 0; opacity: 0.95; }
+    
+    .canvas-container { display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 30px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    #grid { border: 3px solid #28a745; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: crosshair; display: block; }
+    
+    .range-indicator { background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border: 2px solid #ffc107; border-radius: 12px; padding: 15px; text-align: center; font-weight: bold; color: #856404; font-size: 1.1em; margin-bottom: 25px; }
+    
+    .control-card { background: #fff; border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-left: 5px solid #28a745; }
+    .control-card h2 { color: #28a745; font-size: 1.4em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    
+    .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 10px; margin-top: 15px; }
+    .button-grid button { padding: 12px; border: 2px solid #28a745; background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); color: #28a745; border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+    .button-grid button:hover { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3); }
+    .button-grid button.active { background: #28a745; color: #fff; }
+    
+    .main-controls-section { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .main-controls-section h2 { color: #2e7d32; font-size: 1.4em; margin-bottom: 20px; }
+    
+    .btn-custom { padding: 12px 24px; font-size: 1.05em; font-weight: 600; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+    .btn-start { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: #fff; }
+    .btn-start:hover:not(:disabled) { background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3); }
+    .btn-stop { background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: #fff; }
+    .btn-stop:hover:not(:disabled) { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); }
+    .btn-stop:disabled, .btn-start:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-clear { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: #fff; }
+    .btn-clear:hover { background: linear-gradient(135deg, #c82333 0%, #bd2130 100%); }
+    .btn-random { background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: #fff; }
+    .btn-random:hover { background: linear-gradient(135deg, #5a32a3 0%, #4c2a8f 100%); }
+    
+    .speed-control { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .speed-control input[type="range"] { flex: 1; min-width: 200px; }
+    
+    .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+    .option-card { background: #fff; padding: 15px; border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; }
+    .option-card:hover { border-color: #28a745; background: #f8fff9; transform: translateY(-2px); }
+    
+    .outputs-section { background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); border-radius: 15px; padding: 30px; margin: 30px 0; box-shadow: 0 6px 20px rgba(0,0,0,0.1); border-top: 5px solid #28a745; }
+    .outputs-section h2 { color: #28a745; font-size: 1.8em; margin-bottom: 25px; text-align: center; }
+    .output-group { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); border-left: 4px solid #28a745; }
+    .output-label { display: block; font-weight: 700; color: #495057; margin-bottom: 12px; font-size: 1.1em; }
+    .output-box { width: 100%; min-height: 80px; padding: 15px; border: 2px solid #dee2e6; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.95em; background: #f8f9fa; resize: vertical; transition: all 0.3s ease; }
+    .output-box:focus { outline: none; border-color: #28a745; background: #fff; box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25); }
+    
+    .content-divider { border: none; height: 3px; background: linear-gradient(90deg, transparent, #28a745, transparent); margin: 50px 0; }
+    
+    .edu-intro-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 35px; border-radius: 15px; margin: 40px 0; border-left: 6px solid #28a745; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .edu-intro-section h2 { color: #2c3e50; font-size: 2em; margin-bottom: 25px; }
+    .edu-intro-section p { color: #34495e; line-height: 1.9; margin-bottom: 18px; font-size: 1.08em; }
+    
+    .edu-warning-section { background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%); border: 3px solid #e74c3c; border-radius: 15px; padding: 30px; margin: 40px 0; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2); }
+    .edu-warning-section h3 { color: #c0392b; font-size: 1.6em; margin-bottom: 20px; }
+    .edu-warning-section p, .edu-warning-section ul { color: #7f1d1d; line-height: 1.8; font-size: 1.05em; }
+    
+    .puzzle-section { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 35px; border-radius: 15px; margin: 40px 0; border-left: 6px solid #ff9800; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2); }
+    .puzzle-section h2 { color: #e65100; font-size: 2em; margin-bottom: 25px; }
+    .puzzle-section h3 { color: #ef6c00; font-size: 1.5em; margin: 25px 0 15px; }
+    .puzzle-section p { color: #4e342e; line-height: 1.9; margin-bottom: 18px; font-size: 1.05em; }
+    .puzzle-section ul { margin-left: 30px; color: #4e342e; }
+    .puzzle-section ul li { margin-bottom: 12px; line-height: 1.7; }
+    .puzzle-highlight { background: #fff; padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #ff9800; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    
+    .edu-content-section { background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%); padding: 35px; border-radius: 15px; margin: 40px 0; border-left: 6px solid #00acc1; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .edu-content-section h2 { color: #006064; font-size: 2em; margin-bottom: 25px; }
+    .edu-content-section h3 { color: #00838f; font-size: 1.5em; margin: 30px 0 18px; }
+    .edu-content-section p { color: #004d40; line-height: 1.9; margin-bottom: 18px; font-size: 1.05em; }
+    .edu-content-section ul { margin-left: 30px; color: #004d40; }
+    .edu-content-section ul li { margin-bottom: 12px; line-height: 1.7; }
+    .edu-content-section code { background: #fff; padding: 3px 8px; border-radius: 4px; color: #c0392b; font-size: 0.95em; }
+    
+    .edu-faq-section { background: #fff; padding: 35px; border-radius: 15px; margin: 40px 0; box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .edu-faq-section h2 { color: #2c3e50; font-size: 2em; margin-bottom: 30px; text-align: center; }
+    .edu-faq-item { margin-bottom: 25px; padding: 25px; background: #f8f9fa; border-radius: 12px; border-left: 5px solid #28a745; transition: all 0.3s ease; }
+    .edu-faq-item:hover { background: #e8f5e9; transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .edu-faq-item h4 { color: #28a745; font-size: 1.3em; margin-bottom: 12px; }
+    .edu-faq-item p { color: #555; line-height: 1.8; font-size: 1.05em; }
+    
+    .navbar { background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); border-bottom: 3px solid #28a745; margin-bottom: 0; padding: 15px 0; }
+    .navbar-brand { font-size: 1.1em; transition: all 0.3s ease; margin-right: 20px; }
+    .navbar-brand:hover { transform: translateY(-2px); color: #20c997 !important; }
+    
+    .site-footer { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: #ecf0f1; padding: 40px 0 20px; margin-top: 60px; }
+    .footer-nav a { color: #ecf0f1; text-decoration: none; transition: all 0.3s ease; font-size: 0.9em; }
+    .footer-nav a:hover { color: #28a745; text-decoration: underline; }
+    
+    @media (max-width: 992px) {
+      .main-wrapper { flex-direction: column; }
+      .sidebar { width: 100%; position: static; }
+      .hero-section h1 { font-size: 2em; }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section { padding: 30px 20px; }
+      .hero-section h1 { font-size: 1.6em; }
+      .button-grid { grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); }
+      .btn-custom { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-blog"></i> @CanalQb
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-flask"></i> Nova Versão
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-key"></i> Btckeygen
+      </a>
     </div>
-<!-- Canvas Centralizado -->
-<div class="canvas-container">
-  <canvas id="grid" width="700" height="600" aria-label="Matriz interativa para seleção de células"></canvas>
-</div>
+  </nav>
 
-<!-- Indicador de Faixa -->
-<div class="range-indicator" aria-live="polite">
-  Faixa ativa: Linha <span id="activeRangeLabel">1 até 16</span>
-</div>
+  <div class="main-wrapper">
+    <aside class="sidebar">
+      <h3><i class="fas fa-link"></i> Links Úteis</h3>
+      <ul class="sidebar-links">
+        <li><a href="https://bitcoin.org/" target="_blank" rel="noopener noreferrer"><i class="fab fa-bitcoin"></i> Bitcoin.org</a></li>
+        <li><a href="https://github.com/bitcoin/bitcoin" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Bitcoin GitHub</a></li>
+        <li><a href="https://en.bitcoin.it/wiki/Secp256k1" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i> Curva secp256k1</a></li>
+        <li><a href="https://www.blockchain.com/explorer" target="_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> Blockchain Explorer</a></li>
+        <li><a href="https://en.bitcoin.it/wiki/Private_key" target="_blank" rel="noopener noreferrer"><i class="fas fa-key"></i> Wiki Private Keys</a></li>
+        <li><a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer"><i class="fas fa-tools"></i> BTC Keygen</a></li>
+      </ul>
+      
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-info-circle"></i> Sobre o Projeto</h4>
+        <p style="font-size:0.95em;color:#6c757d;line-height:1.6;">
+          Esta ferramenta educacional demonstra visualmente como as chaves privadas Bitcoin são geradas a partir de números binários de 256 bits.
+        </p>
+      </div>
+      
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
+        <p style="font-size:0.9em;color:#dc3545;line-height:1.5;">
+          <strong>Nunca</strong> use chaves geradas online para armazenar Bitcoin real. Apenas para fins educacionais.
+        </p>
+      </div>
+    </aside>
 
-<!-- Controles de Altura e Base -->
-<div class="control-card">
-  <h2><i class="fas fa-sliders-h"></i> Selecionar Altura (Linha Inicial)</h2>
-  <div id="heightButtons" class="button-grid" role="group" aria-label="Botões para selecionar altura"></div>
+    <main class="main-content">
+      <div class="hero-section">
+        <h1>🔐 Gerador de Private Keys Bitcoin</h1>
+        <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
+      </div>
 
-  <h2 class="mt-4"><i class="fas fa-arrows-alt-v"></i> Selecionar Base (Linha Final)</h2>
-  <div id="baseButtons" class="button-grid" role="group" aria-label="Botões para selecionar base"></div>
-</div>
+      <div class="canvas-container">
+        <canvas id="grid" width="700" height="600"></canvas>
+      </div>
 
-<!-- Controles Principais -->
-<div class="main-controls-section">
-  <h2><i class="fas fa-gamepad"></i> Controles Principais</h2>
-  <div class="d-flex gap-2 flex-wrap">
-    <button id="startBtn" class="btn-custom btn-start" aria-pressed="false" aria-label="Iniciar geração">
-      <i class="fas fa-play"></i> Iniciar
-    </button>
-    <button id="stopBtn" class="btn-custom btn-stop" disabled aria-pressed="false" aria-label="Parar geração">
-      <i class="fas fa-pause"></i> Parar
-    </button>
-    <button id="clearBtn" class="btn-custom btn-clear" aria-label="Limpar seleção">
-      <i class="fas fa-trash"></i> Limpar
-    </button>
-    <button id="randBtn" class="btn-custom btn-random" aria-label="Aleatorizar matriz">
-      <i class="fas fa-dice"></i> Aleatorizar
-    </button>
+      <div class="range-indicator">
+        Faixa ativa: Linha <span id="activeRangeLabel">1 até 16</span>
+      </div>
+
+      <div class="control-card">
+        <h2><i class="fas fa-sliders-h"></i> Selecionar Altura (Linha Inicial)</h2>
+        <div id="heightButtons" class="button-grid"></div>
+
+        <h2 class="mt-4"><i class="fas fa-arrows-alt-v"></i> Selecionar Base (Linha Final)</h2>
+        <div id="baseButtons" class="button-grid"></div>
+      </div>
+
+      <div class="main-controls-section">
+        <h2><i class="fas fa-gamepad"></i> Controles Principais</h2>
+        <div class="d-flex gap-2 flex-wrap">
+          <button id="startBtn" class="btn-custom btn-start">
+            <i class="fas fa-play"></i> Iniciar
+          </button>
+          <button id="stopBtn" class="btn-custom btn-stop" disabled>
+            <i class="fas fa-pause"></i> Parar
+          </button>
+          <button id="clearBtn" class="btn-custom btn-clear">
+            <i class="fas fa-trash"></i> Limpar
+          </button>
+          <button id="randBtn" class="btn-custom btn-random">
+            <i class="fas fa-dice"></i> Aleatorizar
+          </button>
+        </div>
+      </div>
+
+      <div class="control-card">
+        <h2><i class="fas fa-cogs"></i> Configurações Avançadas</h2>
+        
+        <div class="speed-control d-flex align-items-center gap-3">
+          <label for="speed" class="fw-semibold mb-0"><i class="fas fa-tachometer-alt"></i> Velocidade:</label>
+          <input type="range" class="form-range" id="speed" min="1" max="1000" step="1" value="500" />
+          <span id="speedLabel" class="fw-bold text-primary">500 ms</span>
+        </div>
+
+        <div class="options-grid">
+          <label class="option-card">
+            <input type="radio" name="mode" value="sequential" checked />
+            <span><i class="fas fa-stream"></i> Sequencial (H)</span>
+          </label>
+
+          <label class="option-card">
+            <input type="radio" name="mode" value="vertical" />
+            <span><i class="fas fa-arrows-alt-v"></i> Sequencial (V)</span>
+          </label>
+
+          <label class="option-card">
+            <input type="checkbox" id="toggleOnClick" checked />
+            <span><i class="fas fa-mouse-pointer"></i> Clique alterna célula</span>
+          </label>
+
+          <label class="option-card">
+            <input type="checkbox" id="randomizeStatesOnStep" />
+            <span><i class="fas fa-random"></i> Aleatorizar no passo</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="outputs-section">
+        <h2><i class="fas fa-key"></i> Chaves Geradas</h2>
+        
+        <div class="output-group">
+          <label for="hexBox" class="output-label">
+            <i class="fas fa-hashtag"></i> 🔑 Private Key HEX (64 caracteres)
+          </label>
+          <textarea id="hexBox" class="output-box form-control" readonly></textarea>
+        </div>
+
+        <div class="output-group">
+          <label for="wifBox" class="output-label">
+            <i class="fas fa-wallet"></i> 💼 WIF Comprimido
+          </label>
+          <textarea id="wifBox" class="output-box form-control" readonly></textarea>
+        </div>
+
+        <div class="output-group">
+          <label for="wifBoxUncompressed" class="output-label">
+            <i class="fas fa-box-open"></i> 📦 WIF Não Comprimido
+          </label>
+          <textarea id="wifBoxUncompressed" class="output-box form-control" readonly></textarea>
+        </div>
+      </div>
+
+      <hr class="content-divider">
+
+      <section class="puzzle-section">
+        <h2>🧩 O Desafio do Puzzle 1000 BTC</h2>
+        <p>
+          O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
+        </p>
+
+        <h3>Como Funciona o Puzzle?</h3>
+        <p>
+          Cada endereço do puzzle possui uma private key que está limitada a uma faixa específica de bits. Por exemplo:
+        </p>
+        <ul>
+          <li><strong>Puzzle #1:</strong> 1 bit (faixa: 1)</li>
+          <li><strong>Puzzle #10:</strong> 10 bits (faixa: 512 a 1023)</li>
+          <li><strong>Puzzle #66:</strong> 66 bits (já encontrado em 2023)</li>
+          <li><strong>Puzzle #130:</strong> 130 bits (ainda não resolvido)</li>
+          <li><strong>Puzzle #256:</strong> 256 bits completos (praticamente impossível por força bruta)</li>
+        </ul>
+
+        <div class="puzzle-highlight">
+          <h3><i class="fas fa-trophy"></i> Status Atual do Puzzle</h3>
+          <p>
+            Até o momento, mais de 160 puzzles foram resolvidos pela comunidade. Os puzzles mais difíceis (acima de 66 bits) requerem poder computacional massivo ou algoritmos avançados de busca. A cada puzzle resolvido, a dificuldade aumenta exponencialmente.
+          </p>
+          <p>
+            <strong>Recompensa total ainda disponível:</strong> Aproximadamente 840 BTC distribuídos nos puzzles não resolvidos (valores podem variar com o preço do Bitcoin).
+          </p>
+        </div>
+
+        <h3>Como Esta Ferramenta Ajuda?</h3>
+        <p>
+          Este gerador permite explorar faixas específicas de chaves privadas ajustando as linhas da matriz. Ao selecionar altura e base, você define o intervalo de bits ativos, possibilitando:
+        </p>
+        <ul>
+          <li>Testar teorias sobre padrões em chaves privadas</li>
+          <li>Compreender a distribuição estatística de endereços Bitcoin</li>
+          <li>Explorar educacionalmente as faixas dos puzzles conhecidos</li>
+          <li>Desenvolver algoritmos de busca mais eficientes</li>
+        </ul>
+
+        <h3>Endereços Oficiais do Puzzle</h3>
+        <p>
+          O criador do puzzle publicou os endereços originais em <a href="https://privatekeys.pw/puzzles/bitcoin-puzzle-tx" target="_blank" rel="noopener noreferrer" style="color:#e65100;font-weight:bold;">Privatekeys.pw/puzzles</a>. Você pode verificar quais puzzles ainda possuem saldo e monitorar tentativas da comunidade em tempo real.
+        </p>
+
+        <div class="puzzle-highlight">
+          <h3><i class="fas fa-exclamation-triangle"></i> Aviso Importante</h3>
+          <p>
+            Embora resolver um puzzle seja tecnicamente possível, as chances são extremamente baixas para puzzles acima de 70 bits. Participar dessa busca requer investimento massivo em hardware especializado (ASICs, GPUs) e conhecimento avançado em criptografia. Esta ferramenta é educacional e não garante sucesso na resolução de puzzles.
+          </p>
+        </div>
+      </section>
+
+      <section class="edu-intro-section">
+        <h2>🎓 O Que São Private Keys do Bitcoin?</h2>
+        <p>
+          Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin. Sem a private key, é impossível mover fundos de um endereço.
+        </p>
+        <p>
+          Este gerador educacional demonstra como as chaves privadas são criadas usando uma matriz interativa de 16×16 células. Cada célula pode estar em estado "ativo" (1) ou "inativo" (0), formando um número binário de 256 bits que é posteriormente convertido para formato hexadecimal (64 caracteres) e WIF (Wallet Import Format).
+        </p>
+        <p>
+          O Bitcoin utiliza a <strong>curva elíptica secp256k1</strong> para gerar pares de chaves pública-privada. A private key é um número aleatório entre 1 e aproximadamente 2²⁵⁶, o que garante um espaço de possibilidades tão vasto que torna praticamente impossível adivinhar ou gerar a mesma chave duas vezes por acaso.
+        </p>
+        <p>
+          <strong>Aplicações práticas:</strong> Desenvolvedores, estudantes de criptografia e entusiastas podem usar esta ferramenta para entender os fundamentos matemáticos do Bitcoin, testar algoritmos de geração de endereços e explorar conceitos como entropia, aleatoriedade criptográfica e funções hash.
+        </p>
+      </section>
+
+      <section class="edu-warning-section">
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA</h3>
+        <p>
+          <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração. Chaves geradas em ambientes conectados à internet são consideradas comprometidas.
+        </p>
+        <p><strong>Por que isso é perigoso?</strong></p>
+        <ul>
+          <li>Qualquer código JavaScript executado no navegador pode ser interceptado</li>
+          <li>Extensões maliciosas podem capturar dados sensíveis</li>
+          <li>Conexões de rede podem ser monitoradas</li>
+          <li>Não há garantia de aleatoriedade verdadeira em geradores web</li>
+        </ul>
+        <p>
+          <strong>Para armazenamento real de Bitcoin:</strong> Use carteiras hardware (Ledger, Trezor), carteiras de papel geradas offline em computadores air-gapped, ou software de código aberto auditado pela comunidade como Electrum ou Bitcoin Core.
+        </p>
+      </section>
+
+      <section class="edu-content-section">
+        <h2>📚 Como Funciona a Geração de Chaves Bitcoin</h2>
+        
+        <h3>1. Geração de Entropia</h3>
+        <p>
+          A segurança do Bitcoin começa com a <strong>entropia</strong> — aleatoriedade verdadeira. Uma private key segura requer 256 bits de entropia completamente aleatórios. Esta ferramenta simula esse processo através de uma matriz visual onde você pode manipular cada bit individualmente.
+        </p>
+        
+        <h3>2. Formato Hexadecimal (HEX)</h3>
+        <p>
+          O formato HEX representa a private key como 64 caracteres hexadecimais (0-9, A-F). Cada caractere hexadecimal representa 4 bits, então 64 caracteres = 256 bits. Exemplo: <code>5KJvsngHeMpm884wtkJNzQGaCErckhHJBGFsvd3VyK5qMZXj3Vi</code>
+        </p>
+        
+        <h3>3. WIF Comprimido vs Não Comprimido</h3>
+        <p>
+          <strong>WIF (Wallet Import Format)</strong> é um padrão para codificar private keys de forma mais legível e segura:
+        </p>
+        <ul>
+          <li><strong>WIF Comprimido:</strong> Começa com 'K' ou 'L', indica que a chave pública derivada deve ser comprimida (33 bytes em vez de 65)</li>
+          <li><strong>WIF Não Comprimido:</strong> Começa com '5', usa formato de chave pública não comprimida</li>
+          <li>Ambos derivam o mesmo par de chaves, mas geram endereços Bitcoin diferentes</li>
+        </ul>
+        
+        <h3>4. Curva Elíptica secp256k1</h3>
+        <p>
+          O Bitcoin usa a curva <strong>secp256k1</strong> definida pela equação y² = x³ + 7. A private key é multiplicada pelo ponto gerador da curva para produzir a chave pública. Esta operação é unidirecional: fácil de calcular, impossível de reverter.
+        </p>
+      </section>
+
+      <section class="edu-faq-section">
+        <h2>❓ Perguntas Frequentes</h2>
+        
+        <div class="edu-faq-item">
+          <h4>Posso usar esta ferramenta para criar uma carteira Bitcoin real?</h4>
+          <p>
+            <strong>NÃO!</strong> Esta é uma ferramenta exclusivamente educacional. Chaves geradas online são consideradas comprometidas e inseguras. Use sempre carteiras hardware ou software offline auditado para valores reais.
+          </p>
+        </div>
+        
+        <div class="edu-faq-item">
+          <h4>Qual a diferença entre WIF comprimido e não comprimido?</h4>
+          <p>
+            Ambos representam a mesma private key, mas indicam formatos diferentes de chave pública. WIF comprimido (começa com K ou L) gera endereços menores e mais eficientes. WIF não comprimido (começa com 5) é o formato legado.
+          </p>
+        </div>
+        
+        <div class="edu-faq-item">
+          <h4>Como funciona a matriz 16×16?</h4>
+          <p>
+            A matriz possui 256 células (16 linhas × 16 colunas). Cada célula representa um bit (0 ou 1). O estado completo da matriz forma um número binário de 256 bits que é convertido para HEX e WIF. Você pode clicar nas células para alternar seus estados manualmente.
+          </p>
+        </div>
+        
+        <div class="edu-faq-item">
+          <h4>Posso realmente encontrar Bitcoin resolvendo o Puzzle 1000 BTC?</h4>
+          <p>
+            Tecnicamente sim, mas as chances são extremamente baixas para puzzles acima de 70 bits. Resolver puzzles requer poder computacional massivo e conhecimento avançado. Esta ferramenta serve para fins educacionais e experimentação.
+          </p>
+        </div>
+      </section>
+
+      <footer class="site-footer mt-5 pt-4 border-top">
+        <nav class="footer-nav container">
+          <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
+            <li><a href="#about">About</a></li>
+            <li><a href="#privacy">Privacidade</a></li>
+            <li><a href="#terms">Termos de Uso</a></li>
+            <li><a href="#disclaimer">Disclaimer</a></li>
+            <li><a href="#contacts">Contatos</a></li>
+          </ul>
+        </nav>
+        <div class="text-center mt-3 small text-muted">
+          © 2025 @CanalQb — Rodrigo Carlos Moraes<br />
+          Gerador de private keys Bitcoin - Puzzle 1000 BTC
+        </div>
+      </footer>
+    </main>
   </div>
-</div>
 
-<!-- Controles de Velocidade e Opções -->
-<div class="control-card">
-  <h2><i class="fas fa-cogs"></i> Configurações Avançadas</h2>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/elliptic@6.5.4/dist/elliptic.min.js"></script>
   
-  <div class="speed-control d-flex align-items-center gap-3">
-    <label for="speed" class="fw-semibold mb-0"><i class="fas fa-tachometer-alt"></i> Velocidade:</label>
-    <input type="range" class="form-range" id="speed" min="1" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-label="Controle de velocidade da geração" />
-    <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">500 ms</span>
-  </div>
+  <script>
+    // INÍCIO DO SCRIPT AUTO16.JS - NÃO MODIFICADO
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d');
+    const rows = 16, cols = 16, cellSize = 40;
+    let grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
+    let activeHeight = 1, activeBase = 16, running = false, intervalId = null;
+    let currentRow = 1, currentCol = 0, speed = 500;
+    let mode = 'sequential', toggleOnClick = true, randomizeStatesOnStep = false;
 
-  <div class="options-grid">
-    <label class="option-card">
-      <input type="radio" name="mode" value="sequential" checked aria-checked="true" />
-      <span><i class="fas fa-stream"></i> Sequencial (H)</span>
-    </label>
+    function drawGrid() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * cellSize + 50;
+          const y = r * cellSize + 50;
+          const inActiveRange = (r + 1) >= activeHeight && (r + 1) <= activeBase;
+          
+          if (grid[r][c] === 1) {
+            ctx.fillStyle = '#28a745';
+          } else if (inActiveRange) {
+            ctx.fillStyle = '#e0e0e0';
+          } else {
+            ctx.fillStyle = '#f5f5f5';
+          }
+          
+          ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
+          ctx.strokeStyle = '#ccc';
+          ctx.strokeRect(x, y, cellSize - 2, cellSize - 2);
+          
+          ctx.fillStyle = '#000';
+          ctx.font = '12px Arial';
+          ctx.fillText(grid[r][c], x + cellSize / 2 - 5, y + cellSize / 2 + 5);
+        }
+      }
+      
+      for (let r = 0; r < rows; r++) {
+        ctx.fillStyle = '#000';
+        ctx.font = '14px Arial';
+        ctx.fillText(r + 1, 20, r * cellSize + 50 + cellSize / 2 + 5);
+      }
+    }
 
-    <label class="option-card">
-      <input type="radio" name="mode" value="vertical" aria-checked="false" />
-      <span><i class="fas fa-arrows-alt-v"></i> Sequencial (V)</span>
-    </label>
+    function updateOutputs() {
+      let binary = '';
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          binary += grid[r][c];
+        }
+      }
+      
+      const hex = BigInt('0b' + binary).toString(16).padStart(64, '0');
+      document.getElementById('hexBox').value = hex;
+      
+      try {
+        const wifCompressed = hexToWIF(hex, true);
+        const wifUncompressed = hexToWIF(hex, false);
+        document.getElementById('wifBox').value = wifCompressed;
+        document.getElementById('wifBoxUncompressed').value = wifUncompressed;
+      } catch (e) {
+        document.getElementById('wifBox').value = 'Erro na conversão';
+        document.getElementById('wifBoxUncompressed').value = 'Erro na conversão';
+      }
+    }
 
-    <label class="option-card">
-      <input type="checkbox" id="toggleOnClick" checked aria-checked="true" />
-      <span><i class="fas fa-mouse-pointer"></i> Clique alterna célula</span>
-    </label>
+    function hexToWIF(hex, compressed = true) {
+      const prefix = '80';
+      const suffix = compressed ? '01' : '';
+      const extended = prefix + hex + suffix;
+      const hash1 = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(extended));
+      const hash2 = CryptoJS.SHA256(hash1);
+      const checksum = hash2.toString().substr(0, 8);
+      const final = extended + checksum;
+      return base58Encode(final);
+    }
 
-    <label class="option-card">
-      <input type="checkbox" id="randomizeStatesOnStep" aria-checked="false" />
-      <span><i class="fas fa-random"></i> Aleatorizar no passo</span>
-    </label>
-  </div>
-</div>
+    function base58Encode(hex) {
+      const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      let num = BigInt('0x' + hex);
+      let encoded = '';
+      while (num > 0) {
+        encoded = alphabet[Number(num % 58n)] + encoded;
+        num = num / 58n;
+      }
+      for (let i = 0; i < hex.length && hex[i] === '0' && hex[i + 1] === '0'; i += 2) {
+        encoded = '1' + encoded;
+      }
+      return encoded;
+    }
 
-<!-- Seção de Outputs -->
-<div class="outputs-section">
-  <h2><i class="fas fa-key"></i> Chaves Geradas</h2>
-  
-  <div class="output-group">
-    <label for="hexBox" class="output-label">
-      <i class="fas fa-hashtag"></i> 🔑 Private Key HEX (64 caracteres)
-    </label>
-    <textarea id="hexBox" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada em formato HEX"></textarea>
-  </div>
+    function step() {
+      if (mode === 'sequential') {
+        if (currentRow < activeHeight || currentRow > activeBase) {
+          currentRow = activeHeight;
+          currentCol = 0;
+        }
+        
+        if (randomizeStatesOnStep) {
+          grid[currentRow - 1][currentCol] = Math.random() < 0.5 ? 0 : 1;
+        } else {
+          grid[currentRow - 1][currentCol] = 1 - grid[currentRow - 1][currentCol];
+        }
+        
+        currentCol++;
+        if (currentCol >= cols) {
+          currentCol = 0;
+          currentRow++;
+          if (currentRow > activeBase) {
+            currentRow = activeHeight;
+          }
+        }
+      } else if (mode === 'vertical') {
+        if (currentRow < activeHeight || currentRow > activeBase) {
+          currentRow = activeHeight;
+          currentCol = 0;
+        }
+        
+        if (randomizeStatesOnStep) {
+          grid[currentRow - 1][currentCol] = Math.random() < 0.5 ? 0 : 1;
+        } else {
+          grid[currentRow - 1][currentCol] = 1 - grid[currentRow - 1][currentCol];
+        }
+        
+        currentRow++;
+        if (currentRow > activeBase) {
+          currentRow = activeHeight;
+          currentCol++;
+          if (currentCol >= cols) {
+            currentCol = 0;
+          }
+        }
+      }
+      
+      drawGrid();
+      updateOutputs();
+    }
 
-  <div class="output-group">Continuar14:49
+    document.getElementById('startBtn').addEventListener('click', () => {
+      if (!running) {
+        running = true;
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('stopBtn').disabled = false;
+        intervalId = setInterval(step, speed);
+      }
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      if (running) {
+        running = false;
+        clearInterval(intervalId);
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+      }
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
+      drawGrid();
+      updateOutputs();
+    });
+
+    document.getElementById('randBtn').addEventListener('click', () => {
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          grid[r][c] = Math.random() < 0.5 ? 0 : 1;
+        }
+      }
+      drawGrid();
+      updateOutputs();
+    });
+
+    canvas.addEventListener('click', (e) => {
+      if (!toggleOnClick) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left - 50;
+      const y = e.clientY - rect.top - 50;
+      const col = Math.floor(x / cellSize);
+      const row = Math.floor(y / cellSize);
+      
+      if (row >= 0 && row < rows && col >= 0 && col < cols) {
+        grid[row][col] = 1 - grid[row][col];
+        drawGrid();
+        updateOutputs();
+      }
+    });
+
+    document.getElementById('speed').addEventListener('input', (e) => {
+      speed = parseInt(e.target.value);
+      document.getElementById('speedLabel').textContent = speed + ' ms';
+      if (running) {
+        clearInterval(intervalId);
+        intervalId = setInterval(step, speed);
+      }
+    });
+
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        mode = e.target.value;
+      });
+    });
+
+    document.getElementById('toggleOnClick').addEventListener('change', (e) => {
+      toggleOnClick = e.target.checked;
+    });
+
+    document.getElementById('randomizeStatesOnStep').addEventListener('change', (e) => {
+      randomizeStatesOnStep = e.target.checked;
+    });
+
+    // Criar botões de altura
+    const heightButtonsContainer = document.getElementById('heightButtons');
+    for (let i = 1; i <= 16; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = i === 1 ? 'active' : '';
+      btn.addEventListener('click', () => {
+        activeHeight = i;
+        if (activeHeight > activeBase) activeBase = activeHeight;
+        document.querySelectorAll('#heightButtons button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('activeRangeLabel').textContent = activeHeight + ' até ' + activeBase;
+        drawGrid();
+      });
+      heightButtonsContainer.appendChild(btn);
+    }
+
+    // Criar botões de base
+    const baseButtonsContainer = document.getElementById('baseButtons');
+    for (let i = 1; i <= 16; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = i === 16 ? 'active' : '';
+      btn.addEventListener('click', () => {
+        activeBase = i;
+        if (activeBase < activeHeight) activeHeight = activeBase;
+        document.querySelectorAll('#baseButtons button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('activeRangeLabel').textContent = activeHeight + ' até ' + activeBase;
+        drawGrid();
+      });
+      baseButtonsContainer.appendChild(btn);
+    }
+
+    drawGrid();
+    updateOutputs();
+  </script>
+</body>
+</html>
