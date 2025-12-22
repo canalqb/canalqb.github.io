@@ -299,18 +299,17 @@ h1 {
   overflow: hidden;
   animation: slideIn 0.5s ease-out;
 }
- 
+
 textarea[readonly] {
-  user-select: none;          /* evita seleção do texto */
-  pointer-events: none;       /* bloqueia clique e foco */
-  
-  scrollbar-width: none;      /* Firefox */
-  -ms-overflow-style: none;   /* IE e Edge */
-  overflow: auto;             /* mantém scroll funcional */
+  user-select: none;
+  pointer-events: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow: auto;
 }
 
 textarea[readonly]::-webkit-scrollbar {
-  display: none;              /* Chrome, Safari, Opera */
+  display: none;
 }
 
 @keyframes slideIn {
@@ -366,7 +365,6 @@ section > div {
   display: none;
 }
 
-/* Adiciona uma transição suave */
 section > p,
 section > div {
   transition: max-height 0.3s ease;
@@ -378,7 +376,7 @@ section > div {
 section.expanded > p,
 section.expanded > div {
   display: block;
-  max-height: 1000px; /* valor maior para a transição */
+  max-height: 1000px;
 }
 
 /* Estilo do ícone de seta */
@@ -417,4 +415,36 @@ section.active div {
 
 section.active h2 .toggle-icon {
   transform: rotate(180deg);
+}
+
+/* Centraliza o canvas dentro do container */
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+/* Faz o canvas se ajustar responsivamente */
+#grid {
+  max-width: 100%; /* Faz com que o canvas ocupe até 100% da largura disponível */
+  max-height: 500px; /* Limita a altura máxima do canvas */
+  width: 100%; /* Faz com que o canvas ocupe 100% da largura disponível */
+  height: auto; /* Ajusta a altura de forma proporcional */
+  border: 1px solid #ccc; /* Apenas para adicionar uma borda visível */
+}
+
+/* Adiciona responsividade para telas menores */
+@media (max-width: 768px) {
+  #grid {
+    max-height: 300px; /* Ajusta a altura máxima em dispositivos móveis */
+  }
+}
+
+@media (max-width: 576px) {
+  #grid {
+    max-height: 200px; /* Ajusta ainda mais em telas menores */
+  }
 }
