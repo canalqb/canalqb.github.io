@@ -214,12 +214,11 @@
       <hr class="content-divider">
 
       <!-- SEÇÃO PUZZLE 1000 BTC -->
-      <section class="puzzle-section">
-        <h2>🧩 O Desafio do Puzzle 1000 BTC</h2>
+      <section class="puzzle-section"> 
+        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down toggle-icon"></i></h2>
         <p>
           O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
         </p>
-
         <h3>Como Funciona o Puzzle?</h3>
         <p>
           Cada endereço do puzzle possui uma private key que está limitada a uma faixa específica de bits. Por exemplo:
@@ -231,7 +230,7 @@
           <li><strong>Puzzle #130:</strong> 130 bits (ainda não resolvido)</li>
           <li><strong>Puzzle #256:</strong> 256 bits completos (praticamente impossível por força bruta)</li>
         </ul>
-
+        
         <div class="puzzle-highlight">
           <h3><i class="fas fa-trophy"></i> Status Atual do Puzzle</h3>
           <p>
@@ -241,7 +240,7 @@
             <strong>Recompensa total ainda disponível:</strong> Aproximadamente 840 BTC distribuídos nos puzzles não resolvidos (valores podem variar com o preço do Bitcoin).
           </p>
         </div>
-
+      
         <h3>Como Esta Ferramenta Ajuda?</h3>
         <p>
           Este gerador permite explorar faixas específicas de chaves privadas ajustando as linhas da matriz. Ao selecionar altura e base, você define o intervalo de bits ativos, possibilitando:
@@ -252,12 +251,12 @@
           <li>Explorar educacionalmente as faixas dos puzzles conhecidos</li>
           <li>Desenvolver algoritmos de busca mais eficientes</li>
         </ul>
-
+      
         <h3>Endereços Oficiais do Puzzle</h3>
         <p>
           O criador do puzzle publicou os endereços originais em <a href="https://privatekeys.pw/puzzles/bitcoin-puzzle-tx" target="_blank" rel="noopener noreferrer" style="color:#e65100;font-weight:bold;">Privatekeys.pw/puzzles</a>. Você pode verificar quais puzzles ainda possuem saldo e monitorar tentativas da comunidade em tempo real.
         </p>
-
+      
         <div class="puzzle-highlight">
           <h3><i class="fas fa-exclamation-triangle"></i> Aviso Importante</h3>
           <p>
@@ -265,10 +264,9 @@
           </p>
         </div>
       </section>
-
-      <!-- SEÇÃO EDUCACIONAL INTRODUTÓRIA -->
+      
       <section class="edu-intro-section">
-        <h2>🎓 O Que São Private Keys do Bitcoin?</h2>
+        <h2>🎓 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down toggle-icon"></i></h2>
         <p>
           Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin. Sem a private key, é impossível mover fundos de um endereço.
         </p>
@@ -282,10 +280,9 @@
           <strong>Aplicações práticas:</strong> Desenvolvedores, estudantes de criptografia e entusiastas podem usar esta ferramenta para entender os fundamentos matemáticos do Bitcoin, testar algoritmos de geração de endereços e explorar conceitos como entropia, aleatoriedade criptográfica e funções hash.
         </p>
       </section>
-
-      <!-- AVISO DE SEGURANÇA -->
+      
       <section class="edu-warning-section">
-        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA</h3>
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down toggle-icon"></i></h3>
         <p>
           <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração. Chaves geradas em ambientes conectados à internet são consideradas comprometidas.
         </p>
@@ -300,21 +297,17 @@
           <strong>Para armazenamento real de Bitcoin:</strong> Use carteiras hardware (Ledger, Trezor), carteiras de papel geradas offline em computadores air-gapped, ou software de código aberto auditado pela comunidade como Electrum ou Bitcoin Core.
         </p>
       </section>
-
-      <!-- CONTEÚDO EDUCACIONAL DETALHADO -->
+      
       <section class="edu-content-section">
-        <h2>📚 Como Funciona a Geração de Chaves Bitcoin</h2>
-        
+        <h2>📚 Como Funciona a Geração de Chaves Bitcoin <i class="fas fa-chevron-down toggle-icon"></i></h2>
         <h3>1. Geração de Entropia</h3>
         <p>
           A segurança do Bitcoin começa com a <strong>entropia</strong> — aleatoriedade verdadeira. Uma private key segura requer 256 bits de entropia completamente aleatórios. Esta ferramenta simula esse processo através de uma matriz visual onde você pode manipular cada bit individualmente.
         </p>
-        
         <h3>2. Formato Hexadecimal (HEX)</h3>
         <p>
           O formato HEX representa a private key como 64 caracteres hexadecimais (0-9, A-F). Cada caractere hexadecimal representa 4 bits, então 64 caracteres = 256 bits. Exemplo: <code>5KJvsngHeMpm884wtkJNzQGaCErckhHJBGFsvd3VyK5qMZXj3Vi</code>
         </p>
-        
         <h3>3. WIF Comprimido vs Não Comprimido</h3>
         <p>
           <strong>WIF (Wallet Import Format)</strong> é um padrão para codificar private keys de forma mais legível e segura:
@@ -324,45 +317,29 @@
           <li><strong>WIF Não Comprimido:</strong> Começa com '5', usa formato de chave pública não comprimida</li>
           <li>Ambos derivam o mesmo par de chaves, mas geram endereços Bitcoin diferentes</li>
         </ul>
-        
         <h3>4. Curva Elíptica secp256k1</h3>
         <p>
           O Bitcoin usa a curva <strong>secp256k1</strong> definida pela equação y² = x³ + 7. A private key é multiplicada pelo ponto gerador da curva para produzir a chave pública. Esta operação é unidirecional: fácil de calcular, impossível de reverter.
         </p>
       </section>
-
-      <!-- FAQ -->
+      
       <section class="edu-faq-section">
-        <h2>❓ Perguntas Frequentes</h2>
-        
+        <h2>❓ Perguntas Frequentes <i class="fas fa-chevron-down toggle-icon"></i></h2>
         <div class="edu-faq-item">
           <h4>Posso usar esta ferramenta para criar uma carteira Bitcoin real?</h4>
           <p>
-            <strong>NÃO!</strong> Esta é uma ferramenta exclusivamente educacional. Chaves geradas online são consideradas comprometidas e inseguras. Use sempre carteiras hardware ou software offline auditado para valores reais.
+            <strong>NÃO!</strong> Esta é uma ferramenta educacional e NÃO deve ser usada para gerar chaves privadas de Bitcoin para armazenamento de fundos reais. Use sempre carteiras de hardware ou software com recursos de segurança auditados.
           </p>
         </div>
-        
         <div class="edu-faq-item">
-          <h4>Qual a diferença entre WIF comprimido e não comprimido?</h4>
+          <h4>O que significa "força bruta" no contexto de puzzles de Bitcoin?</h4>
           <p>
-            Ambos representam a mesma private key, mas indicam formatos diferentes de chave pública. WIF comprimido (começa com K ou L) gera endereços menores e mais eficientes. WIF não comprimido (começa com 5) é o formato legado.
-          </p>
-        </div>
-        
-        <div class="edu-faq-item">
-          <h4>Como funciona a matriz 16×16?</h4>
-          <p>
-            A matriz possui 256 células (16 linhas × 16 colunas). Cada célula representa um bit (0 ou 1). O estado completo da matriz forma um número binário de 256 bits que é convertido para HEX e WIF. Você pode clicar nas células para alternar seus estados manualmente.
-          </p>
-        </div>
-        
-        <div class="edu-faq-item">
-          <h4>Posso realmente encontrar Bitcoin resolvendo o Puzzle 1000 BTC?</h4>
-          <p>
-            Tecnicamente sim, mas as chances são extremamente baixas para puzzles acima de 70 bits. Resolver puzzles requer poder computacional massivo e conhecimento avançado. Esta ferramenta serve para fins educacionais e experimentação.
+            Força bruta é o método de tentativa e erro onde um computador tenta todas as combinações possíveis até encontrar a chave correta. Isso pode levar milhões de anos dependendo da complexidade do puzzle.
           </p>
         </div>
       </section>
+      
+
 
       <!-- Footer -->
       <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
