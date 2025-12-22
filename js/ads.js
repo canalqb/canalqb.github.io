@@ -40,91 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================
-  // GERENCIAMENTO DO ANÚNCIO FLUTUANTE
-  // ========================================
-  const floatingAd = document.getElementById('floatingAd');
-  const closeFloatingBtn = document.getElementById('closeFloatingAd');
-  let floatingAdTimer = null;
-  let autoCloseTimer = null;
-  let floatingAdClosed = false;
-
-  function showFloatingAd() {
-    if (!AD_CONFIG.enableFloating || !floatingAd || floatingAdClosed) return;
-
-    floatingAd.style.display = 'block';
-    console.log('📢 Anúncio flutuante exibido');
-
-    // Inicializa o anúncio dentro do flutuante se ainda não foi
-    const floatingAdElement = floatingAd.querySelector('.adsbygoogle');
-    if (floatingAdElement && !floatingAdElement.dataset.adsbygoogleStatus) {
-      try {
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        console.log('✅ Anúncio flutuante AdSense inicializado');
-      } catch (error) {
-        console.warn('⚠️ Erro ao inicializar anúncio flutuante:', error);
-      }
-    }
-
-    // Auto-fechar após delay (opcional)
-    if (AD_CONFIG.enableAutoClose) {
-      autoCloseTimer = setTimeout(() => {
-        hideFloatingAd();
-        console.log('⏱️ Anúncio flutuante fechado automaticamente');
-      }, AD_CONFIG.floatingCloseDelay);
-    }
-  }
-
-  function hideFloatingAd() {
-    if (!floatingAd) return;
-    
-    floatingAd.style.display = 'none';
-    floatingAdClosed = true;
-    
-    if (autoCloseTimer) {
-      clearTimeout(autoCloseTimer);
-      autoCloseTimer = null;
-    }
-    
-    console.log('❌ Anúncio flutuante fechado');
-  }
-
-  function scheduleFloatingAd() {
-    if (!AD_CONFIG.enableFloating) return;
-
-    // Primeira exibição após delay inicial
-    floatingAdTimer = setTimeout(() => {
-      showFloatingAd();
-
-      // Reexibir periodicamente se o usuário fechar
-      const reShowInterval = setInterval(() => {
-        if (floatingAdClosed) {
-          floatingAdClosed = false;
-          showFloatingAd();
-        }
-      }, AD_CONFIG.floatingShowInterval);
-
-      // Salva referência para limpeza se necessário
-      window.floatingAdInterval = reShowInterval;
-    }, AD_CONFIG.floatingDelay);
-  }
-
-  // Evento de fechar anúncio flutuante
-  if (closeFloatingBtn) {
-    closeFloatingBtn.addEventListener('click', () => {
-      hideFloatingAd();
-    });
-  }
-
-  // ========================================
   // MONITORAMENTO DE BLOQUEADORES DE ANÚNCIO
   // ========================================
   function detectAdBlocker() {
-    // Verifica se AdSense está carregado
+    // Verifica se o AdSense está carregado corretamente
     const adsbygoogleLoaded = typeof window.adsbygoogle !== 'undefined';
     
+    // Se o AdSense não estiver carregado, retorna true, indicando bloqueio
     if (!adsbygoogleLoaded) {
-      console.warn('⚠️ AdSense pode estar bloqueado ou não carregado');
-      showAdBlockWarning(false);  // <-- Mostra aviso de bloqueador apenas se AdSense não estiver carregado
+      console.warn('⚠️ AdSense não carregado corretamente ou bloqueado');
+      showAdBlockWarning(false);  // Mensagem de AdSense não aprovado
       return true;
     }
 
@@ -132,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const adElements = document.querySelectorAll('.adsbygoogle');
     let hasVisibleAd = false;
 
+    // Verifica se algum anúncio está visível na página
     adElements.forEach(ad => {
       const rect = ad.getBoundingClientRect();
       if (rect.height > 0 && rect.width > 0) {
@@ -139,12 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Se não houver anúncios visíveis ou o AdSense não carregou como esperado, mostramos o aviso
     if (!hasVisibleAd && adElements.length > 0) {
       console.warn('⚠️ Nenhum anúncio visível detectado');
-      showAdBlockWarning(true);  // <-- Mostra aviso caso AdSense esteja carregado mas bloqueado
+      showAdBlockWarning(true);  // Bloqueio de anúncios detectado
+      return true;  // Retorna verdadeiro indicando bloqueio
     }
 
-    return !hasVisibleAd && adElements.length > 0;
+    // Caso contrário, não há bloqueio
+    return false;
   }
 
   // ========================================
@@ -170,10 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
     warning.style.justifyContent = 'space-between';
     warning.style.alignItems = 'center';
 
-    // Se AdSense não tiver sido aprovado ainda, mostre uma mensagem apropriada
+    // Exibe mensagem diferente dependendo do status do AdSense
     const message = isAdsenseApproved
       ? '⚠️ Detectamos que você está usando um bloqueador de anúncios. Por favor, considere desativá-lo para apoiar nosso site.'
-      : '⚠️ AdSense ainda não foi aprovado para o seu site. Por favor, aguarde a aprovação para monetizar com AdSense.';
+      : '⚠️ O AdSense ainda não foi aprovado para o seu site. Por favor, aguarde a aprovação para monetizar com AdSense.';
 
     warning.innerHTML = `
       <span>${message}</span>
@@ -255,9 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 2000);
     }, 1000);
 
-    // Agenda anúncio flutuante
-    scheduleFloatingAd();
-
     // Track impressão inicial
     trackAdInteraction('page_load', 'ads_initialized');
   }
@@ -269,8 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // EXPORTA FUNÇÕES PÚBLICAS (OPCIONAL)
   // ========================================
   window.AdsManager = {
-    showFloating: showFloatingAd,
-    hideFloating: hideFloatingAd,
     refresh: initializeAds,
     config: AD_CONFIG
   };
@@ -278,24 +202,3 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('✅ ads.js carregado com sucesso');
 });
 
-// ========================================
-// FALLBACK PARA ANÚNCIOS NÃO CARREGADOS
-// ========================================
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const adElements = document.querySelectorAll('.adsbygoogle');
-    
-    adElements.forEach((ad, index) => {
-      // Verifica se o anúncio foi preenchido
-      const isEmpty = ad.innerHTML.trim() === '';
-      const hasNoHeight = ad.offsetHeight === 0;
-      
-      if (isEmpty || hasNoHeight) {
-        console.warn(`⚠️ Anúncio ${index + 1} pode não ter carregado corretamente`);
-        
-        // Opcional: adiciona placeholder ou mensagem
-        // ad.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">Anúncio</div>';
-      }
-    });
-  }, 3000);
-});
