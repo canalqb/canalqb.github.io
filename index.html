@@ -444,6 +444,16 @@
     });
   });
 </script>
+<script>
+  document.querySelectorAll('h2, h3').forEach(function(header) {
+  header.addEventListener('click', function() {
+    const parentSection = this.closest('section');
+    if (parentSection) {
+      parentSection.classList.toggle('active');
+    }
+  });
+});
 
+</script>
 </body>
 </html>
