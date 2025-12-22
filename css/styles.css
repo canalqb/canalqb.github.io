@@ -64,15 +64,28 @@ h1 {
 }
 
 #grid {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
   border: 3px solid #2d3748;
   border-radius: 8px;
   background: #fff;
   cursor: crosshair;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: block;
-  width: 512px;
-  height: 512px;
   touch-action: none;
+}
+
+@media (max-width: 768px) {
+  #grid {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+@media (max-width: 576px) {
+  #grid {
+    max-width: calc(100vw - 1rem);
+  }
 }
 
 .range-indicator {
@@ -359,92 +372,50 @@ textarea[readonly]::-webkit-scrollbar {
   accent-color: #667eea;
 }
 
-/* Esconde o conteúdo expandido inicialmente */
-section > p,
-section > div {
-  display: none;
+/* SECTIONS - CORRIGIDO */
+section h2 {
+  color: #1a202c;
+  font-weight: 700;
+  margin: 1.5rem 0 0 0;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-left: 4px solid #667eea;
 }
 
+section h2 span {
+  flex: 1;
+}
+
+section h2 i {
+  color: #667eea;
+  margin-left: 1rem;
+  transition: transform 0.3s ease;
+}
+
+/* Sections recolhidas por padrão */
 section > p,
-section > div {
-  transition: max-height 0.3s ease;
-  max-height: 0;
-  overflow: hidden;
+section > div,
+section > h3,
+section > ul,
+section > ol {
+  display: none;
 }
 
 /* Quando a seção está expandida */
-section.expanded > p,
-section.expanded > div {
-  display: block;
-  max-height: 1000px;
-}
-
-/* Estilo do ícone de seta */
-.toggle-icon {
-  margin-left: 10px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-/* Quando a seção estiver expandida, a seta vira para cima */
-section.expanded .toggle-icon {
-  transform: rotate(180deg);
-}
-
-/* Adicionando a animação e controle dos ícones */
-.toggle-icon {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-section > div {
-  display: none;
-  padding: 10px;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  margin-top: 10px;
-}
-
-section h2:hover .toggle-icon {
-  color: #e65100;
-}
-
-section.active div {
+section.active > p,
+section.active > div,
+section.active > h3,
+section.active > ul,
+section.active > ol {
   display: block;
 }
 
-section.active h2 .toggle-icon {
+/* Rotação do ícone quando expandido */
+section.active h2 i {
   transform: rotate(180deg);
-}
-
-/* Centraliza o canvas dentro do container */
-.canvas-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-}
-
-/* Faz o canvas se ajustar responsivamente */
-#grid {
-  max-width: 100%; /* Faz com que o canvas ocupe até 100% da largura disponível */
-  max-height: 500px; /* Limita a altura máxima do canvas */
-  width: 100%; /* Faz com que o canvas ocupe 100% da largura disponível */
-  height: auto; /* Ajusta a altura de forma proporcional */
-  border: 1px solid #ccc; /* Apenas para adicionar uma borda visível */
-}
-
-/* Adiciona responsividade para telas menores */
-@media (max-width: 768px) {
-  #grid {
-    max-height: 300px; /* Ajusta a altura máxima em dispositivos móveis */
-  }
-}
-
-@media (max-width: 576px) {
-  #grid {
-    max-height: 200px; /* Ajusta ainda mais em telas menores */
-  }
 }
