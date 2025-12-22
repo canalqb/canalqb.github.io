@@ -49,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Se o AdSense não estiver carregado, retorna true, indicando bloqueio
     if (!adsbygoogleLoaded) {
       console.warn('⚠️ AdSense não carregado corretamente ou bloqueado');
-      showAdBlockWarning(false);  // Mensagem de AdSense não aprovado
-      return true;
+      return true; // Indica que o bloqueador de anúncios foi detectado
     }
 
     // Verifica se há elementos de anúncio visíveis
@@ -65,11 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Se não houver anúncios visíveis ou o AdSense não carregou como esperado, mostramos o aviso
+    // Se não houver anúncios visíveis ou o AdSense não carregou como esperado, retorna "true" indicando bloqueio
     if (!hasVisibleAd && adElements.length > 0) {
       console.warn('⚠️ Nenhum anúncio visível detectado');
-      showAdBlockWarning(true);  // Bloqueio de anúncios detectado
-      return true;  // Retorna verdadeiro indicando bloqueio
+      return true; // Indica que o bloqueador de anúncios foi detectado
     }
 
     // Caso contrário, não há bloqueio
@@ -77,52 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================
-  // AVISO DE BLOQUEADOR DE ANÚNCIOS
+  // AVISO DE BLOQUEADOR DE ANÚNCIOS (REMOVIDO)
   // ========================================
-  function showAdBlockWarning(isAdsenseApproved) {
-    if (document.getElementById('adBlockWarning')) return; // Evita duplicar
-
-    const warning = document.createElement('div');
-    warning.id = 'adBlockWarning';
-    warning.style.position = 'fixed';
-    warning.style.top = '0';
-    warning.style.left = '0';
-    warning.style.right = '0';
-    warning.style.backgroundColor = '#f44336'; // vermelho vibrante
-    warning.style.color = 'white';
-    warning.style.padding = '15px';
-    warning.style.textAlign = 'center';
-    warning.style.fontSize = '16px';
-    warning.style.zIndex = '9999';
-    warning.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
-    warning.style.display = 'flex';
-    warning.style.justifyContent = 'space-between';
-    warning.style.alignItems = 'center';
-
-    // Exibe mensagem diferente dependendo do status do AdSense
-    const message = isAdsenseApproved
-      ? '⚠️ Detectamos que você está usando um bloqueador de anúncios. Por favor, considere desativá-lo para apoiar nosso site.'
-      : '⚠️ O AdSense ainda não foi aprovado para o seu site. Por favor, aguarde a aprovação para monetizar com AdSense.';
-
-    warning.innerHTML = `
-      <span>${message}</span>
-      <button id="closeAdBlockWarning" style="
-        background: transparent;
-        border: none;
-        color: white;
-        font-weight: bold;
-        font-size: 18px;
-        cursor: pointer;
-        margin-left: 20px;
-      " aria-label="Fechar aviso de bloqueador de anúncios">&times;</button>
-    `;
-
-    document.body.appendChild(warning);
-
-    document.getElementById('closeAdBlockWarning').addEventListener('click', () => {
-      warning.style.display = 'none';
-    });
-  }
+  // A parte do código que exibe a mensagem foi removida para não mostrar o aviso
 
   // ========================================
   // ANALYTICS E TRACKING (OPCIONAL)
@@ -201,4 +156,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('✅ ads.js carregado com sucesso');
 });
-
