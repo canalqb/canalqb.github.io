@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Configurações do grid e canvas
+  /*const SIZE = 16;
+  let CELL_SIZE = 15;
+  let MARGIN_LEFT = 80;
+  let MARGIN_TOP = 30;
+  let MARGIN_RIGHT = 200;*/
+  
   const SIZE = 16;
-  const CELL_SIZE = 25;
-  const MARGIN_LEFT = 30;
-  const MARGIN_TOP = 30;
-  const MARGIN_RIGHT = 130;
+  let CELL_SIZE = 7.5;
+  let MARGIN_LEFT = 300;
+  let MARGIN_TOP = 30;
+  let MARGIN_RIGHT = 300;
 
   // Elementos DOM
   const canvas = document.getElementById('grid');
@@ -31,9 +37,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let running = false;
   let timeoutId = null;
 
+  // Função para ajustar dimensões responsivas
+  function adjustDimensions() {
+    const containerWidth = canvas.parentElement.clientWidth - 30;
+    const availableWidth = containerWidth - MARGIN_LEFT - MARGIN_RIGHT;
+    CELL_SIZE = Math.max(6, Math.floor(availableWidth / SIZE));
+    
+    if (window.innerWidth < 768) {
+      MARGIN_RIGHT = 130;
+      MARGIN_LEFT = 60;
+    } else if (window.innerWidth < 992) {
+      MARGIN_RIGHT = 170;
+      MARGIN_LEFT = 70;
+    }
+  }
+
   // Define tamanho do canvas
-  canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
-  canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
+  function setCanvasSize() {
+    adjustDimensions();
+    canvas.width = MARGIN_LEFT + SIZE * CELL_SIZE + MARGIN_RIGHT;
+    canvas.height = MARGIN_TOP + SIZE * CELL_SIZE;
+  }
+
+  setCanvasSize();
 
   // --- FUNÇÕES ---
 
@@ -46,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.font = '12px Arial';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = '#555';
 
     // Cabeçalho colunas (topo)
     ctx.textAlign = 'center';
@@ -240,14 +266,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const mode = getSelectedMode();
 
     if (mode === 'sequential') {
-      // Linha a linha, esquerda para direita
       for (let i = 0; i < bits.length; i++) {
         const y = altura - 1 + Math.floor(i / SIZE);
         const x = i % SIZE;
         gridState[y * SIZE + x] = bits[i] === '1';
       }
     } else if (mode === 'vertical') {
-      // Coluna a coluna da direita para esquerda, linha de baixo para cima
       let bitIndex = 0;
       for (let col = SIZE - 1; col >= 0; col--) {
         for (let row = base - 1; row >= altura - 1; row--) {
@@ -324,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGroup.style.display = 'flex';
     btnGroup.style.gap = '10px';
     btnGroup.style.marginBottom = '10px';
+    btnGroup.style.flexWrap = 'wrap';
 
     const copyBtn = document.createElement('button');
     copyBtn.className = 'btn btn-sm btn-outline-secondary';
@@ -360,4 +385,10 @@ document.addEventListener('DOMContentLoaded', () => {
   createRangeButtons();
   drawGrid();
   speedLabel.textContent = `${speedInput.value} ms`;
+
+  // Redraw on window resize
+  window.addEventListener('resize', () => {
+    setCanvasSize();
+    drawGrid();
+  });
 });
