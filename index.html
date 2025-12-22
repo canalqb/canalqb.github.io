@@ -67,7 +67,10 @@
 
   <div class="main-wrapper">
     <!-- Sidebar -->
+	
     <aside class="sidebar">
+
+	  
       <h3><i class="fas fa-link"></i> Links Úteis</h3>
       <ul class="sidebar-links">
         <li><a href="https://bitcoin.org/" target="_blank" rel="noopener noreferrer"><i class="fab fa-bitcoin"></i> Bitcoin.org</a></li>
@@ -78,7 +81,7 @@
         <li><a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer"><i class="fas fa-tools"></i> BTC Keygen</a></li>
       </ul>
       
-      <div class="sidebar-widget">
+	  <div class="sidebar-widget">
         <h4><i class="fas fa-info-circle"></i> Sobre o Projeto</h4>
         <p style="font-size:0.95em;color:#6c757d;line-height:1.6;">
           Esta ferramenta educacional demonstra visualmente como as chaves privadas Bitcoin são geradas a partir de números binários de 256 bits.
@@ -145,8 +148,8 @@
         
         <div class="speed-control d-flex align-items-center gap-3">
           <label for="speed" class="fw-semibold mb-0"><i class="fas fa-tachometer-alt"></i> Velocidade:</label>
-          <input type="range" class="form-range" id="speed" min="1" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="1000" aria-valuenow="500" aria-label="Controle de velocidade da geração" />
-          <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">500 ms</span>
+          <input type="range" class="form-range" id="speed" min="1" max="50" step="1" value="25" aria-valuemin="1" aria-valuemax="50" aria-valuenow="50" aria-label="Controle de velocidade da geração" />
+          <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">25 ms</span>
         </div>
 
         <div class="options-grid">
@@ -214,8 +217,8 @@
       <hr class="content-divider">
 
       <!-- SEÇÃO PUZZLE 1000 BTC -->
-      <section class="puzzle-section"> 
-        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down toggle-icon"></i></h2>
+      <section class="post_puzzle-section"> 
+        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down"></i></h2>
         <p>
           O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
         </p>
@@ -231,7 +234,7 @@
           <li><strong>Puzzle #256:</strong> 256 bits completos (praticamente impossível por força bruta)</li>
         </ul>
         
-        <div class="puzzle-highlight">
+        <div class="post_puzzle-highlight">
           <h3><i class="fas fa-trophy"></i> Status Atual do Puzzle</h3>
           <p>
             Até o momento, mais de 160 puzzles foram resolvidos pela comunidade. Os puzzles mais difíceis (acima de 66 bits) requerem poder computacional massivo ou algoritmos avançados de busca. A cada puzzle resolvido, a dificuldade aumenta exponencialmente.
@@ -254,10 +257,10 @@
       
         <h3>Endereços Oficiais do Puzzle</h3>
         <p>
-          O criador do puzzle publicou os endereços originais em <a href="https://privatekeys.pw/puzzles/bitcoin-puzzle-tx" target="_blank" rel="noopener noreferrer" style="color:#e65100;font-weight:bold;">Privatekeys.pw/puzzles</a>. Você pode verificar quais puzzles ainda possuem saldo e monitorar tentativas da comunidade em tempo real.
+          O criador do puzzle publicou os endereços originais em <a href="https://privatekeys.pw/puzzles/bitcoin-puzzle-tx" target="_blank" rel="noopener noreferrer">Privatekeys.pw/puzzles</a>. Você pode verificar quais puzzles ainda possuem saldo e monitorar tentativas da comunidade em tempo real.
         </p>
       
-        <div class="puzzle-highlight">
+        <div class="post_puzzle-highlight">
           <h3><i class="fas fa-exclamation-triangle"></i> Aviso Importante</h3>
           <p>
             Embora resolver um puzzle seja tecnicamente possível, as chances são extremamente baixas para puzzles acima de 70 bits. Participar dessa busca requer investimento massivo em hardware especializado (ASICs, GPUs) e conhecimento avançado em criptografia. Esta ferramenta é educacional e não garante sucesso na resolução de puzzles.
@@ -265,8 +268,8 @@
         </div>
       </section>
       
-      <section class="edu-intro-section">
-        <h2>🎓 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down toggle-icon"></i></h2>
+      <section class="post_edu-intro-section">
+        <h2>🎓 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down"></i></h2>
         <p>
           Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin. Sem a private key, é impossível mover fundos de um endereço.
         </p>
@@ -281,8 +284,8 @@
         </p>
       </section>
       
-      <section class="edu-warning-section">
-        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down toggle-icon"></i></h3>
+      <section class="post_edu-warning-section">
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down"></i></h3>
         <p>
           <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração. Chaves geradas em ambientes conectados à internet são consideradas comprometidas.
         </p>
@@ -298,11 +301,11 @@
         </p>
       </section>
       
-      <section class="edu-content-section">
-        <h2>📚 Como Funciona a Geração de Chaves Bitcoin <i class="fas fa-chevron-down toggle-icon"></i></h2>
+      <section class="post_edu-content-section">
+        <h2>📚 Como Funciona a Geração de Chaves Bitcoin <i class="fas fa-chevron-down"></i></h2>
         <h3>1. Geração de Entropia</h3>
         <p>
-          A segurança do Bitcoin começa com a <strong>entropia</strong> — aleatoriedade verdadeira. Uma private key segura requer 256 bits de entropia completamente aleatórios. Esta ferramenta simula esse processo através de uma matriz visual onde você pode manipular cada bit individualmente.
+          A segurança do Bitcoin começa com a <strong>entropia</strong> – aleatoriedade verdadeira. Uma private key segura requer 256 bits de entropia completamente aleatórios. Esta ferramenta simula esse processo através de uma matriz visual onde você pode manipular cada bit individualmente.
         </p>
         <h3>2. Formato Hexadecimal (HEX)</h3>
         <p>
@@ -323,23 +326,21 @@
         </p>
       </section>
       
-      <section class="edu-faq-section">
-        <h2>❓ Perguntas Frequentes <i class="fas fa-chevron-down toggle-icon"></i></h2>
-        <div class="edu-faq-item">
+      <section class="post_edu-faq-section">
+        <h2>❓ Perguntas Frequentes <i class="fas fa-chevron-down"></i></h2>
+        <div class="post_edu-faq-item">
           <h4>Posso usar esta ferramenta para criar uma carteira Bitcoin real?</h4>
           <p>
             <strong>NÃO!</strong> Esta é uma ferramenta educacional e NÃO deve ser usada para gerar chaves privadas de Bitcoin para armazenamento de fundos reais. Use sempre carteiras de hardware ou software com recursos de segurança auditados.
           </p>
         </div>
-        <div class="edu-faq-item">
+        <div class="post_edu-faq-item">
           <h4>O que significa "força bruta" no contexto de puzzles de Bitcoin?</h4>
           <p>
             Força bruta é o método de tentativa e erro onde um computador tenta todas as combinações possíveis até encontrar a chave correta. Isso pode levar milhões de anos dependendo da complexidade do puzzle.
           </p>
         </div>
       </section>
-      
-
 
       <!-- Footer -->
       <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
@@ -356,10 +357,9 @@
             <li><a href="/paginas/privacy-policy.html" id="privacyPolicyLink" class="dynamic-link">Privacidade</a></li>
             <li><a href="/paginas/contacts.html" id="contactsLink" class="dynamic-link">Contatos</a></li>
           </ul>
-
         </nav>
         <div class="text-center mt-3 small text-muted">
-          © 2025 @CanalQb — Rodrigo Carlos Moraes<br />
+          © 2025 @CanalQb – Rodrigo Carlos Moraes<br />
           Gerador de private keys Bitcoin - Puzzle 1000 BTC
         </div>
       </footer>
@@ -427,7 +427,6 @@
     fetch(url)
       .then(response => response.text())
       .then(data => {
-        // Injetar o conteúdo carregado na área principal
         document.querySelector('.main-content').innerHTML = data;
       })
       .catch(error => {
@@ -438,22 +437,21 @@
   // Adicionar o evento de clique em todos os links com a classe "dynamic-link"
   document.querySelectorAll('.dynamic-link').forEach(link => {
     link.addEventListener('click', function(event) {
-      event.preventDefault(); // Impede o comportamento padrão de navegação
-      const url = link.getAttribute('href'); // Pega o link de destino
-      loadPageContent(url); // Chama a função para carregar o conteúdo
+      event.preventDefault();
+      const url = link.getAttribute('href');
+      loadPageContent(url);
     });
   });
-</script>
-<script>
-  document.querySelectorAll('h2, h3').forEach(function(header) {
-  header.addEventListener('click', function() {
-    const parentSection = this.closest('section');
-    if (parentSection) {
-      parentSection.classList.toggle('active');
+
+  // Expandir/Recolher Sections
+  document.querySelectorAll('.post_edu-intro-section, .post_edu-warning-section, .post_puzzle-section, .post_edu-content-section, .post_edu-faq-section').forEach(section => {
+    const header = section.querySelector('h2, h3');
+    if (header) {
+      header.addEventListener('click', function() {
+        section.classList.toggle('expanded');
+      });
     }
   });
-});
-
 </script>
 </body>
 </html>
