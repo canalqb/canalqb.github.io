@@ -368,16 +368,16 @@
       <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
         <nav class="footer-nav container" aria-label="Navegação rodapé">
           <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
-            <li><a href="/paginas/about.html" target="_blank">About</a></li>
-            <li><a href="/paginas/preferências_de_privacidade.html" target="_blank">Gestão de Preferências</a></li>
-            <li><a href="/paginas/cookie-consent.html" target="_blank">Consentimento de Cookies</a></li>
-            <li><a href="/paginas/user-rights.html" target="_blank">Direitos do Usuário</a></li>
-            <li><a href="/paginas/dmca.html" target="_blank">DMCA</a></li>
-            <li><a href="/paginas/sitemap.html" target="_blank">Sitemap</a></li>
-            <li><a href="/paginas/data-transparency.html" target="_blank">Transparência de Dados</a></li>
-            <li><a href="/paginas/disclaimer.html" target="_blank">Disclaimer</a></li>
-            <li><a href="/paginas/privacy-policy.html" target="_blank">Privacidade</a></li>
-            <li><a href="/paginas/contacts.html" target="_blank">Contatos</a></li>
+            <li><a href="/paginas/about.html" id="aboutLink" class="dynamic-link">About</a></li>
+            <li><a href="/paginas/preferências_de_privacidade.html" id="privacySettingsLink" class="dynamic-link">Gestão de Preferências</a></li>
+            <li><a href="/paginas/cookie-consent.html" id="cookieConsentLink" class="dynamic-link">Consentimento de Cookies</a></li>
+            <li><a href="/paginas/user-rights.html" id="userRightsLink" class="dynamic-link">Direitos do Usuário</a></li>
+            <li><a href="/paginas/dmca.html" id="dmcaLink" class="dynamic-link">DMCA</a></li>
+            <li><a href="/paginas/sitemap.html" id="sitemapLink" class="dynamic-link">Sitemap</a></li>
+            <li><a href="/paginas/data-transparency.html" id="dataTransparencyLink" class="dynamic-link">Transparência de Dados</a></li>
+            <li><a href="/paginas/disclaimer.html" id="disclaimerLink" class="dynamic-link">Disclaimer</a></li>
+            <li><a href="/paginas/privacy-policy.html" id="privacyPolicyLink" class="dynamic-link">Privacidade</a></li>
+            <li><a href="/paginas/contacts.html" id="contactsLink" class="dynamic-link">Contatos</a></li>
           </ul>
 
         </nav>
@@ -444,5 +444,29 @@
   <script src="js/auto16.js" defer></script>
   <script src="js/ads.js" defer></script>
   <script src="js/cookie-consent.js" defer></script>
+  <script>
+  // Função para carregar o conteúdo da página dinâmica
+  function loadPageContent(url) {
+    fetch(url)
+      .then(response => response.text())
+      .then(data => {
+        // Injetar o conteúdo carregado na área principal
+        document.querySelector('.main-content').innerHTML = data;
+      })
+      .catch(error => {
+        console.error('Erro ao carregar a página:', error);
+      });
+  }
+
+  // Adicionar o evento de clique em todos os links com a classe "dynamic-link"
+  document.querySelectorAll('.dynamic-link').forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault(); // Impede o comportamento padrão de navegação
+      const url = link.getAttribute('href'); // Pega o link de destino
+      loadPageContent(url); // Chama a função para carregar o conteúdo
+    });
+  });
+</script>
+
 </body>
 </html>
