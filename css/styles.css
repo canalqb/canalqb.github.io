@@ -313,7 +313,6 @@ textarea[readonly]::-webkit-scrollbar {
   display: none;              /* Chrome, Safari, Opera */
 }
 
-
 @keyframes slideIn {
   from {
     transform: translateX(400px);
@@ -329,7 +328,7 @@ textarea[readonly]::-webkit-scrollbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+}
 
 /* Estilo para alinhar opções lado a lado */
 .control-section .d-flex {
@@ -360,6 +359,7 @@ textarea[readonly]::-webkit-scrollbar {
   margin-right: 8px;
   accent-color: #667eea;
 }
+
 /* Esconde o conteúdo expandido inicialmente */
 section > p,
 section > div {
@@ -390,5 +390,31 @@ section.expanded > div {
 
 /* Quando a seção estiver expandida, a seta vira para cima */
 section.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Adicionando a animação e controle dos ícones */
+.toggle-icon {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+section > div {
+  display: none;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+section h2:hover .toggle-icon {
+  color: #e65100;
+}
+
+section.active div {
+  display: block;
+}
+
+section.active h2 .toggle-icon {
   transform: rotate(180deg);
 }
