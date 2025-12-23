@@ -1,0 +1,353 @@
+/* ============================================ */
+/* adsense-styles.css */
+/* Estilos otimizados para AdSense + Blogspot */
+/* ============================================ */
+
+/* Banner Top Anúncio */
+#ad-banner-top {
+  background: transparent;
+  padding: 12px 0;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  overflow: hidden;
+  min-height: 50px;
+  display: block !important;
+}
+
+#ad-banner-top .ad-label {
+  font-size: 0.65rem;
+  color: #6c757d;
+  margin: 5px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* Container responsivo para anúncios */
+.ad-container {
+  margin: 15px 0;
+  text-align: center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.ad-container .ad-label {
+  font-size: 0.65rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Anúncio In-Feed */
+#ad-infeed {
+  margin: 30px 0;
+  padding: 15px 0;
+  background: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+#ad-infeed .ad-label {
+  font-size: 0.65rem;
+  color: #6c757d;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+/* Anúncio In-Article */
+.ad-in-article {
+  margin: 25px 0;
+  padding: 15px 0;
+  background: transparent;
+  text-align: center;
+}
+
+.ad-in-article .ad-label {
+  font-size: 0.65rem;
+  color: #6c757d;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+/* Anúncio Flutuante (Floating RPM) */
+.ad-floating {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9998;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  max-width: 360px;
+  min-width: 280px;
+  overflow: hidden;
+  animation: slideInAd 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.3s ease;
+}
+
+.ad-floating.closing {
+  animation: slideOutAd 0.5s ease-in forwards;
+}
+
+/* Header do Anúncio Flutuante */
+.ad-floating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.ad-floating-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+/* Botão Fechar */
+.ad-close-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.ad-close-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.ad-close-btn:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+/* Conteúdo do Anúncio Flutuante */
+.ad-floating-content {
+  padding: 10px;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Elemento de Anúncio Responsivo */
+.adsbygoogle {
+  display: block;
+  background: transparent;
+}
+
+/* Suporte a Dark Mode (futuro) */
+@media (prefers-color-scheme: dark) {
+  .ad-floating-content {
+    background: #2d3748;
+  }
+
+  .ad-floating {
+    background: #1a202c;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .ad-label {
+    color: #a0aec0 !important;
+  }
+}
+
+/* Animações */
+@keyframes slideInAd {
+  from {
+    transform: translateX(450px);
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes slideOutAd {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    transform: translateX(450px);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Mobile Responsivo */
+@media (max-width: 576px) {
+  .ad-floating {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    min-width: unset;
+  }
+
+  @keyframes slideInAd {
+    from {
+      transform: translateY(400px);
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  @keyframes slideOutAd {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+    to {
+      transform: translateY(400px);
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .ad-floating-header {
+    padding: 8px 12px;
+  }
+
+  .ad-close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .ad-floating-content {
+    min-height: 180px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  #ad-banner-top {
+    padding: 8px 0;
+    margin-bottom: 15px;
+  }
+
+  .ad-container {
+    margin: 12px 0;
+  }
+
+  #ad-infeed {
+    margin: 20px 0;
+    padding: 12px 0;
+  }
+
+  .ad-in-article {
+    margin: 20px 0;
+    padding: 12px 0;
+  }
+}
+
+/* Otimização para Print */
+@media print {
+  #ad-banner-top,
+  #ad-infeed,
+  .ad-in-article,
+  .ad-floating {
+    display: none !important;
+  }
+}
+
+/* Acessibilidade - Foco visível */
+.ad-close-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Suporte a Viewport mínimo */
+@supports (width: 100vw) {
+  @media (max-width: 576px) {
+    .ad-floating {
+      width: calc(100vw - 20px);
+      max-width: calc(100vw - 20px);
+    }
+  }
+}
+
+/* Otimização de Performance - Reduz repaints */
+.ad-floating {
+  will-change: transform;
+  contain: layout style paint;
+}
+
+/* Classe para bloqueador detectado */
+.ads-blocked {
+  padding: 15px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 0.9rem;
+  margin: 15px 0;
+  text-align: center;
+  display: none;
+}
+
+.ads-blocked.show {
+  display: block;
+}
+
+/* Indicador de tipo de dispositivo (debug) */
+body[data-device-type]::before {
+  content: '';
+  display: none;
+}
+
+/* Suporte GDPR - Hidden até consentimento */
+.ad-awaiting-consent {
+  opacity: 0.5;
+  pointer-events: none;
+  background: #f0f0f0;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.ad-awaiting-consent::after {
+  content: 'Aguardando consentimento para exibir anúncios';
+}

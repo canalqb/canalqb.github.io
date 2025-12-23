@@ -1,0 +1,466 @@
+/* ============================================ */
+/* gdpr-consent-styles.css */
+/* Estilos para Banner de Consentimento GDPR */
+/* Compatível com Blogspot e Acessibilidade */
+/* ============================================ */
+
+/* Container Principal do Banner */
+#gdpr-consent-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  padding: 20px 24px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  color: #2d3748;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  z-index: 99999;
+  animation: slideUpBanner 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+#gdpr-consent-banner::-webkit-scrollbar {
+  width: 8px;
+}
+
+#gdpr-consent-banner::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+#gdpr-consent-banner::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+#gdpr-consent-banner::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Título e Descrição */
+#gdpr-consent-banner h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a202c;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#gdpr-consent-banner h2::before {
+  content: '🔒';
+  font-size: 1.3rem;
+}
+
+#gdpr-consent-banner p {
+  margin: 0 0 16px;
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+/* Grupo de Botões */
+.consent-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.consent-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  text-align: center;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botão Aceitar Todos */
+#consent-accept-all {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+#consent-accept-all:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.5);
+}
+
+#consent-accept-all:active {
+  transform: translateY(0);
+}
+
+#consent-accept-all:focus-visible {
+  outline: 2px solid #38a169;
+  outline-offset: 2px;
+}
+
+/* Botão Rejeitar */
+#consent-reject-all {
+  background: white;
+  color: #2d3748;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#consent-reject-all:hover {
+  border-color: #cbd5e0;
+  background: #f7fafc;
+  transform: translateY(-1px);
+}
+
+#consent-reject-all:focus-visible {
+  outline: 2px solid #2d3748;
+  outline-offset: 2px;
+}
+
+/* Botão Personalizar */
+#consent-customize {
+  background: white;
+  color: #4f46e5;
+  border: 2px solid #4f46e5;
+  text-decoration: none;
+}
+
+#consent-customize:hover {
+  background: #eef2ff;
+  transform: translateY(-1px);
+}
+
+#consent-customize:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Botão Fechar (X) */
+#consent-close-banner {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #718096;
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+#consent-close-banner:hover {
+  color: #2d3748;
+  transform: scale(1.2);
+}
+
+#consent-close-banner:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Container de Configurações */
+#consent-settings {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 16px;
+  transition: all 0.3s ease;
+}
+
+#consent-settings.hidden {
+  display: none;
+}
+
+#consent-settings h3 {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+/* Itens de Checkbox */
+.consent-option {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.consent-option:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.consent-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  margin-right: 12px;
+  cursor: pointer;
+  accent-color: #4f46e5;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.consent-option input[type="checkbox"]:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.consent-option input[type="checkbox"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.consent-option label {
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.consent-option label strong {
+  display: block;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.consent-option label span {
+  display: block;
+  font-size: 13px;
+  color: #718096;
+  line-height: 1.5;
+}
+
+/* Botão Salvar Configurações */
+#consent-save-settings {
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 16px;
+}
+
+#consent-save-settings:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+#consent-save-settings:active {
+  transform: translateY(0);
+}
+
+#consent-save-settings:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+/* Animações */
+@keyframes slideUpBanner {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes fadeOutBanner {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes fadeInBanner {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #gdpr-consent-banner {
+    padding: 16px;
+    font-size: 13px;
+  }
+
+  #gdpr-consent-banner h2 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  #gdpr-consent-banner p {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  .consent-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .consent-btn {
+    width: 100%;
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+
+  #consent-close-banner {
+    top: 8px;
+    right: 8px;
+  }
+
+  #consent-settings {
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  #consent-option label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  #gdpr-consent-banner {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  #gdpr-consent-banner h2 {
+    font-size: 0.9rem;
+  }
+
+  #gdpr-consent-banner h2::before {
+    font-size: 1.2rem;
+  }
+
+  .consent-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+
+  #consent-save-settings {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
+/* Dark Mode (futuro) */
+@media (prefers-color-scheme: dark) {
+  #gdpr-consent-banner {
+    background: #1a202c;
+    border-top-color: #2d3748;
+    color: #e2e8f0;
+  }
+
+  #gdpr-consent-banner h2 {
+    color: #f7fafc;
+  }
+
+  #gdpr-consent-banner p {
+    color: #cbd5e0;
+  }
+
+  #consent-reject-all {
+    background: #2d3748;
+    color: #e2e8f0;
+    border-color: #4a5568;
+  }
+
+  #consent-reject-all:hover {
+    background: #4a5568;
+    border-color: #718096;
+  }
+
+  #consent-settings {
+    background: #2d3748;
+    border-color: #4a5568;
+  }
+
+  .consent-option {
+    border-bottom-color: #4a5568;
+  }
+
+  .consent-option label strong {
+    color: #f7fafc;
+  }
+
+  .consent-option label span {
+    color: #a0aec0;
+  }
+}
+
+/* Print - Oculta banner */
+@media print {
+  #gdpr-consent-banner {
+    display: none !important;
+  }
+}
+
+/* Acessibilidade - Modo Alto Contraste */
+@media (prefers-contrast: more) {
+  #gdpr-consent-banner {
+    border-top: 2px solid #000;
+  }
+
+  .consent-btn {
+    border: 2px solid currentColor;
+  }
+
+  #consent-settings {
+    border: 2px solid #000;
+  }
+}
+
+/* Acessibilidade - Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  #gdpr-consent-banner,
+  .consent-btn {
+    animation: none;
+    transition: none;
+  }
+}
