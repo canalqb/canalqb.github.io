@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 - Puzzle 1000 BTC">
+  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC</title>
+  
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];
+      w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NLMLKHPS');
+  </script>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- CSS Customizados -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/adsense-styles.css" />
+  <link rel="stylesheet" href="css/gdpr-consent-styles.css" />
+  
+  <!-- BitcoinJS -->
+  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
+  
+  <style>
+    /* Ajustes para grid maior e responsivo */
+    .canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    #grid {
+      min-width: 100%;
+      max-width: 100%;
+      height: auto;
+      width: 100%;
+      border: 3px solid #2d3748;
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: block;
+      touch-action: none;
+    }
+
+    @media (max-width: 768px) {
+      #grid {
+        max-width: 100vw;
+      }
+    }
+
+    /* Melhorar visibilidade do grid */
+    .hero-section {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, #667eea15, #764ba215);
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+
+    /* GDPR Banner Fix */
+    #gdpr-consent-banner {
+      display: none !important;
+    }
+
+    #gdpr-consent-banner.show {
+      display: block !important;
+    }
+
+    .gdpr-consent-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      padding: 20px 24px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      color: #2d3748;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+      z-index: 99999;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .gdpr-consent-banner h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .gdpr-consent-banner p {
+      margin: 0 0 16px;
+      line-height: 1.6;
+      color: #4a5568;
+    }
+
+    .consent-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .consent-btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    #consent-accept-all {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+    }
+
+    #consent-accept-all:hover {
+      transform: translateY(-2px);
+    }
+
+    #consent-reject-all {
+      background: white;
+      color: #2d3748;
+      border: 2px solid #e2e8f0;
+    }
+
+    #consent-customize {
+      background: white;
+      color: #4f46e5;
+      border: 2px solid #4f46e5;
+    }
+
+    #consent-close-banner {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #718096;
+      font-size: 24px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+    }
+
+    #consent-settings {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    #consent-settings.hidden {
+      display: none;
+    }
+
+    .consent-option {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .consent-option:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    .consent-option input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: #4f46e5;
+      flex-shrink: 0;
+    }
+
+    .consent-option label {
+      flex: 1;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .consent-option label strong {
+      display: block;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 4px;
+    }
+
+    .consent-option label span {
+      display: block;
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.5;
+    }
+
+    #consent-save-settings {
+      width: 100%;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .gdpr-consent-banner {
+        padding: 16px;
+      }
+
+      .consent-buttons {
+        flex-direction: column;
+      }
+
+      .consent-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS" height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
+  </noscript>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg shadow-sm" role="navigation" aria-label="Menu principal">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar @CanalQb Blog">
+        <i class="fas fa-blog" aria-hidden="true"></i> @CanalQb
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer" aria-label="Nova Versão ainda em teste">
+        <i class="fas fa-flask" aria-hidden="true"></i> Nova Versão
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar Btckeygen">
+        <i class="fas fa-key" aria-hidden="true"></i> Btckeygen
+      </a>
+    </div>
+  </nav>
+
+  <!-- SEÇÃO AD #1: Banner Top -->
+  <div id="ad-banner-top" class="ad-banner-top" role="region" aria-label="Publicidade - Topo">
+    <div class="ad-label">Publicidade</div>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-3614622181047762"
+         data-ad-slot="4371879523"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+  </div>
+
+  <!-- Layout Principal -->
+  <div class="main-wrapper d-flex flex-column flex-lg-row">
+    
+    <!-- SIDEBAR ESQUERDA -->
+    <aside class="sidebar-left">
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-info-circle"></i> Sobre o Projeto</h4>
+        <p style="font-size:0.95em;color:#6c757d;line-height:1.6;">
+          Esta ferramenta educacional demonstra visualmente como as chaves privadas Bitcoin são geradas a partir de números binários de 256 bits.
+        </p>
+      </div>
+      
+      <div class="sidebar-widget">
+        <h3><i class="fas fa-link"></i> Links Úteis</h3>
+        <ul class="sidebar-links">
+          <li><a href="https://bitcoin.org/" target="_blank" rel="noopener noreferrer"><i class="fab fa-bitcoin"></i> Bitcoin.org</a></li>
+          <li><a href="https://github.com/bitcoin/bitcoin" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Bitcoin GitHub</a></li>
+          <li><a href="https://en.bitcoin.it/wiki/Secp256k1" target="_blank" rel="noopener noreferrer"><i class="fas fa-book"></i> Curva secp256k1</a></li>
+          <li><a href="https://www.blockchain.com/explorer" target="_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> Blockchain Explorer</a></li>
+          <li><a href="https://en.bitcoin.it/wiki/Private_key" target="_blank" rel="noopener noreferrer"><i class="fas fa-key"></i> Wiki Private Keys</a></li>
+          <li><a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer"><i class="fas fa-tools"></i> BTC Keygen</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content flex-grow-1" role="main">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <h1>🔑 Gerador de Private Keys Bitcoin</h1>
+        <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
+      </div>
+
+      <!-- Canvas Centralizado (MAIOR) -->
+      <div class="canvas-wrapper">
+        <canvas id="grid" aria-label="Matriz interativa 16x16 para seleção de células" width="1200" height="900"></canvas>
+      </div>
+
+      <!-- Indicador de Faixa -->
+      <div class="range-indicator" aria-live="polite">
+        Faixa ativa: Linha <span id="activeRangeLabel">12 até 16</span>
+      </div>
+
+      <!-- Controles Principais -->
+      <div class="main-controls-section">
+        <h2><i class="fas fa-gamepad"></i> Controles Principais</h2>
+        <div class="d-flex gap-2 flex-wrap">
+          <button id="startBtn" class="btn-custom btn-start" aria-pressed="false" aria-label="Iniciar geração">
+            <i class="fas fa-play"></i> Iniciar
+          </button>
+          <button id="stopBtn" class="btn-custom btn-stop" disabled aria-pressed="false" aria-label="Parar geração">
+            <i class="fas fa-pause"></i> Parar
+          </button>
+          <button id="clearBtn" class="btn-custom btn-clear" aria-label="Limpar seleção">
+            <i class="fas fa-trash"></i> Limpar
+          </button>
+          <button id="randBtn" class="btn-custom btn-random" aria-label="Aleatorizar matriz">
+            <i class="fas fa-dice"></i> Aleatorizar
+          </button>
+        </div>
+      </div>
+
+      <!-- Controles de Altura e Base -->
+      <div class="control-card">
+        <h2><i class="fas fa-sliders-h"></i> Selecionar Altura (Linha Inicial)</h2>
+        <div id="heightButtons" class="button-grid" role="group" aria-label="Botões para selecionar altura"></div>
+
+        <h2 class="mt-4"><i class="fas fa-arrows-alt-v"></i> Selecionar Base (Linha Final)</h2>
+        <div id="baseButtons" class="button-grid" role="group" aria-label="Botões para selecionar base"></div>
+
+        <!-- Linha Extra -->
+        <h2 class="mt-4">➕ Selecionar Linha Extra (fora do intervalo)</h2>
+        <div id="extra-buttons" class="button-group"></div>
+      </div>
+
+      <!-- Controles de Velocidade e Opções -->
+      <div class="control-card">
+        <h2><i class="fas fa-cogs"></i> Configurações Avançadas</h2>
+        <div class="speed-control d-flex align-items-center gap-3">
+          <label for="speed" class="fw-semibold mb-0"><i class="fas fa-tachometer-alt"></i> Velocidade:</label>
+          <input type="range" class="form-range" id="speed" min="1" max="50" step="1" value="25" aria-valuemin="1" aria-valuemax="50" aria-valuenow="25" aria-label="Controle de velocidade da geração" />
+          <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">25 ms</span>
+        </div>
+
+        <div class="options-grid">
+          <label class="option-card">
+            <input type="radio" name="mode" value="sequential" checked aria-checked="true" />
+            <span><i class="fas fa-stream"></i> Sequencial (H)</span>
+          </label>
+          <label class="option-card">
+            <input type="radio" name="mode" value="vertical" aria-checked="false" />
+            <span><i class="fas fa-arrows-alt-v"></i> Sequencial (V)</span>
+          </label>
+          <label class="option-card">
+            <input type="checkbox" id="toggleOnClick" checked aria-checked="true" />
+            <span><i class="fas fa-mouse-pointer"></i> Clique alterna célula</span>
+          </label>
+          <label class="option-card">
+            <input type="checkbox" id="randomizeStatesOnStep" aria-checked="false" />
+            <span><i class="fas fa-random"></i> Aleatorizar no passo</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Seção de Outputs -->
+      <div class="outputs-section">
+        <h2><i class="fas fa-key"></i> Chaves Geradas</h2>
+        <div class="output-group">
+          <label for="hexBox" class="output-label">
+            <i class="fas fa-hashtag"></i> 🔐 Private Key HEX (64 caracteres)
+          </label>
+          <textarea id="hexBox" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada em formato HEX"></textarea>
+        </div>
+        <div class="output-group">
+          <label for="wifBox" class="output-label">
+            <i class="fas fa-wallet"></i> 💼 WIF Comprimido
+          </label>
+          <textarea id="wifBox" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada WIF comprimida"></textarea>
+        </div>
+        <div class="output-group">
+          <label for="wifBoxUncompressed" class="output-label">
+            <i class="fas fa-box-open"></i> 📦 WIF Não Comprimido
+          </label>
+          <textarea id="wifBoxUncompressed" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada WIF não comprimida"></textarea>
+        </div>
+      </div>
+
+      <!-- SEÇÃO AD #2: In-Article -->
+      <div id="ad-in-article-1" class="ad-container" role="region" aria-label="Publicidade - Conteúdo">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-3614622181047762"
+             data-ad-slot="8052390745"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+
+      <hr class="content-divider">
+
+      <!-- SEÇÃO AD #3: In-Feed -->
+      <div id="ad-infeed" role="region" aria-label="Publicidade - Feed">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="autorelaxed"
+             data-ad-client="ca-pub-3614622181047762"
+             data-ad-slot="1937287877"></ins>
+      </div>
+
+      <!-- SEÇÃO DE CONTEÚDO EDUCATIVO -->
+      <section class="post_puzzle-section"> 
+        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down"></i></h2>
+        <p>
+          O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
+        </p>
+        <h3>Como Funciona o Puzzle?</h3>
+        <p>
+          Cada endereço do puzzle possui uma private key que está limitada a uma faixa específica de bits. Por exemplo:
+        </p>
+        <ul>
+          <li><strong>Puzzle #1:</strong> 1 bit (faixa: 1)</li>
+          <li><strong>Puzzle #10:</strong> 10 bits (faixa: 512 a 1023)</li>
+          <li><strong>Puzzle #66:</strong> 66 bits (já encontrado em 2023)</li>
+          <li><strong>Puzzle #130:</strong> 130 bits (ainda não resolvido)</li>
+          <li><strong>Puzzle #256:</strong> 256 bits completos (praticamente impossível por força bruta)</li>
+        </ul>
+      </section>
+
+      <!-- SEÇÃO AD #4: In-Article -->
+      <div id="ad-in-article-2" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 2">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-3614622181047762"
+             data-ad-slot="8052390745"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+      
+      <section class="post_edu-intro-section">
+        <h2>📚 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down"></i></h2>
+        <p>
+          Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin.
+        </p>
+      </section>
+
+      <!-- SEÇÃO AD #5: In-Feed Segunda Vez -->
+      <div id="ad-infeed-2" role="region" aria-label="Publicidade - Feed 2">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-format="autorelaxed"
+             data-ad-client="ca-pub-3614622181047762"
+             data-ad-slot="1937287877"></ins>
+      </div>
+
+      <section class="post_edu-warning-section">
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down"></i></h3>
+        <p>
+          <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração.
+        </p>
+      </section>
+
+      <!-- SEÇÃO AD #6: In-Article Final -->
+      <div id="ad-in-article-3" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 3">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-3614622181047762"
+             data-ad-slot="8052390745"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+
+      <!-- Footer -->
+      <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
+        <nav class="footer-nav container" aria-label="Navegação rodapé">
+          <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
+            <li><a href="/paginas/about.html" class="dynamic-link">About</a></li>
+            <li><a href="/paginas/privacy.html" class="dynamic-link">Privacidade</a></li>
+            <li><a href="/paginas/disclaimer.html" class="dynamic-link">Disclaimer</a></li>
+            <li><a href="/paginas/contacts.html" class="dynamic-link">Contatos</a></li>
+          </ul>
+        </nav>
+        <div class="text-center mt-3 small text-muted">
+          © 2025 @CanalQb – Rodrigo Carlos Moraes<br />
+          Gerador de private keys Bitcoin - Puzzle 1000 BTC
+        </div>
+      </footer>
+    </main>
+
+    <!-- SIDEBAR DIREITA -->
+    <aside class="sidebar-right">
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
+        <p style="font-size:0.9em;color:#dc3545;line-height:1.5;">
+          <strong>Nunca</strong> use chaves geradas online para armazenar Bitcoin real. Apenas para fins educacionais.
+        </p>
+      </div>
+
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-search"></i> Puzzles Encontrados</h4>
+        <ul id="wifList" class="list-group"></ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- BANNER DE CONSENTIMENTO GDPR -->
+  <!-- ========================================== -->
+  <div id="gdpr-consent-banner" class="gdpr-consent-banner" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+    <button id="consent-close-banner" aria-label="Fechar banner de consentimento">✕</button>
+    
+    <h2 id="consent-title">🔒 Sua Privacidade Importa</h2>
+    <p>
+      Usamos cookies e tecnologias similares para melhorar sua experiência, analisar tráfego e fornecer conteúdo personalizado. 
+      Você pode aceitar todos, rejeitar não-necessários ou personalizar suas preferências.
+    </p>
+
+    <div class="consent-buttons">
+      <button id="consent-accept-all" class="consent-btn">✓ Aceitar Todos</button>
+      <button id="consent-reject-all" class="consent-btn">✗ Rejeitar</button>
+      <button id="consent-customize" class="consent-btn">⚙ Personalizar</button>
+    </div>
+
+    <!-- Configurações Detalhadas -->
+    <div id="consent-settings" class="hidden">
+      <h3>Preferências de Consentimento</h3>
+      
+      <div class="consent-option">
+        <input type="checkbox" id="consent-analytics" checked>
+        <label for="consent-analytics">
+          <strong>Google Analytics</strong>
+          <span>Nos ajuda a entender como você usa o site para melhorar a experiência.</span>
+        </label>
+      </div>
+
+      <div class="consent-option">
+        <input type="checkbox" id="consent-marketing">
+        <label for="consent-marketing">
+          <strong>Google AdSense</strong>
+          <span>Permite exibir anúncios personalizados baseados no seu interesse.</span>
+        </label>
+      </div>
+
+      <div class="consent-option">
+        <input type="checkbox" id="consent-preferences">
+        <label for="consent-preferences">
+          <strong>Preferências e Funcionalidades</strong>
+          <span>Memoriza suas escolhas para personalizar futuras visitas.</span>
+        </label>
+      </div>
+
+      <button id="consent-save-settings" class="consent-btn">💾 Salvar Preferências</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ANÚNCIO FLUTUANTE (Floating RPM) -->
+  <!-- ========================================== -->
+  <div id="floatingAd" class="ad-floating" role="region" aria-label="Publicidade flutuante" style="display:none;">
+    <div class="ad-floating-header">
+      <span class="ad-floating-label">📢 Publicidade</span>
+      <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">×</button>
+    </div>
+    <div class="ad-floating-content">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-3614622181047762"
+           data-ad-slot="3037141776"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762" crossorigin="anonymous"></script>
+  
+  <!-- Scripts Customizados (ORDEM IMPORTANTE) -->
+  <script src="js/gdpr-init-fix.js" defer></script>
+  <script src="js/auto16.js" defer></script>
+  <script src="js/adsense-manager.js" defer></script>
+  <script src="js/gdpr-consent-analytics.js" defer></script>
+  <script src="js/script_random_pisca.js" defer></script>
+  <script src="js/puzzles.js" defer></script>
+
+
+
+</body>
+</html>
