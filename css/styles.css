@@ -16,7 +16,6 @@ body {
   position: relative;
 }
 
-/* SIDEBAR ESQUERDA — original */
 .sidebar-left {
   width: 280px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -29,16 +28,13 @@ body {
   z-index: 10;
 }
 
-/* CONTEÚDO CENTRAL — mantém proporção ideal */
 .main-content {
   flex: 1;
   min-width: 0;
   font-size: 0.9em;
-  /* Garante espaço para sidebar direita sem afetar o fluxo visual */
   margin-right: 300px;
 }
 
-/* SIDEBAR DIREITA — posicionada à direita, sem empurrar o conteúdo */
 .sidebar-right {
   position: sticky;
   top: 20px;
@@ -49,10 +45,9 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   height: fit-content;
   z-index: 10;
-  margin-left: -300px; /* Não ocupa espaço no flex, apenas flutua à direita */
+  margin-left: -300px;
 }
 
-/* Estilos compartilhados entre sidebars */
 .sidebar-left .sidebar-widget,
 .sidebar-right .sidebar-widget {
   background: #fff;
@@ -108,265 +103,328 @@ body {
   transform: translateX(5px);
 }
 
-/* --- ESTILOS DO CONTEÚDO PRINCIPAL (INALTERADOS) --- */
-.main-content h1 { font-size: 1.8em; }
-.main-content h2 { font-size: 1.3em; }
-.main-content h3 { font-size: 1.1em; }
-.main-content h4 { font-size: 1em; }
-.main-content p { font-size: 0.95em; }
-.main-content li { font-size: 0.95em; }
-.main-content button { font-size: 0.9em; padding: 8px 16px; }
-.main-content .btn-custom { padding: 10px 18px; font-size: 0.95em; }
-.main-content .output-label { font-size: 1em; }
-.main-content .output-box { font-size: 0.9em; }
+/* --- HIERARQUIA DE TÍTULOS E ESPAÇAMENTOS --- */
+.main-content h1 { 
+  font-size: 2em;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 15px 0;
+  line-height: 1.3;
+}
 
-/* Hero Section */
+.main-content h2 { 
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 25px 0 15px 0;
+  line-height: 1.4;
+}
+
+.main-content h3 { 
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 20px 0 12px 0;
+  line-height: 1.4;
+}
+
+.main-content h4 { 
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #718096;
+  margin: 15px 0 10px 0;
+  line-height: 1.4;
+}
+
+.main-content p { 
+  font-size: 0.95em;
+  line-height: 1.7;
+  margin: 0 0 12px 0;
+  color: #4a5568;
+}
+
+.main-content li { 
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 8px;
+  color: #4a5568;
+}
+
+.main-content ul,
+.main-content ol {
+  margin: 12px 0;
+  padding-left: 25px;
+}
+
+.main-content button { 
+  font-size: 0.9em; 
+  padding: 10px 18px;
+  line-height: 1.2;
+}
+
+.main-content .btn-custom { 
+  padding: 12px 20px; 
+  font-size: 0.95em;
+  line-height: 1.2;
+}
+
+.main-content .output-label { 
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+
+.main-content .output-box { 
+  font-size: 0.9em;
+  padding: 12px;
+}
+
 .hero-section {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-  padding: 25px 20px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  color: #1b5e20;
+  padding: 30px 25px;
   border-radius: 20px;
   text-align: center;
   margin-bottom: 30px;
-  box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
-}
-.hero-section h1 {
-  font-size: 2em;
-  font-weight: bold;
-  margin-bottom: 5px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  color: #2b49e0;  
-}
-.hero-section .subtitle {
-  font-size: 1em;
-  margin-bottom: 0;
-  opacity: 0.95;
-  margin-top: 3px;
-  color: #1c5714;  
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(40, 167, 69, 0.2);
+  border: 2px solid #a5d6a7;
 }
 
-/* Canvas */
-.canvas-container {
+.hero-section h1 {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+  color: #1b5e20;
+  line-height: 1.2;
+}
+
+.hero-section .subtitle {
+  font-size: 1.1em;
+  margin-bottom: 0;
+  margin-top: 5px;
+  color: #2e7d32;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
+  line-height: 1.3;
+}
+
+.canvas-wrapper {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  padding: 20px 15px;
-  border-radius: 15px;
-  margin-bottom: 25px;
+  margin: 1.5rem 0;
+  width: 100%;
   overflow-x: auto;
 }
+
 #grid {
-  border: 2px solid #28a745;
+  min-width: 100%;
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border: 3px solid #2d3748;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: #fff;
   cursor: crosshair;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: block;
+  touch-action: none;
 }
 
-/* Indicador de Faixa */
+@media (max-width: 768px) {
+  #grid {
+    max-width: 100vw;
+  }
+}
+
 .range-indicator {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
   border: 2px solid #ffc107;
   border-radius: 12px;
-  padding: 15px;
+  padding: 15px 20px;
   text-align: center;
-  font-weight: bold;
+  font-weight: 600;
   color: #856404;
   font-size: 1em;
   margin-bottom: 25px;
 }
 
-/* Cards de Controle */
 .control-card {
-  background: #fff;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 15px;
   padding: 25px;
   margin-bottom: 25px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border-left: 5px solid #28a745;
 }
+
 .control-card h2 {
   color: #28a745;
   font-size: 1.4em;
-  margin-bottom: 20px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
   display: flex;
   align-items: center;
   gap: 10px;
+  line-height: 1.3;
 }
 
-/* Botões de Linha (Altura/Base) */
 .button-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(40px, 40px));
-  gap: 10px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
+  gap: 6px; /* reduzido de 10px para 6px */
+  margin-top: 12px;
 }
+
 .button-grid button {
-  padding: 8px;
-  width: 40px;
-  height: 40px;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #28a745;
+  border: 1.5px solid #28a745;
   background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
   color: #28a745;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.85em;
+  font-size: 0.75em; /* ligeiramente menor para caber melhor */
+  line-height: 1;
 }
+
 .button-grid button:hover {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: #fff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
+
 .button-grid button.active {
   background: #28a745;
   color: #fff;
 }
+
 .button-grid button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
-.button-grid button:disabled:hover {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  color: #28a745;
-  transform: none;
-  box-shadow: none;
-}
 
-/* Botões de Linha Extra */
+/* BOTÕES EXTRAS - ESTILO VERMELHO */
 #extra-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(40px, 40px));
-  gap: 10px;
-  margin-top: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
+  gap: 6px; /* reduzido de 10px para 6px */
+  margin-top: 12px;
 }
+
 #extra-buttons button {
-  padding: 8px;
-  width: 40px;
-  height: 40px;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #28a745;
+  border: 1.5px solid #dc3545;
   background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  color: #28a745;
-  border-radius: 8px;
-  font-weight: bold;
+  color: #dc3545;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.85em;
-}
-#extra-buttons button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-}
-#extra-buttons button.active {
-  background: #28a745;
-  color: #fff;
-}
-#extra-buttons button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-#extra-buttons button:disabled:hover {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  color: #28a745;
-  transform: none;
-  box-shadow: none;
+  font-size: 0.75em;
+  line-height: 1;
 }
 
-/* Estilo Específico – Linhas Extras com Borda Vermelha (opcional, caso use) */
-.extra-cols-container h4 {
-  color: #dc3545;
-  font-size: 1.2em;
-  margin-bottom: 15px;
-}
-.extra-cols-container .button-grid button {
-  border: 2px solid #dc3545;
-  color: #dc3545;
-}
-.extra-cols-container .button-grid button:hover {
+#extra-buttons button:hover:not(:disabled) {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: #fff;
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
-.extra-cols-container .button-grid button.active {
+
+#extra-buttons button.active {
   background: #dc3545;
   color: #fff;
   border-color: #dc3545;
 }
 
-/* Controles Principais */
+#extra-buttons button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .main-controls-section {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
   border-radius: 15px;
   padding: 25px;
   margin-bottom: 25px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
+
 .main-controls-section h2 {
   color: #2e7d32;
   font-size: 1.4em;
-  margin-bottom: 20px;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  line-height: 1.3;
 }
 
-/* Botões Custom */
 .btn-custom {
   padding: 12px 24px;
-  font-size: 1.05em;
+  font-size: 1em;
   font-weight: 600;
   border-radius: 10px;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  line-height: 1.2;
 }
+
 .btn-start {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: #fff;
 }
+
 .btn-start:hover:not(:disabled) {
   background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3);
 }
+
 .btn-stop {
   background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
   color: #fff;
 }
+
 .btn-stop:hover:not(:disabled) {
   background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
 }
+
 .btn-stop:disabled,
 .btn-start:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .btn-clear {
   background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: #fff;
 }
+
 .btn-clear:hover {
   background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
 }
+
 .btn-random {
   background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
   color: #fff;
 }
+
 .btn-random:hover {
   background: linear-gradient(135deg, #5a32a3 0%, #4c2a8f 100%);
 }
 
-/* Controles de Velocidade */
 .speed-control {
   background: #fff;
   padding: 20px;
@@ -377,21 +435,24 @@ body {
   align-items: center;
   gap: 15px;
 }
+
 .speed-control label {
   font-weight: 600;
+  margin: 0;
 }
+
 .speed-control input[type="range"] {
   flex: 1;
   min-width: 200px;
 }
 
-/* Opções */
 .options-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
   margin-top: 15px;
 }
+
 .option-card {
   background: #fff;
   padding: 15px;
@@ -403,30 +464,35 @@ body {
   align-items: center;
   gap: 10px;
 }
+
 .option-card:hover {
   border-color: #28a745;
   background: #f8fff9;
   transform: translateY(-2px);
 }
+
 .option-card input {
   margin-right: 8px;
 }
 
-/* Outputs */
 .outputs-section {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 15px;
   padding: 30px;
   margin: 30px 0;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
   border-top: 5px solid #28a745;
 }
+
 .outputs-section h2 {
   color: #28a745;
   font-size: 1.8em;
-  margin-bottom: 25px;
+  font-weight: 600;
+  margin: 0 0 25px 0;
   text-align: center;
+  line-height: 1.3;
 }
+
 .output-group {
   background: #fff;
   padding: 20px;
@@ -435,13 +501,16 @@ body {
   box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   border-left: 4px solid #28a745;
 }
+
 .output-label {
   display: block;
-  font-weight: 700;
+  font-weight: 600;
   color: #495057;
   margin-bottom: 12px;
-  font-size: 1.1em;
+  font-size: 1.05em;
+  line-height: 1.3;
 }
+
 .output-box {
   width: 100%;
   min-height: 80px;
@@ -453,7 +522,9 @@ body {
   background: #f8f9fa;
   resize: vertical;
   transition: all 0.3s ease;
+  line-height: 1.5;
 }
+
 .output-box:focus {
   outline: none;
   border-color: #28a745;
@@ -461,7 +532,6 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
-/* Separador */
 .content-divider {
   border: none;
   height: 3px;
@@ -469,137 +539,94 @@ body {
   margin: 50px 0;
 }
 
-/* SEÇÕES EXPANDÍVEIS */
-.post_edu-intro-section,
-.post_edu-warning-section,
+/* === SEÇÕES COLAPSÁVEIS === */
 .post_puzzle-section,
-.post_edu-content-section,
-.post_edu-faq-section {
+.post_edu-intro-section,
+.post_edu-warning-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 15px;
-  padding: 30px;
-  margin: 40px 0;
+  padding: 0;
+  margin: 30px 0;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  max-height: 80px;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  max-height: 65px;
+  transition: max-height 0.4s ease, box-shadow 0.3s ease;
+  border: 2px solid #e9ecef;
 }
-.post_edu-intro-section.expanded,
-.post_edu-warning-section.expanded,
+
 .post_puzzle-section.expanded,
-.post_edu-content-section.expanded,
-.post_edu-faq-section.expanded {
-  max-height: none;
+.post_edu-intro-section.expanded,
+.post_edu-warning-section.expanded {
+  max-height: 2000px;
 }
-.post_edu-intro-section h2,
-.post_edu-warning-section h3,
+
+.post_puzzle-section:hover,
+.post_edu-intro-section:hover,
+.post_edu-warning-section:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
 .post_puzzle-section h2,
-.post_edu-content-section h2,
-.post_edu-faq-section h2 {
+.post_edu-intro-section h2,
+.post_edu-warning-section h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0;
-  margin-bottom: 20px;
+  padding: 18px 25px;
+  margin: 0;
   cursor: pointer;
   user-select: none;
-}
-.post_edu-intro-section h2:hover,
-.post_edu-warning-section h3:hover,
-.post_puzzle-section h2:hover,
-.post_edu-content-section h2:hover,
-.post_edu-faq-section h2:hover {
-  opacity: 0.8;
-}
-
-/* Estilos por seção */
-.post_edu-intro-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-left: 6px solid #28a745;
-}
-.post_edu-intro-section h2 { color: #2c3e50; font-size: 1.8em; }
-.post_edu-intro-section p { color: #34495e; line-height: 1.9; margin-bottom: 18px; font-size: 1.05em; }
-
-.post_edu-warning-section {
-  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
-  border: 3px solid #e74c3c;
-  border-left: 6px solid #c0392b;
-}
-.post_edu-warning-section h3 { color: #c0392b; font-size: 1.5em; }
-.post_edu-warning-section p,
-.post_edu-warning-section ul { color: #7f1d1d; line-height: 1.8; font-size: 1.05em; }
-.post_edu-warning-section ul { margin-left: 30px; }
-.post_edu-warning-section ul li { margin-bottom: 12px; }
-
-.post_puzzle-section {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border-left: 6px solid #ff9800;
-}
-.post_puzzle-section h2 { color: #e65100; font-size: 1.8em; }
-.post_puzzle-section h3 { color: #ef6c00; font-size: 1.4em; margin: 25px 0 15px; }
-.post_puzzle-section p { color: #4e342e; line-height: 1.9; margin-bottom: 18px; font-size: 1.05em; }
-.post_puzzle-section ul { margin-left: 30px; color: #4e342e; }
-.post_puzzle-section ul li { margin-bottom: 12px; line-height: 1.7; }
-.post_puzzle-section a { color: #e65100; font-weight: bold; text-decoration: none; }
-.post_puzzle-section a:hover { text-decoration: underline; }
-.post_puzzle-highlight {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 20px 0;
-  border-left: 4px solid #ff9800;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-weight: 600;
+  position: relative;
+  background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  font-size: 1.3em;
+  color: #2d3748;
+  line-height: 1.3;
 }
 
-.post_edu-content-section {
-  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-  border-left: 6px solid #00acc1;
-}
-.post_edu-content-section h2 { color: #006064; font-size: 1.8em; }
-.post_edu-content-section h3 { color: #00838f; font-size: 1.3em; margin: 30px 0 18px; }
-.post_edu-content-section p { color: #004d40; line-height: 1.9; margin-bottom: 18px; font-size: 1.05em; }
-.post_edu-content-section ul { margin-left: 30px; color: #004d40; }
-.post_edu-content-section ul li { margin-bottom: 12px; line-height: 1.7; }
-.post_edu-content-section code {
-  background: #fff;
-  padding: 3px 8px;
-  border-radius: 4px;
-  color: #c0392b;
-  font-size: 0.95em;
+.post_puzzle-section h2 .toggle-icon,
+.post_edu-intro-section h2 .toggle-icon,
+.post_edu-warning-section h3 .toggle-icon {
+  transition: transform 0.3s ease;
+  font-size: 0.8em;
+  color: #718096;
 }
 
-.post_edu-faq-section {
-  background: #fff;
-  border-top: 5px solid #28a745;
+.post_puzzle-section.expanded h2 .toggle-icon,
+.post_edu-intro-section.expanded h2 .toggle-icon,
+.post_edu-warning-section.expanded h3 .toggle-icon {
+  transform: rotate(180deg);
 }
-.post_edu-faq-section h2 {
-  color: #2c3e50;
-  font-size: 1.8em;
-  text-align: left;
-}
-.post_edu-faq-item {
-  margin-bottom: 25px;
+
+.post_puzzle-section .section-content,
+.post_edu-intro-section .section-content,
+.post_edu-warning-section .section-content {
   padding: 25px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 5px solid #28a745;
-  transition: all 0.3s ease;
 }
-.post_edu-faq-item:hover {
-  background: #e8f5e9;
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-.post_edu-faq-item h4 {
+
+.post_puzzle-section .section-content h3,
+.post_edu-intro-section .section-content h3,
+.post_edu-warning-section .section-content h3 {
   color: #28a745;
   font-size: 1.2em;
-  margin-bottom: 12px;
-  margin-top: 0;
+  font-weight: 600;
+  margin: 20px 0 12px 0;
+  line-height: 1.4;
 }
-.post_edu-faq-item p {
-  color: #555;
-  line-height: 1.8;
-  font-size: 1.05em;
-  margin-bottom: 0;
+
+.post_puzzle-section .section-content p,
+.post_edu-intro-section .section-content p,
+.post_edu-warning-section .section-content p {
+  margin-bottom: 15px;
+  line-height: 1.7;
+}
+
+.post_puzzle-section .section-content ul,
+.post_edu-intro-section .section-content ul,
+.post_edu-warning-section .section-content ul {
+  margin: 15px 0;
+  padding-left: 25px;
 }
 
 /* Navbar */
@@ -609,11 +636,13 @@ body {
   margin-bottom: 0;
   padding: 15px 0;
 }
+
 .navbar-brand {
   font-size: 1.1em;
   transition: all 0.3s ease;
   margin-right: 20px;
 }
+
 .navbar-brand:hover {
   transform: translateY(-2px);
   color: #20c997 !important;
@@ -626,12 +655,14 @@ body {
   padding: 40px 0 20px;
   margin-top: 60px;
 }
+
 .footer-nav a {
   color: #ecf0f1;
   text-decoration: none;
   transition: all 0.3s ease;
   font-size: 0.9em;
 }
+
 .footer-nav a:hover {
   color: #28a745;
   text-decoration: underline;
@@ -644,19 +675,21 @@ body {
   color: #4CAF50;
   transition: transform 0.3s ease, color 0.3s ease;
 }
+
 .fa-copy:hover {
   color: #FF5722;
   transform: scale(1.0);
 }
+
 .fa-copy:active {
   color: #2196F3;
   transform: scale(0.7);
 }
+
 .fa-copy.text-success {
   color: #28a745 !important;
 }
 
-/* Scroll WIF */
 #wifList {
   max-height: 200px;
   overflow-y: auto;
@@ -688,7 +721,7 @@ body {
 
 @media (max-width: 768px) {
   .hero-section {
-    padding: 30px 20px;
+    padding: 25px 20px;
   }
   .hero-section h1 {
     font-size: 1.6em;
@@ -700,21 +733,33 @@ body {
   .btn-custom {
     width: 100%;
   }
-  .canvas-container {
-    padding: 15px;
-  }
-  .post_edu-intro-section,
-  .post_edu-warning-section,
   .post_puzzle-section,
-  .post_edu-content-section,
-  .post_edu-faq-section {
+  .post_edu-intro-section,
+  .post_edu-warning-section {
+    padding: 0;
+    margin: 25px 0;
+  }
+  .post_puzzle-section h2,
+  .post_edu-intro-section h2,
+  .post_edu-warning-section h3 {
+    font-size: 1.2em !important;
+    padding: 15px 20px;
+  }
+  .post_puzzle-section .section-content,
+  .post_edu-intro-section .section-content,
+  .post_edu-warning-section .section-content {
     padding: 20px;
   }
-  .post_edu-intro-section h2,
-  .post_edu-warning-section h3,
-  .post_puzzle-section h2,
-  .post_edu-content-section h2,
-  .post_edu-faq-section h2 {
-    font-size: 1.4em !important;
+  
+  .main-content h1 {
+    font-size: 1.7em;
+  }
+  
+  .main-content h2 {
+    font-size: 1.3em;
+  }
+  
+  .main-content h3 {
+    font-size: 1.15em;
   }
 }
