@@ -32,219 +32,6 @@
   
   <!-- BitcoinJS -->
   <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
-  
-  <style>
-    /* Ajustes para grid maior e responsivo */
-    .canvas-wrapper {
-      display: flex;
-      justify-content: center;
-      margin: 1.5rem 0;
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    #grid {
-      min-width: 100%;
-      max-width: 100%;
-      height: auto;
-      width: 100%;
-      border: 3px solid #2d3748;
-      border-radius: 8px;
-      background: #fff;
-      cursor: crosshair;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      display: block;
-      touch-action: none;
-    }
-
-    @media (max-width: 768px) {
-      #grid {
-        max-width: 100vw;
-      }
-    }
-
-    /* Melhorar visibilidade do grid */
-    .hero-section {
-      text-align: center;
-      padding: 2rem 1rem;
-      background: linear-gradient(135deg, #667eea15, #764ba215);
-      border-radius: 12px;
-      margin-bottom: 2rem;
-    }
-
-    /* GDPR Banner Fix */
-    #gdpr-consent-banner {
-      display: none !important;
-    }
-
-    #gdpr-consent-banner.show {
-      display: block !important;
-    }
-
-    .gdpr-consent-banner {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      border-top: 1px solid #e2e8f0;
-      padding: 20px 24px;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      font-size: 14px;
-      color: #2d3748;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-      z-index: 99999;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .gdpr-consent-banner h2 {
-      margin: 0 0 12px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #1a202c;
-    }
-
-    .gdpr-consent-banner p {
-      margin: 0 0 16px;
-      line-height: 1.6;
-      color: #4a5568;
-    }
-
-    .consent-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .consent-btn {
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-    }
-
-    #consent-accept-all {
-      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-      color: white;
-    }
-
-    #consent-accept-all:hover {
-      transform: translateY(-2px);
-    }
-
-    #consent-reject-all {
-      background: white;
-      color: #2d3748;
-      border: 2px solid #e2e8f0;
-    }
-
-    #consent-customize {
-      background: white;
-      color: #4f46e5;
-      border: 2px solid #4f46e5;
-    }
-
-    #consent-close-banner {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: transparent;
-      border: none;
-      color: #718096;
-      font-size: 24px;
-      cursor: pointer;
-      width: 32px;
-      height: 32px;
-    }
-
-    #consent-settings {
-      background: #f7fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 16px;
-    }
-
-    #consent-settings.hidden {
-      display: none;
-    }
-
-    .consent-option {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .consent-option:last-child {
-      margin-bottom: 0;
-      border-bottom: none;
-    }
-
-    .consent-option input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      margin-top: 2px;
-      margin-right: 12px;
-      cursor: pointer;
-      accent-color: #4f46e5;
-      flex-shrink: 0;
-    }
-
-    .consent-option label {
-      flex: 1;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .consent-option label strong {
-      display: block;
-      font-weight: 700;
-      color: #1a202c;
-      margin-bottom: 4px;
-    }
-
-    .consent-option label span {
-      display: block;
-      font-size: 13px;
-      color: #718096;
-      line-height: 1.5;
-    }
-
-    #consent-save-settings {
-      width: 100%;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 16px;
-    }
-
-    @media (max-width: 768px) {
-      .gdpr-consent-banner {
-        padding: 16px;
-      }
-
-      .consent-buttons {
-        flex-direction: column;
-      }
-
-      .consent-btn {
-        width: 100%;
-      }
-    }
-  </style>
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
@@ -302,13 +89,9 @@
         </ul>
       </div>
 
-      <!-- Inicia codigo Contador -->
-      
       <div class="sidebar-widget">
-<div align="center"><a title='Contador de Visitas do MegaContador' href='https://megacontador.com.br/' ><img src='https://megacontador.com.br/img-zsnBM7iJuUWa51R7-3.gif' border='0' alt='Contador de visitas'></a></div>
-<!-- Fim do codigo Contador -->
+        <div align="center"><a title='Contador de Visitas do MegaContador' href='https://megacontador.com.br/'><img src='https://megacontador.com.br/img-zsnBM7iJuUWa51R7-3.gif' border='0' alt='Contador de visitas'></a></div>
       </div>
-
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
@@ -319,7 +102,7 @@
         <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
       </div>
 
-      <!-- Canvas Centralizado (MAIOR) -->
+      <!-- Canvas Centralizado -->
       <div class="canvas-wrapper">
         <canvas id="grid" aria-label="Matriz interativa 16x16 para seleção de células" width="1200" height="900"></canvas>
       </div>
@@ -356,7 +139,6 @@
         <h2 class="mt-4"><i class="fas fa-arrows-alt-v"></i> Selecionar Base (Linha Final)</h2>
         <div id="baseButtons" class="button-grid" role="group" aria-label="Botões para selecionar base"></div>
 
-        <!-- Linha Extra -->
         <h2 class="mt-4">➕ Selecionar Linha Extra (fora do intervalo)</h2>
         <div id="extra-buttons" class="button-group"></div>
       </div>
@@ -413,7 +195,7 @@
         </div>
       </div>
 
-      <!-- SEÇÃO AD #2: In-Article -->
+      <!-- ANÚNCIOS -->
       <div id="ad-in-article-1" class="ad-container" role="region" aria-label="Publicidade - Conteúdo">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -426,7 +208,6 @@
 
       <hr class="content-divider">
 
-      <!-- SEÇÃO AD #3: In-Feed -->
       <div id="ad-infeed" role="region" aria-label="Publicidade - Feed">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -435,27 +216,28 @@
              data-ad-client="ca-pub-3614622181047762"
              data-ad-slot="1937287877"></ins>
       </div>
-https://www.xml-sitemaps.com/
-      <!-- SEÇÃO DE CONTEÚDO EDUCATIVO -->
+
+      <!-- SEÇÕES COLAPSÍVEIS -->
       <section class="post_puzzle-section"> 
-        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down"></i></h2>
-        <p>
-          O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
-        </p>
-        <h3>Como Funciona o Puzzle?</h3>
-        <p>
-          Cada endereço do puzzle possui uma private key que está limitada a uma faixa específica de bits. Por exemplo:
-        </p>
-        <ul>
-          <li><strong>Puzzle #1:</strong> 1 bit (faixa: 1)</li>
-          <li><strong>Puzzle #10:</strong> 10 bits (faixa: 512 a 1023)</li>
-          <li><strong>Puzzle #66:</strong> 66 bits (já encontrado em 2023)</li>
-          <li><strong>Puzzle #130:</strong> 130 bits (ainda não resolvido)</li>
-          <li><strong>Puzzle #256:</strong> 256 bits completos (praticamente impossível por força bruta)</li>
-        </ul>
+        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down toggle-icon"></i></h2>
+        <div class="section-content">
+          <p>
+            O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
+          </p>
+          <h3>Como Funciona o Puzzle?</h3>
+          <p>
+            Cada endereço do puzzle possui uma private key que está limitada a uma faixa específica de bits. Por exemplo:
+          </p>
+          <ul>
+            <li><strong>Puzzle #1:</strong> 1 bit (faixa: 1)</li>
+            <li><strong>Puzzle #10:</strong> 10 bits (faixa: 512 a 1023)</li>
+            <li><strong>Puzzle #66:</strong> 66 bits (já encontrado em 2023)</li>
+            <li><strong>Puzzle #130:</strong> 130 bits (ainda não resolvido)</li>
+            <li><strong>Puzzle #256:</strong> 256 bits completos (praticamente impossível por força bruta)</li>
+          </ul>
+        </div>
       </section>
 
-      <!-- SEÇÃO AD #4: In-Article -->
       <div id="ad-in-article-2" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 2">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -467,13 +249,14 @@ https://www.xml-sitemaps.com/
       </div>
       
       <section class="post_edu-intro-section">
-        <h2>📚 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down"></i></h2>
-        <p>
-          Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin.
-        </p>
+        <h2>📚 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down toggle-icon"></i></h2>
+        <div class="section-content">
+          <p>
+            Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin.
+          </p>
+        </div>
       </section>
 
-      <!-- SEÇÃO AD #5: In-Feed Segunda Vez -->
       <div id="ad-infeed-2" role="region" aria-label="Publicidade - Feed 2">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -484,13 +267,14 @@ https://www.xml-sitemaps.com/
       </div>
 
       <section class="post_edu-warning-section">
-        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down"></i></h3>
-        <p>
-          <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração.
-        </p>
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down toggle-icon"></i></h3>
+        <div class="section-content">
+          <p>
+            <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração.
+          </p>
+        </div>
       </section>
 
-      <!-- SEÇÃO AD #6: In-Article Final -->
       <div id="ad-in-article-3" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 3">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -534,28 +318,21 @@ https://www.xml-sitemaps.com/
     </aside>
   </div>
 
-  <!-- ========================================== -->
-  <!-- BANNER DE CONSENTIMENTO GDPR -->
-  <!-- ========================================== -->
+  <!-- GDPR BANNER -->
   <div id="gdpr-consent-banner" class="gdpr-consent-banner" role="dialog" aria-modal="true" aria-labelledby="consent-title">
     <button id="consent-close-banner" aria-label="Fechar banner de consentimento">✕</button>
-    
     <h2 id="consent-title">🔒 Sua Privacidade Importa</h2>
     <p>
       Usamos cookies e tecnologias similares para melhorar sua experiência, analisar tráfego e fornecer conteúdo personalizado. 
       Você pode aceitar todos, rejeitar não-necessários ou personalizar suas preferências.
     </p>
-
     <div class="consent-buttons">
       <button id="consent-accept-all" class="consent-btn">✓ Aceitar Todos</button>
       <button id="consent-reject-all" class="consent-btn">✗ Rejeitar</button>
       <button id="consent-customize" class="consent-btn">⚙ Personalizar</button>
     </div>
-
-    <!-- Configurações Detalhadas -->
     <div id="consent-settings" class="hidden">
       <h3>Preferências de Consentimento</h3>
-      
       <div class="consent-option">
         <input type="checkbox" id="consent-analytics" checked>
         <label for="consent-analytics">
@@ -563,7 +340,6 @@ https://www.xml-sitemaps.com/
           <span>Nos ajuda a entender como você usa o site para melhorar a experiência.</span>
         </label>
       </div>
-
       <div class="consent-option">
         <input type="checkbox" id="consent-marketing">
         <label for="consent-marketing">
@@ -571,7 +347,6 @@ https://www.xml-sitemaps.com/
           <span>Permite exibir anúncios personalizados baseados no seu interesse.</span>
         </label>
       </div>
-
       <div class="consent-option">
         <input type="checkbox" id="consent-preferences">
         <label for="consent-preferences">
@@ -579,14 +354,11 @@ https://www.xml-sitemaps.com/
           <span>Memoriza suas escolhas para personalizar futuras visitas.</span>
         </label>
       </div>
-
       <button id="consent-save-settings" class="consent-btn">💾 Salvar Preferências</button>
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- ANÚNCIO FLUTUANTE (Floating RPM) -->
-  <!-- ========================================== -->
+  <!-- ANÚNCIO FLUTUANTE -->
   <div id="floatingAd" class="ad-floating" role="region" aria-label="Publicidade flutuante" style="display:none;">
     <div class="ad-floating-header">
       <span class="ad-floating-label">📢 Publicidade</span>
@@ -604,8 +376,6 @@ https://www.xml-sitemaps.com/
 
   <!-- Scripts -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762" crossorigin="anonymous"></script>
-  
-  <!-- Scripts Customizados (ORDEM IMPORTANTE) -->
   <script src="js/gdpr-init-fix.js" defer></script>
   <script src="js/auto16.js" defer></script>
   <script src="js/adsense-manager.js" defer></script>
@@ -613,7 +383,17 @@ https://www.xml-sitemaps.com/
   <script src="js/script_random_pisca.js" defer></script>
   <script src="js/puzzles.js" defer></script>
 
-
-
+  <!-- SCRIPT PARA COLAPSAR SEÇÕES -->
+  <script>
+    document.querySelectorAll('.post_puzzle-section, .post_edu-intro-section, .post_edu-warning-section')
+      .forEach(section => {
+        const heading = section.querySelector('h2, h3');
+        if (heading) {
+          heading.addEventListener('click', () => {
+            section.classList.toggle('expanded');
+          });
+        }
+      });
+  </script>
 </body>
 </html>
