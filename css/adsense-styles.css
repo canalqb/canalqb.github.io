@@ -1,80 +1,134 @@
 /* ============================================ */
 /* adsense-styles.css */
 /* Estilos otimizados para AdSense + Blogspot */
+/* Com auto-hide quando sem anúncios */
 /* ============================================ */
 
 /* Banner Top Anúncio */
 #ad-banner-top {
   background: transparent;
-  padding: 12px 0;
+  padding: 8px 0;
   text-align: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   overflow: hidden;
   min-height: 50px;
   display: block !important;
+  transition: all 0.3s ease;
+}
+
+/* Oculta quando vazio */
+#ad-banner-top:empty,
+#ad-banner-top:not(:has(.adsbygoogle[data-ad-status="filled"])) {
+  display: none !important;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
 }
 
 #ad-banner-top .ad-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #6c757d;
-  margin: 5px 0;
+  margin: 3px 0;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
+  letter-spacing: 0.8px;
+  font-weight: 600;
 }
 
 /* Container responsivo para anúncios */
 .ad-container {
-  margin: 15px 0;
+  margin: 12px 0;
   text-align: center;
   overflow: hidden;
   background: transparent;
+  transition: all 0.3s ease;
+}
+
+/* Oculta quando vazio */
+.ad-container:empty,
+.ad-container:not(:has(.adsbygoogle[data-ad-status="filled"])) {
+  display: none !important;
+  margin: 0;
 }
 
 .ad-container .ad-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #6c757d;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: block;
 }
 
 /* Anúncio In-Feed */
-#ad-infeed {
-  margin: 30px 0;
-  padding: 15px 0;
+#ad-infeed,
+#ad-infeed-2 {
+  margin: 20px 0;
+  padding: 10px 0;
   background: transparent;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   text-align: center;
+  transition: all 0.3s ease;
 }
 
-#ad-infeed .ad-label {
-  font-size: 0.65rem;
+/* Oculta quando vazio */
+#ad-infeed:empty,
+#ad-infeed:not(:has(.adsbygoogle[data-ad-status="filled"])),
+#ad-infeed-2:empty,
+#ad-infeed-2:not(:has(.adsbygoogle[data-ad-status="filled"])) {
+  display: none !important;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#ad-infeed .ad-label,
+#ad-infeed-2 .ad-label {
+  font-size: 0.6rem;
   color: #6c757d;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   font-weight: 600;
 }
 
 /* Anúncio In-Article */
+#ad-in-article-1,
+#ad-in-article-2,
+#ad-in-article-3,
 .ad-in-article {
-  margin: 25px 0;
-  padding: 15px 0;
+  margin: 18px 0;
+  padding: 10px 0;
   background: transparent;
   text-align: center;
+  transition: all 0.3s ease;
 }
 
+/* Oculta quando vazio */
+#ad-in-article-1:empty,
+#ad-in-article-1:not(:has(.adsbygoogle[data-ad-status="filled"])),
+#ad-in-article-2:empty,
+#ad-in-article-2:not(:has(.adsbygoogle[data-ad-status="filled"])),
+#ad-in-article-3:empty,
+#ad-in-article-3:not(:has(.adsbygoogle[data-ad-status="filled"])),
+.ad-in-article:empty,
+.ad-in-article:not(:has(.adsbygoogle[data-ad-status="filled"])) {
+  display: none !important;
+  margin: 0;
+  padding: 0;
+}
+
+#ad-in-article-1 .ad-label,
+#ad-in-article-2 .ad-label,
+#ad-in-article-3 .ad-label,
 .ad-in-article .ad-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #6c757d;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   font-weight: 600;
 }
 
@@ -96,6 +150,12 @@
   transition: all 0.3s ease;
 }
 
+/* Oculta quando vazio */
+.ad-floating:empty,
+.ad-floating:not(:has(.adsbygoogle[data-ad-status="filled"])) {
+  display: none !important;
+}
+
 .ad-floating.closing {
   animation: slideOutAd 0.5s ease-in forwards;
 }
@@ -105,17 +165,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
+  padding: 8px 12px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 12px 12px 0 0;
 }
 
 .ad-floating-label {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   margin: 0;
 }
 
@@ -124,11 +184,11 @@
   background: rgba(255, 255, 255, 0.25);
   border: none;
   color: white;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -149,8 +209,8 @@
 
 /* Conteúdo do Anúncio Flutuante */
 .ad-floating-content {
-  padding: 10px;
-  min-height: 250px;
+  padding: 8px;
+  min-height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,39 +304,43 @@
   }
 
   .ad-floating-header {
-    padding: 8px 12px;
+    padding: 6px 10px;
   }
 
   .ad-close-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
   }
 
   .ad-floating-content {
-    min-height: 180px;
-    padding: 8px;
+    min-height: 150px;
+    padding: 6px;
   }
 }
 
 @media (max-width: 768px) {
   #ad-banner-top {
-    padding: 8px 0;
-    margin-bottom: 15px;
+    padding: 6px 0;
+    margin-bottom: 12px;
   }
 
   .ad-container {
-    margin: 12px 0;
+    margin: 10px 0;
   }
 
-  #ad-infeed {
-    margin: 20px 0;
-    padding: 12px 0;
+  #ad-infeed,
+  #ad-infeed-2 {
+    margin: 15px 0;
+    padding: 8px 0;
   }
 
+  #ad-in-article-1,
+  #ad-in-article-2,
+  #ad-in-article-3,
   .ad-in-article {
-    margin: 20px 0;
-    padding: 12px 0;
+    margin: 15px 0;
+    padding: 8px 0;
   }
 }
 
@@ -284,6 +348,10 @@
 @media print {
   #ad-banner-top,
   #ad-infeed,
+  #ad-infeed-2,
+  #ad-in-article-1,
+  #ad-in-article-2,
+  #ad-in-article-3,
   .ad-in-article,
   .ad-floating {
     display: none !important;
@@ -314,13 +382,13 @@
 
 /* Classe para bloqueador detectado */
 .ads-blocked {
-  padding: 15px;
+  padding: 12px;
   background: #fff3cd;
   border: 1px solid #ffc107;
   border-radius: 8px;
   color: #856404;
-  font-size: 0.9rem;
-  margin: 15px 0;
+  font-size: 0.85rem;
+  margin: 12px 0;
   text-align: center;
   display: none;
 }
@@ -342,12 +410,28 @@ body[data-device-type]::before {
   background: #f0f0f0;
   border: 1px dashed #ccc;
   border-radius: 4px;
-  padding: 10px;
+  padding: 8px;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #666;
 }
 
 .ad-awaiting-consent::after {
   content: 'Aguardando consentimento para exibir anúncios';
+}
+
+/* FALLBACK para browsers que não suportam :has() */
+@supports not (selector(:has(*))) {
+  /* Mantém visível se :has() não for suportado */
+  #ad-banner-top,
+  .ad-container,
+  #ad-infeed,
+  #ad-infeed-2,
+  #ad-in-article-1,
+  #ad-in-article-2,
+  #ad-in-article-3,
+  .ad-in-article,
+  .ad-floating {
+    display: block !important;
+  }
 }
