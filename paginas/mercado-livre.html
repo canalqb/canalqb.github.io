@@ -1,0 +1,45 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>🛒 Notificação Mercado Livre</h1>
+  <p class="subtitle">Isenção de relação comercial</p>
+</div>
+
+<section class="control-card">
+  <p>
+    Este site <strong>não está afiliado, associado, autorizado ou endossado pelo Mercado Livre</strong> 
+    ou qualquer de suas subsidiárias.
+  </p>
+  <p>
+    A menção ao nome "Mercado Livre" (se houver) é meramente descritiva e não implica parceria, 
+    patrocínio ou relação comercial de qualquer tipo.
+  </p>
+  <p>
+    "Mercado Livre" é uma marca registrada de sua respectiva empresa.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

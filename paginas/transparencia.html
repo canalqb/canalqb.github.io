@@ -1,0 +1,53 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>🔍 Transparência</h1>
+  <p class="subtitle">Clareza sobre o propósito e operação deste site</p>
+</div>
+
+<section class="control-card">
+  <p>
+    Este site é um <strong>projeto educacional aberto</strong>, sem fins lucrativos, mantido por 
+    <strong>Rodrigo Carlos Moraes (@CanalQb)</strong>.
+  </p>
+  <p>
+    Não há patrocinadores, investidores ou anunciantes com influência editorial. 
+    A monetização via AdSense é usada apenas para cobrir custos de hospedagem e domínio.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>Dados técnicos</h2>
+  <ul>
+    <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript puro;</li>
+    <li><strong>Bibliotecas:</strong> BitcoinJS, Bootstrap;</li>
+    <li><strong>Hospedagem:</strong> GitHub Pages;</li>
+    <li><strong>Domínios:</strong> btckeygen.com, canalqb.blogspot.com;</li>
+    <li><strong>Código aberto:</strong> <a href="https://github.com/canalqb" target="_blank" rel="noopener noreferrer">github.com/canalqb</a>.</li>
+  </ul>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

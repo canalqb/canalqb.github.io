@@ -1,0 +1,48 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>⚖️ Notificação DMCA</h1>
+  <p class="subtitle">Proteção contra violação de direitos autorais</p>
+</div>
+
+<section class="control-card">
+  <p>
+    Este site <strong>não hospeda nenhum conteúdo protegido por direitos autorais de terceiros</strong>.
+    Todo o material é original ou de domínio público (ex: documentação do Bitcoin Core, secp256k1).
+  </p>
+  <p>
+    Se você acredita que algum conteúdo aqui viola seus direitos, envie uma notificação formal via:
+  </p>
+  <ul>
+    <li><strong>GitHub:</strong> abra uma issue em <a href="https://github.com/canalqb" target="_blank" rel="noopener noreferrer">github.com/canalqb</a>;</li>
+    <li><strong>Blog:</strong> comente com link de evidência em <a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">canalqb.blogspot.com</a>.</li>
+  </ul>
+  <p>
+    Não aceitamos notificações via e-mail não verificáveis.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

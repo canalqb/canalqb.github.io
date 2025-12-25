@@ -1,0 +1,55 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>📬 Contato</h1>
+  <p class="subtitle">Entre em contato para dúvidas, sugestões ou colaborações</p>
+</div>
+
+<section class="control-card">
+  <h2>Como nos encontrar</h2>
+  <p>
+    Este é um projeto educacional mantido por <strong>Rodrigo Carlos Moraes</strong>. 
+    Por ser um recurso técnico e gratuito, não há suporte comercial, mas você pode nos contatar via:
+  </p>
+  <ul>
+    <li><strong>Blog:</strong> <a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">canalqb.blogspot.com</a> (comentários abertos)</li>
+    <li><strong>GitHub:</strong> <a href="https://github.com/canalqb" target="_blank" rel="noopener noreferrer">github.com/canalqb</a> (issues e pull requests)</li>
+    <li><strong>YouTube:</strong> <a href="https://www.youtube.com/@canalqb" target="_blank" rel="noopener noreferrer">@canalqb</a> (vídeos educacionais)</li>
+  </ul>
+  <p>
+    <strong>Não respondemos e-mails diretos.</strong> Utilize os canais acima para garantir resposta.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>🚨 Relatórios de segurança</h2>
+  <p>
+    Se encontrar uma vulnerabilidade de segurança, por favor, relate via GitHub ou envie um vídeo explicativo 
+    no YouTube com link nos comentários do blog. Priorizamos transparência e correção pública.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

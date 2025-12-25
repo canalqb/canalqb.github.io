@@ -1,0 +1,48 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>📱 Privacidade em Aplicativos</h1>
+  <p class="subtitle">Não há aplicativos móveis oficiais</p>
+</div>
+
+<section class="control-card">
+  <p>
+    <strong>O CanalQb não possui aplicativos móveis oficiais</strong> nas lojas Google Play ou App Store.
+  </p>
+  <p>
+    Todo o acesso ao conteúdo educacional é feito via navegador web, nos seguintes domínios:
+    <ul>
+      <li><a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer">btckeygen.com</a></li>
+      <li><a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">canalqb.blogspot.com</a></li>
+      <li><a href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer">canalqb.github.io/v1/</a></li>
+    </ul>
+  </p>
+  <p>
+    Qualquer app com nosso nome é falso e não é endossado por nós.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

@@ -1,0 +1,63 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>👥 Sobre Nós</h1>
+  <p class="subtitle">Educação em criptografia Bitcoin desde o zero</p>
+</div>
+
+<section class="control-card">
+  <p>
+    O <strong>Gerador Educativo de Private Keys Bitcoin</strong> é um projeto sem fins lucrativos criado por 
+    <strong>Rodrigo Carlos Moraes (@CanalQb)</strong>, com o objetivo de ensinar de forma visual e segura 
+    os fundamentos da criptografia usada no Bitcoin.
+  </p>
+  <p>
+    Nosso foco está no <strong>Puzzle 1000 BTC</strong>, um desafio criptográfico que distribuiu 1000 BTC 
+    em 256 endereços com chaves privadas em faixas específicas de bits. Usamos uma matriz 16×16 interativa 
+    para demonstrar como bits binários geram private keys de 256 bits.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>🎯 Nossa Missão</h2>
+  <ul>
+    <li>Democratizar o conhecimento técnico sobre Bitcoin;</li>
+    <li>Ensinar segurança criptográfica sem jargões desnecessários;</li>
+    <li>Alertar contra o uso de ferramentas online para armazenamento real de BTC;</li>
+    <li>Manter tudo como <strong>código aberto</strong> e auditável.</li>
+  </ul>
+</section>
+
+<section class="control-card">
+  <h2>🔗 Projetos Relacionados</h2>
+  <p>
+    <a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer">BTCKeygen.com</a> – Ferramenta avançada para geração e visualização de chaves.<br>
+    <a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">CanalQb Blog</a> – Tutoriais, análise de segurança e educação em blockchain.<br>
+    <a href="https://github.com/canalqb" target="_blank" rel="noopener noreferrer">GitHub @CanalQb</a> – Todo o código fonte disponível publicamente.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

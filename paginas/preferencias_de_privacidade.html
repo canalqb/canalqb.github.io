@@ -1,0 +1,96 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>🔧 Gestão de Preferências de Privacidade</h1>
+  <p class="subtitle">Como você controla cookies, analytics e anúncios neste site</p>
+</div>
+
+<section class="control-card">
+  <h2>1. Painel de consentimento</h2>
+  <p>
+    Este site utiliza um <strong>banner de consentimento GDPR</strong> ao ser acessado. 
+    Por meio dele, você pode:
+  </p>
+  <ul>
+    <li>Aceitar todos os cookies;</li>
+    <li>Rejeitar cookies não essenciais;</li>
+    <li>Personalizar suas preferências de rastreamento.</li>
+  </ul>
+</section>
+
+<section class="control-card">
+  <h2>2. Categorias de consentimento</h2>
+  <p>
+    As opções disponíveis são:
+  </p>
+  <ul>
+    <li><strong>Cookies necessários:</strong> essenciais para o funcionamento básico (ex: lembrar seu consentimento). Sempre ativados.</li>
+    <li><strong>Analytics (Google Analytics):</strong> ajuda a entender como você usa o site. Ativado apenas com seu consentimento.</li>
+    <li><strong>Marketing (Google AdSense):</strong> permite anúncios personalizados. Ativado apenas com seu consentimento.</li>
+  </ul>
+</section>
+
+<section class="control-card">
+  <h2>3. Como alterar suas preferências?</h2>
+  <p>
+    Você pode atualizar seu consentimento a qualquer momento:
+  </p>
+  <ol>
+    <li>Acesse qualquer página do site;</li>
+    <li>Clique no link <strong>“Preferências de Cookies”</strong> no canto inferior direito;</li>
+    <li>Ajuste suas opções e clique em <strong>“Salvar Preferências”</strong>.</li>
+  </ol>
+</section>
+
+<section class="control-card">
+  <h2>4. Controle alternativo</h2>
+  <p>
+    Além do painel integrado, você também pode:
+  </p>
+  <ul>
+    <li>Limpar cookies nas configurações do seu navegador;</li>
+    <li>Navegar em modo anônimo;</li>
+    <li>Usar extensões como uBlock Origin ou Privacy Badger.</li>
+  </ul>
+</section>
+
+<section class="control-card">
+  <h2>5. Transparência educacional</h2>
+  <p>
+    Este site <strong>não coleta dados pessoais</strong>, <strong>não armazena chaves privadas</strong> 
+    e <strong>não rastreia usuários fora do escopo do consentimento</strong>. 
+    Toda a geração de chaves ocorre localmente no seu navegador.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>6. Última atualização</h2>
+  <p>
+    Esta página foi revisada pela última vez em: <strong>25 de dezembro de 2025</strong>.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>
