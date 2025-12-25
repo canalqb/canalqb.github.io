@@ -6,22 +6,136 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
-
 <url>
   <loc>https://canalqb.github.io/</loc>
-  <lastmod>2025-12-23T18:55:36+00:00</lastmod>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
   <priority>1.00</priority>
 </url>
+
 <url>
   <loc>https://canalqb.github.io/paginas/about.html</loc>
-  <lastmod>2025-12-23T18:55:36+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://canalqb.github.io/paginas/disclaimer.html</loc>
-  <lastmod>2025-12-23T18:55:36+00:00</lastmod>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 
+<url>
+  <loc>https://canalqb.github.io/paginas/app-privacidade.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/ccookies.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/consentimento_de_cookies.html</loc>
+  <lastmod>2025-12-18T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/contato.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/contatos.html</loc>
+  <lastmod>2025-12-18T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/cookies.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/direitos-autorais.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/direitos-usuario.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/disclaimer.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/dmca.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/mercado-livre.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/monetizacao.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/nao-venda.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/politicadeprivacidade.html</loc>
+  <lastmod>2025-12-18T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/preferencias_de_privacidade.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/preferências_de_privacidade.html</loc>
+  <lastmod>2025-12-18T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/privacidade.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/sobre.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/termos.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<url>
+  <loc>https://canalqb.github.io/paginas/transparencia.html</loc>
+  <lastmod>2025-12-25T21:28:37+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
 
 </urlset>
