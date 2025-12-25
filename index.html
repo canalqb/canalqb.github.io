@@ -629,6 +629,18 @@
     console.log('📦 Versão: 2.0.0');
     console.log('🔐 GDPR Manager:', typeof window.gdprManager !== 'undefined' ? 'OK' : 'Aguardando');
     console.log('📊 Analytics:', typeof window.gdprAnalytics !== 'undefined' ? 'OK' : 'Aguardando');
+
+    
+    // Colapsar seções
+    document.querySelectorAll('.post_puzzle-section, .post_edu-intro-section, .post_edu-warning-section')
+      .forEach(section => {
+        const heading = section.querySelector('h2, h3');
+        if (heading) {
+          heading.addEventListener('click', () => {
+            section.classList.toggle('expanded');
+          });
+        }
+      });
   </script>
 </body>
 </html>
