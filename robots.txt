@@ -2,4 +2,6 @@ User-agent: *
 Disallow: /css
 Disallow: /js
 Disallow: /cgi-bin
-Disallow: /.git 
+Disallow: /.git
+
+Sitemap: https://canalqb.github.io/sitemap.xml
