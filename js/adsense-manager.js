@@ -2,6 +2,7 @@
  * adsense-manager.js
  * Gerenciador completo de anúncios AdSense para Blogspot
  * Otimizado para SEO, performance e conformidade Google
+ * VERSÃO CORRIGIDA: Melhor detecção de anúncios vazios no Android Chrome
  */
 
 (function() {
@@ -18,7 +19,8 @@
     delays: {
       topAd: 500,
       floatingAd: 8000,
-      autoCloseFloating: 15000
+      autoCloseFloating: 15000,
+      emptyCheckDelay: 2000 // Delay para verificar se anúncio carregou
     },
     storage: 'adClosedStates',
     maxRetries: 3,
@@ -87,6 +89,11 @@
             (window.adsbygoogle = window.adsbygoogle || []).push({});
             ad.dataset.adProcessed = 'true';
             console.log(`✅ Anúncio ${idx + 1} carregado`);
+            
+            // Agenda verificação se o anúncio carregou de fato
+            setTimeout(() => {
+              checkAdLoaded(ad);
+            }, AdsenseConfig.delays.emptyCheckDelay);
           } catch (e) {
             console.warn(`⚠️ Erro ao processar anúncio ${idx + 1}:`, e.message);
           }
@@ -98,6 +105,123 @@
     } catch (err) {
       console.error('❌ Erro ao processar anúncios:', err);
     }
+  }
+
+  /**
+   * CORRIGIDO: Verifica se anúncio carregou conteúdo (Android Chrome compatível)
+   */
+  function checkAdLoaded(adElement) {
+    if (!adElement) return;
+
+    const container = adElement.closest('.ad-container, .ad-banner-top, #ad-infeed, #ad-infeed-2, #ad-in-article-1, #ad-in-article-2, #ad-in-article-3, .ad-floating');
+    if (!container) return;
+
+    // Múltiplos métodos de detecção para maior compatibilidade
+    const isEmpty = isAdEmpty(adElement);
+    
+    if (isEmpty) {
+      console.log('🚫 Anúncio vazio detectado, ocultando container');
+      hideAdContainer(container);
+    } else {
+      console.log('✅ Anúncio com conteúdo detectado');
+      showAdContainer(container);
+    }
+  }
+
+  /**
+   * CORRIGIDO: Verifica se anúncio está vazio (múltiplos métodos)
+   */
+  function isAdEmpty(adElement) {
+    // Método 1: Verifica data-ad-status (AdSense padrão)
+    const adStatus = adElement.getAttribute('data-ad-status');
+    if (adStatus === 'unfilled') {
+      return true;
+    }
+
+    // Método 2: Verifica dimensões computadas (funciona melhor no Android)
+    const rect = adElement.getBoundingClientRect();
+    const hasSize = rect.width > 0 && rect.height > 0;
+    
+    // Método 3: Verifica se há iframes internos (anúncios carregados têm iframe)
+    const hasIframe = adElement.querySelector('iframe') !== null;
+    
+    // Método 4: Verifica altura computada do elemento
+    const computedHeight = window.getComputedStyle(adElement).height;
+    const heightValue = parseInt(computedHeight, 10);
+    const hasComputedHeight = !isNaN(heightValue) && heightValue > 10;
+
+    // Método 5: Verifica filhos com conteúdo
+    const hasChildren = adElement.children.length > 0;
+    
+    // Método 6: Verifica se elemento está visível (display/visibility)
+    const computedStyle = window.getComputedStyle(adElement);
+    const isVisible = computedStyle.display !== 'none' && 
+                      computedStyle.visibility !== 'hidden' &&
+                      computedStyle.opacity !== '0';
+
+    // Console detalhado para debug
+    console.log('📊 Verificação de anúncio:', {
+      adStatus,
+      hasSize,
+      hasIframe,
+      hasComputedHeight: `${heightValue}px`,
+      hasChildren,
+      isVisible,
+      width: rect.width,
+      height: rect.height
+    });
+
+    // Anúncio está vazio se:
+    // - Não tem tamanho E não tem iframe E não tem altura computada > 10px
+    // OU
+    // - Status explicitamente "unfilled"
+    const isEmpty = (!hasSize && !hasIframe && !hasComputedHeight) || adStatus === 'unfilled';
+    
+    return isEmpty;
+  }
+
+  /**
+   * CORRIGIDO: Oculta container de anúncio vazio
+   */
+  function hideAdContainer(container) {
+    if (!container) return;
+    
+    // Remove inline styles que podem sobrescrever CSS
+    container.style.removeProperty('display');
+    container.style.removeProperty('visibility');
+    
+    // Adiciona classe para controle via CSS
+    container.classList.add('ad-empty');
+    container.setAttribute('data-ad-empty', 'true');
+    
+    // Força ocultação via inline (fallback para Android)
+    container.style.setProperty('display', 'none', 'important');
+    container.style.setProperty('height', '0', 'important');
+    container.style.setProperty('margin', '0', 'important');
+    container.style.setProperty('padding', '0', 'important');
+    container.style.setProperty('overflow', 'hidden', 'important');
+    
+    console.log('🚫 Container ocultado:', container.id || container.className);
+  }
+
+  /**
+   * CORRIGIDO: Exibe container de anúncio com conteúdo
+   */
+  function showAdContainer(container) {
+    if (!container) return;
+    
+    // Remove marcadores de vazio
+    container.classList.remove('ad-empty');
+    container.removeAttribute('data-ad-empty');
+    
+    // Remove inline styles forçados
+    container.style.removeProperty('display');
+    container.style.removeProperty('height');
+    container.style.removeProperty('margin');
+    container.style.removeProperty('padding');
+    container.style.removeProperty('overflow');
+    
+    console.log('✅ Container exibido:', container.id || container.className);
   }
 
   /**
@@ -181,6 +305,14 @@
     // Carrega anúncio
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
+      
+      // Verifica se carregou após delay
+      setTimeout(() => {
+        const adElement = container.querySelector('.adsbygoogle');
+        if (adElement) {
+          checkAdLoaded(adElement);
+        }
+      }, AdsenseConfig.delays.emptyCheckDelay);
     } catch (e) {
       console.warn('⚠️ Erro ao carregar anúncio flutuante:', e.message);
     }
@@ -195,9 +327,6 @@
         trackEvent('ad_closed', 'floating');
       });
     }
-
-    // Auto-close (opcional)
-    // setTimeout(() => hideFloatingAd(container), AdsenseConfig.delays.autoCloseFloating);
   }
 
   /**
@@ -284,7 +413,7 @@
   }
 
   /**
-   • Lazy Load de Anúncios
+   * Lazy Load de Anúncios
    */
   function lazyLoadAds() {
     const adObserver = new IntersectionObserver((entries) => {
@@ -293,6 +422,11 @@
           entry.target.dataset.adLoaded = 'true';
           try {
             (window.adsbygoogle = window.adsbygoogle || []).push({});
+            
+            // Verifica se carregou após delay
+            setTimeout(() => {
+              checkAdLoaded(entry.target);
+            }, AdsenseConfig.delays.emptyCheckDelay);
           } catch (e) {
             console.warn('⚠️ Erro ao carregar anúncio lazy:', e.message);
           }
@@ -303,6 +437,19 @@
     document.querySelectorAll('.adsbygoogle:not([data-ad-loaded])').forEach(ad => {
       adObserver.observe(ad);
     });
+  }
+
+  /**
+   * NOVO: Re-verificação periódica de anúncios (Android Chrome fix)
+   */
+  function startPeriodicCheck() {
+    setInterval(() => {
+      document.querySelectorAll('.adsbygoogle[data-ad-processed="true"]').forEach(ad => {
+        if (!ad.closest('.ad-empty')) {
+          checkAdLoaded(ad);
+        }
+      });
+    }, 5000); // Verifica a cada 5 segundos
   }
 
   /**
@@ -336,6 +483,7 @@
     detectAdBlocker();
     initFloatingAd();
     lazyLoadAds();
+    startPeriodicCheck(); // Novo
 
     // Reprocessa anúncios dinamicamente
     window.addEventListener('load', () => {
@@ -363,6 +511,9 @@
     config: AdsenseConfig,
     trackEvent,
     processAds,
+    checkAdLoaded,
+    hideAdContainer,
+    showAdContainer,
     reloadAds: () => {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
