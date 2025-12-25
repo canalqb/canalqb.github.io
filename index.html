@@ -3,29 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <meta name="google-site-verification" content="2Y9-oF7dxXk9Xq-MNVGlef1S9EP8f95jwU7gUl7FrA8" />
-  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 - Puzzle 1000 BTC. Ferramenta gratuita para aprendizado de criptografia.">
-  <meta name="keywords" content="bitcoin, private key, puzzle, criptografia, secp256k1, blockchain, educacional">
-  <meta name="author" content="Rodrigo Carlos Moraes (@CanalQb)">
-  <meta name="robots" content="index, follow">
+  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 - Puzzle 1000 BTC">
+  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC</title>
   
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Gerador Private Keys Bitcoin - Puzzle 1000 BTC">
-  <meta property="og:description" content="Ferramenta educacional interativa para aprendizado de criptografia Bitcoin">
-  <meta property="og:image" content="https://btckeygen.com/img/preview.png">
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Gerador Private Keys Bitcoin">
-  <meta name="twitter:description" content="Ferramenta educacional de criptografia Bitcoin">
-  
-  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC | @CanalQb</title>
-  <link rel="canonical" href="https://btckeygen.com/">
-
-  <!-- ============================================
-       GOOGLE TAG MANAGER (GTM) - PRIMEIRO!
-       ============================================ -->
+  <!-- Google Tag Manager -->
   <script>
     (function(w,d,s,l,i){
       w[l]=w[l]||[];
@@ -37,77 +20,41 @@
       f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-NLMLKHPS');
   </script>
-
-  <!-- ============================================
-       CSS - ORDEM CORRETA
-       ============================================ -->
+  
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-  
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- CSS Customizados (ORDEM IMPORTANTE!) -->
+  
+  <!-- CSS Customizados -->
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/adsense-styles.css" />
   <link rel="stylesheet" href="css/gdpr-consent-styles.css" />
-
-  <!-- ============================================
-       BITCOINJS LIB
-       ============================================ -->
-  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js" defer></script>
-
-  <!-- ============================================
-       PRECONNECT PARA PERFORMANCE
-       ============================================ -->
-  <link rel="preconnect" href="https://pagead2.googlesyndication.com">
-  <link rel="preconnect" href="https://www.googletagmanager.com">
-  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+  
+  <!-- BitcoinJS -->
+  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
 </head>
-
 <body>
-  <!-- ============================================
-       GOOGLE TAG MANAGER (NOSCRIPT)
-       ============================================ -->
+  <!-- Google Tag Manager (noscript) -->
   <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS" 
-            height="0" 
-            width="0" 
-            style="display:none;visibility:hidden" 
-            aria-hidden="true"></iframe>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS" height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
   </noscript>
 
-  <!-- ============================================
-       NAVBAR
-       ============================================ -->
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg shadow-sm" role="navigation" aria-label="Menu principal">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" 
-         href="http://canalqb.blogspot.com/" 
-         target="_blank" 
-         rel="noopener noreferrer" aria-label="Visitar @CanalQb Blog">
+      <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar @CanalQb Blog">
         <i class="fas fa-blog" aria-hidden="true"></i> @CanalQb
-      </a> 
-      <a class="navbar-brand fw-bold text-primary" 
-         href="http://lojadoqb.blogspot.com/" 
-         target="_blank" 
-         rel="noopener noreferrer" 
-         aria-label="Visitar @Loja do Qb - Usando meu script do Mercadolivre">
-        <i class="fas fa-blog" aria-hidden="true"></i> @Script Mercado Livre funcionando aqui
-      </a> 
-      <a class="navbar-brand fw-bold text-primary" 
-         href="https://btckeygen.com/" 
-         target="_blank" 
-         rel="noopener noreferrer" 
-         aria-label="Visitar Btckeygen">
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank" rel="noopener noreferrer" aria-label="Nova Versão ainda em teste">
+        <i class="fas fa-flask" aria-hidden="true"></i> Nova Versão
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer" aria-label="Visitar Btckeygen">
         <i class="fas fa-key" aria-hidden="true"></i> Btckeygen
       </a>
     </div>
   </nav>
 
-  <!-- ============================================
-       ANÚNCIO: BANNER TOP
-       ============================================ -->
+  <!-- SEÇÃO AD #1: Banner Top -->
   <div id="ad-banner-top" class="ad-banner-top" role="region" aria-label="Publicidade - Topo">
     <div class="ad-label">Publicidade</div>
     <ins class="adsbygoogle"
@@ -118,15 +65,11 @@
          data-full-width-responsive="true"></ins>
   </div>
 
-  <!-- ============================================
-       LAYOUT PRINCIPAL
-       ============================================ -->
+  <!-- Layout Principal -->
   <div class="main-wrapper d-flex flex-column flex-lg-row">
     
-    <!-- ============================================
-         SIDEBAR ESQUERDA
-         ============================================ -->
-    <aside class="sidebar-left" role="complementary" aria-label="Menu lateral esquerdo">
+    <!-- SIDEBAR ESQUERDA -->
+    <aside class="sidebar-left">
       <div class="sidebar-widget">
         <h4><i class="fas fa-info-circle"></i> Sobre o Projeto</h4>
         <p style="font-size:0.95em;color:#6c757d;line-height:1.6;">
@@ -146,35 +89,26 @@
         </ul>
       </div>
 
-      <div class="sidebar-widget" style="text-align:center;">
-        <a title="Contador de Visitas do MegaContador" href="https://megacontador.com.br/">
-          <img src="https://megacontador.com.br/img-zsnBM7iJuUWa51R7-3.gif" 
-               border="0" 
-               alt="Contador de visitas"
-               loading="lazy">
-        </a>
+      <div class="sidebar-widget">
+        <div align="center"><a title='Contador de Visitas do MegaContador' href='https://megacontador.com.br/'><img src='https://megacontador.com.br/img-zsnBM7iJuUWa51R7-3.gif' border='0' alt='Contador de visitas'></a></div>
       </div>
     </aside>
 
-    <!-- ============================================
-         CONTEÚDO PRINCIPAL
-         ============================================ -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <main id="main-content" class="main-content flex-grow-1" role="main">
+      <!-- TUDO AQUI SERÁ SUBSTITUÍDO AO CARREGAR OUTRAS PÁGINAS -->
       <!-- Hero Section -->
       <div class="hero-section">
         <h1>🔑 Gerador de Private Keys Bitcoin</h1>
         <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
       </div>
 
-      <!-- Canvas Grid -->
+      <!-- Canvas Centralizado -->
       <div class="canvas-wrapper">
-        <canvas id="grid" 
-                aria-label="Matriz interativa 16x16 para seleção de células" 
-                width="1200" 
-                height="900"></canvas>
+        <canvas id="grid" aria-label="Matriz interativa 16x16 para seleção de células" width="1200" height="900"></canvas>
       </div>
 
-      <!-- Indicador de Faixa Ativa -->
+      <!-- Indicador de Faixa -->
       <div class="range-indicator" aria-live="polite">
         Faixa ativa: Linha <span id="activeRangeLabel">12 até 16</span>
       </div>
@@ -183,33 +117,22 @@
       <div class="main-controls-section">
         <h2><i class="fas fa-gamepad"></i> Controles Principais</h2>
         <div class="d-flex gap-2 flex-wrap">
-          <button id="startBtn" 
-                  class="btn-custom btn-start" 
-                  aria-pressed="false" 
-                  aria-label="Iniciar geração">
+          <button id="startBtn" class="btn-custom btn-start" aria-pressed="false" aria-label="Iniciar geração">
             <i class="fas fa-play"></i> Iniciar
           </button>
-          <button id="stopBtn" 
-                  class="btn-custom btn-stop" 
-                  disabled 
-                  aria-pressed="false" 
-                  aria-label="Parar geração">
+          <button id="stopBtn" class="btn-custom btn-stop" disabled aria-pressed="false" aria-label="Parar geração">
             <i class="fas fa-pause"></i> Parar
           </button>
-          <button id="clearBtn" 
-                  class="btn-custom btn-clear" 
-                  aria-label="Limpar seleção">
+          <button id="clearBtn" class="btn-custom btn-clear" aria-label="Limpar seleção">
             <i class="fas fa-trash"></i> Limpar
           </button>
-          <button id="randBtn" 
-                  class="btn-custom btn-random" 
-                  aria-label="Aleatorizar matriz">
+          <button id="randBtn" class="btn-custom btn-random" aria-label="Aleatorizar matriz">
             <i class="fas fa-dice"></i> Aleatorizar
           </button>
         </div>
       </div>
 
-      <!-- Controles de Seleção -->
+      <!-- Controles de Altura e Base -->
       <div class="control-card">
         <h2><i class="fas fa-sliders-h"></i> Selecionar Altura (Linha Inicial)</h2>
         <div id="heightButtons" class="button-grid" role="group" aria-label="Botões para selecionar altura"></div>
@@ -221,24 +144,12 @@
         <div id="extra-buttons" class="button-group"></div>
       </div>
 
-      <!-- Configurações Avançadas -->
+      <!-- Controles de Velocidade e Opções -->
       <div class="control-card">
         <h2><i class="fas fa-cogs"></i> Configurações Avançadas</h2>
         <div class="speed-control d-flex align-items-center gap-3">
-          <label for="speed" class="fw-semibold mb-0">
-            <i class="fas fa-tachometer-alt"></i> Velocidade:
-          </label>
-          <input type="range" 
-                 class="form-range" 
-                 id="speed" 
-                 min="1" 
-                 max="50" 
-                 step="1" 
-                 value="25" 
-                 aria-valuemin="1" 
-                 aria-valuemax="50" 
-                 aria-valuenow="25" 
-                 aria-label="Controle de velocidade da geração" />
+          <label for="speed" class="fw-semibold mb-0"><i class="fas fa-tachometer-alt"></i> Velocidade:</label>
+          <input type="range" class="form-range" id="speed" min="1" max="50" step="1" value="25" aria-valuemin="1" aria-valuemax="50" aria-valuenow="25" aria-label="Controle de velocidade da geração" />
           <span id="speedLabel" class="fw-bold text-primary" aria-live="polite">25 ms</span>
         </div>
 
@@ -262,45 +173,30 @@
         </div>
       </div>
 
-      <!-- Chaves Geradas -->
+      <!-- Seção de Outputs -->
       <div class="outputs-section">
         <h2><i class="fas fa-key"></i> Chaves Geradas</h2>
-        
         <div class="output-group">
           <label for="hexBox" class="output-label">
             <i class="fas fa-hashtag"></i> 🔐 Private Key HEX (64 caracteres)
           </label>
-          <textarea id="hexBox" 
-                    class="output-box form-control" 
-                    readonly 
-                    aria-readonly="true" 
-                    aria-label="Chave privada em formato HEX"></textarea>
+          <textarea id="hexBox" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada em formato HEX"></textarea>
         </div>
-        
         <div class="output-group">
           <label for="wifBox" class="output-label">
             <i class="fas fa-wallet"></i> 💼 WIF Comprimido
           </label>
-          <textarea id="wifBox" 
-                    class="output-box form-control" 
-                    readonly 
-                    aria-readonly="true" 
-                    aria-label="Chave privada WIF comprimida"></textarea>
+          <textarea id="wifBox" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada WIF comprimida"></textarea>
         </div>
-        
         <div class="output-group">
           <label for="wifBoxUncompressed" class="output-label">
             <i class="fas fa-box-open"></i> 📦 WIF Não Comprimido
           </label>
-          <textarea id="wifBoxUncompressed" 
-                    class="output-box form-control" 
-                    readonly 
-                    aria-readonly="true" 
-                    aria-label="Chave privada WIF não comprimida"></textarea>
+          <textarea id="wifBoxUncompressed" class="output-box form-control" readonly aria-readonly="true" aria-label="Chave privada WIF não comprimida"></textarea>
         </div>
       </div>
 
-      <!-- ANÚNCIO IN-ARTICLE 1 -->
+      <!-- ANÚNCIOS -->
       <div id="ad-in-article-1" class="ad-container" role="region" aria-label="Publicidade - Conteúdo">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -311,9 +207,8 @@
              data-full-width-responsive="true"></ins>
       </div>
 
-      <hr class="content-divider" aria-hidden="true">
+      <hr class="content-divider">
 
-      <!-- ANÚNCIO INFEED -->
       <div id="ad-infeed" role="region" aria-label="Publicidade - Feed">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -323,12 +218,9 @@
              data-ad-slot="1937287877"></ins>
       </div>
 
-      <!-- Seção: Puzzle 1000 BTC -->
+      <!-- SEÇÕES COLAPSÁVEIS -->
       <section class="post_puzzle-section"> 
-        <h2>
-          🧩 O Desafio do Puzzle 1000 BTC 
-          <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
-        </h2>
+        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down toggle-icon"></i></h2>
         <div class="section-content">
           <p>
             O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas. O objetivo do puzzle é encontrar essas chaves através de força bruta, análise matemática ou padrões.
@@ -347,7 +239,6 @@
         </div>
       </section>
 
-      <!-- ANÚNCIO IN-ARTICLE 2 -->
       <div id="ad-in-article-2" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 2">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -358,12 +249,8 @@
              data-full-width-responsive="true"></ins>
       </div>
       
-      <!-- Seção: Educacional -->
       <section class="post_edu-intro-section">
-        <h2>
-          📚 O Que São Private Keys do Bitcoin? 
-          <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
-        </h2>
+        <h2>📚 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down toggle-icon"></i></h2>
         <div class="section-content">
           <p>
             Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar bitcoins associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira Bitcoin.
@@ -371,7 +258,6 @@
         </div>
       </section>
 
-      <!-- ANÚNCIO INFEED 2 -->
       <div id="ad-infeed-2" role="region" aria-label="Publicidade - Feed 2">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -381,12 +267,8 @@
              data-ad-slot="1937287877"></ins>
       </div>
 
-      <!-- Seção: Aviso de Segurança -->
       <section class="post_edu-warning-section">
-        <h3>
-          ⚠️ AVISO CRÍTICO DE SEGURANÇA 
-          <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
-        </h3>
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down toggle-icon"></i></h3>
         <div class="section-content">
           <p>
             <strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é exclusivamente para fins educacionais e de demonstração.
@@ -394,7 +276,6 @@
         </div>
       </section>
 
-      <!-- ANÚNCIO IN-ARTICLE 3 -->
       <div id="ad-in-article-3" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 3">
         <div class="ad-label">Publicidade</div>
         <ins class="adsbygoogle"
@@ -406,10 +287,8 @@
       </div>
     </main>
 
-    <!-- ============================================
-         SIDEBAR DIREITA
-         ============================================ -->
-    <aside class="sidebar-right" role="complementary" aria-label="Menu lateral direito">
+    <!-- SIDEBAR DIREITA -->
+    <aside class="sidebar-right">
       <div class="sidebar-widget">
         <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
         <p style="font-size:0.9em;color:#dc3545;line-height:1.5;">
@@ -422,7 +301,7 @@
         <ul id="wifList" class="list-group"></ul>
       </div>
 
-      <!-- Widget oculto para recarga do AdSense -->
+      <!-- WIDGET OCULTO PARA RECARGA DO ADSENSE -->
       <div class="sidebar-widget ad-hidden-reload" style="height:0; overflow:hidden; opacity:0; pointer-events:none;">
         <ins class="adsbygoogle"
              style="display:inline-block;width:1px;height:1px;"
@@ -432,53 +311,38 @@
     </aside>
   </div>
 
-  <!-- ============================================
-       FOOTER
-       ============================================ -->
+  <!-- FOOTER - AGORA COM LINK PARA HOME -->
   <footer class="site-footer mt-5 pt-4 border-top" role="contentinfo">
     <nav class="footer-nav container" aria-label="Navegação rodapé">
       <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
         <li><a href="#" onclick="window.location.href='/'">Home</a></li>
         <li><a href="paginas/about.html" class="dynamic-link">About</a></li>
-        <li><a href="paginas/ccookies.html" class="dynamic-link">Cookies</a></li>
-        <li><a href="paginas/privacidade.html" class="dynamic-link">Privacidade</a></li>
-        <li><a href="paginas/termos.html" class="dynamic-link">Termos</a></li>
+        <li><a href="paginas/privacy.html" class="dynamic-link">Privacidade</a></li>
         <li><a href="paginas/disclaimer.html" class="dynamic-link">Disclaimer</a></li>
-        <li><a href="paginas/contato.html" class="dynamic-link">Contato</a></li>
-        <li><a href="paginas/dmca.html" class="dynamic-link">DMCA</a></li>
+        <li><a href="paginas/contacts.html" class="dynamic-link">Contatos</a></li>
       </ul>
     </nav>
-    
- 
-    
     <div class="text-center mt-3 small text-muted">
       © 2025 @CanalQb – Rodrigo Carlos Moraes<br />
-      Gerador de Private Keys Bitcoin - Puzzle 1000 BTC
+      Gerador de private keys Bitcoin - Puzzle 1000 BTC
     </div>
   </footer>
 
-  <!-- ============================================
-       BANNER GDPR (VERSÃO 2.0)
-       ============================================ -->
-  <div id="gdpr-consent-banner" class="gdpr-consent-banner" role="dialog" aria-modal="true" aria-labelledby="consent-title" aria-hidden="true">
+  <!-- GDPR BANNER -->
+  <div id="gdpr-consent-banner" class="gdpr-consent-banner" role="dialog" aria-modal="true" aria-labelledby="consent-title">
     <button id="consent-close-banner" aria-label="Fechar banner de consentimento">✕</button>
-    
     <h2 id="consent-title">🔒 Sua Privacidade Importa</h2>
-    
     <p>
       Usamos cookies e tecnologias similares para melhorar sua experiência, analisar tráfego e fornecer conteúdo personalizado. 
       Você pode aceitar todos, rejeitar não-necessários ou personalizar suas preferências.
     </p>
-    
     <div class="consent-buttons">
       <button id="consent-accept-all" class="consent-btn">✓ Aceitar Todos</button>
-      <button id="consent-reject-all" class="consent-btn">✗ Rejeitar Não Essenciais</button>
-      <!-- <button id="consent-customize" class="consent-btn" aria-expanded="false">⚙ Personalizar</button> -->
+      <button id="consent-reject-all" class="consent-btn">✗ Rejeitar</button>
+      <button id="consent-customize" class="consent-btn">⚙ Personalizar</button>
     </div>
-    
     <div id="consent-settings" class="hidden">
       <h3>Preferências de Consentimento</h3>
-      
       <div class="consent-option">
         <input type="checkbox" id="consent-analytics" checked>
         <label for="consent-analytics">
@@ -486,7 +350,6 @@
           <span>Nos ajuda a entender como você usa o site para melhorar a experiência.</span>
         </label>
       </div>
-      
       <div class="consent-option">
         <input type="checkbox" id="consent-marketing">
         <label for="consent-marketing">
@@ -494,7 +357,6 @@
           <span>Permite exibir anúncios personalizados baseados no seu interesse.</span>
         </label>
       </div>
-      
       <div class="consent-option">
         <input type="checkbox" id="consent-preferences">
         <label for="consent-preferences">
@@ -502,20 +364,11 @@
           <span>Memoriza suas escolhas para personalizar futuras visitas.</span>
         </label>
       </div>
-      
       <button id="consent-save-settings" class="consent-btn">💾 Salvar Preferências</button>
-      
-      <p class="mt-3 text-center small">
-        <a href="paginas/ccookies.html" class="dynamic-link" style="color:#28a745; text-decoration: underline;">
-          Ver política detalhada de cookies
-        </a>
-      </p>
     </div>
   </div>
 
-  <!-- ============================================
-       ANÚNCIO FLUTUANTE
-       ============================================ -->
+  <!-- ANÚNCIO FLUTUANTE -->
   <div id="floatingAd" class="ad-floating" role="region" aria-label="Publicidade flutuante" style="display:none;">
     <div class="ad-floating-header">
       <span class="ad-floating-label">📢 Publicidade</span>
@@ -531,106 +384,27 @@
     </div>
   </div>
 
-  <!-- ============================================
-       SCRIPTS - ORDEM CORRETA E CRÍTICA!
-       ============================================ -->
-  
-  <!-- AdSense Script (async) -->
-  <script async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762" 
-          crossorigin="anonymous"></script>
-  
-  <!-- GDPR Scripts (DEVEM CARREGAR PRIMEIRO!) -->
+  <!-- Scripts -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762" crossorigin="anonymous"></script>
   <script src="js/gdpr-init-fix.js" defer></script>
-  <script src="js/gdpr-consent-analytics.js" defer></script>
-  
-  <!-- Scripts da Aplicação -->
   <script src="js/auto16.js" defer></script>
   <script src="js/adsense-manager.js" defer></script>
+  <script src="js/gdpr-consent-analytics.js" defer></script>
   <script src="js/script_random_pisca.js" defer></script>
   <script src="js/puzzles.js" defer></script>
 
-  <!-- ============================================
-       SCRIPT PRINCIPAL (INLINE)
-       ============================================ -->
+  <!-- SCRIPT DE NAVEGAÇÃO DINÂMICA (SIMPLIFICADO) -->
   <script>
-    // ============================================
-    // NAVEGAÇÃO DINÂMICA (SPA)
-    // ============================================
-    document.addEventListener('click', function(e) {
-      const link = e.target.closest('a.dynamic-link');
-      if (!link) return;
-      
-      e.preventDefault();
-      const href = link.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('http')) return;
-
-      if (window.lastLoaded === href) return;
-      window.lastLoaded = href;
-
-      const main = document.getElementById('main-content');
-      if (!main) return;
-
-      fetch(href)
-        .then(response => {
-          if (!response.ok) throw new Error('Página não encontrada');
-          return response.text();
-        })
-        .then(html => {
-          main.innerHTML = html;
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          setTimeout(window.initAdSense, 500);
-        })
-        .catch(err => {
-          console.error('Erro ao carregar:', err);
-          main.innerHTML = `<div class="alert alert-danger m-4">Erro ao carregar a página solicitada.</div>`;
-        });
-    });
-
-    // ============================================
-    // SUPORTE AO BOTÃO "VOLTAR"
-    // ============================================
-    window.addEventListener('popstate', () => location.reload());
-
-    // ============================================
-    // COPIAR TEXTO (WIF LIST)
-    // ============================================
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('fa-copy')) {
-        const targetId = e.target.dataset.target;
-        const targetElement = document.getElementById(targetId);
-        
-        if (targetElement && targetElement.value) {
-          navigator.clipboard.writeText(targetElement.value)
-            .then(() => {
-              // Feedback visual
-              const originalColor = e.target.style.color;
-              e.target.style.color = '#28a745';
-              e.target.classList.add('text-success');
-              
-              setTimeout(() => {
-                e.target.style.color = originalColor;
-                e.target.classList.remove('text-success');
-              }, 1500);
-              
-              console.log('✓ Texto copiado!');
-            })
-            .catch(err => {
-              console.error('Erro ao copiar:', err);
-            });
-        }
+    // Função global para reinicializar anúncios
+    window.initAdSense = function() {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.warn('Erro ao recarregar anúncios:', e);
       }
-    });
+    };
+ 
 
-    // ============================================
-    // LOG DE INICIALIZAÇÃO
-    // ============================================
-    console.log('🚀 Sistema inicializado');
-    console.log('📦 Versão: 2.0.0');
-    console.log('🔐 GDPR Manager:', typeof window.gdprManager !== 'undefined' ? 'OK' : 'Aguardando');
-    console.log('📊 Analytics:', typeof window.gdprAnalytics !== 'undefined' ? 'OK' : 'Aguardando');
-
-    
     // Colapsar seções
     document.querySelectorAll('.post_puzzle-section, .post_edu-intro-section, .post_edu-warning-section')
       .forEach(section => {
@@ -641,6 +415,47 @@
           });
         }
       });
+  
+    // ========== NAVEGAÇÃO DINÂMICA (CARREGA HTML PARCIAL) ==========
+    document.addEventListener('click', async function(e) {
+      const link = e.target.closest('a.dynamic-link');
+      if (!link) return;
+
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http')) return;
+
+      // Evita recarregar a mesma página
+      if (window.lastLoaded === href) return;
+      window.lastLoaded = href;
+
+      const main = document.getElementById('main-content');
+      if (!main) return;
+
+      try {
+        const response = await fetch(href);
+        if (!response.ok) throw new Error('Página não encontrada');
+        
+        const html = await response.text();
+        main.innerHTML = html;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Reinicializa AdSense
+        setTimeout(() => {
+          if (typeof window.initAdSense === 'function') {
+            window.initAdSense();
+          }
+        }, 500);
+      } catch (err) {
+        console.error('Erro ao carregar:', err);
+        main.innerHTML = `<div class="alert alert-danger m-4">Erro ao carregar a página solicitada.</div>`;
+      }
+    });
+
+    // Histórico: recarrega ao usar "Voltar"
+    window.addEventListener('popstate', () => {
+      location.reload();
+    });
   </script>
 </body>
 </html>
