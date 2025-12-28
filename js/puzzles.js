@@ -281,7 +281,7 @@ const puzzleConfig = {
 		li.innerHTML = `
 		  <div>
 			<div><p>Puzzle #${puzzleNumber}</p></div> 
-				<div id="${puzzleNumber}" value="${info.wif}"></div>
+				<div id="${puzzleNumber}" value="${info.wif}">${info.wif}</div>
 		  </div>
 		  <i class="fas fa-copy" data-target="${puzzleNumber}"></i>
 		`;
