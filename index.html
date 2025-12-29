@@ -811,15 +811,14 @@
 
                 const div = document.createElement('div');
                 div.style.padding = '2px 4px';
-                div.style.borderBottom = '1px solid #e1e7f0';
-                div.style.fontSize = '11px';
+                div.style.borderBottom = '1px solid #e1e7f0'; 
                 
                 if (balanceBTC === "0.00000000") {
                     div.style.color = "#ff0000";
                     div.style.textDecoration = "line-through";
                 }
 
-                div.innerHTML = `<div>${addr}-${balanceBTC}</div>
+                div.innerHTML = `<div>${addr} - ${balanceBTC}</div>
                                  <div></div>`;
 
                 btcList.appendChild(div);
