@@ -71,10 +71,10 @@ class GitHubSecretsLoader {
       }));
       
     } else {
-      console.warn('⚠️ Secrets do GitHub Pages não encontrados');
+      console.log('⚠️ Secrets do GitHub Pages não encontrados');
       console.log('💡 Configure os secrets no GitHub Actions:');
       console.log('   - SUPABASE_URL: https://dhpzusdynwpnsejnlzvf.supabase.co');
-      console.log('   - SUPABASE_KEY: sb_publishable_ZOpNfIGoHpzmx9h53xQSWw_0bf4_xb2');
+      console.log('   - SUPABASE_KEY: sb_publishable_CzrMyXDeFQmd1cTZ4Uls3A_l83xJJsa'); // CORREÇÃO: Mesma chave do modo horizontal
       
       // Tenta carregar do arquivo de configuração fallback
       this.loadFallbackConfig();
@@ -251,7 +251,7 @@ class GitHubSecretsLoader {
     if (this.isLocalEnvironment() && !this.isGitHubPages) {
       // Para desenvolvimento local - simula os secrets
       window.SUPABASE_URL = 'https://dhpzusdynwpnsejnlzvf.supabase.co';
-      window.SUPABASE_KEY = 'sb_publishable_ZOpNfIGoHpzmx9h53xQSWw_0bf4_xb2';
+      window.SUPABASE_KEY = 'sb_publishable_CzrMyXDeFQmd1cTZ4Uls3A_l83xJJsa'; // 🚀 CORREÇÃO: Mesma chave do modo horizontal
       
       console.log('🔧 Variáveis de desenvolvimento injetadas para teste local');
     }

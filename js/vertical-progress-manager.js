@@ -29,7 +29,7 @@ class VerticalProgressManager {
     }
     else {
       this.supabaseUrl = window.SUPABASE_URL || 'https://dhpzusdynwpnsejnlzvf.supabase.co';
-      this.supabaseKey = window.SUPABASE_KEY || 'sb_publishable_ZOpNfIGoHpzmx9h53xQSWw_0bf4_xb2';
+      this.supabaseKey = window.SUPABASE_KEY || 'sb_publishable_CzrMyXDeFQmd1cTZ4Uls3A_l83xJJsa'; // 🚀 CORREÇÃO: Mesma chave do modo horizontal
     }
   }
 

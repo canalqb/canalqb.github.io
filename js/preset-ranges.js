@@ -6,7 +6,17 @@
 
 function removeLeadingZeros(hex) {
   if (!hex || typeof hex !== 'string') return hex;
-  return hex.replace(/^0+/, '') || '0';
+  
+  // 🚀 CORREÇÃO: Mantém pelo menos 16 dígitos hexadecimais (64 bits)
+  // Para não remover zeros significativos de valores como 4000000000000004a9
+  const cleaned = hex.replace(/^0+/, '');
+  
+  // Se o resultado for muito curto, mantém zeros significativos
+  if (cleaned.length < 16) {
+    return hex; // Retorna o valor original se for muito curto
+  }
+  
+  return cleaned || '0';
 }
 
 document.addEventListener('DOMContentLoaded', () => {

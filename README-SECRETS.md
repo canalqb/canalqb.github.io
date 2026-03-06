@@ -57,7 +57,7 @@ https://supabase.com/dashboard/project/dhpzusdynwpnsejnlzvf/settings/api-keys
 
 #### **2. Anon/Public Key**
 - **Nome**: `SUPABASE_KEY`
-- **Valor**: `sb_publishable_CzrMyXDeFQmd1cTZ4Uls3A_l83xJJsa`
+- **Valor**: `sb_publishable_CzrMyXDeFQmd1cTZ4Uls3A_l83xJJsa` (CORRIGIDO: Mesma chave dos dois modos)
 - **Localização**: Dashboard → Settings → API → Project API keys → anon/public (copie a chave completa)
 
 ---
