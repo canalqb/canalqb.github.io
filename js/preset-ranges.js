@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ? '📌 Este é o intervalo inicial do preset. Nenhum progresso salvo.'
       : '💡 Intervalo recuperado do banco de dados (progresso global).';
 
-    // 🚀 RECONSTRÓI O CONTEÚDO - VERSÃO COMPACTA
+    // 🚀 RECONSTRÓI O CONTEÚDO - VERSÃO COMPACTA (EXATAMENTE COMO NA IMAGEM)
     statusEl.innerHTML = `
       <!-- CARD HORIZONTAL (GLOBAL) -->
       <div class="database-status-card" style="background: #f7fafc; border: 1px solid #edf2f7; border-left: 4px solid #38a169; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
@@ -207,11 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
           <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 10px;">
-            <div><span style="color: #38a169; font-weight: bold;">INI:</span> ${inicioLimpo}</div>
-            <div><span style="color: #38a169; font-weight: bold;">FIM:</span> ${fimLimpo}</div>
-          </div>
-          <div id="status-wif-display" style="font-family: monospace; font-size: 10px; color: #4a5568; min-width: 150px;">
-            <span style="color: #38a169; font-weight: bold;">WIF:</span> Carregando...
+            <div><span style="color: #38a169; font-weight: bold;">INI:</span> ${inicioLimpo} | <span style="color: #38a169; font-weight: bold;">FIM:</span> ${fimLimpo}</div>
           </div>
         </div>
       </div>
@@ -242,8 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
               <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${vInicio}</div>
-                <div><span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${vFim}</div>
+                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${vInicio} | <span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${vFim}</div>
               </div>
               <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
                 <span style="background: ${vStatusColor}; color: ${vStatusTextColor}; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${vStatus}</span>
@@ -262,8 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                  <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo}</div>
-                  <div><span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
+                  <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo} | <span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
                 </div>
                 <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
                   <span style="background: #e2e8f0; color: #718096; padding: 2px 6px; border-radius: 4px; font-weight: bold;">AGUARDANDO INÍCIO</span>
@@ -284,8 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
               <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo}</div>
-                <div><span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
+                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo} | <span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
               </div>
               <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
                 <span style="background: #e2e8f0; color: #718096; padding: 2px 6px; border-radius: 4px; font-weight: bold;">AGUARDANDO INÍCIO</span>
@@ -298,13 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(async () => {
       try {
-        const wifStart = await toWIF(data.inicio.padStart(64, '0'), true);
-        const wifEnd = await toWIF(data.fim.padStart(64, '0'), true);
         const wifEl = document.getElementById('status-wif-display');
         if (wifEl) {
-          wifEl.innerHTML = `
-            <span style="color: #38a169; font-weight: bold;">WIF:</span> ${wifStart.substring(0, 8)}... | ${wifEnd.substring(0, 8)}...
-          `;
+          wifEl.innerHTML = '';
         }
       } catch (e) { }
     }, 50);
