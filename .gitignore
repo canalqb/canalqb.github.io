@@ -1,11 +1,11 @@
-# Project structure
+﻿# Project structure
 # 1) index.html               ---> main  HTML file with the objects and references to scripts and styles
 # 2) css/visualPrivKey.css    ---> Styles sheet
 # 3) js/visualPrivKeyMain.js  ---> Main script with canvas calculations and object functions
 # 4) js/bitcoinJS-lib.js      ---> BitcoinJS-lib v0.1.3-default (ECDSA formulas)
 # 5) js/QRcode.js             ---> QR Code Generator for JavaScript
 
-# Secrets e arquivos sensíveis
+# Secrets e arquivos sensÃ­veis
 js/secrets-config.js
 config/local-config.json
 *.key
@@ -99,3 +99,11 @@ jspm_packages/
 
 # DynamoDB Local files
 .dynamodb/
+
+test-*
+
+setup-*
+
+fix*
+
+*.php
