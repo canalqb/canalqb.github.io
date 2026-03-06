@@ -182,8 +182,8 @@
    */
   async function fetchProgressViaREST(preset) {
     try {
-      // 🚀 CORREÇÃO: Usa a mesma tabela que funciona (puzzle_vertical)
-      const url = `${CONFIG.SUPABASE_URL}/rest/v1/puzzle_vertical?preset=eq.${preset}&select=preset,inicio,fim`;
+      // 🚀 CORREÇÃO: Usa tabela puzzle_progress (horizontal) - NÃO ALTERAR VERTICAL
+      const url = `${CONFIG.SUPABASE_URL}/rest/v1/puzzle_progress?preset=eq.${preset}&select=*`;
       const response = await fetch(url, {
         headers: {
           'apikey': CONFIG.SUPABASE_ANON_KEY,
@@ -193,15 +193,15 @@
 
       if (response.ok) {
         const data = await response.json();
-        console.log(`✅ [REST] Progresso do preset ${preset} carregado via puzzle_vertical`);
+        console.log(`✅ [REST] Progresso do preset ${preset} carregado via puzzle_progress`);
         return data.length > 0 ? data[0] : null;
       } else {
         const errorText = await response.text();
         console.error('❌ Erro REST API Horizontal:', response.status, errorText);
         
-        // 🚀 CORREÇÃO: Se tabela não existe, tenta criá-la
+        // 🚀 CORREÇÃO: Se tabela não existe, informa para criar manualmente
         if (response.status === 404 || errorText.includes('relation') || errorText.includes('does not exist')) {
-          console.warn('💡 A tabela "puzzle_vertical" parece não existir. Isso é estranho, pois o vertical funciona...');
+          console.warn('💡 A tabela "puzzle_progress" não existe. Execute sql/create-puzzle-progress.sql no Supabase');
         }
         
         return null;
@@ -307,8 +307,8 @@
    */
   async function updateProgressViaREST(preset, inicio, fim) {
     try {
-      // 🚀 CORREÇÃO: Usa a mesma tabela que funciona (puzzle_vertical)
-      const url = `${CONFIG.SUPABASE_URL}/rest/v1/puzzle_vertical`;
+      // 🚀 CORREÇÃO: Usa tabela puzzle_progress (horizontal) - NÃO ALTERAR VERTICAL
+      const url = `${CONFIG.SUPABASE_URL}/rest/v1/puzzle_progress`;
       const data = {
         preset: preset,
         inicio: inicio,
@@ -329,7 +329,7 @@
 
       if (response.ok) {
         const result = await response.json();
-        console.log(`✅ [REST] Preset ${preset} atualizado via puzzle_vertical:`, { inicio, fim });
+        console.log(`✅ [REST] Preset ${preset} atualizado via puzzle_progress:`, { inicio, fim });
         return result;
       } else {
         const errorText = await response.text();
