@@ -186,107 +186,204 @@ document.addEventListener('DOMContentLoaded', () => {
       ? '📌 Este é o intervalo inicial do preset. Nenhum progresso salvo.'
       : '💡 Intervalo recuperado do banco de dados (progresso global).';
 
-    // 🚀 RECONSTRÓI O CONTEÚDO - VERSÃO COMPACTA (EXATAMENTE COMO NA IMAGEM)
+    // 🚀 RECONSTRÓI O CONTEÚDO - LAYOUT UNIFICADO COMO NO EXEMPLO
     statusEl.innerHTML = `
-      <!-- CARD HORIZONTAL (GLOBAL) -->
-      <div class="database-status-card" style="background: #f7fafc; border: 1px solid #edf2f7; border-left: 4px solid #38a169; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
-        <div style="font-size: 11px; color: #718096; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-           <i class="fas fa-arrows-alt-h"></i> Progresso Sequencial (Horizontal)
+      <style>
+      .progress-card{
+        border:1px solid #dcdcdc;
+        border-radius:8px;
+        padding:12px;
+        background:#f8f9fb;
+        font-family:monospace;
+        margin: 10px 0;
+      }
+      
+      .progress-header{
+        display:flex;
+        gap:8px;
+        align-items:center;
+        margin-bottom:10px;
+        font-weight:bold;
+        font-size: 11px;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .progress-body{
+        display:flex;
+        gap:20px;
+        align-items:center;
+        flex-wrap:wrap;
+      }
+      
+      .progress-global{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        flex: 1;
+        min-width: 200px;
+      }
+      
+      .progress-bar{
+        width:200px;
+        height:8px;
+        background:#e5e5e5;
+        border-radius:4px;
+        overflow:hidden;
+      }
+      
+      .progress-fill{
+        height:100%;
+        width: ${Math.min(100, porcentagem)}%;
+        background:#2ecc71;
+        transition: width 0.3s ease;
+      }
+      
+      .progress-block{
+        font-size:12px;
+        flex: 1;
+        min-width: 250px;
+      }
+      
+      .block-title{
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .horizontal .block-title{
+        color: #27ae60;
+      }
+      
+      .vertical .block-title{
+        color: #3498db;
+      }
+      
+      .range{
+        display:flex;
+        gap:6px;
+        margin-bottom: 3px;
+      }
+      
+      .label{
+        font-weight: bold;
+      }
+      
+      .horizontal .label{
+        color: #27ae60;
+      }
+      
+      .vertical .label{
+        color: #3498db;
+      }
+      
+      .value{
+        color: #2c3e50;
+      }
+      </style>
+
+      <div class="progress-card">
+
+        <div class="progress-header">
+          <span class="icon">↔</span>
+          <span class="title">PROGRESSO SEQUENCIAL</span>
         </div>
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-          <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 150px;">
-            <div style="color: #276749; font-weight: 700;">${bitCount} bits</div>
-            <div style="flex: 1;">
-              <div style="display: flex; justify-content: space-between; font-size: 10px;">
-                <span>Global:</span>
-                <span style="color: #38a169; font-weight: bold;">${porcentagem.toFixed(4)}%</span>
-              </div>
-              <div style="background: #e2e8f0; height: 5px; border-radius: 3px; overflow: hidden;">
-                <div style="background: #48bb78; height: 100%; width: ${Math.min(100, porcentagem)}%;"></div>
-              </div>
+
+        <div class="progress-body">
+
+          <!-- Progress Global -->
+          <div class="progress-global">
+            <span class="bits">${bitCount} bits</span>
+            <span class="label">Global:</span>
+
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+
+            <span class="percent">${porcentagem.toFixed(4)}%</span>
+          </div>
+
+          <!-- Horizontal -->
+          <div class="progress-block horizontal">
+            <div class="block-title">(HORIZONTAL)</div>
+
+            <div class="range">
+              <span class="label">INI:</span>
+              <span class="value">${inicioLimpo}</span>
+            </div>
+
+            <div class="range">
+              <span class="label">FIM:</span>
+              <span class="value">${fimLimpo}</span>
             </div>
           </div>
-          <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 10px;">
-            <div><span style="color: #38a169; font-weight: bold;">INI:</span> ${inicioLimpo} | <span style="color: #38a169; font-weight: bold;">FIM:</span> ${fimLimpo}</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- CARD VERTICAL (EXCLUSIVO) -->
-      <div id="vertical-status-card-container">
+          <!-- Vertical -->
+          <div class="progress-block vertical" id="vertical-progress-block">
+            <div class="block-title">(VERTICAL)</div>
+
+            <div class="range">
+              <span class="label">INI V:</span>
+              <span class="value">${inicioLimpo}</span>
+            </div>
+
+            <div class="range">
+              <span class="label">FIM V:</span>
+              <span class="value">${fimLimpo}</span>
+            </div>
+          </div>
+
+        </div>
+
       </div>
     `;
 
-    // 🚀 CARREGA VERTICAL DIRETO SEM LOADING
+    // 🚀 CARREGA VERTICAL USANDO NOVO LAYOUT
     if (window.VerticalProgressManager) {
       const vManager = new window.VerticalProgressManager();
       vManager.getLastVerticalProgress(bitCount).then(vData => {
-        const vContainer = document.getElementById('vertical-status-card-container');
-        if (!vContainer) return;
+        const vBlock = document.getElementById('vertical-progress-block');
+        if (!vBlock) return;
 
         // 🚀 MOSTRA DIRETO O VALOR (COM OU SEM DADOS DO BANCO)
         const vInicio = vData ? removeLeadingZeros(vData.inicio) : inicioLimpo;
         const vFim = vData ? removeLeadingZeros(vData.fim) : fimLimpo;
-        const vStatus = vData ? 'PONTO DE RETOMADA' : 'AGUARDANDO INÍCIO';
-        const vStatusColor = vData ? '#d1e9ff' : '#e2e8f0';
-        const vStatusTextColor = vData ? '#2c5282' : '#718096';
 
-        vContainer.innerHTML = `
-          <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
-            <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-               <i class="fas fa-arrows-alt-v"></i> Progresso Sequencial (Vertical)
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-              <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${vInicio} | <span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${vFim}</div>
-              </div>
-              <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
-                <span style="background: ${vStatusColor}; color: ${vStatusTextColor}; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${vStatus}</span>
-              </div>
-            </div>
+        vBlock.innerHTML = `
+          <div class="block-title">(VERTICAL)</div>
+
+          <div class="range">
+            <span class="label">INI V:</span>
+            <span class="value">${vInicio}</span>
+          </div>
+
+          <div class="range">
+            <span class="label">FIM V:</span>
+            <span class="value">${vFim}</span>
           </div>
         `;
       }).catch(() => {
         // 🚀 EM CASO DE ERRO, MOSTRA VALORES PADRÃO
-        const vContainer = document.getElementById('vertical-status-card-container');
-        if (vContainer) {
-          vContainer.innerHTML = `
-            <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
-              <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-                 <i class="fas fa-arrows-alt-v"></i> Progresso Sequencial (Vertical)
-              </div>
-              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                  <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo} | <span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
-                </div>
-                <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
-                  <span style="background: #e2e8f0; color: #718096; padding: 2px 6px; border-radius: 4px; font-weight: bold;">AGUARDANDO INÍCIO</span>
-                </div>
-              </div>
+        const vBlock = document.getElementById('vertical-progress-block');
+        if (vBlock) {
+          vBlock.innerHTML = `
+            <div class="block-title">(VERTICAL)</div>
+
+            <div class="range">
+              <span class="label">INI V:</span>
+              <span class="value">${inicioLimpo}</span>
+            </div>
+
+            <div class="range">
+              <span class="label">FIM V:</span>
+              <span class="value">${fimLimpo}</span>
             </div>
           `;
         }
       });
-    } else {
-      // 🚀 SE VERTICAL PROGRESS MANAGER NÃO EXISTE, MOSTRA VALORES PADRÃO
-      const vContainer = document.getElementById('vertical-status-card-container');
-      if (vContainer) {
-        vContainer.innerHTML = `
-          <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
-            <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-               <i class="fas fa-arrows-alt-v"></i> Progresso Sequencial (Vertical)
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-              <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo} | <span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
-              </div>
-              <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
-                <span style="background: #e2e8f0; color: #718096; padding: 2px 6px; border-radius: 4px; font-weight: bold;">AGUARDANDO INÍCIO</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }
     }
 
     setTimeout(async () => {
