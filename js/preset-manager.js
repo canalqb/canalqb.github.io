@@ -76,10 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (usingSupabase && supabaseData) {
       currentPresetData = supabaseData;
-      if (window.ProgressTracker) {
-        window.ProgressTracker.stop();
-        window.ProgressTracker.start(bitCount, startHex, endHex);
-      }
+      // 🚀 REMOVIDO: Não usar ProgressTracker aqui - modal deve aparecer só quando processar
     } else {
       currentPresetData = null;
       if (window.ProgressTracker) window.ProgressTracker.stop();
