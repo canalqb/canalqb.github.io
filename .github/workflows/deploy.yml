@@ -43,12 +43,8 @@ jobs:
 
       - name: Minify Assets
         run: |
-          # Minify JS (In place)
-          for file in js/*.js; do
-            if [ -f "$file" ]; then
-              npx terser "$file" --compress --mangle --output "$file"
-            fi
-          done
+          # 🚀 CORREÇÃO: Não minifica arquivos JS críticos para produção
+          # Minify apenas CSS e HTML
           
           # Minify HTML (Safe way)
           html-minifier-terser \
@@ -59,7 +55,7 @@ jobs:
             --remove-script-type-attributes \
             --use-short-doctype \
             --minify-css true \
-            --minify-js true \
+            --minify-js false \
             index.html > index.min.html
           mv index.min.html index.html
 

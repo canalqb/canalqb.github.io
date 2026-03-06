@@ -31,6 +31,7 @@
    * Carrega configurações do Config Manager
    */
   function loadConfigFromManager() {
+    // 🚀 CORREÇÃO: Tenta múltiplas fontes para produção
     if (window.ConfigManager && window.ConfigManager.isSupabaseAvailable()) {
       const supabaseConfig = window.ConfigManager.getSupabaseConfig();
       CONFIG.SUPABASE_URL = supabaseConfig.url;
@@ -39,11 +40,32 @@
       
       console.log('🔧 Supabase configurado via Config Manager (ambiente local)');
       return true;
-    } else {
-      console.log('🚫 Supabase não disponível (ambiente de produção)');
-      CONFIG.ENABLED = false;
-      return false;
     }
+    
+    // 🚀 CORREÇÃO: Tenta GitHub Secrets para produção
+    if (window.GitHubSecrets && window.GitHubSecrets.isAvailable()) {
+      const githubConfig = window.GitHubSecrets.getSupabaseConfig();
+      CONFIG.SUPABASE_URL = githubConfig.url;
+      CONFIG.SUPABASE_ANON_KEY = githubConfig.anonKey;
+      CONFIG.ENABLED = true;
+      
+      console.log('� Supabase configurado via GitHub Secrets (produção)');
+      return true;
+    }
+    
+    // 🚀 CORREÇÃO: Tenta variáveis globais injetadas
+    if (typeof window.SUPABASE_URL !== 'undefined' && typeof window.SUPABASE_KEY !== 'undefined') {
+      CONFIG.SUPABASE_URL = window.SUPABASE_URL;
+      CONFIG.SUPABASE_ANON_KEY = window.SUPABASE_KEY;
+      CONFIG.ENABLED = true;
+      
+      console.log('🚀 Supabase configurado via variáveis globais (produção)');
+      return true;
+    }
+    
+    console.log('🚫 Supabase não disponível - nenhuma fonte de configuração encontrada');
+    CONFIG.ENABLED = false;
+    return false;
   }
 
   /**
@@ -53,6 +75,13 @@
     if (isInitialized) return true;
 
     try {
+      // 🚀 DEBUG: Verifica fontes de configuração
+      console.log('🔍 [DEBUG] Verificando fontes de configuração:');
+      console.log('  - ConfigManager:', !!window.ConfigManager);
+      console.log('  - GitHubSecrets:', !!window.GitHubSecrets);
+      console.log('  - SUPABASE_URL:', typeof window.SUPABASE_URL !== 'undefined' ? '***CONFIGURADO***' : 'NÃO CONFIGURADO');
+      console.log('  - SUPABASE_KEY:', typeof window.SUPABASE_KEY !== 'undefined' ? '***CONFIGURADO***' : 'NÃO CONFIGURADO');
+
       // Carrega configurações do Config Manager
       if (!loadConfigFromManager()) {
         console.log('🚫 Supabase não inicializado - ambiente de produção');
