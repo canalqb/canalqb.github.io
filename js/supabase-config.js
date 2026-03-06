@@ -133,10 +133,17 @@
     }
 
     if (!isInitialized && !initSupabase()) {
-      throw new Error('Supabase não inicializado');
+      console.log('🚫 Supabase não inicializado - tentando REST API direto');
+      // 🚀 CORREÇÃO: Tenta REST API direto como fallback
+      return await fetchProgressViaREST(preset);
     }
 
     try {
+      // 🚀 CORREÇÃO: Tenta REST API direto (mais confiável que cliente)
+      return await fetchProgressViaREST(preset);
+      
+      // Código original (comentado como backup)
+      /*
       const { data, error } = await supabaseClient
         .from(CONFIG.TABELA)
         .select('*')
@@ -154,10 +161,50 @@
 
       console.log(`✅ Progresso do preset ${preset} carregado do banco`);
       return data;
+      */
 
     } catch (error) {
       console.error(`❌ Erro ao buscar progresso do preset ${preset}:`, error);
-      throw error;
+      // 🚀 CORREÇÃO: Tenta REST API como fallback
+      try {
+        return await fetchProgressViaREST(preset);
+      } catch (fallbackError) {
+        console.error('❌ Erro no fallback REST API:', fallbackError);
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * 🚀 CORREÇÃO: Busca progresso via REST API direto (como o vertical)
+   * @param {number} preset - Número do preset
+   * @returns {Promise<Object|null>} Dados do progresso ou null
+   */
+  async function fetchProgressViaREST(preset) {
+    try {
+      const url = `${CONFIG.SUPABASE_URL}/rest/v1/puzzle_progress?preset=eq.${preset}&select=*`;
+      const response = await fetch(url, {
+        headers: {
+          'apikey': CONFIG.SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`✅ [REST] Progresso do preset ${preset} carregado via REST API`);
+        return data.length > 0 ? data[0] : null;
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Erro REST API Horizontal:', response.status, errorText);
+        if (response.status === 404) {
+          console.warn('💡 A tabela "puzzle_progress" parece não existir no seu Supabase.');
+        }
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ Erro ao buscar progresso via REST API:', error);
+      return null;
     }
   }
 
@@ -169,8 +216,9 @@
    * @returns {Promise<Object>} Dados atualizados
    */
   async function updateProgress(preset, novoInicio, novoFim) {
-    if (!isInitialized && !initSupabase()) {
-      throw new Error('Supabase não inicializado');
+    if (!CONFIG.ENABLED) {
+      console.log('🚫 Supabase não disponível - ambiente de produção');
+      return null;
     }
 
     try {
@@ -183,6 +231,11 @@
       const inicioNormalizado = novoInicio.toLowerCase();
       const fimNormalizado = novoFim.toLowerCase();
 
+      // 🚀 CORREÇÃO: Usa REST API direto como o vertical
+      return await updateProgressViaREST(preset, inicioNormalizado, fimNormalizado);
+
+      // Código original (comentado como backup)
+      /*
       const { data, error } = await supabaseClient
         .from(CONFIG.TABELA)
         .update({
@@ -202,9 +255,53 @@
       });
 
       return data;
+      */
 
     } catch (error) {
       console.error(`❌ Erro ao atualizar preset ${preset}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 🚀 CORREÇÃO: Atualiza progresso via REST API direto (como o vertical)
+   * @param {number} preset - Número do preset
+   * @param {string} inicio - Valor hexadecimal normalizado
+   * @param {string} fim - Valor hexadecimal normalizado
+   * @returns {Promise<Object>} Dados atualizados
+   */
+  async function updateProgressViaREST(preset, inicio, fim) {
+    try {
+      const url = `${CONFIG.SUPABASE_URL}/rest/v1/puzzle_progress`;
+      const data = {
+        preset: preset,
+        inicio: inicio,
+        fim: fim,
+        updated_at: new Date().toISOString()
+      };
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'apikey': CONFIG.SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates' // Importante para o Upsert baseado na PK
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(`✅ [REST] Preset ${preset} atualizado via REST API:`, { inicio, fim });
+        return result;
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Erro REST API Update:', response.status, errorText);
+        throw new Error(`Erro ${response.status}: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao atualizar via REST API:', error);
       throw error;
     }
   }
