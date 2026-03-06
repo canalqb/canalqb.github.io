@@ -234,6 +234,24 @@
       discovery_timestamp: new Date().toISOString()
     };
     
+    // 🚀 VERIFICAÇÃO DE DUPLICATA ANTES DE INSERIR
+    const isDuplicate = await checkPuzzleAlreadyFound(hexPrivateKey, mode);
+    if (isDuplicate) {
+      const duplicateError = new Error(`Puzzle com chave ${hexPrivateKey.substring(0, 8)}... já foi encontrado anteriormente`);
+      duplicateError.code = 'DUPLICATE_PUZZLE';
+      
+      // Dispara evento de duplicata
+      window.dispatchEvent(new CustomEvent('puzzleFoundDuplicate', {
+        detail: {
+          hexKey: hexPrivateKey,
+          mode: mode,
+          preset: preset
+        }
+      }));
+      
+      throw duplicateError;
+    }
+    
     try {
       const url = `${supabaseUrl}/rest/${CONFIG.API_VERSION}/${CONFIG.TABELA}`;
       const response = await fetchWithRetry(url, {
@@ -264,6 +282,25 @@
       };
       
     } catch (error) {
+      // 🚀 TRATA ERRO DE UNIQUE CONSTRAINT DO BANCO
+      if (error.message && error.message.includes('duplicate key') || 
+          error.message && error.message.includes('unique constraint')) {
+        const duplicateError = new Error(`Puzzle com chave ${hexPrivateKey.substring(0, 8)}... já existe no banco de dados`);
+        duplicateError.code = 'DUPLICATE_PUZZLE';
+        duplicateError.originalError = error;
+        
+        // Dispara evento de duplicata
+        window.dispatchEvent(new CustomEvent('puzzleFoundDuplicate', {
+          detail: {
+            hexKey: hexPrivateKey,
+            mode: mode,
+            preset: preset
+          }
+        }));
+        
+        throw duplicateError;
+      }
+      
       console.error('❌ Puzzle Finder: Erro ao registrar puzzle', error);
       
       // Dispara evento de erro
@@ -331,20 +368,25 @@
    */
   async function checkPuzzleAlreadyFound(hexPrivateKey, mode) {
     try {
-      const result = await getPuzzlesFound({
-        limit: 1,
-        mode: mode
-      });
+      // 🚀 CORREÇÃO: Busca diretamente pela chave hexadecimal
+      const cleanHex = hexPrivateKey.replace(/^0x/, '').toLowerCase();
       
-      if (result.success && result.data.length > 0) {
-        const found = result.data.some(puzzle => 
-          puzzle.hex_private_key === hexPrivateKey.replace(/^0x/, '').toLowerCase()
-        );
-        
-        return found;
+      const url = `${supabaseUrl}/rest/${CONFIG.API_VERSION}/${CONFIG.TABELA}?`;
+      const params = new URLSearchParams();
+      params.append('hex_private_key', 'eq.' + cleanHex);
+      params.append('limit', '1');
+      
+      const response = await fetchWithRetry(url + params.toString(), { method: 'GET' });
+      const data = await response.json();
+      
+      // 🚀 VERIFICAÇÃO CORRETA: Retorna true se encontrar a chave
+      const isDuplicate = data.length > 0;
+      
+      if (isDuplicate) {
+        console.log(`⚠️ Puzzle Finder: Chave ${cleanHex.substring(0, 8)}... já foi encontrada anteriormente`);
       }
       
-      return false;
+      return isDuplicate;
       
     } catch (error) {
       console.warn('⚠️ Puzzle Finder: Erro ao verificar duplicidade', error);

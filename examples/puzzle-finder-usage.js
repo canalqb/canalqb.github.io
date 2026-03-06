@@ -174,13 +174,34 @@ async function integrateWithProcessing(hexKey, mode, processingInfo) {
 // EXEMPLO 7: INTERFACE DE USUÁRIO
 // ============================================
 function showNotification(title, data) {
+  // Determina tipo e cor baseada no título ou dados
+  let bgColor, borderColor, icon;
+  
+  if (title.includes('🎉') || title.includes('PUZZLE ENCONTRADO')) {
+    bgColor = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    borderColor = '#667eea';
+    icon = '🎉';
+  } else if (title.includes('⚠️') || (data.type && data.type === 'warning')) {
+    bgColor = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+    borderColor = '#f5576c';
+    icon = '⚠️';
+  } else if (title.includes('❌') || title.includes('Erro')) {
+    bgColor = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)';
+    borderColor = '#ff6b6b';
+    icon = '❌';
+  } else {
+    bgColor = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+    borderColor = '#4facfe';
+    icon = 'ℹ️';
+  }
+  
   // Cria modal de notificação
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: ${bgColor};
     color: white;
     padding: 20px;
     border-radius: 12px;
@@ -188,16 +209,29 @@ function showNotification(title, data) {
     z-index: 10000;
     max-width: 400px;
     font-family: monospace;
+    border: 2px solid ${borderColor};
+    animation: slideInRight 0.3s ease-out;
   `;
   
-  modal.innerHTML = `
-    <div style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">${title}</div>
-    <div style="font-size: 12px; line-height: 1.5;">
-      <div>Preset: <strong>${data.preset}</strong></div>
-      <div>Modo: <strong>${data.mode}</strong></div>
-      <div>WIF: <strong>${data.wif}</strong></div>
-      ${data.address ? `<div>Address: <strong>${data.address.substring(0, 10)}...</strong></div>` : ''}
-    </div>
+  // Constrói conteúdo baseado nos dados
+  let content = `<div style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">${icon} ${title}</div>`;
+  
+  if (typeof data === 'object' && data !== null) {
+    content += '<div style="font-size: 12px; line-height: 1.5;">';
+    
+    if (data.preset) content += `<div>Preset: <strong>${data.preset}</strong></div>`;
+    if (data.mode) content += `<div>Modo: <strong>${data.mode}</strong></div>`;
+    if (data.wif) content += `<div>WIF: <strong>${data.wif}</strong></div>`;
+    if (data.address) content += `<div>Address: <strong>${data.address.substring(0, 10)}...</strong></div>`;
+    if (data.message) content += `<div style="margin-top: 5px;">${data.message}</div>`;
+    if (data.error) content += `<div style="margin-top: 5px; opacity: 0.9;">${data.error}</div>`;
+    
+    content += '</div>';
+  } else {
+    content += `<div style="font-size: 12px;">${data}</div>`;
+  }
+  
+  modal.innerHTML = content + `
     <button onclick="this.parentElement.remove()" style="
       margin-top: 15px;
       background: rgba(255,255,255,0.2);
@@ -206,15 +240,27 @@ function showNotification(title, data) {
       padding: 8px 16px;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 12px;
     ">Fechar</button>
   `;
+  
+  // Adiciona animação CSS
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
   
   document.body.appendChild(modal);
   
   // Remove automaticamente após 10 segundos
   setTimeout(() => {
     if (modal.parentElement) {
-      modal.remove();
+      modal.style.animation = 'slideInRight 0.3s ease-out reverse';
+      setTimeout(() => modal.remove(), 300);
     }
   }, 10000);
 }
@@ -241,6 +287,22 @@ function setupEventListeners() {
     
     // Mostra erro para usuário
     showNotification('❌ Erro ao registrar puzzle', { error: error });
+  });
+  
+  // 🚀 ESCUTA DUPLICATAS - NOVO EVENTO
+  window.addEventListener('puzzleFoundDuplicate', (event) => {
+    const { hexKey, mode, preset } = event.detail;
+    console.log('⚠️ Evento: Puzzle duplicado ignorado', {
+      hexKey: hexKey.substring(0, 8) + '...',
+      mode: mode,
+      preset: preset
+    });
+    
+    // Mostra aviso amigável para usuário
+    showNotification('⚠️ Puzzle já encontrado', {
+      message: `Chave ${hexKey.substring(0, 8)}... já foi registrada anteriormente`,
+      type: 'warning'
+    });
   });
 }
 

@@ -50,6 +50,12 @@ CREATE INDEX IF NOT EXISTS idx_ovo_ia_puzzles_encontrados_mode ON ovo_ia_puzzles
 -- ÍNDICE COMPOSTO PARA CONSULTAS FREQUENTES
 CREATE INDEX IF NOT EXISTS idx_ovo_ia_puzzles_encontrados_preset_mode ON ovo_ia_puzzles_encontrados(preset, mode);
 
+-- 🚀 CONSTRAINT UNIQUE PARA IMPEDIR DUPLICATAS DE CHAVE
+-- Garante que a mesma chave hexadecimal não seja inserida duas vezes
+ALTER TABLE ovo_ia_puzzles_encontrados 
+ADD CONSTRAINT IF NOT EXISTS ovo_ia_puzzles_encontrados_hex_unique 
+UNIQUE (hex_private_key);
+
 -- TRIGGER PARA ATUALIZAR updated_at AUTOMATICAMENTE
 CREATE OR REPLACE FUNCTION update_ovo_ia_puzzles_encontrados_updated_at()
 RETURNS TRIGGER AS $$
