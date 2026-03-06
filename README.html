@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 OVO IA - Sistema Completo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero-section {
+            padding: 80px 0;
+            color: white;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-gradient {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .step-indicator {
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 mb-4">
+                        <i class="fas fa-robot"></i> OVO IA
+                    </h1>
+                    <p class="lead mb-5">
+                        Sistema completo para Puzzle Bitcoin com gerenciamento inteligente de tabelas
+                    </p>
+                    <div class="mb-4">
+                        <span class="badge bg-success me-2">v1.0.0</span>
+                        <span class="badge bg-info">Supabase</span>
+                        <span class="badge bg-warning">JavaScript</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GERENCIAMENTO DE TABELAS -->
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-section">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-database"></i> Gerenciamento de Tabelas
+                    </h2>
+                    <p class="text-center text-muted mb-5">
+                        Crie tabelas personalizadas seguindo os padrões OVO IA
+                    </p>
+
+                    <!-- FORMULÁRIO DE CRIAÇÃO -->
+                    <form id="tableForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tableName" class="form-label">
+                                    <i class="fas fa-table"></i> Nome da Tabela
+                                </label>
+                                <input type="text" class="form-control" id="tableName" 
+                                       placeholder="ex: puzzles_encontrados" required>
+                                <small class="form-text text-muted">
+                                    Use snake_case. O prefixo "ovo_ia_" será adicionado automaticamente.
+                                </small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="tablePurpose" class="form-label">
+                                    <i class="fas fa-bullseye"></i> Finalidade
+                                </label>
+                                <input type="text" class="form-control" id="tablePurpose" 
+                                       placeholder="ex: Registrar WIFs encontrados" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="projectName" class="form-label">
+                                    <i class="fas fa-project-diagram"></i> Projeto
+                                </label>
+                                <input type="text" class="form-control" id="projectName" 
+                                       placeholder="ex: Puzzle Bitcoin Finder" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="accessType" class="form-label">
+                                    <i class="fas fa-lock"></i> Tipo de Acesso
+                                </label>
+                                <select class="form-select" id="accessType" required>
+                                    <option value="public">Público (leitura/escrita)</option>
+                                    <option value="read-only">Somente leitura pública</option>
+                                    <option value="restricted">Acesso restrito</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- CAMPOS PERSONALIZADOS -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-columns"></i> Campos da Tabela
+                            </label>
+                            <div id="fieldsContainer">
+                                <div class="row mb-2 field-row">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" placeholder="Nome" name="fieldName">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" name="fieldType">
+                                            <option value="VARCHAR(255)">VARCHAR(255)</option>
+                                            <option value="TEXT">TEXT</option>
+                                            <option value="BIGINT">BIGINT</option>
+                                            <option value="INTEGER">INTEGER</option>
+                                            <option value="BOOLEAN">BOOLEAN</option>
+                                            <option value="TIMESTAMP">TIMESTAMP</option>
+                                            <option value="JSONB">JSONB</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" placeholder="Descrição" name="fieldDescription">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" name="fieldRequired">
+                                            <label class="form-check-label">Obrigatório</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="removeField(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addField()">
+                                <i class="fas fa-plus"></i> Adicionar Campo
+                            </button>
+                        </div>
+
+                        <!-- ÍNDICES ESPECIAIS -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-index"></i> Índices Especiais
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="uniqueIndex">
+                                        <label class="form-check-label" for="uniqueIndex">
+                                            Índice UNIQUE (impede duplicatas)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="compositeIndex">
+                                        <label class="form-check-label" for="compositeIndex">
+                                            Índice Composto (múltiplas colunas)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-gradient btn-lg">
+                                <i class="fas fa-magic"></i> Gerar SQL
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- RESULTADO SQL -->
+                    <div id="sqlResult" class="mt-5" style="display: none;">
+                        <h3 class="mb-3">
+                            <i class="fas fa-code"></i> SQL Gerado
+                        </h3>
+                        <div class="code-block">
+                            <pre id="sqlCode" style="margin: 0; white-space: pre-wrap;"></pre>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-success me-2" onclick="copySQL()">
+                                <i class="fas fa-copy"></i> Copiar SQL
+                            </button>
+                            <button class="btn btn-info" onclick="downloadSQL()">
+                                <i class="fas fa-download"></i> Baixar SQL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PASSO A PASSO -->
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center text-white mb-5">
+                    <i class="fas fa-list-ol"></i> Processo Passo a Passo
+                </h2>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="feature-card text-center">
+                            <div class="step-indicator mb-3">1</div>
+                            <h5>Preencha o Formulário</h5>
+                            <p>Defina nome, finalidade e campos da sua tabela seguindo os padrões OVO IA.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card text-center">
+                            <div class="step-indicator mb-3">2</div>
+                            <h5>Gere SQL Automaticamente</h5>
+                            <p>O sistema usa templates validados para criar SQL compatível com Supabase.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card text-center">
+                            <div class="step-indicator mb-3">3</div>
+                            <h5>Execute no Supabase</h5>
+                            <p>Copie e cole o SQL gerado no editor SQL do seu projeto Supabase.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXEMPLOS PRONTOS -->
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-section">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-lightbulb"></i> Exemplos Prontos
+                    </h2>
+                    <p class="text-center text-muted mb-4">
+                        Use estes exemplos como base para seus projetos
+                    </p>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-puzzle-piece text-primary"></i> Puzzles Encontrados
+                                    </h5>
+                                    <p class="card-text">Tabela completa para registrar WIFs de puzzles Bitcoin encontrados.</p>
+                                    <button class="btn btn-primary btn-sm" onclick="loadExample('puzzles')">
+                                        Carregar Exemplo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-bar text-success"></i> Estatísticas
+                                    </h5>
+                                    <p class="card-text">Tabela para armazenar estatísticas e métricas do sistema.</p>
+                                    <button class="btn btn-success btn-sm" onclick="loadExample('statistics')">
+                                        Carregar Exemplo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-file-alt text-warning"></i> Logs de Processamento
+                                    </h5>
+                                    <p class="card-text">Tabela para registrar logs e auditoria do sistema.</p>
+                                    <button class="btn btn-warning btn-sm" onclick="loadExample('logs')">
+                                        Carregar Exemplo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOCUMENTAÇÃO -->
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-section">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-book"></i> Documentação
+                    </h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-file-code"></i> Templates</h5>
+                            <ul>
+                                <li><a href="templates/sql-template.md" target="_blank">SQL Template Universal</a></li>
+                                <li><a href="examples/universal-tables.js" target="_blank">Managers JavaScript</a></li>
+                                <li><a href="master_rules.md" target="_blank">Regras do Projeto</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><i class="fas fa-graduation-cap"></i> Guias</h5>
+                            <ul>
+                                <li><a href="README-PUZZLE-FINDER.md" target="_blank">Puzzle Finder Guide</a></li>
+                                <li><a href="GUIA-INTEGRACAO-SUPABASE.md" target="_blank">Supabase Integration</a></li>
+                                <li><a href="sql/" target="_blank">SQL Scripts</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="container-fluid text-center text-white py-4">
+        <p>&copy; 2024 OVO IA - Sistema Completo para Puzzle Bitcoin</p>
+        <div>
+            <a href="https://github.com/canalqb" target="_blank" class="text-white me-3">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="#" class="text-white">
+                <i class="fas fa-question-circle"></i> Ajuda
+            </a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================
+        // 🎯 SISTEMA DE GERAÇÃO DE SQL
+        // ============================================
+        
+        // Templates de exemplos
+        const examples = {
+            puzzles: {
+                tableName: 'puzzles_encontrados',
+                purpose: 'Registrar WIFs quando o puzzle Bitcoin é encontrado',
+                project: 'Puzzle Bitcoin Finder',
+                fields: [
+                    { name: 'preset', type: 'BIGINT', description: 'Número do preset (ex: 70, 71, 72)', required: true },
+                    { name: 'hex_private_key', type: 'VARCHAR(64)', description: 'Chave privada em hex (64 chars)', required: true },
+                    { name: 'wif_compressed', type: 'VARCHAR(52)', description: 'WIF comprimido', required: true },
+                    { name: 'wif_uncompressed', type: 'VARCHAR(52)', description: 'WIF não comprimido', required: true },
+                    { name: 'address_compressed', type: 'VARCHAR(62)', description: 'Endereço comprimido', required: false },
+                    { name: 'address_uncompressed', type: 'VARCHAR(62)', description: 'Endereço não comprimido', required: false },
+                    { name: 'mode', type: 'VARCHAR(10)', description: 'Modo: horizontal ou vertical', required: true },
+                    { name: 'bits', type: 'BIGINT', description: 'Bits do puzzle', required: true },
+                    { name: 'discovery_timestamp', type: 'TIMESTAMP', description: 'Data/hora da descoberta', required: false }
+                ],
+                uniqueIndex: true,
+                accessType: 'public'
+            },
+            statistics: {
+                tableName: 'estatisticas',
+                purpose: 'Armazenar estatísticas e métricas do sistema',
+                project: 'OVO IA Analytics',
+                fields: [
+                    { name: 'preset', type: 'BIGINT', description: 'Número do preset', required: true },
+                    { name: 'total_puzzles', type: 'BIGINT', description: 'Total de puzzles encontrados', required: false },
+                    { name: 'horizontal_count', type: 'BIGINT', description: 'Puzzles horizontais', required: false },
+                    { name: 'vertical_count', type: 'BIGINT', description: 'Puzzles verticais', required: false },
+                    { name: 'last_discovery', type: 'TIMESTAMP', description: 'Última descoberta', required: false }
+                ],
+                uniqueIndex: true,
+                accessType: 'public'
+            },
+            logs: {
+                tableName: 'logs_processamento',
+                purpose: 'Registrar logs e auditoria do sistema',
+                project: 'OVO IA Logger',
+                fields: [
+                    { name: 'level', type: 'VARCHAR(20)', description: 'Nível do log (info, warning, error)', required: true },
+                    { name: 'message', type: 'TEXT', description: 'Mensagem do log', required: true },
+                    { name: 'details', type: 'JSONB', description: 'Detalhes adicionais', required: false },
+                    { name: 'timestamp', type: 'TIMESTAMP', description: 'Data/hora do log', required: false },
+                    { name: 'user_agent', type: 'VARCHAR(500)', description: 'User agent do navegador', required: false },
+                    { name: 'session_id', type: 'VARCHAR(100)', description: 'ID da sessão', required: false }
+                ],
+                uniqueIndex: false,
+                accessType: 'restricted'
+            }
+        };
+
+        // Adicionar campo dinamicamente
+        function addField() {
+            const container = document.getElementById('fieldsContainer');
+            const fieldRow = document.createElement('div');
+            fieldRow.className = 'row mb-2 field-row';
+            fieldRow.innerHTML = `
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Nome" name="fieldName">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" name="fieldType">
+                        <option value="VARCHAR(255)">VARCHAR(255)</option>
+                        <option value="TEXT">TEXT</option>
+                        <option value="BIGINT">BIGINT</option>
+                        <option value="INTEGER">INTEGER</option>
+                        <option value="BOOLEAN">BOOLEAN</option>
+                        <option value="TIMESTAMP">TIMESTAMP</option>
+                        <option value="JSONB">JSONB</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Descrição" name="fieldDescription">
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="fieldRequired">
+                        <label class="form-check-label">Obrigatório</label>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeField(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(fieldRow);
+        }
+
+        // Remover campo
+        function removeField(button) {
+            button.closest('.field-row').remove();
+        }
+
+        // Carregar exemplo
+        function loadExample(type) {
+            const example = examples[type];
+            if (example) {
+                document.getElementById('tableName').value = example.tableName;
+                document.getElementById('tablePurpose').value = example.purpose;
+                document.getElementById('projectName').value = example.project;
+                document.getElementById('accessType').value = example.accessType;
+                document.getElementById('uniqueIndex').checked = example.uniqueIndex;
+                
+                // Limpar campos existentes
+                const container = document.getElementById('fieldsContainer');
+                container.innerHTML = '';
+                
+                // Adicionar campos do exemplo
+                example.fields.forEach(field => {
+                    const fieldRow = document.createElement('div');
+                    fieldRow.className = 'row mb-2 field-row';
+                    fieldRow.innerHTML = `
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="Nome" name="fieldName" value="${field.name}">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="fieldType">
+                                <option value="VARCHAR(255)" ${field.type === 'VARCHAR(255)' ? 'selected' : ''}>VARCHAR(255)</option>
+                                <option value="TEXT" ${field.type === 'TEXT' ? 'selected' : ''}>TEXT</option>
+                                <option value="BIGINT" ${field.type === 'BIGINT' ? 'selected' : ''}>BIGINT</option>
+                                <option value="INTEGER" ${field.type === 'INTEGER' ? 'selected' : ''}>INTEGER</option>
+                                <option value="BOOLEAN" ${field.type === 'BOOLEAN' ? 'selected' : ''}>BOOLEAN</option>
+                                <option value="TIMESTAMP" ${field.type === 'TIMESTAMP' ? 'selected' : ''}>TIMESTAMP</option>
+                                <option value="JSONB" ${field.type === 'JSONB' ? 'selected' : ''}>JSONB</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="Descrição" name="fieldDescription" value="${field.description}">
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="fieldRequired" ${field.required ? 'checked' : ''}>
+                                <label class="form-check-label">Obrigatório</label>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-sm btn-danger" onclick="removeField(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(fieldRow);
+                });
+            }
+        }
+
+        // Gerar SQL
+        function generateSQL() {
+            const tableName = document.getElementById('tableName').value;
+            const purpose = document.getElementById('tablePurpose').value;
+            const project = document.getElementById('projectName').value;
+            const accessType = document.getElementById('accessType').value;
+            const uniqueIndex = document.getElementById('uniqueIndex').checked;
+            
+            // Coletar campos
+            const fields = [];
+            const fieldRows = document.querySelectorAll('.field-row');
+            fieldRows.forEach(row => {
+                const name = row.querySelector('input[name="fieldName"]').value;
+                const type = row.querySelector('select[name="fieldType"]').value;
+                const description = row.querySelector('input[name="fieldDescription"]').value;
+                const required = row.querySelector('input[name="fieldRequired"]').checked;
+                
+                if (name && type) {
+                    fields.push({ name, type, description, required });
+                }
+            });
+
+            // Gerar SQL usando template
+            const sql = generateSQLFromTemplate({
+                tableName,
+                purpose,
+                project,
+                fields,
+                accessType,
+                uniqueIndex
+            });
+
+            return sql;
+        }
+
+        // Gerar SQL a partir do template
+        function generateSQLFromTemplate(params) {
+            const { tableName, purpose, project, fields, accessType, uniqueIndex } = params;
+            
+            // Campos SQL
+            let fieldsSQL = '';
+            fields.forEach(field => {
+                fieldsSQL += `    ${field.name} ${field.type}${field.required ? ' NOT NULL' : ''}, -- ${field.description}\n`;
+            });
+
+            // Constraints
+            let constraintsSQL = '';
+            fields.forEach(field => {
+                if (field.type.includes('VARCHAR') && field.type.match(/\d+/)) {
+                    const length = field.type.match(/\d+/)[0];
+                    constraintsSQL += `    CONSTRAINT ovo_ia_${tableName}_${field.name}_check \n        CHECK (length(${field.name}) = ${length}),\n`;
+                }
+            });
+
+            // Índices
+            let indexesSQL = '';
+            fields.forEach(field => {
+                if (field.type.includes('VARCHAR') || field.type.includes('TEXT')) {
+                    indexesSQL += `CREATE INDEX IF NOT EXISTS idx_ovo_ia_${tableName}_${field.name} ON ovo_ia_${tableName} USING hash (${field.name});\n`;
+                } else {
+                    indexesSQL += `CREATE INDEX IF NOT EXISTS idx_ovo_ia_${tableName}_${field.name} ON ovo_ia_${tableName}(${field.name});\n`;
+                }
+            });
+
+            // Constraint UNIQUE
+            let uniqueSQL = '';
+            if (uniqueIndex && fields.length > 0) {
+                const firstField = fields[0].name;
+                uniqueSQL = `DO $$\nBEGIN\n    IF NOT EXISTS (\n        SELECT 1 FROM pg_constraint \n        WHERE conname = 'ovo_ia_${tableName}_${firstField}_unique'\n    ) THEN\n        ALTER TABLE ovo_ia_${tableName} \n        ADD CONSTRAINT ovo_ia_${tableName}_${firstField}_unique \n        UNIQUE (${firstField});\n    END IF;\nEND $$;\n\n`;
+            }
+
+            // RLS Policies
+            let rlsSQL = '';
+            if (accessType === 'public') {
+                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ovo_ia_${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir inserções públicas\nCREATE POLICY "Allow insert ${tableName}" ON ovo_ia_${tableName}\n    FOR INSERT\n    TO anon\n    WITH CHECK (true);\n\n-- Política para permitir leituras públicas\nCREATE POLICY "Allow read ${tableName}" ON ovo_ia_${tableName}\n    FOR SELECT\n    TO anon\n    USING (true);\n\n-- Política para permitir atualizações apenas pelo serviço\nCREATE POLICY "Allow service updates" ON ovo_ia_${tableName}\n    FOR UPDATE\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n\n-- Política para permitir exclusões apenas pelo serviço\nCREATE POLICY "Allow service deletes" ON ovo_ia_${tableName}\n    FOR DELETE\n    TO service_role\n    USING (true);\n`;
+            } else if (accessType === 'read-only') {
+                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ovo_ia_${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir leituras públicas\nCREATE POLICY "Allow read ${tableName}" ON ovo_ia_${tableName}\n    FOR SELECT\n    TO anon\n    USING (true);\n\n-- Política para permitir operações completas ao serviço\nCREATE POLICY "Allow service ${tableName}" ON ovo_ia_${tableName}\n    FOR ALL\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n`;
+            } else {
+                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ovo_ia_${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir operações apenas ao serviço\nCREATE POLICY "Allow service ${tableName}" ON ovo_ia_${tableName}\n    FOR ALL\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n`;
+            }
+
+            return `-- ============================================\n-- TABELA: ${purpose.toUpperCase()}\n-- ============================================\n-- Finalidade: ${purpose}\n-- Prefixo: ovo_ia_ (conforme regras do usuário)\n-- Projeto: ${project}\n\nCREATE TABLE IF NOT EXISTS ovo_ia_${tableName} (\n    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n    \n${fieldsSQL}    -- Controle e Auditoria\n    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n    \n${constraintsSQL});\n\n-- ÍNDICES OTIMIZADOS\n${indexesSQL}\n-- ${uniqueIndex ? '-- ÍNDICE UNIQUE' : ''}\n${uniqueSQL}\n-- TRIGGER PARA ATUALIZAR updated_at AUTOMATICAMENTE\nCREATE OR REPLACE FUNCTION update_ovo_ia_${tableName}_updated_at()\nRETURNS TRIGGER AS $$\nBEGIN\n    NEW.updated_at = NOW();\n    RETURN NEW;\nEND;\n$$ language 'plpgsql';\n\nCREATE TRIGGER trigger_ovo_ia_${tableName}_updated_at\n    BEFORE UPDATE ON ovo_ia_${tableName}\n    FOR EACH ROW\n    EXECUTE FUNCTION update_ovo_ia_${tableName}_updated_at();\n\n-- COMENTÁRIOS\nCOMMENT ON TABLE ovo_ia_${tableName} IS '${purpose}';\n${fields.map(field => `COMMENT ON COLUMN ovo_ia_${tableName}.${field.name} IS '${field.description}';`).join('\n')}\n\n${rlsSQL}`;
+        }
+
+        // Copiar SQL
+        function copySQL() {
+            const sqlCode = document.getElementById('sqlCode').textContent;
+            navigator.clipboard.writeText(sqlCode).then(() => {
+                alert('✅ SQL copiado para a área de transferência!');
+            });
+        }
+
+        // Baixar SQL
+        function downloadSQL() {
+            const sqlCode = document.getElementById('sqlCode').textContent;
+            const blob = new Blob([sqlCode], { type: 'text/sql' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ovo_ia_${document.getElementById('tableName').value}.sql`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event listener do formulário
+        document.getElementById('tableForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            try {
+                const sql = generateSQL();
+                document.getElementById('sqlCode').textContent = sql;
+                document.getElementById('sqlResult').style.display = 'block';
+                
+                // Scroll para o resultado
+                document.getElementById('sqlResult').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                alert('❌ Erro ao gerar SQL: ' + error.message);
+            }
+        });
+
+        // Adicionar campo inicial
+        addField();
+    </script>
+</body>
+</html>
