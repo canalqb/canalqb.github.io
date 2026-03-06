@@ -1,355 +1,86 @@
-name: Deploy to GitHub Pages with Supabase Integration
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Checkout
+        uses: actions/checkout@v4
         
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-      
-    - name: Install dependencies
-      run: |
-        npm install -g html-minifier-terser
-        npm install -g terser
-        
-    - name: Replace Supabase placeholders
-      run: |
-        echo "🔧 Replacing Supabase placeholders..."
-        
-        # Create secrets configuration file
-        cat > js/secrets-config.js << EOF
-        /**
-         * ========================================================================
-         * SECRETS CONFIG - GERADO AUTOMATICAMENTE PELO GITHUB ACTIONS
-         * ========================================================================
-         */
-        
-        // Secrets injetados pelo GitHub Actions
-        window.SUPABASE_URL = '${{ secrets.SUPABASE_URL }}';
-        window.SUPABASE_KEY = '${{ secrets.SUPABASE_KEY }}';
-        
-        console.log('🔑 Secrets do Supabase injetados com sucesso');
-        console.log('🌐 URL:', window.SUPABASE_URL ? '***CONFIGURADO***' : 'NÃO CONFIGURADO');
-        console.log('🔑 KEY:', window.SUPABASE_KEY ? '***CONFIGURADO***' : 'NÃO CONFIGURADO');
-        
-        // Validação adicional
-        if (window.SUPABASE_KEY && window.SUPABASE_KEY.startsWith('sb_publishable_')) {
-          console.log('✅ Chave publishable válida detectada');
-        } else if (window.SUPABASE_KEY && window.SUPABASE_KEY.startsWith('eyJ')) {
-          console.log('✅ Chave JWT válida detectada');
-        } else {
-          console.log('⚠️ Formato de chave desconhecido');
-        }
-        EOF
-        
-        echo "✅ Arquivo js/secrets-config.js criado com sucesso"
-        
-        # Modifica o index.html para incluir o secrets-config.js
-        sed -i '/<!-- GitHub Secrets Loader - PARA PRODUÇÃO -->/a\  <script src="js/secrets-config.js"></script>' index.html
-        
-        echo "✅ index.html modificado para incluir secrets-config.js"
-        
-        # Replace in any other files that might have placeholders
-        find . -name "*.js" -o -name "*.html" -o -name "*.json" | xargs grep -l "__SUPABASE" 2>/dev/null | while read file; do
-          echo "🔧 Processing $file"
-          sed -i "s|__SUPABASE_URL__|${{ secrets.SUPABASE_URL }}|g" "$file"
-          sed -i "s|__SUPABASE_KEY__|${{ secrets.SUPABASE_KEY }}|g" "$file"
-        done
-        
-        echo "✅ All Supabase placeholders replaced"
-        
-    - name: Verify Supabase configuration
-      run: |
-        echo "🔍 Verifying Supabase configuration..."
-        
-        # Check if placeholders were replaced
-        if grep -q "__SUPABASE" js/supabase-config.js; then
-          echo "❌ ERROR: Supabase placeholders not replaced!"
-          echo "Content of supabase-config.js:"
-          cat js/supabase-config.js
-          exit 1
-        fi
-        
-        # Check if secrets are present
-        if grep -q "sb_publishable_" js/supabase-config.js; then
-          echo "✅ Supabase publishable key found"
-        else
-          echo "⚠️ WARNING: Supabase publishable key not found"
-        fi
-        
-        if grep -q "https://" js/supabase-config.js; then
-          echo "✅ Supabase URL found"
-        else
-          echo "⚠️ WARNING: Supabase URL not found"
-        fi
-        
-        echo "✅ Supabase configuration verified"
-        
-    - name: Minify JavaScript files
-      run: |
-        echo "🗜️ Minifying JavaScript files..."
-        
-        # Create minified directory
-        mkdir -p js/minified
-        
-        # Minify each JS file
-        for file in js/*.js; do
-          if [ -f "$file" ]; then
-            filename=$(basename "$file")
-            echo "Minifying $filename..."
-            
-            # Use terser to minify
-            npx terser "$file" \
-              --compress \
-              --mangle \
-              --output "js/minified/$filename" \
-              --source-map "filename='$filename.map', includeSources"
-              
-            # Replace original with minified version
-            mv "js/minified/$filename" "$file"
-            if [ -f "js/minified/$filename.map" ]; then
-              mv "js/minified/$filename.map" "js/$filename.map"
-            fi
-          fi
-        done
-        
-        echo "✅ JavaScript files minified"
-        
-    - name: Optimize HTML
-      run: |
-        echo "📝 Optimizing HTML..."
-        
-        # Minify HTML
-        html-minifier-terser \
-          --collapse-whitespace \
-          --remove-comments \
-          --remove-optional-tags \
-          --remove-redundant-attributes \
-          --remove-script-type-attributes \
-          --use-short-doctype \
-          --minify-css true \
-          --minify-js true \
-          --output index.html \
-          index.html
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
           
-        echo "✅ HTML optimized"
-        
-    - name: Add build metadata
-      run: |
-        echo "📋 Adding build metadata..."
-        
-        # Create build info file
-        cat > build-info.json << EOF
-        {
-          "buildTime": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-          "commit": "${{ github.sha }}",
-          "branch": "${{ github.ref_name }}",
-          "actor": "${{ github.actor }}",
-          "workflow": "${{ github.workflow }}",
-          "runId": "${{ github.run_id }}",
-          "repository": "${{ github.repository }}",
-          "supabaseConfigured": true
-        }
-        EOF
-        
-        echo "✅ Build metadata added"
-        
-    - name: Create robots.txt for production
-      run: |
-        echo "🤖 Creating robots.txt..."
-        
-        cat > robots.txt << EOF
-        User-agent: *
-        Allow: /
-        Disallow: /js/*.map
-        Disallow: /build-info.json
-        
-        Sitemap: https://canalqb.github.io/sitemap.xml
-        
-        # Crawl-delay for respectful crawling
-        Crawl-delay: 1
-        
-        # Allow major search engines
-        User-agent: Googlebot
-        Allow: /
-        
-        User-agent: Bingbot
-        Allow: /
-        
-        User-agent: Slurp
-        Allow: /
-        
-        EOF
-        
-        echo "✅ robots.txt created"
-        
-    - name: Create .nojekyll file
-      run: |
-        touch .nojekyll
-        echo "✅ .nojekyll file created"
-        
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: '.'
+      - name: Install Tools
+        run: npm install -g html-minifier-terser terser
 
-  # Deployment job
+      - name: Inject Supabase Secrets
+        run: |
+          mkdir -p js
+          cat > js/secrets-config.js << EOF
+          window.SUPABASE_URL = '${{ secrets.SUPABASE_URL }}';
+          window.SUPABASE_KEY = '${{ secrets.SUPABASE_KEY }}';
+          console.log('🔑 Supabase Secrets Injected');
+          EOF
+          
+          # Suporte para a tag de carregamento no HTML
+          sed -i '/<!-- GitHub Secrets Loader - PARA PRODUÇÃO -->/a\  <script src="js/secrets-config.js"></script>' index.html
+
+      - name: Minify Assets
+        run: |
+          # Minify JS (In place)
+          for file in js/*.js; do
+            if [ -f "$file" ]; then
+              npx terser "$file" --compress --mangle --output "$file"
+            fi
+          done
+          
+          # Minify HTML (Safe way)
+          html-minifier-terser \
+            --collapse-whitespace \
+            --remove-comments \
+            --remove-optional-tags \
+            --remove-redundant-attributes \
+            --remove-script-type-attributes \
+            --use-short-doctype \
+            --minify-css true \
+            --minify-js true \
+            index.html > index.min.html
+          mv index.min.html index.html
+
+      - name: Prepare Dist
+        run: |
+          mkdir dist
+          # Copia apenas o necessário para produção
+          cp -r css js paginas regras index.html ads.txt favicon.ico canalqb.ico robots.txt sitemap.xml .nojekyll dist/ 2>/dev/null || true
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main'
-    
     steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-      
-    - name: Update Supabase on successful deploy
-      if: success()
-      run: |
-        echo "🚀 Deployment successful! Notifying Supabase..."
-        
-        # Optional: You can add webhook call to Supabase here
-        # curl -X POST "${{ secrets.SUPABASE_WEBHOOK_URL }}" \
-        #   -H "Content-Type: application/json" \
-        #   -d '{"event": "deployment", "url": "${{ steps.deployment.outputs.page_url }}"}'
-        
-        echo "✅ Deployment completed successfully"
-        echo "🌐 Site available at: ${{ steps.deployment.outputs.page_url }}"
-
-  # Test job for pull requests
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
-    
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: github-pages
-        path: ./dist
-        
-    - name: Test Supabase integration
-      run: |
-        echo "🧪 Testing Supabase integration..."
-        
-        # Check if Supabase config is properly set
-        if grep -q "__SUPABASE" dist/js/supabase-config.js; then
-          echo "❌ ERROR: Supabase placeholders not replaced in test build"
-          exit 1
-        fi
-        
-        # Check JavaScript syntax
-        for file in dist/js/*.js; do
-          if [ -f "$file" ]; then
-            echo "Testing syntax of $(basename $file)..."
-            node -c "$file" || {
-              echo "❌ Syntax error in $file"
-              exit 1
-            }
-          fi
-        done
-        
-        echo "✅ All tests passed"
-        
-    - name: Validate HTML
-      run: |
-        echo "🔍 Validating HTML..."
-        
-        # Install html-validator
-        npm install -g html-validator
-        
-        # Validate HTML
-        html-validator --file=dist/index.html --format=json || {
-          echo "⚠️ HTML validation warnings found (this is usually OK)"
-        }
-        
-        echo "✅ HTML validation completed"
-
-  # Security scan job
-  security:
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: github-pages
-        path: ./dist
-        
-    - name: Security scan
-      run: |
-        echo "🔒 Running security scan..."
-        
-        # Check for exposed secrets
-        if grep -r -i "password\|secret\|key.*=" dist/js/ --include="*.js" | grep -v "supabase.*key\|adsense.*key"; then
-          echo "⚠️ WARNING: Potential secrets found in JavaScript files"
-        fi
-        
-        # Check for console.log statements (should be removed in production)
-        console_logs=$(grep -r "console\.log" dist/js/ --include="*.js" | wc -l)
-        if [ "$console_logs" -gt 10 ]; then
-          echo "⚠️ WARNING: Many console.log statements found ($console_logs)"
-        fi
-        
-        echo "✅ Security scan completed"
-        
-    - name: Check file sizes
-      run: |
-        echo "📏 Checking file sizes..."
-        
-        # Check JavaScript file sizes
-        for file in dist/js/*.js; do
-          if [ -f "$file" ]; then
-            size=$(stat -c%s "$file")
-            filename=$(basename "$file")
-            
-            if [ "$size" -gt 1048576 ]; then  # 1MB
-              echo "⚠️ WARNING: $filename is large ($(echo "scale=1; $size/1024" | bc)KB)"
-            else
-              echo "✅ $filename: $(echo "scale=1; $size/1024" | bc)KB"
-            fi
-          fi
-        done
-        
-        # Check HTML size
-        html_size=$(stat -c%s "dist/index.html")
-        echo "✅ index.html: $(echo "scale=1; $html_size/1024" | bc)KB"
-        
-        echo "✅ File size check completed"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
