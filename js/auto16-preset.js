@@ -496,10 +496,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 🚀 MODAL SÓ PARA PRESET REAL + SEQUENCIAL (H)
-    if (getMode() === 'horizontal' && window.presetExpressoAtivo) {
+    // 🚀 MODAL SÓ PARA PRESET REAL + SEQUENCIAL (H) - CORRIGIDO
+    // Só mostra modal se estiver realmente processando (running = true)
+    if (getMode() === 'horizontal' && window.presetExpressoAtivo && presetRunning) {
       createProgressModal();
-    } else if (getMode() === 'vertical') {
+    } else if (getMode() === 'vertical' && presetRunning) {
       createVerticalProgressModal();
     }
     const speed = parseInt(document.getElementById('speed')?.value || 50);
