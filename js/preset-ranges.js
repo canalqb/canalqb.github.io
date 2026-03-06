@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ? '📌 Este é o intervalo inicial do preset. Nenhum progresso salvo.'
       : '💡 Intervalo recuperado do banco de dados (progresso global).';
 
-    // 🚀 RECONSTRÓI O CONTEÚDO - VERSÃO COM DUPLOS CARDS (H + V)
+    // 🚀 RECONSTRÓI O CONTEÚDO - VERSÃO COMPACTA
     statusEl.innerHTML = `
       <!-- CARD HORIZONTAL (GLOBAL) -->
       <div class="database-status-card" style="background: #f7fafc; border: 1px solid #edf2f7; border-left: 4px solid #38a169; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
@@ -218,38 +218,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <!-- CARD VERTICAL (EXCLUSIVO) -->
       <div id="vertical-status-card-container">
-         <div style="text-align: center; padding: 10px; font-size: 11px; color: #a0aec0;">
-            <i class="fas fa-spinner fa-spin"></i> Buscando progresso vertical...
-         </div>
       </div>
     `;
 
-    // 🚀 BUSCA PROGRESSO VERTICAL EM SEPARADO
+    // 🚀 CARREGA VERTICAL DIRETO SEM LOADING
     if (window.VerticalProgressManager) {
       const vManager = new window.VerticalProgressManager();
       vManager.getLastVerticalProgress(bitCount).then(vData => {
         const vContainer = document.getElementById('vertical-status-card-container');
         if (!vContainer) return;
 
-        if (vData) {
-          vContainer.innerHTML = `
-            <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
-              <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
-                 <i class="fas fa-arrows-alt-v"></i> Progresso Sequencial (Vertical)
+        // 🚀 MOSTRA DIRETO O VALOR (COM OU SEM DADOS DO BANCO)
+        const vInicio = vData ? removeLeadingZeros(vData.inicio) : inicioLimpo;
+        const vFim = vData ? removeLeadingZeros(vData.fim) : fimLimpo;
+        const vStatus = vData ? 'PONTO DE RETOMADA' : 'AGUARDANDO INÍCIO';
+        const vStatusColor = vData ? '#d1e9ff' : '#e2e8f0';
+        const vStatusTextColor = vData ? '#2c5282' : '#718096';
+
+        vContainer.innerHTML = `
+          <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
+            <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+               <i class="fas fa-arrows-alt-v"></i> Progresso Sequencial (Vertical)
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
+                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${vInicio}</div>
+                <div><span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${vFim}</div>
               </div>
-              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
-                  <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${removeLeadingZeros(vData.inicio)}</div>
-                  <div><span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${removeLeadingZeros(vData.fim)}</div>
-                </div>
-                <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
-                  <span style="background: #d1e9ff; color: #2c5282; padding: 2px 6px; border-radius: 4px; font-weight: bold;">PONTO DE RETOMADA</span>
-                </div>
+              <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
+                <span style="background: ${vStatusColor}; color: ${vStatusTextColor}; padding: 2px 6px; border-radius: 4px; font-weight: bold;">${vStatus}</span>
               </div>
             </div>
-          `;
-        } else {
-          // 🚀 SE NÃO HÁ DADOS NO BANCO, MOSTRA OS VALORES INICIAIS PADRÃO DO PRESET
+          </div>
+        `;
+      }).catch(() => {
+        // 🚀 EM CASO DE ERRO, MOSTRA VALORES PADRÃO
+        const vContainer = document.getElementById('vertical-status-card-container');
+        if (vContainer) {
           vContainer.innerHTML = `
             <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
               <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -268,6 +273,27 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         }
       });
+    } else {
+      // 🚀 SE VERTICAL PROGRESS MANAGER NÃO EXISTE, MOSTRA VALORES PADRÃO
+      const vContainer = document.getElementById('vertical-status-card-container');
+      if (vContainer) {
+        vContainer.innerHTML = `
+          <div class="database-status-card" style="background: #f0f7ff; border: 1px solid #e1effe; border-left: 4px solid #3182ce; padding: 10px 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 13px;">
+            <div style="font-size: 11px; color: #4a5568; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">
+               <i class="fas fa-arrows-alt-v"></i> Progresso Sequencial (Vertical)
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; flex-direction: column; flex: 2; min-width: 250px; background: white; padding: 5px 8px; border-radius: 4px; border: 1px solid #d1e9ff; font-family: monospace; font-size: 10px;">
+                <div><span style="color: #3182ce; font-weight: bold;">INI V:</span> ${inicioLimpo}</div>
+                <div><span style="color: #3182ce; font-weight: bold;">FIM V:</span> ${fimLimpo}</div>
+              </div>
+              <div style="font-size: 10px; color: #4a5568; flex: 1; text-align: right;">
+                <span style="background: #e2e8f0; color: #718096; padding: 2px 6px; border-radius: 4px; font-weight: bold;">AGUARDANDO INÍCIO</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
     }
 
     setTimeout(async () => {
