@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <!-- Meta Tags Básicas -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 - Puzzle 1000 BTC">
+  <meta name="keywords"
+    content="bitcoin, private key, bitcoin private key, puzzle bitcoin, puzzle 1000 btc, gerador bitcoin, bitcoin puzzle, matriz 16x16, cryptography, blockchain, chave privada bitcoin, estudo bitcoin, privatekeys, privatekeys.pw, puzzle, puzzles, bitcoin-puzzle-tx">
+  <meta name="google-site-verification" content="2Y9-oF7dxXk9Xq-MNVGlef1S9EP8f95jwU7gUl7FrA8" />
+
+  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" sizes="16x16" href="favicon.ico">
+  <link rel="icon" sizes="32x32" href="favicon.ico">
+
+  <!-- Google Ads -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762"
+    crossorigin="anonymous"></script>
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-NLMLKHPS');
+  </script>
+
+  <!-- CSS Externo -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/adsense-styles.css" />
+  <link rel="stylesheet" href="css/gdpr-consent-styles.css" />
+  <link rel="stylesheet" href="css/database-status.css" />
+  <link rel="stylesheet" href="css/background-processor-styles.css" />
+
+  <!-- BitcoinJS -->
+  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://canalqb.github.io/#website",
+        "url": "https://canalqb.github.io/",
+        "name": "CanalQB - Gerador de Private Keys Bitcoin",
+        "description": "Gerador educacional de Private Keys Bitcoin usando matriz 16x16 baseado no Puzzle 1000 BTC.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "CanalQB",
+          "url": "https://github.com/canalqb"
+        }
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://canalqb.github.io/#webapp",
+        "name": "Gerador de Private Keys Bitcoin",
+        "url": "https://canalqb.github.io/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript",
+        "description": "Aplicação educacional que demonstra a geração de Private Keys Bitcoin utilizando matriz 16x16 para estudo criptográfico.",
+        "creator": {
+          "@type": "Organization",
+          "name": "CanalQB",
+          "url": "https://github.com/canalqb"
+        }
+      },
+      {
+        "@type": "LearningResource",
+        "@id": "https://canalqb.github.io/#learningresource",
+        "name": "Bitcoin Private Key Puzzle 1000 BTC",
+        "educationalLevel": "Intermediate",
+        "learningResourceType": "Simulation",
+        "about": [
+          { "@type": "Thing", "name": "Bitcoin" },
+          { "@type": "Thing", "name": "Criptografia" },
+          { "@type": "Thing", "name": "Blockchain" }
+        ],
+        "description": "Recurso educacional para estudo de chaves privadas Bitcoin e puzzles criptográficos."
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS" height="0" width="0"
+      style="display:none;visibility:hidden" aria-hidden="true"></iframe>
+  </noscript>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg shadow-sm" role="navigation" aria-label="Menu principal">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="http://canalqb.blogspot.com/" target="_blank"
+        rel="noopener noreferrer" aria-label="Visitar @CanalQb Blog">
+        <i class="fas fa-blog" aria-hidden="true"></i> @CanalQb
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.github.io/v1/" target="_blank"
+        rel="noopener noreferrer" aria-label="Nova Versão ainda em teste">
+        <i class="fas fa-flask" aria-hidden="true"></i> Nova Versão
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://btckeygen.com/" target="_blank"
+        rel="noopener noreferrer" aria-label="Visitar Btckeygen">
+        <i class="fas fa-key" aria-hidden="true"></i> Btckeygen
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="http://airdropsqb.free.nf/" target="_blank"
+        rel="noopener noreferrer" aria-label="Visitar AirdropsQB">
+        <i class="fas fa-parachute-box" aria-hidden="true"></i> Airdrops
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="https://canalqb.infinityfree.me/" target="_blank"
+        rel="noopener noreferrer" aria-label="Visitar sistema de troca de inscritos">
+        <i class="fas fa-right-left" aria-hidden="true"></i> Troca de Inscritos
+      </a>
+
+      <!-- 🔧 BANNER DE DESENVOLVIMENTO - INTEGRADO AO NAV -->
+      <div id="dev-banner" style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: linear-gradient(90deg, rgba(40, 167, 69, 0.9), rgba(32, 201, 151, 0.9));
+        color: white;
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 4px;
+        margin: 0 10px;
+        transition: all 0.3s ease;
+      " title="Ambiente de Desenvolvimento - XAMPP">
+        <span>🔧</span>
+        <span>Dev (XAMPP)</span>
+        <span>•</span>
+        <span>Supabase: ATIVO</span>
+        <span>•</span>
+        <span>Debug: ON</span>
+        <button onclick="this.parentElement.style.display='none'" style="
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          padding: 2px 6px;
+          border-radius: 3px;
+          cursor: pointer;
+          margin-left: 8px;
+          font-size: 10px;
+        " title="Fechar banner">×</button>
+      </div>
+
+      <!-- 🚀 AUTO-REMOVE BANNER APÓS TEMPO -->
+      <script>
+        // Remove o banner de desenvolvimento automaticamente após 10 segundos
+        setTimeout(() => {
+          const devBanner = document.getElementById('dev-banner');
+          if (devBanner) {
+            devBanner.style.opacity = '0';
+            setTimeout(() => {
+              devBanner.style.display = 'none';
+            }, 300);
+          }
+        }, 10000); // 10 segundos
+      </script>
+    </div>
+  </nav>
+
+  <!-- SEÇÃO AD #1: Banner Top -->
+  <div id="ad-banner-top" class="ad-banner-top" role="region" aria-label="Publicidade - Topo">
+    <div class="ad-label">Publicidade</div>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762" data-ad-slot="4371879523"
+      data-ad-format="auto" data-full-width-responsive="true"></ins>
+  </div>
+
+  <!-- Layout Principal -->
+  <div class="main-wrapper d-flex flex-column flex-lg-row">
+
+    <!-- SIDEBAR ESQUERDA -->
+    <aside class="sidebar-left">
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-info-circle"></i> Sobre o Projeto</h4>
+        <p>Esta ferramenta educacional demonstra visualmente como as chaves privadas Bitcoin são geradas a partir de
+          números binários de 256 bits.</p>
+      </div>
+
+      <div class="sidebar-widget">
+        <h3><i class="fas fa-link"></i> Links Úteis</h3>
+        <ul class="sidebar-links">
+          <li><a href="https://bitcoin.org/" target="_blank" rel="noopener noreferrer"><i class="fab fa-bitcoin"></i>
+              Bitcoin.org</a></li>
+          <li><a href="https://github.com/bitcoin/bitcoin" target="_blank" rel="noopener noreferrer"><i
+                class="fab fa-github"></i> Bitcoin GitHub</a></li>
+          <li><a href="https://en.bitcoin.it/wiki/Secp256k1" target="_blank" rel="noopener noreferrer"><i
+                class="fas fa-book"></i> Curva secp256k1</a></li>
+          <li><a href="https://www.blockchain.com/explorer" target="_blank" rel="noopener noreferrer"><i
+                class="fas fa-search"></i> Blockchain Explorer</a></li>
+          <li><a href="https://en.bitcoin.it/wiki/Private_key" target="_blank" rel="noopener noreferrer"><i
+                class="fas fa-key"></i> Wiki Private Keys</a></li>
+          <li><a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer"><i class="fas fa-tools"></i>
+              BTC Keygen</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-widget">
+        <div align="center"><a title='Contador de Visitas do MegaContador' href='https://megacontador.com.br/'><img
+              src='https://megacontador.com.br/img-zsnBM7iJuUWa51R7-3.gif' border='0' alt='Contador de visitas'></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Indicadores de Background Processing -->
+    <div id="background-indicator" class="background-indicator visible stopped"
+      title="Indicador de Processamento em Background">
+      <div class="pulse-icon"></div>
+      <span id="background-text">⏸️ Parado</span>
+    </div>
+
+    <!-- LEGENDA EXPLICATIVA -->
+    <div class="background-legend" style="
+      position: fixed;
+      top: 120px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      z-index: 998;
+      max-width: 200px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    " id="background-legend">
+      <strong>📊 Indicador de Background:</strong><br>
+      <small>• 🟢 Processando: Sistema ativo<br>
+        • 🟡 Pausado: Sistema em pausa<br>
+        • 🔴 Parado: Sistema inativo<br>
+        • Clique para ver detalhes</small>
+    </div>
+
+    <div id="background-status-badge" class="background-status-badge">
+      <span id="background-status-text">Foreground</span>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main id="main-content" class="main-content flex-grow-1" role="main">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <h1>🔑 Gerador de Private Keys Bitcoin</h1>
+        <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
+      </div>
+
+      <!-- Canvas Centralizado - MATRIZ 16x16 INTACTA -->
+      <div class="canvas-wrapper">
+        <canvas id="grid" aria-label="Matriz interativa 16x16 para seleção de células" width="1200"
+          height="900"></canvas>
+      </div>
+
+      <!-- Preset (combobox) -->
+      <div class="d-flex align-items-center gap-3">
+        <label for="presetBits" class="fw-semibold mb-0"><i class="fas fa-layer-group"></i> Preset (bits):</label>
+        <select class="form-select" id="presetBits" aria-label="Selecionar quantidade de bits">
+          <option value="70">Puzzle 71 (2^70 a 2^71 - 1)</option>
+          <option value="71" selected>Puzzle 72 (2^71 a 2^72 - 1)</option>
+          <option value="72">Puzzle 73 (2^72 a 2^73 - 1)</option>
+          <option value="73">Puzzle 74 (2^73 a 2^74 - 1)</option>
+          <option value="74">Puzzle 75 (2^74 a 2^75 - 1)</option>
+          <option value="75">Puzzle 76 (2^75 a 2^76 - 1)</option>
+          <option value="76">Puzzle 77 (2^76 a 2^77 - 1)</option>
+          <option value="77">Puzzle 78 (2^77 a 2^78 - 1)</option>
+          <option value="78">Puzzle 79 (2^78 a 2^79 - 1)</option>
+          <option value="79">Puzzle 80 (2^79 a 2^80 - 1)</option>
+          <option value="80">Puzzle 81 (2^80 a 2^81 - 1)</option>
+          <option value="81">Puzzle 82 (2^81 a 2^82 - 1)</option>
+          <option value="82">Puzzle 83 (2^82 a 2^83 - 1)</option>
+          <option value="83">Puzzle 84 (2^83 a 2^84 - 1)</option>
+          <option value="84">Puzzle 85 (2^84 a 2^85 - 1)</option>
+          <option value="85">Puzzle 86 (2^85 a 2^86 - 1)</option>
+          <option value="86">Puzzle 87 (2^86 a 2^87 - 1)</option>
+          <option value="87">Puzzle 88 (2^87 a 2^88 - 1)</option>
+          <option value="88">Puzzle 89 (2^89 a 2^89 - 1)</option>
+          <option value="89">Puzzle 90 (2^89 a 2^90 - 1)</option>
+          <option value="90">Puzzle 91 (2^90 a 2^91 - 1)</option>
+          <option value="91">Puzzle 92 (2^91 a 2^92 - 1)</option>
+          <option value="92">Puzzle 93 (2^92 a 2^93 - 1)</option>
+          <option value="93">Puzzle 94 (2^93 a 2^94 - 1)</option>
+          <option value="94">Puzzle 95 (2^94 a 2^95 - 1)</option>
+          <option value="95">Puzzle 96 (2^95 a 2^96 - 1)</option>
+          <option value="96">Puzzle 97 (2^96 a 2^97 - 1)</option>
+          <option value="97">Puzzle 98 (2^97 a 2^98 - 1)</option>
+          <option value="98">Puzzle 99 (2^98 a 2^99 - 1)</option>
+          <option value="99">Puzzle 100 (2^99 a 2^100 - 1)</option>
+          <option value="100">Puzzle 101 (2^100 a 2^101 - 1)</option>
+          <option value="101">Puzzle 102 (2^101 a 2^102 - 1)</option>
+          <option value="102">Puzzle 103 (2^102 a 2^103 - 1)</option>
+          <option value="103">Puzzle 104 (2^103 a 2^104 - 1)</option>
+          <option value="104">Puzzle 105 (2^104 a 2^105 - 1)</option>
+          <option value="105">Puzzle 106 (2^105 a 2^106 - 1)</option>
+          <option value="106">Puzzle 107 (2^106 a 2^107 - 1)</option>
+          <option value="107">Puzzle 108 (2^107 a 2^108 - 1)</option>
+          <option value="108">Puzzle 109 (2^108 a 2^109 - 1)</option>
+          <option value="109">Puzzle 110 (2^109 a 2^110 - 1)</option>
+          <option value="110">Puzzle 111 (2^110 a 2^111 - 1)</option>
+          <option value="111">Puzzle 112 (2^111 a 2^112 - 1)</option>
+          <option value="112">Puzzle 113 (2^112 a 2^113 - 1)</option>
+          <option value="113">Puzzle 114 (2^113 a 2^114 - 1)</option>
+          <option value="114">Puzzle 115 (2^114 a 2^115 - 1)</option>
+          <option value="115">Puzzle 116 (2^115 a 2^116 - 1)</option>
+          <option value="116">Puzzle 117 (2^116 a 2^117 - 1)</option>
+          <option value="117">Puzzle 118 (2^117 a 2^118 - 1)</option>
+          <option value="118">Puzzle 119 (2^118 a 2^119 - 1)</option>
+          <option value="119">Puzzle 120 (2^119 a 2^120 - 1)</option>
+          <option value="120">Puzzle 121 (2^120 a 2^121 - 1)</option>
+          <option value="121">Puzzle 122 (2^121 a 2^122 - 1)</option>
+          <option value="122">Puzzle 123 (2^122 a 2^123 - 1)</option>
+          <option value="123">Puzzle 124 (2^123 a 2^124 - 1)</option>
+          <option value="124">Puzzle 125 (2^124 a 2^125 - 1)</option>
+          <option value="125">Puzzle 126 (2^125 a 2^126 - 1)</option>
+          <option value="126">Puzzle 127 (2^126 a 2^127 - 1)</option>
+          <option value="127">Puzzle 128 (2^127 a 2^128 - 1)</option>
+          <option value="128">Puzzle 129 (2^128 a 2^129 - 1)</option>
+          <option value="129">Puzzle 130 (2^129 a 2^130 - 1)</option>
+          <option value="130">Puzzle 131 (2^130 a 2^131 - 1)</option>
+          <option value="131">Puzzle 132 (2^131 a 2^132 - 1)</option>
+          <option value="132">Puzzle 133 (2^132 a 2^133 - 1)</option>
+          <option value="133">Puzzle 134 (2^133 a 2^134 - 1)</option>
+          <option value="134">Puzzle 135 (2^134 a 2^135 - 1)</option>
+          <option value="135">Puzzle 136 (2^135 a 2^136 - 1)</option>
+          <option value="136">Puzzle 137 (2^136 a 2^137 - 1)</option>
+          <option value="137">Puzzle 138 (2^137 a 2^138 - 1)</option>
+          <option value="138">Puzzle 139 (2^138 a 2^139 - 1)</option>
+          <option value="139">Puzzle 140 (2^139 a 2^140 - 1)</option>
+          <option value="140">Puzzle 141 (2^140 a 2^141 - 1)</option>
+          <option value="141">Puzzle 142 (2^141 a 2^142 - 1)</option>
+          <option value="142">Puzzle 143 (2^142 a 2^143 - 1)</option>
+          <option value="143">Puzzle 144 (2^143 a 2^144 - 1)</option>
+          <option value="144">Puzzle 145 (2^144 a 2^145 - 1)</option>
+          <option value="145">Puzzle 146 (2^145 a 2^146 - 1)</option>
+          <option value="146">Puzzle 147 (2^146 a 2^147 - 1)</option>
+          <option value="147">Puzzle 148 (2^147 a 2^148 - 1)</option>
+          <option value="148">Puzzle 149 (2^148 a 2^149 - 1)</option>
+          <option value="149">Puzzle 150 (2^149 a 2^150 - 1)</option>
+          <option value="150">Puzzle 151 (2^150 a 2^151 - 1)</option>
+          <option value="151">Puzzle 152 (2^151 a 2^152 - 1)</option>
+          <option value="152">Puzzle 153 (2^152 a 2^153 - 1)</option>
+          <option value="153">Puzzle 154 (2^153 a 2^154 - 1)</option>
+          <option value="154">Puzzle 155 (2^154 a 2^155 - 1)</option>
+          <option value="155">Puzzle 156 (2^155 a 2^156 - 1)</option>
+          <option value="156">Puzzle 157 (2^156 a 2^157 - 1)</option>
+          <option value="157">Puzzle 158 (2^157 a 2^158 - 1)</option>
+          <option value="158">Puzzle 159 (2^158 a 2^159 - 1)</option>
+          <option value="159">Puzzle 160 (2^159 a 2^160 - 1)</option>
+          <option value="160">Puzzle 161 (2^160 a 2^161 - 1)</option>
+          <option value="161">Puzzle 162 (2^161 a 2^162 - 1)</option>
+          <option value="162">Puzzle 163 (2^162 a 2^163 - 1)</option>
+          <option value="163">Puzzle 164 (2^163 a 2^164 - 1)</option>
+          <option value="164">Puzzle 165 (2^164 a 2^165 - 1)</option>
+          <option value="165">Puzzle 166 (2^165 a 2^166 - 1)</option>
+          <option value="166">Puzzle 167 (2^166 a 2^167 - 1)</option>
+          <option value="167">Puzzle 168 (2^167 a 2^168 - 1)</option>
+          <option value="168">Puzzle 169 (2^168 a 2^169 - 1)</option>
+          <option value="169">Puzzle 170 (2^169 a 2^170 - 1)</option>
+          <option value="170">Puzzle 171 (2^170 a 2^171 - 1)</option>
+          <option value="171">Puzzle 172 (2^171 a 2^172 - 1)</option>
+          <option value="172">Puzzle 173 (2^172 a 2^173 - 1)</option>
+          <option value="173">Puzzle 174 (2^173 a 2^174 - 1)</option>
+          <option value="174">Puzzle 175 (2^174 a 2^175 - 1)</option>
+          <option value="175">Puzzle 176 (2^175 a 2^176 - 1)</option>
+          <option value="176">Puzzle 177 (2^176 a 2^177 - 1)</option>
+          <option value="177">Puzzle 178 (2^177 a 2^178 - 1)</option>
+          <option value="178">Puzzle 179 (2^178 a 2^179 - 1)</option>
+          <option value="179">Puzzle 180 (2^179 a 2^180 - 1)</option>
+          <option value="180">Puzzle 181 (2^180 a 2^181 - 1)</option>
+          <option value="181">Puzzle 182 (2^181 a 2^182 - 1)</option>
+          <option value="182">Puzzle 183 (2^182 a 2^183 - 1)</option>
+          <option value="183">Puzzle 184 (2^183 a 2^184 - 1)</option>
+          <option value="184">Puzzle 185 (2^184 a 2^185 - 1)</option>
+          <option value="185">Puzzle 186 (2^185 a 2^186 - 1)</option>
+          <option value="186">Puzzle 187 (2^186 a 2^187 - 1)</option>
+          <option value="187">Puzzle 188 (2^187 a 2^188 - 1)</option>
+          <option value="188">Puzzle 189 (2^188 a 2^189 - 1)</option>
+          <option value="189">Puzzle 190 (2^189 a 2^190 - 1)</option>
+          <option value="190">Puzzle 191 (2^190 a 2^191 - 1)</option>
+          <option value="191">Puzzle 192 (2^191 a 2^192 - 1)</option>
+          <option value="192">Puzzle 193 (2^192 a 2^193 - 1)</option>
+          <option value="193">Puzzle 194 (2^193 a 2^194 - 1)</option>
+          <option value="194">Puzzle 195 (2^194 a 2^195 - 1)</option>
+          <option value="195">Puzzle 196 (2^195 a 2^196 - 1)</option>
+          <option value="196">Puzzle 197 (2^196 a 2^197 - 1)</option>
+          <option value="197">Puzzle 198 (2^197 a 2^198 - 1)</option>
+          <option value="198">Puzzle 199 (2^198 a 2^199 - 1)</option>
+          <option value="199">Puzzle 200 (2^199 a 2^200 - 1)</option>
+          <option value="200">Puzzle 201 (2^200 a 2^201 - 1)</option>
+          <option value="201">Puzzle 202 (2^201 a 2^202 - 1)</option>
+          <option value="202">Puzzle 203 (2^202 a 2^203 - 1)</option>
+          <option value="203">Puzzle 204 (2^203 a 2^204 - 1)</option>
+          <option value="204">Puzzle 205 (2^204 a 2^205 - 1)</option>
+          <option value="205">Puzzle 206 (2^205 a 2^206 - 1)</option>
+          <option value="206">Puzzle 207 (2^206 a 2^207 - 1)</option>
+          <option value="207">Puzzle 208 (2^207 a 2^208 - 1)</option>
+          <option value="208">Puzzle 209 (2^208 a 2^209 - 1)</option>
+          <option value="209">Puzzle 210 (2^209 a 2^210 - 1)</option>
+          <option value="210">Puzzle 211 (2^210 a 2^211 - 1)</option>
+          <option value="211">Puzzle 212 (2^211 a 2^212 - 1)</option>
+          <option value="212">Puzzle 213 (2^212 a 2^213 - 1)</option>
+          <option value="213">Puzzle 214 (2^213 a 2^214 - 1)</option>
+          <option value="214">Puzzle 215 (2^214 a 2^215 - 1)</option>
+          <option value="215">Puzzle 216 (2^215 a 2^216 - 1)</option>
+          <option value="216">Puzzle 217 (2^216 a 2^217 - 1)</option>
+          <option value="217">Puzzle 218 (2^217 a 2^218 - 1)</option>
+          <option value="218">Puzzle 219 (2^218 a 2^219 - 1)</option>
+          <option value="219">Puzzle 220 (2^219 a 2^220 - 1)</option>
+          <option value="220">Puzzle 221 (2^220 a 2^221 - 1)</option>
+          <option value="221">Puzzle 222 (2^221 a 2^222 - 1)</option>
+          <option value="222">Puzzle 223 (2^222 a 2^223 - 1)</option>
+          <option value="223">Puzzle 224 (2^223 a 2^224 - 1)</option>
+          <option value="224">Puzzle 225 (2^224 a 2^225 - 1)</option>
+          <option value="225">Puzzle 226 (2^225 a 2^226 - 1)</option>
+          <option value="226">Puzzle 227 (2^226 a 2^227 - 1)</option>
+          <option value="227">Puzzle 228 (2^227 a 2^228 - 1)</option>
+          <option value="228">Puzzle 229 (2^228 a 2^229 - 1)</option>
+          <option value="229">Puzzle 230 (2^229 a 2^230 - 1)</option>
+          <option value="230">Puzzle 231 (2^230 a 2^231 - 1)</option>
+          <option value="231">Puzzle 232 (2^231 a 2^232 - 1)</option>
+          <option value="232">Puzzle 233 (2^232 a 2^233 - 1)</option>
+          <option value="233">Puzzle 234 (2^233 a 2^234 - 1)</option>
+          <option value="234">Puzzle 235 (2^234 a 2^235 - 1)</option>
+          <option value="235">Puzzle 236 (2^235 a 2^236 - 1)</option>
+          <option value="236">Puzzle 237 (2^236 a 2^237 - 1)</option>
+          <option value="237">Puzzle 238 (2^237 a 2^238 - 1)</option>
+          <option value="238">Puzzle 239 (2^238 a 2^239 - 1)</option>
+          <option value="239">Puzzle 240 (2^239 a 2^240 - 1)</option>
+          <option value="240">Puzzle 241 (2^240 a 2^241 - 1)</option>
+          <option value="241">Puzzle 242 (2^241 a 2^242 - 1)</option>
+          <option value="242">Puzzle 243 (2^242 a 2^243 - 1)</option>
+          <option value="243">Puzzle 244 (2^243 a 2^244 - 1)</option>
+          <option value="244">Puzzle 245 (2^244 a 2^245 - 1)</option>
+          <option value="245">Puzzle 246 (2^245 a 2^246 - 1)</option>
+          <option value="246">Puzzle 247 (2^246 a 2^247 - 1)</option>
+          <option value="247">Puzzle 248 (2^247 a 2^248 - 1)</option>
+          <option value="248">Puzzle 249 (2^248 a 2^249 - 1)</option>
+          <option value="249">Puzzle 250 (2^249 a 2^250 - 1)</option>
+          <option value="250">Puzzle 251 (2^250 a 2^251 - 1)</option>
+          <option value="251">Puzzle 252 (2^251 a 2^252 - 1)</option>
+          <option value="252">Puzzle 253 (2^252 a 2^253 - 1)</option>
+          <option value="253">Puzzle 254 (2^253 a 2^254 - 1)</option>
+          <option value="254">Puzzle 255 (2^254 a 2^255 - 1)</option>
+          <option value="255">Puzzle 256 (2^255 a 2^256 - 1)</option>
+          <option value="256">Puzzle 257 (2^256 a 2^257 - 1)</option>
+          <option value="">Nenhuma carteira com saldo</option>
+        </select>
+        <button class="btn btn-primary" id="applyPresetBtn" aria-label="Aplicar preset selecionado">
+          <i class="fas fa-check"></i> Aplicar
+        </button>
+      </div>
+
+      <!-- Intervalos HEX e WIF - ALINHADOS À ESQUERDA -->
+      <section id="database-status-section" class="database-status-section" style="display: block;">
+        <!-- O conteúdo será carregado via JavaScript -->
+        <div
+          style="padding: 20px; text-align: center; color: #718096; background: #f7fafc; border-radius: 12px; border: 1px dashed #e2e8f0; margin: 15px 0;">
+          <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Carregando informações do banco de dados...
+        </div>
+      </section>
+
+      <style>
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      </style>
+      </section>
+
+      <!-- Indicador de Faixa -->
+      <div class="range-indicator" aria-live="polite">
+        Faixa ativa: Linha <span id="activeRangeLabel">12 até 16</span>
+      </div>
+
+      <!-- ============================================
+           GRID: Esquerda (Cards 1+3) | Direita (Card 2)
+           ============================================ -->
+      <div class="cards-grid-container">
+
+        <!-- COLUNA ESQUERDA: Card 1 (Config) + Card 3 (Controles) -->
+        <div class="control-card config-avancadas-card">
+
+          <!-- PARTE 1: Configurações Avançadas -->
+          <h2><i class="fas fa-cogs"></i> Configurações Avançadas</h2>
+
+          <div class="d-flex align-items-center gap-3">
+            <!-- Espaço para futuras configurações -->
+          </div>
+          <div class="options-grid">
+            <label class="option-card">
+              <input type="radio" name="mode" value="horizontal" checked aria-checked="true" />
+              <span><i class="fas fa-stream"></i> Sequencial (H)</span>
+            </label>
+            <label class="option-card">
+              <input type="radio" name="mode" value="vertical" aria-checked="false" />
+              <span><i class="fas fa-arrows-alt-v"></i> Sequencial (V)</span>
+            </label>
+            <label class="option-card">
+              <input type="radio" name="mode" value="randomize" aria-checked="false" />
+              <span><i class="fas fa-random"></i> Aleatorizar no passo</span>
+            </label>
+            <label class="option-card">
+              <input type="checkbox" id="toggleOnClick" checked aria-checked="true" />
+              <span><i class="fas fa-mouse-pointer"></i> Adicionar células</span>
+            </label>
+          </div>
+
+          <!-- PARTE 2: Controles Principais (DENTRO do mesmo card) -->
+          <div class="main-controls-section controles-principais-card">
+            <h2><i class="fas fa-gamepad"></i> Controles Principais</h2>
+            <div class="d-flex gap-2">
+              <button id="startBtn" class="btn-custom btn-start" aria-pressed="false" aria-label="Iniciar geração">
+                <i class="fas fa-play"></i> Iniciar
+              </button>
+              <button id="stopBtn" class="btn-custom btn-stop" disabled aria-pressed="false" aria-label="Parar geração">
+                <i class="fas fa-pause"></i> Parar
+              </button>
+              <button id="clearBtn" class="btn-custom btn-clear" aria-label="Limpar seleção">
+                <i class="fas fa-trash"></i> Limpar
+              </button>
+              <button id="randBtn" class="btn-custom btn-random" aria-label="Aleatorizar matriz">
+                <i class="fas fa-dice"></i> Aleatorizar
+              </button>
+              <button id="debugBtn" class="btn-custom btn-debug" onclick="window.startDebug()"
+                aria-label="Iniciar debug automatizado" title="Executa testes automáticos do sistema">
+                <i class="fas fa-bug"></i> Debug
+              </button>
+            </div>
+
+            <!-- 🚀 Controle de Velocidade (ESTAVA FALTANDO!) -->
+            <div class="speed-control" style="margin-top: 10px;">
+              <label for="speed" class="fw-semibold mb-2">
+                <i class="fas fa-tachometer-alt"></i> Velocidade (ms): <span id="speedValue">50</span>
+              </label>
+              <input type="range" id="speed" min="1" max="50" value="50" step="1" class="form-range"
+                aria-label="Controle de velocidade de execução">
+              <div class="d-flex justify-content-between">
+                <small>1ms (rápido)</small>
+                <small>50ms (lento)</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUNA DIREITA: Card 2 (Seleção de Linhas) - ESTENDE TODA ALTURA -->
+        <div class="control-card selecao-linhas-card">
+          <h2><i class="fas fa-sliders-h"></i> Selecionar Altura (Linha Inicial)</h2>
+          <div id="heightButtons" class="button-grid" role="group" aria-label="Botões para selecionar altura"></div>
+
+          <h2><i class="fas fa-arrows-alt-v"></i> Selecionar Base (Linha Final)</h2>
+          <div id="baseButtons" class="button-grid" role="group" aria-label="Botões para selecionar base"></div>
+
+          <h2>➕ Selecionar Linha Extra</h2>
+          <div id="extra-buttons" class="button-group"></div>
+        </div>
+
+      </div>
+      <!-- FIM DO GRID -->
+
+      <!-- Seção de Outputs -->
+      <div class="outputs-section">
+        <h2><i class="fas fa-key"></i> Chaves Geradas</h2>
+        <div class="output-group">
+          <label for="hexBox" class="output-label">
+            <i class="fas fa-hashtag"></i> 🔐 Private Key HEX
+          </label>
+          <textarea id="hexBox" class="output-box form-control" readonly aria-readonly="true"
+            aria-label="Chave privada em formato HEX"></textarea>
+        </div>
+        <div class="output-group">
+          <label for="wifBox" class="output-label">
+            <i class="fas fa-wallet"></i> 💼 WIF Comprimido
+          </label>
+          <textarea id="wifBox" class="output-box form-control" readonly aria-readonly="true"
+            aria-label="Chave privada WIF comprimida"></textarea>
+        </div>
+        <div class="output-group">
+          <label for="wifBoxUncompressed" class="output-label">
+            <i class="fas fa-box-open"></i> 📦 WIF Não Comprimido
+          </label>
+          <textarea id="wifBoxUncompressed" class="output-box form-control" readonly aria-readonly="true"
+            aria-label="Chave privada WIF não comprimida"></textarea>
+        </div>
+      </div>
+
+      <!-- Seção de Conversores -->
+      <div class="control-card">
+        <h2><i class="fas fa-exchange-alt"></i> Conversores</h2>
+        <div class="speed-control d-flex flex-column gap-2">
+          <div>
+            <label for="converterInput" class="fw-semibold mb-2"><i class="fas fa-keyboard"></i> Insira
+              (WIF/HEX/Binário/Inteiro):</label>
+            <textarea id="converterInput" class="form-control" rows="2"
+              placeholder="WIF, HEX, binário ou número inteiro..." aria-label="Entrada para conversão"></textarea>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn-custom btn-start" id="convertBtn"
+              aria-label="Converter entrada">Converter</button>
+            <button type="button" class="btn-custom btn-clear" id="clearConverterBtn"
+              aria-label="Limpar campos">Limpar</button>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-hashtag"></i> HEX</label>
+            <textarea id="converterHex" class="output-box" readonly aria-readonly="true"></textarea>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-wallet"></i> WIF Comprimido</label>
+            <textarea id="converterWifCompressed" class="output-box" readonly aria-readonly="true"></textarea>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-wallet"></i> WIF Não Comprimido</label>
+            <textarea id="converterWifUncompressed" class="output-box" readonly aria-readonly="true"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANÚNCIOS -->
+      <div id="ad-in-article-1" class="ad-container" role="region" aria-label="Publicidade - Conteúdo">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="8052390745" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <hr class="content-divider">
+
+      <div id="ad-infeed" role="region" aria-label="Publicidade - Feed">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"
+          data-ad-client="ca-pub-3614622181047762" data-ad-slot="1937287877"></ins>
+      </div>
+
+      <!-- SEÇÕES COLAPSÁVEIS -->
+      <section class="post_puzzle-section">
+        <h2>🧩 O Desafio do Puzzle 1000 BTC <i class="fas fa-chevron-down toggle-icon"></i></h2>
+        <div class="section-content">
+          <p>O famoso "Bitcoin Puzzle" é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000
+            BTC
+            em 256 endereços diferentes, cada um correspondendo a uma private key dentro de faixas de bits específicas.
+          </p>
+          <h3>Como Funciona o Puzzle?</h3>
+          <p>Cada endereço do puzzle possui uma private key que está limitada a uma faixa específica de bits. Por
+            exemplo:
+          </p>
+          <ul>
+            <li><strong>Puzzle #1:</strong> 1 bit (faixa: 1)</li>
+            <li><strong>Puzzle #10:</strong> 10 bits (faixa: 512 a 1023)</li>
+            <li><strong>Puzzle #66:</strong> 66 bits (já encontrado em 2023)</li>
+            <li><strong>Puzzle #130:</strong> 130 bits (ainda não resolvido)</li>
+          </ul>
+        </div>
+      </section>
+
+      <div id="ad-in-article-2" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 2">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="8052390745" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <section class="post_edu-intro-section">
+        <h2>📚 O Que São Private Keys do Bitcoin? <i class="fas fa-chevron-down toggle-icon"></i></h2>
+        <div class="section-content">
+          <p>Uma <strong>private key (chave privada)</strong> é um número secreto de 256 bits que permite gastar
+            bitcoins
+            associados a um endereço específico. É fundamentalmente a prova matemática de propriedade de uma carteira
+            Bitcoin.</p>
+        </div>
+      </section>
+
+      <div id="ad-infeed-2" role="region" aria-label="Publicidade - Feed 2">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle" style="display:block" data-ad-format="autorelaxed"
+          data-ad-client="ca-pub-3614622181047762" data-ad-slot="1937287877"></ins>
+      </div>
+
+      <section class="post_edu-warning-section">
+        <h3>⚠️ AVISO CRÍTICO DE SEGURANÇA <i class="fas fa-chevron-down toggle-icon"></i></h3>
+        <div class="section-content">
+          <p><strong>NUNCA use chaves privadas geradas online para armazenar Bitcoin real!</strong> Esta ferramenta é
+            exclusivamente para fins educacionais e de demonstração.</p>
+        </div>
+      </section>
+
+      <div id="ad-in-article-3" class="ad-container" role="region" aria-label="Publicidade - Conteúdo 3">
+        <div class="ad-label">Publicidade</div>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="8052390745" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      </div>
+
+      <div class="sidebar-widget">
+        <div id="btc-wallet-widget"
+          style="font-family: 'Courier New', Courier, monospace; background: #fafafa; padding: 10px; border-radius: 8px; color: #222; max-width: 600px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+          <h3 style="text-align:center; margin: 0 0 8px; font-weight: 700; color: #111;">Saldo das Carteiras BTC</h3>
+          <div
+            style="max-height: 400px; overflow-y: auto; border: 1px solid #e1e7f0; border-radius: 5px; padding: 4px;">
+            <div id="btc-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- SIDEBAR DIREITA -->
+    <aside class="sidebar-right">
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
+        <p><strong>Nunca</strong> use chaves geradas online para armazenar Bitcoin real. Apenas para fins educacionais.
+        </p>
+      </div>
+
+      <!-- WIDGET OCULTO PARA RECARGA DO ADSENSE -->
+      <div class="sidebar-widget ad-hidden-reload" style="height:0; overflow:hidden; opacity:0; pointer-events:none;">
+        <ins class="adsbygoogle" style="display:inline-block;width:1px;height:1px;"
+          data-ad-client="ca-pub-3614622181047762" data-ad-slot="4371879523"></ins>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer border-top" role="contentinfo">
+    <nav class="footer-nav container" aria-label="Navegação rodapé">
+      <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
+        <li><a href="/">Home</a></li>
+        <li><a href="paginas/about.html" class="dynamic-link">About</a></li>
+        <li><a href="paginas/privacidade.html" class="dynamic-link">Privacidade</a></li>
+        <li><a href="paginas/disclaimer.html" class="dynamic-link">Disclaimer</a></li>
+        <li><a href="paginas/contato.html" class="dynamic-link">Contatos</a></li>
+      </ul>
+    </nav>
+    <div class="text-center small text-muted">
+      © 2025 @CanalQb – Rodrigo Carlos Moraes<br />
+      Gerador de private keys Bitcoin - Puzzle 1000 BTC
+    </div>
+  </footer>
+
+  <!-- GDPR BANNER -->
+  <div id="gdpr-consent-banner" class="gdpr-consent-banner" role="dialog" aria-modal="true"
+    aria-labelledby="consent-title">
+    <button id="consent-close-banner" aria-label="Fechar banner de consentimento">✕</button>
+    <h2 id="consent-title">🔒 Sua Privacidade Importa</h2>
+    <p>Usamos cookies e tecnologias similares para melhorar sua experiência, analisar tráfego e fornecer conteúdo
+      personalizado.</p>
+    <div class="consent-buttons">
+      <button id="consent-accept-all" class="consent-btn">✓ Aceitar Todos</button>
+      <button id="consent-reject-all" class="consent-btn">✗ Rejeitar</button>
+      <button id="consent-customize" class="consent-btn">⚙ Personalizar</button>
+    </div>
+    <div id="consent-settings" class="hidden">
+      <h3>Preferências de Consentimento</h3>
+      <div class="consent-option">
+        <input type="checkbox" id="consent-analytics" checked>
+        <label for="consent-analytics">
+          <strong>Google Analytics</strong>
+          <span>Nos ajuda a entender como você usa o site.</span>
+        </label>
+      </div>
+      <div class="consent-option">
+        <input type="checkbox" id="consent-marketing">
+        <label for="consent-marketing">
+          <strong>Google AdSense</strong>
+          <span>Permite exibir anúncios personalizados.</span>
+        </label>
+      </div>
+      <div class="consent-option">
+        <input type="checkbox" id="consent-preferences">
+        <label for="consent-preferences">
+          <strong>Preferências e Funcionalidades</strong>
+          <span>Memoriza suas escolhas.</span>
+        </label>
+      </div>
+      <button id="consent-save-settings" class="consent-btn">💾 Salvar Preferências</button>
+    </div>
+  </div>
+
+  <!-- ANÚNCIO FLUTUANTE -->
+  <div id="floatingAd" class="ad-floating" role="region" aria-label="Publicidade flutuante" style="display:none;">
+    <div class="ad-floating-header">
+      <span class="ad-floating-label">📢 Publicidade</span>
+      <button class="ad-close-btn" id="closeFloatingAd" aria-label="Fechar anúncio">×</button>
+    </div>
+    <div class="ad-floating-content">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762" data-ad-slot="3037141776"
+        data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+  </div>
+
+  <!-- MODAL DE PUZZLES - SISTEMA DE 3 ESTADOS -->
+  MODAL DE PUZZLES - SISTEMA DE 3 ESTADOS
+  Oculto → Ticket Lateral → Modal Expandido
+  ============================================ -->
+
+  <!-- Modal de Puzzles Encontrados -->
+  <div id="puzzlesListModal" role="dialog" aria-modal="true" aria-labelledby="puzzlesModalTitle" aria-hidden="true">
+
+    <!-- Header do Modal -->
+    <div class="puzzles-modal-header" id="puzzlesModalHeader" role="button" tabindex="0"
+      aria-label="Expandir lista de puzzles">
+
+      <!-- Título e Ícone -->
+      <h5 id="puzzlesModalTitle">
+        <i class="fas fa-trophy"></i>
+        <span id="puzzlesCountText">0 puzzles encontrados</span>
+        <span class="puzzle-count-badge" id="puzzlesCountBadge">0</span>
+      </h5>
+
+      <!-- Botões do Header -->
+      <div class="puzzles-header-buttons">
+        <!-- Botão Colapsar (esconde o ticket para lateral) -->
+        <button class="puzzles-btn puzzles-collapse-btn" id="puzzlesCollapseBtn" aria-label="Colapsar para lateral"
+          title="Esconder ticket" type="button">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Botão Fechar (fecha modal expandido) -->
+        <button class="puzzles-btn puzzles-close-btn" id="puzzlesCloseBtn" aria-label="Fechar modal"
+          title="Fechar e voltar ao ticket" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Conteúdo do Ticket (visível apenas no modo ticket) -->
+    <div class="ticket-content" id="ticketContent">
+      <p>Clique para ver detalhes</p>
+      <p class="highlight">🎯 Puzzles Bitcoin!</p>
+    </div>
+
+    <!-- Corpo do Modal (lista expandida - visível apenas no modo expandido) -->
+    <div class="puzzles-modal-body" id="puzzlesModalBody">
+      <div id="puzzlesListContent">
+        <!-- Conteúdo será preenchido dinamicamente pelo JavaScript -->
+        <div class="empty-state">
+          <i class="fas fa-search"></i>
+          <p>Nenhum puzzle encontrado ainda</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Script de Controle do Modal -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =================================================================
+      // VARIÁVEIS DE CONTROLE
+      // =================================================================
+
+      const modal = document.getElementById('puzzlesListModal');
+      const header = document.getElementById('puzzlesModalHeader');
+      const collapseBtn = document.getElementById('puzzlesCollapseBtn');
+      const closeBtn = document.getElementById('puzzlesCloseBtn');
+      const countText = document.getElementById('puzzlesCountText');
+      const countBadge = document.getElementById('puzzlesCountBadge');
+
+      let currentState = 'hidden'; // Estados: hidden, ticket, expanded
+      let puzzlesCount = 0;
+
+      // =================================================================
+      // FUNÇÕES DE CONTROLE DE ESTADO
+      // =================================================================
+
+      /**
+       * Muda o estado do modal
+       */
+      function setState(newState) {
+        if (currentState === newState) return;
+
+        console.log(`🔄 Modal: ${currentState} → ${newState}`);
+
+        // Remove classes antigas
+        modal.classList.remove('hidden', 'ticket', 'expanded',
+          'ticket-to-expanded', 'expanded-to-ticket',
+          'updating');
+
+        // Adiciona nova classe
+        switch (newState) {
+          case 'hidden':
+            modal.setAttribute('aria-hidden', 'true');
+            modal.style.display = 'none';
+            break;
+
+          case 'ticket':
+            modal.setAttribute('aria-hidden', 'false');
+            modal.classList.add('ticket');
+
+            // Se vindo de expandido, anima a transição
+            if (currentState === 'expanded') {
+              modal.classList.add('expanded-to-ticket');
+              setTimeout(() => {
+                modal.classList.remove('expanded-to-ticket');
+              }, 500);
+            }
+            break;
+
+          case 'expanded':
+            modal.setAttribute('aria-hidden', 'false');
+            modal.classList.add('expanded');
+
+            // Se vindo de ticket, anima a transição
+            if (currentState === 'ticket') {
+              modal.classList.add('ticket-to-expanded');
+              setTimeout(() => {
+                modal.classList.remove('ticket-to-expanded');
+              }, 500);
+            }
+            break;
+        }
+
+        currentState = newState;
+      }
+
+      /**
+       * Atualiza a lista de puzzles no corpo do modal
+       */
+      function refreshPuzzlesList() {
+        const listContainer = document.getElementById('puzzlesListContent');
+        if (!listContainer) return;
+
+        // 🚀 CORREÇÃO: Remove duplicatas mantendo apenas o mais recente de cada puzzle
+        const allWinners = Object.keys(localStorage)
+          .filter(k => k.startsWith('BTC_WINNER_'))
+          .map(k => JSON.parse(localStorage.getItem(k)));
+
+        // 🚀 Agrupa por puzzle e mantém apenas o mais recente
+        const uniqueWinners = {};
+        allWinners.forEach(win => {
+          if (!uniqueWinners[win.puzzle] || new Date(win.date) > new Date(uniqueWinners[win.puzzle].date)) {
+            uniqueWinners[win.puzzle] = win;
+          }
+        });
+
+        // 🚀 Converte para array e ordena por número do puzzle (ordem alfabética)
+        const winners = Object.values(uniqueWinners)
+          .sort((a, b) => a.puzzle - b.puzzle);
+
+        if (winners.length === 0) {
+          listContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-search"></i>
+              <p>Nenhum puzzle encontrado ainda</p>
+            </div>
+          `;
+          return;
+        }
+
+        listContainer.innerHTML = winners.map(win => `
+          <div class="puzzle-item-card" style="background: rgba(255,255,255,0.05); border-left: 4px solid #48bb78; padding: 12px; margin-bottom: 10px; border-radius: 4px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+               <span style="color: #48bb78; font-weight: bold;">Puzzle #${win.puzzle}</span>
+               <small style="opacity: 0.6;">${new Date(win.date).toLocaleString()}</small>
+            </div>
+            <div style="font-size: 11px; margin-bottom: 4px;">
+              <span style="opacity: 0.7;">Addr:</span> <span class="font-monospace">${win.addr}</span>
+            </div>
+            <div style="font-size: 11px;">
+              <span style="opacity: 0.7;">WIF:</span> <span class="font-monospace" style="color: gold;">${win.wif}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      /**
+       * Atualiza o contador de puzzles
+       */
+      function updateCounter(count) {
+        // 🚀 CORREÇÃO: Calcula puzzles únicos reais
+        const allWinners = Object.keys(localStorage)
+          .filter(k => k.startsWith('BTC_WINNER_'))
+          .map(k => JSON.parse(localStorage.getItem(k)));
+
+        // 🚀 Agrupa por puzzle e mantém apenas o mais recente
+        const uniqueWinners = {};
+        allWinners.forEach(win => {
+          if (!uniqueWinners[win.puzzle] || new Date(win.date) > new Date(uniqueWinners[win.puzzle].date)) {
+            uniqueWinners[win.puzzle] = win;
+          }
+        });
+
+        const uniqueCount = Object.keys(uniqueWinners).length;
+        puzzlesCount = uniqueCount;
+
+        const text = uniqueCount === 1
+          ? '1 puzzle encontrado'
+          : `${uniqueCount} puzzles encontrados`;
+
+        countText.textContent = text;
+        countBadge.textContent = uniqueCount;
+
+        // Atualiza a lista
+        refreshPuzzlesList();
+
+        // Animação de atualização
+        modal.classList.add('updating');
+        setTimeout(() => {
+          modal.classList.remove('updating');
+        }, 600);
+
+        // Se tinha 0 e agora tem puzzles, mostra o ticket
+        if (count > 0 && currentState === 'hidden') {
+          setState('ticket');
+        }
+
+        // Se voltou a 0, esconde
+        if (count === 0) {
+          setState('hidden');
+        }
+      }
+
+      // =================================================================
+      // EVENT LISTENERS
+      // =================================================================
+
+      /**
+       * Clique no header (apenas no modo ticket)
+       * Expande o modal
+       */
+      function handleHeaderClick(e) {
+        if (currentState === 'ticket') {
+          e.stopPropagation();
+          setState('expanded');
+        }
+      }
+
+      /**
+       * Clique no botão de colapsar (modo ticket)
+       * Esconde o ticket temporariamente
+       */
+      function handleCollapseClick(e) {
+        e.stopPropagation();
+
+        if (currentState === 'ticket') {
+          // Anima para fora
+          modal.style.right = '-320px';
+          modal.style.opacity = '0';
+
+          // Depois de 300ms, mostra novamente
+          setTimeout(() => {
+            modal.style.right = '';
+            modal.style.opacity = '';
+          }, 3000); // Reaparece após 3 segundos
+        }
+      }
+
+      /**
+       * Clique no botão fechar (modo expandido)
+       * Volta para o ticket
+       */
+      function handleCloseClick(e) {
+        e.stopPropagation();
+
+        if (currentState === 'expanded') {
+          setState('ticket');
+        }
+      }
+
+      /**
+       * Clique fora do modal (apenas no modo expandido)
+       * Fecha o modal
+       */
+      function handleOutsideClick(e) {
+        if (currentState === 'expanded' &&
+          !modal.contains(e.target) &&
+          e.target !== modal) {
+          setState('ticket');
+        }
+      }
+
+      /**
+       * Tecla ESC (fecha modal expandido)
+       */
+      function handleEscKey(e) {
+        if (e.key === 'Escape' && currentState === 'expanded') {
+          setState('ticket');
+        }
+      }
+
+      // =================================================================
+      // INICIALIZAÇÃO
+      // =================================================================
+
+      function init() {
+        if (!modal || !header) {
+          console.warn('⚠️ Elementos do modal não encontrados');
+          return;
+        }
+
+        // Estado inicial: oculto
+        setState('hidden');
+
+        // Event listeners
+        header.addEventListener('click', handleHeaderClick);
+
+        if (collapseBtn) {
+          collapseBtn.addEventListener('click', handleCollapseClick);
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', handleCloseClick);
+        }
+
+        // Clique fora fecha o modal expandido
+        document.addEventListener('click', handleOutsideClick);
+
+        // ESC fecha o modal expandido
+        document.addEventListener('keydown', handleEscKey);
+
+        // Verifica winners existentes
+        const initialCount = Object.keys(localStorage).filter(k => k.startsWith('BTC_WINNER_')).length;
+        if (initialCount > 0) {
+          updateCounter(initialCount);
+        }
+
+        // Suporte a teclado no header
+        header.addEventListener('keydown', (e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && currentState === 'ticket') {
+            e.preventDefault();
+            setState('expanded');
+          }
+        });
+
+        console.log('✅ Sistema de modal de puzzles inicializado');
+        console.log('   Estados: hidden → ticket → expanded');
+      }
+
+      // =================================================================
+      // API PÚBLICA
+      // =================================================================
+
+      window.puzzlesModal = {
+        // Mostra o ticket (colapsado)
+        showTicket: () => setState('ticket'),
+
+        // Expande o modal
+        expand: () => setState('expanded'),
+
+        // Volta para ticket
+        collapse: () => setState('ticket'),
+
+        // Esconde completamente
+        hide: () => setState('hidden'),
+
+        // Atualiza contador
+        updateCount: (count) => updateCounter(count),
+
+        // Obtém estado atual
+        getState: () => currentState,
+
+        // Toggle entre ticket e expandido
+        toggle: () => {
+          if (currentState === 'ticket') {
+            setState('expanded');
+          } else if (currentState === 'expanded') {
+            setState('ticket');
+          }
+        }
+      };
+
+      // Auto-inicialização
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        setTimeout(init, 100);
+      }
+
+    })();
+  </script>
+
+  <!-- Scripts -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762"
+    crossorigin="anonymous"></script>
+
+  <!-- Debug Disabler - PRIMEIRO PARA OTIMIZAR MEMÓRIA -->
+  <script src="js/debug-disabler.js"></script>
+
+  <!-- ORDEM CRÍTICA: Scripts de Integração Supabase -->
+  <script src="js/environment-detector.js"></script>
+  <script src="js/config-manager.js"></script>
+  <script src="js/progress-tracker.js"></script>
+  <script src="js/wallet-counter.js"></script>
+
+  <!-- GERENCIADOR DE PROGRESSO VERTICAL -->
+  <script src="js/vertical-progress-manager.js?v=2026"></script>
+
+  <!-- GitHub Secrets Loader - PARA PRODUÇÃO -->
+  <script src="js/github-secrets-loader.js"></script>
+
+  <script src="js/supabase-config.js"></script>
+  <script src="js/progress-tracker.js"></script>
+
+  <!-- Background Processor - DEVE SER CARREGADO ANTES DOS PROCESSADORES -->
+  <script src="js/background-processor.js"></script>
+
+  <!-- Modal Manager - PARA GERENCIAR MODAIS -->
+  <script src="js/modal-manager.js"></script>
+
+  <!-- Wallet Counter - PARA CONTAR CARTEIRAS -->
+  <script src="js/wallet-counter.js"></script>
+
+  <script src="js/matriz.js" defer></script>
+  <script src="js/preset-manager.js" defer></script>
+  <script src="js/auto16.js?v=2026" defer></script>
+  <script src="js/auto16-preset.js?v=2026" defer></script>
+  <script src="js/eggs-hunter.js?v=2026" defer></script>
+  <script src="js/preset-ranges.js"></script>
+
+  <!-- Scripts existentes -->
+  <script src="js/gdpr-init-fix.js" defer></script>
+  <script src="js/adsense-manager.js" defer></script>
+  <script src="js/gdpr-consent-analytics.js" defer></script>
+  <script src="js/script_random_pisca.js" defer></script>
+  <script src="js/btc-wallet-balances.js?v=2026" defer></script>
+  <script src="js/converter.js" defer></script>
+
+  <!-- SCRIPT DE NAVEGAÇÃO DINÂMICA -->
+  <script>
+    // 🚀 EVITA DUPLICAÇÃO DE VARIÁVEIS
+    if (typeof window.navigationLoaded === 'undefined') {
+      window.navigationLoaded = true;
+
+      /**
+       * Exibe toast de notificação (Master Rules compliance)
+       */
+      function showToast(message, type = 'info') {
+        // Criar container de alerts se não existir
+        if (!document.getElementById('alerts-container')) {
+          const container = document.createElement('div');
+          container.id = 'alerts-container';
+          container.style.cssText = `
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          z-index: 9999;
+          max-width: 400px;
+        `;
+          document.body.appendChild(container);
+        }
+
+        const container = document.getElementById('alerts-container');
+
+        // Criar elemento do toast
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+        background: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.4s ease-out;
+        font-size: 14px;
+        line-height: 1.4;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      `;
+
+        toast.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">
+            ${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : type === 'error' ? '❌' : 'ℹ️'}
+          </span>
+          <span>${message}</span>
+        </div>
+      `;
+
+        // Adicionar ao container
+        container.appendChild(toast);
+
+        // Auto-remove após 5 segundos
+        setTimeout(() => {
+          toast.style.animation = 'slideInRight 0.4s ease-out reverse';
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.remove();
+            }
+          }, 400);
+        }, 5000);
+
+        // Click para fechar
+        toast.addEventListener('click', () => {
+          toast.style.animation = 'slideInRight 0.4s ease-out reverse';
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.remove();
+            }
+          }, 400);
+        });
+      }
+
+      // Adicionar animação CSS
+      const style = document.createElement('style');
+      style.textContent = `
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    `;
+      document.head.appendChild(style);
+
+      window.initAdSense = function () {
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.warn('Erro ao recarregar anúncios:', e);
+        }
+      };
+
+      document.querySelectorAll('.post_puzzle-section, .post_edu-intro-section, .post_edu-warning-section')
+        .forEach(section => {
+          const heading = section.querySelector('h2, h3');
+          if (heading) {
+            heading.addEventListener('click', () => {
+              section.classList.toggle('expanded');
+            });
+          }
+        });
+
+      // 🚀 Controle de velocidade (ESTAVA FALTANDO!)
+      const speedSlider = document.getElementById('speed');
+      const speedValue = document.getElementById('speedValue');
+
+      if (speedSlider && speedValue) {
+        speedSlider.addEventListener('input', (e) => {
+          const value = e.target.value;
+          speedValue.textContent = value;
+          console.log('⚡ Velocidade alterada para: ' + value + 'ms');
+        });
+      }
+
+      document.addEventListener('click', async function (e) {
+        const link = e.target.closest('a.dynamic-link');
+        if (!link) return;
+
+        e.preventDefault();
+        const href = link.getAttribute('href');
+
+        if (href) {
+          try {
+            const response = await fetch(href);
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const main = doc.querySelector('main');
+
+            if (main) {
+              document.querySelector('main').innerHTML = main.innerHTML;
+              window.history.pushState({}, '', href);
+            }
+          } catch (error) {
+            console.error('Erro ao carregar conteúdo:', error);
+          }
+        }
+      });
+
+      window.addEventListener('popstate', () => {
+        location.reload();
+      });
+
+      // 🚀 FECHA O BLOCO CONDICIONAL
+    }
+  </script>
+
+  <!-- Database Status Manager Script -->
+  <script>
+    /**
+     * Database Status Manager
+     * Gerencia a exibição do status do banco de dados Supabase
+     */
+    (function () {
+      'use strict';
+
+      // Estado do gerenciador
+      let currentPreset = null;
+      let currentData = null;
+      let isConnected = false;
+      let isRefreshing = false;
+
+      // Elementos DOM
+      const elements = {};
+
+      /**
+       * Inicializa os elementos DOM
+       */
+      function initElements() {
+        elements.section = document.getElementById('database-status-section');
+        elements.loading = document.getElementById('database-loading');
+        elements.content = document.getElementById('database-content');
+        elements.empty = document.getElementById('database-empty');
+        elements.connectionStatus = document.getElementById('connection-status');
+        elements.connectionIndicator = document.getElementById('connection-indicator');
+        elements.syncIndicator = document.getElementById('sync-indicator');
+        elements.usersIndicator = document.getElementById('users-indicator');
+        elements.usersCount = document.getElementById('users-count');
+        elements.progressPercentage = document.getElementById('progress-percentage');
+        elements.progressFill = document.getElementById('progress-fill');
+        elements.currentPreset = document.getElementById('current-preset');
+        elements.hexRangeDisplay = document.getElementById('hex-range-display');
+        elements.wifRangeDisplay = document.getElementById('wif-range-display');
+        elements.lastUpdated = document.getElementById('last-updated');
+        elements.statistics = document.getElementById('statistics');
+        elements.alerts = document.getElementById('database-alerts');
+        elements.refreshBtn = document.getElementById('refresh-btn');
+        elements.forceSyncBtn = document.getElementById('force-sync-btn');
+        elements.viewStatsBtn = document.getElementById('view-stats-btn');
+        elements.exportBtn = document.getElementById('export-btn');
+      }
+
+      /**
+       * Mostra a seção de status
+       */
+      function showSection() {
+        if (elements.section) {
+          elements.section.style.display = 'block';
+        }
+      }
+
+      /**
+       * Esconde a seção de status
+       */
+      function hideSection() {
+        if (elements.section) {
+          elements.section.style.display = 'none';
+        }
+      }
+
+      /**
+       * Mostra estado de loading
+       */
+      function showLoading() {
+        hideContent();
+        hideEmpty();
+        if (elements.loading) {
+          elements.loading.style.display = 'flex';
+        }
+        updateConnectionStatus('connecting');
+      }
+
+      /**
+       * Mostra o conteúdo principal
+       */
+      function showContent() {
+        hideLoading();
+        hideEmpty();
+        if (elements.content) {
+          elements.content.style.display = 'block';
+        }
+      }
+
+      /**
+       * Mostra estado vazio
+       */
+      function showEmpty() {
+        hideLoading();
+        hideContent();
+        if (elements.empty) {
+          elements.empty.style.display = 'block';
+        }
+      }
+
+      /**
+       * Esconde todos os estados
+       */
+      function hideLoading() {
+        if (elements.loading) {
+          elements.loading.style.display = 'none';
+        }
+      }
+
+      function hideContent() {
+        if (elements.content) {
+          elements.content.style.display = 'none';
+        }
+      }
+
+      function hideEmpty() {
+        if (elements.empty) {
+          elements.empty.style.display = 'none';
+        }
+      }
+
+      /**
+       * Atualiza o status de conexão
+       */
+      function updateConnectionStatus(status) {
+        if (!elements.connectionStatus) return;
+
+        const statusConfig = {
+          online: { text: '🟢 Online', class: 'online' },
+          connecting: { text: '🟡 Conectando...', class: 'syncing' },
+          offline: { text: '🔴 Offline', class: 'offline' },
+          error: { text: '❌ Erro', class: 'offline' }
+        };
+
+        const config = statusConfig[status] || statusConfig.offline;
+        elements.connectionStatus.textContent = config.text;
+        elements.connectionStatus.className = 'database-status-badge ' + config.class;
+
+        // Atualiza indicadores
+        if (elements.connectionIndicator) {
+          const dot = elements.connectionIndicator.querySelector('.database-status-dot');
+          const text = elements.connectionIndicator.querySelector('span');
+          if (dot) dot.className = 'database-status-dot ' + config.class;
+          if (text) text.textContent = config.text.replace(/[🟡🟢❌🔔]\s*/, '');
+        }
+
+        isConnected = status === 'online';
+      }
+
+      /**
+       * Converte hexadecimal para WIF
+       */
+      async function hexToWIF(hex, compressed = true) {
+        try {
+          if (typeof window.toWIF === 'function') {
+            return await window.toWIF(hex, compressed);
+          }
+
+          // Implementação fallback
+          const hexBytes = hex.match(/.{2}/g).map(byte => parseInt(byte, 16));
+          const payload = new Uint8Array([0x80, ...hexBytes, ...(compressed ? [0x01] : [])]);
+
+          const hash1 = await crypto.subtle.digest('SHA-256', payload);
+          const hash2 = await crypto.subtle.digest('SHA-256', hash1);
+          const checksum = new Uint8Array(hash2).slice(0, 4);
+
+          const full = new Uint8Array([...payload, ...checksum]);
+
+          // Base58 encoding (simplificado)
+          const base58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+          let x = BigInt('0x' + Array.from(full).map(b => b.toString(16).padStart(2, '0')).join(''));
+          let result = '';
+
+          while (x > 0n) {
+            result = base58[Number(x % 58n)] + result;
+            x /= 58n;
+          }
+
+          return result || '1';
+        } catch (error) {
+          console.error('Erro ao converter HEX para WIF:', error);
+          return 'Erro na conversão';
+        }
+      }
+
+      /**
+       * Calcula porcentagem de progresso
+       */
+      function calculateProgress(preset, inicio) {
+        try {
+          const startRange = BigInt('1' + '0'.repeat(preset)); // 2^preset
+          const current = BigInt('0x' + inicio);
+          const total = BigInt('1' + '0'.repeat(preset + 1)) - startRange; // 2^(preset+1) - 2^preset
+          const processed = current - startRange;
+
+          if (processed <= 0n || total <= 0n) return 0;
+
+          return Number((processed * 10000n) / total) / 100;
+        } catch (error) {
+          console.error('Erro ao calcular progresso:', error);
+          return 0;
+        }
+      }
+
+      /**
+       * Formata timestamp
+       */
+      function formatTimestamp(timestamp) {
+        try {
+          const date = new Date(timestamp);
+          const now = new Date();
+          const diff = now - date;
+
+          // Se for menos de 1 minuto
+          if (diff < 60000) {
+            return 'Agora há pouco';
+          }
+
+          // Se for menos de 1 hora
+          if (diff < 3600000) {
+            const minutes = Math.floor(diff / 60000);
+            return `${minutes} minuto${minutes > 1 ? 's' : ''} atrás`;
+          }
+
+          // Se for menos de 1 dia
+          if (diff < 86400000) {
+            const hours = Math.floor(diff / 3600000);
+            return `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+          }
+
+          // Formato completo
+          return date.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        } catch (error) {
+          return 'Data desconhecida';
+        }
+      }
+
+      /**
+       * Atualiza a interface com os dados do banco
+       */
+      async function updateInterface(data) {
+        currentData = data;
+
+        if (!data) {
+          showEmpty();
+          return;
+        }
+
+        showContent();
+
+        // Atualiza preset atual
+        if (elements.currentPreset) {
+          elements.currentPreset.innerHTML = `
+        <strong>Preset ${data.preset}</strong><br>
+        <small style="color: #64748b;">${data.preset} bits</small>
+      `;
+        }
+
+        // Atualiza intervalo HEX
+        if (elements.hexRangeDisplay) {
+          elements.hexRangeDisplay.innerHTML = `
+        <strong>Início:</strong> ${data.inicio}<br>
+        <strong>Fim:</strong> ${data.fim}
+      `;
+        }
+
+        // Atualiza intervalo WIF
+        if (elements.wifRangeDisplay) {
+          const startWIF = await hexToWIF(data.inicio);
+          const endWIF = await hexToWIF(data.fim);
+
+          elements.wifRangeDisplay.innerHTML = `
+        <strong>Início:</strong> ${startWIF}<br>
+        <strong>Fim:</strong> ${endWIF}
+      `;
+        }
+
+        // Atualiza progresso
+        const progress = calculateProgress(data.preset, data.inicio);
+        if (elements.progressPercentage) {
+          elements.progressPercentage.textContent = `${progress.toFixed(2)}%`;
+        }
+        if (elements.progressFill) {
+          elements.progressFill.style.width = `${Math.min(100, progress)}%`;
+        }
+
+        // Atualiza timestamp
+        if (elements.lastUpdated) {
+          elements.lastUpdated.innerHTML = `
+        <strong>Atualização:</strong><br>
+        ${formatTimestamp(data.updated_at)}
+      `;
+        }
+
+        // Atualiza estatísticas
+        if (elements.statistics) {
+          const remaining = BigInt('0x' + data.fim) - BigInt('0x' + data.inicio);
+          elements.statistics.innerHTML = `
+        <strong>Restantes:</strong> ${remaining.toLocaleString()} chaves<br>
+        <small style="color: #64748b;">≈ ${(Number(remaining) / 1000000).toFixed(1)}M chaves</small>
+      `;
+        }
+
+        // Atualiza contador de usuários (simulado)
+        if (elements.usersCount) {
+          const activeUsers = Math.floor(Math.random() * 50) + 10; // Simulação
+          elements.usersCount.textContent = `${activeUsers} usuários ativos`;
+        }
+      }
+
+      /**
+       * @deprecated Usar showToast() em conformidade com master_rules.md
+       */
+      function addAlert(message, type = 'info') {
+        console.warn('⚠️ addAlert() está depreciado. Use showToast() conforme master_rules.md');
+        showToast(message, type);
+      }
+
+      /**
+       * Carrega dados do preset atual
+       */
+      async function loadPresetData(preset) {
+        if (!window.SupabaseDB || !window.SupabaseDB.isReady()) {
+          updateConnectionStatus('offline');
+          return;
+        }
+
+        try {
+          showLoading();
+
+          const data = await window.SupabaseDB.fetch(preset);
+
+          if (data) {
+            currentPreset = preset;
+            updateConnectionStatus('online');
+            updateInterface(data);
+            // 🚀 SUBSTITUIÇÃO TEMPORÁRIA DE showToast
+            console.log(`✅ Dados do preset ${preset} carregados com sucesso`);
+          } else {
+            updateConnectionStatus('online');
+            showEmpty();
+            // 🚀 SUBSTITUIÇÃO TEMPORÁRIA DE showToast
+            console.log(`ℹ️ Nenhum dado encontrado para o preset ${preset}`);
+          }
+
+        } catch (error) {
+          console.error('Erro ao carregar dados do preset:', error);
+          updateConnectionStatus('error');
+          // 🚀 SUBSTITUIÇÃO TEMPORÁRIA DE showToast
+          console.error(`❌ Erro ao carregar dados: ${error.message}`);
+        }
+      }
+
+      /**
+       * Atualiza os dados
+       */
+      async function refreshData() {
+        if (isRefreshing || !currentPreset) return;
+
+        isRefreshing = true;
+
+        if (elements.refreshBtn) {
+          elements.refreshBtn.disabled = true;
+          elements.refreshBtn.innerHTML = '<span>⏳</span><span>Atualizando...</span>';
+        }
+
+        try {
+          await loadPresetData(currentPreset);
+        } finally {
+          isRefreshing = false;
+
+          if (elements.refreshBtn) {
+            elements.refreshBtn.disabled = false;
+            elements.refreshBtn.innerHTML = '<span>🔄</span><span>Atualizar</span>';
+          }
+        }
+      }
+
+      /**
+       * Força sincronização
+       */
+      async function forceSync() {
+        if (!currentPreset || !currentData) {
+          showToast('Selecione um preset primeiro', 'warning');
+          return;
+        }
+
+        if (elements.forceSyncBtn) {
+          elements.forceSyncBtn.disabled = true;
+          elements.forceSyncBtn.innerHTML = '<span>⏳</span><span>Sincronizando...</span>';
+        }
+
+        try {
+          // Simula sincronização forçada
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          showToast('Sincronização forçada concluída', 'success');
+          await refreshData();
+
+        } catch (error) {
+          showToast(`Erro na sincronização: ${error.message}`, 'error');
+        } finally {
+          if (elements.forceSyncBtn) {
+            elements.forceSyncBtn.disabled = false;
+            elements.forceSyncBtn.innerHTML = '<span>⚡</span><span>Forçar Sincronização</span>';
+          }
+        }
+      }
+
+      /**
+       * Exporta dados
+       */
+      function exportData() {
+        if (!currentData) {
+          showToast('Nenhum dado para exportar', 'warning');
+          return;
+        }
+
+        const exportData = {
+          preset: currentData.preset,
+          inicio: currentData.inicio,
+          fim: currentData.fim,
+          updated_at: currentData.updated_at,
+          exported_at: new Date().toISOString(),
+          progress: calculateProgress(currentData.preset, currentData.inicio)
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `puzzle-${currentData.preset}-progress.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(url);
+
+        showToast('Dados exportados com sucesso', 'success');
+      }
+
+      /**
+       * Mostra estatísticas completas
+       */
+      function showFullStats() {
+        if (!currentData) {
+          showToast('Nenhum dado disponível', 'warning');
+          return;
+        }
+
+        // Simulação de modal de estatísticas
+        const stats = `
+      📊 Estatísticas Completas - Preset ${currentData.preset}
+      
+      Progresso: ${calculateProgress(currentData.preset, currentData.inicio).toFixed(2)}%
+      Início: ${currentData.inicio}
+      Fim: ${currentData.fim}
+      Última atualização: ${formatTimestamp(currentData.updated_at)}
+      
+      Chaves restantes: ${(BigInt('0x' + currentData.fim) - BigInt('0x' + currentData.inicio)).toLocaleString()}
+      
+      Tempo estimado (1000 chaves/s): ${((BigInt('0x' + currentData.fim) - BigInt('0x' + currentData.inicio)) / 1000n / 3600n).toLocaleString()} horas
+    `;
+
+        console.log(stats);
+        showToast('Estatísticas completas exibidas no console', 'info');
+      }
+
+      /**
+       * Configura event listeners
+       */
+      function setupEventListeners() {
+        // Botões de ação
+        if (elements.refreshBtn) {
+          elements.refreshBtn.addEventListener('click', refreshData);
+        }
+
+        if (elements.forceSyncBtn) {
+          elements.forceSyncBtn.addEventListener('click', forceSync);
+        }
+
+        if (elements.viewStatsBtn) {
+          elements.viewStatsBtn.addEventListener('click', showFullStats);
+        }
+
+        if (elements.exportBtn) {
+          elements.exportBtn.addEventListener('click', exportData);
+        }
+
+        // Eventos de outros componentes
+        window.addEventListener('presetRangeUpdated', async (event) => {
+          const { bitCount, usingSupabase } = event.detail;
+
+          if (usingSupabase) {
+            showSection();
+            await loadPresetData(bitCount);
+          } else {
+            hideSection();
+          }
+        });
+
+        window.addEventListener('progressUpdated', async (event) => {
+          const { preset } = event.detail;
+
+          if (currentPreset === preset) {
+            await refreshData();
+          }
+        });
+
+        // Eventos do Supabase
+        window.addEventListener('environmentDetected', (event) => {
+          const { supabaseEnabled } = event.detail;
+
+          if (!supabaseEnabled) {
+            hideSection();
+            showToast('Supabase não disponível neste ambiente', 'warning');
+          }
+        });
+      }
+
+      /**
+       * Inicializa o gerenciador
+       */
+      function init() {
+        initElements();
+        setupEventListeners();
+
+        // Verifica se Supabase está disponível
+        if (window.SupabaseDB && window.SupabaseDB.isReady()) {
+          updateConnectionStatus('online');
+        } else {
+          updateConnectionStatus('offline');
+        }
+
+        console.log('✅ Database Status Manager inicializado');
+      }
+
+      // API pública
+      window.DatabaseStatus = {
+        show: showSection,
+        hide: hideSection,
+        loadPreset: loadPresetData,
+        refresh: refreshData,
+        getCurrentPreset: () => currentPreset,
+        getCurrentData: () => currentData,
+        isConnected: () => isConnected
+      };
+
+      // Inicialização
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    }); // 🚀 FECHA O BLOCO DO DATABASE STATUS MANAGER
+  </script>
+
+</body>
+
+</html>

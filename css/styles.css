@@ -1,0 +1,2438 @@
+/* ========================================
+   CSS OTIMIZADO - LAYOUT COMPACTO
+   Mantém funcionalidade, reduz espaçamentos
+   ======================================== */
+
+body {
+  margin: 0;
+  padding: 0;
+  padding-top: 70px; /* Compensa navbar fixa */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+}
+
+/* Animação para célula ativa */
+.cell.animating-start {
+  animation: pulse-cell 1s ease-in-out infinite;
+}
+
+@keyframes pulse-cell {
+  0% { 
+    background-color: #28a745;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+  }
+  50% { 
+    background-color: #343a40;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+  }
+  100% { 
+    background-color: #28a745;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+  }
+}
+
+/* --- LAYOUT PRINCIPAL COM DUAS SIDEBARS --- */
+.main-wrapper {
+  display: flex;
+  gap: 15px; /* 20px → 15px */
+  margin: 15px auto; /* 20px → 15px */
+  max-width: 1400px;
+  padding: 0 15px;
+  position: relative;
+}
+
+.sidebar-left {
+  width: 260px; /* 280px → 260px */
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px; /* 15px → 12px */
+  padding: 15px; /* 25px → 15px */
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08); /* reduzido */
+  position: sticky;
+  top: 15px; /* 20px → 15px */
+  height: fit-content;
+  z-index: 10;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9em;
+  margin-right: 280px; /* 300px → 280px */
+}
+
+.sidebar-right {
+  position: sticky;
+  top: 15px; /* 20px → 15px */
+  width: 260px; /* 280px → 260px */
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px; /* 15px → 12px */
+  padding: 15px; /* 25px → 15px */
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08); /* reduzido */
+  height: fit-content;
+  z-index: 10;
+  margin-left: -280px; /* -300px → -280px */
+}
+
+.sidebar-left .sidebar-widget,
+.sidebar-right .sidebar-widget {
+  background: #fff;
+  padding: 12px; /* 20px → 12px */
+  border-radius: 8px; /* 10px → 8px */
+  margin-top: 12px; /* 20px → 12px */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06); /* reduzido */
+}
+
+.sidebar-left h3,
+.sidebar-right h3,
+.sidebar-left h4,
+.sidebar-right h4 {
+  color: #28a745;
+  margin-bottom: 10px; /* 15px → 10px */
+}
+
+.sidebar-left h3,
+.sidebar-right h3 {
+  font-size: 1.15em; /* 1.3em → 1.15em */
+  border-bottom: 2px solid #28a745; /* 3px → 2px */
+  padding-bottom: 8px; /* 10px → 8px */
+}
+
+.sidebar-left .sidebar-links,
+.sidebar-right .sidebar-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-left .sidebar-links li,
+.sidebar-right .sidebar-links li {
+  margin-bottom: 8px; /* 12px → 8px */
+}
+
+.sidebar-left .sidebar-links a,
+.sidebar-right .sidebar-links a {
+  color: #495057;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 10px → 8px */
+  padding: 8px; /* 10px → 8px */
+  border-radius: 6px; /* 8px → 6px */
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+}
+
+.sidebar-left .sidebar-links a:hover,
+.sidebar-right .sidebar-links a:hover {
+  background: #28a745;
+  color: #fff;
+  transform: translateX(5px);
+}
+
+/* --- HIERARQUIA DE TÍTULOS E ESPAÇAMENTOS --- */
+.main-content h1 { 
+  font-size: 1.8em; /* 2em → 1.8em */
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 10px 0; /* 15px → 10px */
+  line-height: 1.3;
+}
+
+.main-content h2 { 
+  font-size: 1.3em; /* 1.5em → 1.3em */
+  font-weight: 600;
+  color: #2d3748;
+  margin: 15px 0 10px 0; /* 25px → 15px, 15px → 10px */
+  line-height: 1.4;
+}
+
+.main-content h3 { 
+  font-size: 1.15em; /* 1.25em → 1.15em */
+  font-weight: 600;
+  color: #4a5568;
+  margin: 12px 0 8px 0; /* 20px → 12px, 12px → 8px */
+  line-height: 1.4;
+}
+
+.main-content h4 { 
+  font-size: 1.05em; /* 1.1em → 1.05em */
+  font-weight: 600;
+  color: #718096;
+  margin: 10px 0 8px 0; /* 15px → 10px */
+  line-height: 1.4;
+}
+
+.main-content p { 
+  font-size: 0.9em; /* 0.95em → 0.9em */
+  line-height: 1.6; /* 1.7 → 1.6 */
+  margin: 0 0 10px 0; /* 12px → 10px */
+  color: #4a5568;
+}
+
+.main-content li { 
+  font-size: 0.9em; /* 0.95em → 0.9em */
+  line-height: 1.5; /* 1.6 → 1.5 */
+  margin-bottom: 6px; /* 8px → 6px */
+  color: #4a5568;
+}
+
+.main-content ul,
+.main-content ol {
+  margin: 10px 0; /* 12px → 10px */
+  padding-left: 20px; /* 25px → 20px */
+}
+
+.main-content button { 
+  font-size: 0.85em; /* 0.9em → 0.85em */
+  padding: 8px 15px; /* 10px 18px → 8px 15px */
+  line-height: 1.2;
+}
+
+.main-content .btn-custom { 
+  padding: 10px 18px; /* 12px 20px → 10px 18px */
+  font-size: 0.9em; /* 0.95em → 0.9em */
+  line-height: 1.2;
+}
+
+.main-content .output-label { 
+  font-size: 0.95em; /* 1em → 0.95em */
+  margin-bottom: 8px; /* 10px → 8px */
+}
+
+.main-content .output-box { 
+  font-size: 0.85em; /* 0.9em → 0.85em */
+  padding: 10px; /* 12px → 10px */
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  color: #1b5e20;
+  padding: 15px 20px; /* 30px 25px → 15px 20px */
+  border-radius: 15px; /* 20px → 15px */
+  text-align: center;
+  margin-bottom: 15px; /* 30px → 15px */
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.15); /* reduzido */
+  border: 2px solid #a5d6a7;
+}
+
+.hero-section h1 {
+  font-size: 1.8em; /* 2.2em → 1.8em */
+  font-weight: 700;
+  margin-bottom: 5px; /* 8px → 5px */
+  text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+  color: #1b5e20;
+  line-height: 1.2;
+}
+
+.hero-section .subtitle {
+  font-size: 1em; /* 1.1em → 1em */
+  margin-bottom: 0;
+  margin-top: 3px; /* 5px → 3px */
+  color: #2e7d32;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
+  line-height: 1.3;
+}
+
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0; /* 1.5rem → 1rem */
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* CANVAS - MANTÉM TAMANHO ORIGINAL */
+#grid {
+  min-width: 100%;
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  border: 3px solid #2d3748;
+  border-radius: 8px;
+  background: #fff;
+  cursor: crosshair;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: block;
+  touch-action: none;
+}
+
+@media (max-width: 768px) {
+  #grid {
+    max-width: 100vw;
+  }
+}
+
+.range-indicator {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border: 2px solid #ffc107;
+  border-radius: 10px; /* 12px → 10px */
+  padding: 6px 10px; /* 8px 12px → 6px 10px */
+  text-align: center;
+  font-weight: 600;
+  color: #856404;
+  font-size: 0.95em; /* 1em → 0.95em */
+  margin-bottom: 10px; /* adicionado para separar do próximo elemento */
+}
+
+.control-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px; /* 15px → 12px */
+  padding: 12px; /* mantido */
+  margin-bottom: 10px; /* 8px → 10px */
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06); /* reduzido */
+  border-left: 4px solid #28a745; /* 5px → 4px */
+}
+
+.control-card h2 {
+  color: #28a745;
+  font-size: 1.25em; /* 1.4em → 1.25em */
+  font-weight: 600;
+  margin: 0 0 10px 0; /* 8px → 10px */
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 10px → 8px */
+  line-height: 1.3;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
+  gap: 5px; /* 6px → 5px */
+  margin-top: 10px; /* 12px → 10px */
+}
+
+.button-grid button {
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #28a745;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  color: #28a745;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+.button-grid button:hover {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.button-grid button.active {
+  background: #28a745;
+  color: #fff;
+}
+
+.button-grid button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* BOTÕES EXTRAS - ESTILO VERMELHO */
+#extra-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
+  gap: 5px; /* 6px → 5px */
+  margin-top: 10px; /* 12px → 10px */
+}
+
+#extra-buttons button {
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #dc3545;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  color: #dc3545;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+#extra-buttons button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+#extra-buttons button.active {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
+
+#extra-buttons button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.main-controls-section {
+  background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+  border-radius: 12px; /* 15px → 12px */
+  padding: 12px; /* 10px → 12px */
+  margin-bottom: 10px; /* 8px → 10px */
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06); /* reduzido */
+}
+
+.main-controls-section h2 {
+  color: #2e7d32;
+  font-size: 1.25em; /* 1.4em → 1.25em */
+  font-weight: 600;
+  margin: 0 0 10px 0; /* 8px → 10px */
+  line-height: 1.3;
+}
+
+.btn-custom {
+  padding: 10px 20px; /* 12px 24px → 10px 20px */
+  font-size: 0.95em; /* 1em → 0.95em */
+  font-weight: 600;
+  border-radius: 8px; /* 10px → 8px */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12); /* reduzido */
+  line-height: 1.2;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: #fff;
+}
+
+.btn-start:hover:not(:disabled) {
+  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(40, 167, 69, 0.3);
+}
+
+.btn-stop {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: #fff;
+}
+
+.btn-stop:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+}
+
+.btn-stop:disabled,
+.btn-start:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-clear {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: #fff;
+}
+
+.btn-clear:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+}
+
+.btn-random {
+  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  color: #fff;
+}
+
+.btn-random:hover {
+  background: linear-gradient(135deg, #5a32a3 0%, #4c2a8f 100%);
+}
+
+.btn-debug {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-debug:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ee5a24 0%, #dc3545 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(255, 107, 107, 0.3);
+}
+
+.btn-debug::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-debug:hover::before {
+  left: 100%;
+}
+
+.speed-control {
+  background: #fff;
+  padding: 10px; /* 8px → 10px */
+  border-radius: 8px; /* 10px → 8px */
+  margin-bottom: 10px; /* 8px → 10px */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04); /* reduzido */
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 15px → 12px */
+}
+
+.speed-control label {
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.speed-control input[type="range"] {
+  flex: 1;
+  min-width: 180px; /* 200px → 180px */
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* 200px → 180px */
+  gap: 10px; /* 15px → 10px */
+  margin-top: 10px; /* 15px → 10px */
+}
+
+.option-card {
+  background: #fff;
+  padding: 10px 12px; /* 15px → 10px 12px */
+  border: 2px solid #e9ecef;
+  border-radius: 8px; /* 10px → 8px */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 10px → 8px */
+  font-size: 0.9em;
+}
+
+.option-card:hover {
+  border-color: #28a745;
+  background: #f8fff9;
+  transform: translateY(-2px);
+}
+
+.option-card input {
+  margin-right: 6px; /* 8px → 6px */
+}
+
+.outputs-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px; /* 15px → 12px */
+  padding: 12px; /* 10px → 12px */
+  margin: 10px 0; /* 8px → 10px */
+  box-shadow: 0 5px 16px rgba(0,0,0,0.08); /* reduzido */
+  border-top: 4px solid #28a745; /* 5px → 4px */
+}
+
+.outputs-section h2 {
+  color: #28a745;
+  font-size: 1.5em; /* 1.8em → 1.5em */
+  font-weight: 600;
+  margin: 0 0 12px 0; /* 8px → 12px */
+  text-align: center;
+  line-height: 1.3;
+}
+
+.output-group {
+  background: #fff;
+  padding: 10px;
+  border-radius: 10px; /* 12px → 10px */
+  margin-bottom: 10px; /* 8px → 10px */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); /* reduzido */
+  border-left: 3px solid #28a745; /* 4px → 3px */
+  width: 100%;
+}
+
+/* Garante que os output-group dentro da seção de conversores ocupem toda a largura */
+.control-card .output-group {
+  width: 100%;
+}
+
+.output-label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px; /* 12px → 8px */
+  font-size: 0.95em; /* 1.05em → 0.95em */
+  line-height: 1.3;
+}
+
+.output-box {
+  width: 100%;
+  min-height: 70px; /* 80px → 70px */
+  padding: 12px; /* 15px → 12px */
+  border: 2px solid #dee2e6;
+  border-radius: 6px; /* 8px → 6px */
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em; /* 0.95em → 0.85em */
+  background: #f8f9fa;
+  resize: vertical;
+  transition: all 0.3s ease;
+  line-height: 1.5;
+}
+
+.output-box:focus {
+  outline: none;
+  border-color: #28a745;
+  background: #fff;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.content-divider {
+  border: none;
+  height: 2px; /* 3px → 2px */
+  background: linear-gradient(90deg, transparent, #28a745, transparent);
+  margin: 30px 0; /* 50px → 30px */
+}
+
+/* === SEÇÕES COLAPSÁVEIS === */
+.post_puzzle-section,
+.post_edu-intro-section,
+.post_edu-warning-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px; /* 15px → 12px */
+  padding: 0;
+  margin: 20px 0; /* 30px → 20px */
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08); /* reduzido */
+  overflow: hidden;
+  max-height: 60px; /* 65px → 60px */
+  transition: max-height 0.4s ease, box-shadow 0.3s ease;
+  border: 2px solid #e9ecef;
+}
+
+.post_puzzle-section.expanded,
+.post_edu-intro-section.expanded,
+.post_edu-warning-section.expanded {
+  max-height: 2000px;
+}
+
+.post_puzzle-section:hover,
+.post_edu-intro-section:hover,
+.post_edu-warning-section:hover {
+  box-shadow: 0 5px 16px rgba(0,0,0,0.12);
+}
+
+.post_puzzle-section h2,
+.post_edu-intro-section h2,
+.post_edu-warning-section h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px; /* 18px 25px → 15px 20px */
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  position: relative;
+  background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  font-size: 1.2em; /* 1.3em → 1.2em */
+  color: #2d3748;
+  line-height: 1.3;
+}
+
+.post_puzzle-section h2 .toggle-icon,
+.post_edu-intro-section h2 .toggle-icon,
+.post_edu-warning-section h3 .toggle-icon {
+  transition: transform 0.3s ease;
+  font-size: 0.8em;
+  color: #718096;
+}
+
+.post_puzzle-section.expanded h2 .toggle-icon,
+.post_edu-intro-section.expanded h2 .toggle-icon,
+.post_edu-warning-section.expanded h3 .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.post_puzzle-section .section-content,
+.post_edu-intro-section .section-content,
+.post_edu-warning-section .section-content {
+  padding: 20px; /* 25px → 20px */
+}
+
+.post_puzzle-section .section-content h3,
+.post_edu-intro-section .section-content h3,
+.post_edu-warning-section .section-content h3 {
+  color: #28a745;
+  font-size: 1.15em; /* 1.2em → 1.15em */
+  font-weight: 600;
+  margin: 15px 0 10px 0; /* 20px → 15px, 12px → 10px */
+  line-height: 1.4;
+}
+
+.post_puzzle-section .section-content p,
+.post_edu-intro-section .section-content p,
+.post_edu-warning-section .section-content p {
+  margin-bottom: 12px; /* 15px → 12px */
+  line-height: 1.6; /* 1.7 → 1.6 */
+  font-size: 0.9em;
+}
+
+.post_puzzle-section .section-content ul,
+.post_edu-intro-section .section-content ul,
+.post_edu-warning-section .section-content ul {
+  margin: 12px 0; /* 15px → 12px */
+  padding-left: 20px; /* 25px → 20px */
+}
+
+.post_puzzle-section .section-content li,
+.post_edu-intro-section .section-content li,
+.post_edu-warning-section .section-content li {
+  font-size: 0.9em;
+  margin-bottom: 6px;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border-bottom: 3px solid #28a745;
+  margin-bottom: 0;
+  padding: 10px 0; /* 15px → 10px */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.navbar-brand {
+  font-size: 1em; /* 1.1em → 1em */
+  transition: all 0.3s ease;
+  margin-right: 15px; /* 20px → 15px */
+  padding: 6px 12px; /* adicionado para melhor clicabilidade */
+}
+
+.navbar-brand:hover {
+  transform: translateY(-2px);
+  color: #20c997 !important;
+}
+
+/* Footer */
+.site-footer {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: #ecf0f1;
+  padding: 30px 0 15px; /* 40px → 30px, 20px → 15px */
+  margin-top: 40px; /* 60px → 40px */
+}
+
+.footer-nav a {
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+}
+
+.footer-nav a:hover {
+  color: #28a745;
+  text-decoration: underline;
+}
+
+.footer-nav ul {
+  margin-bottom: 12px;
+}
+
+/* Ícones de cópia */
+.fa-copy {
+  font-size: 18px; /* 20px → 18px */
+  cursor: pointer;
+  color: #4CAF50;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.fa-copy:hover {
+  color: #FF5722;
+  transform: scale(1.0);
+}
+
+.fa-copy:active {
+  color: #2196F3;
+  transform: scale(0.7);
+}
+
+.fa-copy.text-success {
+  color: #28a745 !important;
+}
+
+#wifList {
+  max-height: 180px; /* 200px → 180px */
+  overflow-y: auto;
+  padding-right: 8px; /* 10px → 8px */
+}
+
+/* Diminuir fonte dos puzzles encontrados */
+#wifList .list-group-item {
+  font-size: 0.8em !important;
+  padding: 8px 12px !important;
+}
+
+#wifList .list-group-item .puzzle-title {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 0.85em !important;
+}
+
+#wifList .list-group-item .puzzle-wif {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75em !important;
+  color: #6c757d;
+  word-break: break-all;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1200px) {
+  .main-content {
+    margin-right: 0;
+  }
+  .sidebar-right {
+    position: static;
+    margin-left: 0;
+    margin-top: 20px; /* 30px → 20px */
+    width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  .main-wrapper {
+    flex-direction: column;
+  }
+  .sidebar-left {
+    position: static;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 15px 15px; /* 25px 20px → 15px 15px */
+  }
+  .hero-section h1 {
+    font-size: 1.5em; /* 1.6em → 1.5em */
+  }
+  .hero-section .subtitle {
+    font-size: 0.95em;
+  }
+  .button-grid,
+  #extra-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(55px, 1fr)); /* 60px → 55px */
+  }
+  .btn-custom {
+    width: 100%;
+    padding: 8px 16px; /* mais compacto em mobile */
+  }
+  .post_puzzle-section,
+  .post_edu-intro-section,
+  .post_edu-warning-section {
+    padding: 0;
+    margin: 15px 0; /* 25px → 15px */
+  }
+  .post_puzzle-section h2,
+  .post_edu-intro-section h2,
+  .post_edu-warning-section h3 {
+    font-size: 1.1em !important; /* 1.2em → 1.1em */
+    padding: 12px 15px; /* 15px 20px → 12px 15px */
+  }
+  .post_puzzle-section .section-content,
+  .post_edu-intro-section .section-content,
+  .post_edu-warning-section .section-content {
+    padding: 15px; /* 20px → 15px */
+  }
+  
+  .main-content h1 {
+    font-size: 1.6em; /* 1.7em → 1.6em */
+  }
+  
+  .main-content h2 {
+    font-size: 1.25em; /* 1.3em → 1.25em */
+  }
+  
+  .main-content h3 {
+    font-size: 1.1em; /* 1.15em → 1.1em */
+  }
+
+  .control-card,
+  .main-controls-section,
+  .outputs-section {
+    padding: 10px; /* mais compacto em mobile */
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    padding: 12px;
+  }
+
+  .sidebar-left .sidebar-widget,
+  .sidebar-right .sidebar-widget {
+    padding: 10px;
+    margin-top: 10px;
+  }
+}
+/* ========================================
+   LAYOUT GRID - SIDEBAR DIREITA ESTENDIDA
+   Card 2 ocupa toda altura à direita
+   Cards 1 e 3 empilhados à esquerda
+   ======================================== */
+
+/* === GRID CONTAINER === */
+.cards-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 colunas: esquerda e direita */
+  grid-template-rows: auto; /* altura automática baseada no conteúdo */
+  gap: 12px;
+  margin: 10px 0;
+  align-items: stretch; /* estica cards para mesma altura */
+}
+
+/* Garante que ambos os cards tenham a mesma altura */
+.cards-grid-container > * {
+  min-height: 100%;
+}
+
+/* === CARD 1: Configurações Avançadas (topo esquerdo) === */
+.config-avancadas-card {
+  grid-column: 1; /* coluna 1 (esquerda) */
+  grid-row: 1;    /* linha 1 (topo) */
+}
+
+.config-avancadas-card h2 {
+  font-size: 1.1em !important;
+  margin-bottom: 12px !important;
+}
+
+.config-avancadas-card .speed-control {
+  padding: 8px !important;
+  margin-bottom: 8px !important;
+  flex-wrap: wrap;
+}
+
+.config-avancadas-card .speed-control label {
+  font-size: 0.85em !important;
+  white-space: nowrap;
+}
+
+.config-avancadas-card #speedLabel {
+  font-size: 0.85em !important;
+  min-width: 50px;
+}
+
+.config-avancadas-card .form-range {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Options grid - 2 colunas */
+.config-avancadas-card .options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  margin-top: 8px !important;
+}
+
+.config-avancadas-card .option-card {
+  padding: 8px 10px !important;
+  font-size: 0.85em !important;
+}
+
+.config-avancadas-card .option-card span {
+  font-size: 0.85em !important;
+}
+
+/* === CARD 3: Controles Principais (base esquerda, DENTRO do Card 1) === */
+.config-avancadas-card .controles-principais-card {
+  margin-top: 8px; /* 12px → 8px */
+  padding-top: 8px; /* 12px → 8px */
+  border-top: 2px solid #e9ecef;
+}
+
+.config-avancadas-card .controles-principais-card h2 {
+  font-size: 1.1em !important;
+  margin-bottom: 10px !important;
+}
+
+.config-avancadas-card .controles-principais-card .d-flex {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+
+.config-avancadas-card .controles-principais-card .btn-custom {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  font-size: 0.85em !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.config-avancadas-card .controles-principais-card .btn-custom i {
+  font-size: 0.9em;
+}
+
+/* === CARD 2: Seleção de Linhas (TODA altura à direita) === */
+.selecao-linhas-card {
+  grid-column: 2;    /* coluna 2 (direita) */
+  grid-row: 1 / 3;   /* ocupa linhas 1 e 2 (toda altura) */
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;  /* garante altura mínima */
+  height: 100%;      /* preenche todo espaço disponível */
+}
+
+.selecao-linhas-card h2 {
+  font-size: 1.05em !important;
+  margin-bottom: 8px !important;
+  margin-top: 12px !important;
+  flex-shrink: 0; /* não encolhe os títulos */
+}
+
+.selecao-linhas-card h2:first-child {
+  margin-top: 0 !important;
+}
+
+/* Área de botões com flex-grow para preencher espaço */
+.selecao-linhas-card .button-grid {
+  margin-top: 6px !important;
+  gap: 4px !important;
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  flex-shrink: 0; /* mantém tamanho dos botões */
+}
+
+.selecao-linhas-card .button-grid button {
+  width: 100% !important;
+  aspect-ratio: 1 / 1; /* mantém botões quadrados */
+  font-size: 0.7em !important;
+  padding: 4px !important;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.selecao-linhas-card #extra-buttons {
+  margin-top: 6px !important;
+  gap: 4px !important;
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  margin-bottom: auto; /* empurra para cima, preenchendo espaço abaixo */
+  flex-shrink: 0;
+}
+
+.selecao-linhas-card #extra-buttons button {
+  width: 100% !important;
+  aspect-ratio: 1 / 1; /* mantém botões quadrados */
+  font-size: 0.7em !important;
+  padding: 4px !important;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* === INTERVALOS HEX/WIF - 100% À ESQUERDA === */
+#hexRange,
+#wifRange,
+#wifRangeUncompressed {
+  text-align: left !important;
+  display: block !important;
+  width: 100% !important;
+  word-break: break-all !important;
+}
+
+/* === AJUSTES PARA PRESET === */
+.speed-control:has(#presetBits) {
+  flex-wrap: wrap;
+}
+
+.speed-control:has(#presetBits) label {
+  font-size: 0.9em !important;
+}
+
+.speed-control:has(#presetBits) #presetBits {
+  flex: 1;
+  min-width: 160px;
+  font-size: 0.85em !important;
+  padding: 6px 10px !important;
+}
+
+.speed-control:has(#presetBits) #applyPresetBtn {
+  padding: 6px 16px !important;
+  font-size: 0.85em !important;
+}
+
+/* === CONVERSOR INPUT EXPANDIDO === */
+#converterInput {
+  width: 100% !important;
+  min-width: 300px;
+  padding: 12px 16px !important;
+  font-size: 0.95em !important;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  resize: horizontal;
+  transition: all 0.3s ease;
+}
+
+#converterInput:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* === RANGE INDICATOR === */
+.range-indicator {
+  padding: 5px 10px !important;
+  font-size: 0.9em !important;
+  margin: 8px 0 !important;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.range-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.range-indicator.auto-hide {
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* === COLUNAS EXTRAS === */
+.extra-cols-container {
+  margin-top: 8px;
+  flex-grow: 1; /* preenche espaço restante */
+  display: flex;
+  flex-direction: column;
+}
+
+.extra-cols-container h4 {
+  font-size: 0.95em !important;
+  margin-bottom: 6px !important;
+  color: #dc3545;
+  flex-shrink: 0;
+}
+
+.extra-cols-container .button-grid {
+  gap: 4px !important;
+  grid-template-columns: repeat(16, 1fr);
+  flex-shrink: 0;
+}
+
+.extra-cols-container .button-grid button {
+  width: 100% !important;
+  aspect-ratio: 1 / 1; /* mantém quadrados */
+  font-size: 0.7em !important;
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* === RESPONSIVIDADE === */
+
+/* Tablet: manter 2 colunas mas ajustar */
+@media (max-width: 992px) {
+  .cards-grid-container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .config-avancadas-card {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .selecao-linhas-card {
+    grid-column: 2;
+    grid-row: 1 / 2; /* só primeira linha em tablet */
+  }
+
+  .config-avancadas-card .controles-principais-card .d-flex {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* Mobile: 1 coluna (tudo empilhado) */
+@media (max-width: 768px) {
+  .cards-grid-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .config-avancadas-card {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .selecao-linhas-card {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .config-avancadas-card .options-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .config-avancadas-card .controles-principais-card .d-flex {
+    grid-template-columns: 1fr !important;
+  }
+
+  .selecao-linhas-card .button-grid,
+  .selecao-linhas-card #extra-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr)) !important;
+  }
+}
+
+/* === AJUSTES GERAIS === */
+.control-card,
+.main-controls-section {
+  margin-bottom: 0 !important;
+}
+
+.cards-grid-container .control-card,
+.cards-grid-container .main-controls-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================================
+/* ========================================================================
+   MODAL DE PUZZLES BITCOIN - CSS COMPLETO
+   Sistema de 3 Estados: Oculto → Ticket Lateral → Modal Expandido
+   ========================================================================
+   
+   INSTRUÇÕES DE USO:
+   1. Cole este CSS no final do seu arquivo styles.css
+   2. Ou crie um arquivo separado e importe: @import 'puzzles-modal.css';
+   3. Substitua qualquer CSS antigo do modal de puzzles
+   
+   ESTADOS:
+   - hidden: Modal completamente invisível (padrão)
+   - ticket: Ticket lateral colado à direita da tela
+   - expanded: Modal centralizado com backdrop
+   
+   ======================================================================== */
+
+/* =============================================================
+   RESET E CONFIGURAÇÕES BASE
+   ============================================================= */
+
+#puzzlesListModal,
+#puzzlesListModal *,
+#puzzlesListModal *::before,
+#puzzlesListModal *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================================
+   ESTADO 1: OCULTO (Padrão - Sem Puzzles)
+   ============================================================= */
+
+#puzzlesListModal {
+  /* Posicionamento */
+  position: fixed;
+  top: 50%;
+  right: 0;
+  
+  /* Transform inicial */
+  transform: translateY(-50%);
+  
+  /* Z-index alto */
+  z-index: 9999;
+  
+  /* Estado inicial: COMPLETAMENTE OCULTO */
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  
+  /* Transições suaves */
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Desabilita interação */
+  pointer-events: none;
+}
+
+/* =============================================================
+   ESTADO 2: TICKET LATERAL (Quando Encontra Puzzles)
+   ============================================================= */
+
+#puzzlesListModal.ticket {
+  /* Visibilidade */
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  
+  /* Posicionamento: colado à direita */
+  top: 50%;
+  right: 0;
+  left: auto;
+  transform: translateY(-50%);
+  
+  /* Dimensões do ticket */
+  width: 320px;
+  max-width: 90vw;
+  height: auto;
+  max-height: 140px;
+  
+  /* Aparência */
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  border-radius: 12px 0 0 12px;
+  box-shadow: -5px 0 25px rgba(255, 152, 0, 0.4),
+              -2px 0 10px rgba(255, 152, 0, 0.2);
+  
+  /* Overflow */
+  overflow: visible;
+  
+  /* Animação de entrada */
+  animation: slideInTicket 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slideInTicket {
+  0% {
+    right: -350px;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9);
+  }
+  100% {
+    right: 0;
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Hover no ticket */
+#puzzlesListModal.ticket:hover {
+  box-shadow: -8px 0 35px rgba(255, 152, 0, 0.6),
+              -4px 0 15px rgba(255, 152, 0, 0.3);
+  transform: translateY(-50%) translateX(-5px);
+}
+
+/* =============================================================
+   ESTADO 3: MODAL EXPANDIDO (Quando Usuário Clica)
+   ============================================================= */
+
+#puzzlesListModal.expanded {
+  /* Visibilidade */
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  
+  /* Centralização */
+  top: 50%;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+  
+  /* Dimensões expandidas */
+  width: 90%;
+  max-width: 700px;
+  height: auto;
+  max-height: 85vh;
+  
+  /* Aparência */
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5),
+              0 10px 40px rgba(0, 0, 0, 0.3);
+  
+  /* Overflow para scroll */
+  overflow: hidden;
+  
+  /* Animação de expansão */
+  animation: expandModal 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes expandModal {
+  0% {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Backdrop escuro quando expandido */
+#puzzlesListModal.expanded::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+  z-index: -1;
+  animation: fadeInBackdrop 0.4s ease-out forwards;
+}
+
+@keyframes fadeInBackdrop {
+  from { 
+    opacity: 0; 
+  }
+  to { 
+    opacity: 1; 
+  }
+}
+
+/* =============================================================
+   HEADER DO MODAL (Sempre Visível)
+   ============================================================= */
+
+.puzzles-modal-header {
+  /* Layout */
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  
+  /* Espaçamento */
+  padding: 16px 20px;
+  
+  /* Aparência */
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: #ffffff;
+  
+  /* Border radius (ajusta conforme estado) */
+  border-radius: inherit;
+  
+  /* Cursor */
+  cursor: pointer;
+  user-select: none;
+  
+  /* Transições */
+  transition: all 0.3s ease;
+}
+
+/* Header no modo ticket */
+#puzzlesListModal.ticket .puzzles-modal-header {
+  border-radius: 12px 0 0 12px;
+  cursor: pointer;
+}
+
+/* Header no modo expandido - não clicável */
+#puzzlesListModal.expanded .puzzles-modal-header {
+  border-radius: 16px 16px 0 0;
+  cursor: default;
+  border-bottom: 3px solid rgba(255, 152, 0, 0.3);
+}
+
+/* Hover no header (apenas ticket) */
+#puzzlesListModal.ticket .puzzles-modal-header:hover {
+  background: linear-gradient(135deg, #ffca28 0%, #ffa726 100%);
+  padding-left: 24px;
+}
+
+/* Focus para acessibilidade */
+.puzzles-modal-header:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  outline-offset: -3px;
+}
+
+/* =============================================================
+   TÍTULO DO HEADER
+   ============================================================= */
+
+#puzzlesModalTitle {
+  margin: 0;
+  font-size: 1.15em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+/* Título no ticket (menor) */
+#puzzlesListModal.ticket #puzzlesModalTitle {
+  font-size: 1em;
+}
+
+/* Título expandido (maior) */
+#puzzlesListModal.expanded #puzzlesModalTitle {
+  font-size: 1.4em;
+}
+
+/* Ícone do troféu */
+#puzzlesModalTitle i.fa-trophy {
+  font-size: 1.4em;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+  animation: trophyPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes trophyPulse {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg); 
+  }
+  25% { 
+    transform: scale(1.15) rotate(-8deg); 
+  }
+  75% { 
+    transform: scale(1.15) rotate(8deg); 
+  }
+}
+
+/* Texto do contador */
+#puzzlesCountText {
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* =============================================================
+   BADGE DE CONTAGEM
+   ============================================================= */
+
+.puzzle-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  
+  /* Aparência */
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  
+  /* Tipografia */
+  font-size: 0.95em;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  
+  /* Animação de pop */
+  animation: badgePop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes badgePop {
+  0% { 
+    transform: scale(0); 
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.3); 
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+}
+
+/* =============================================================
+   CONTAINER DE BOTÕES DO HEADER
+   ============================================================= */
+
+.puzzles-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* =============================================================
+   BOTÕES DE CONTROLE
+   ============================================================= */
+
+.puzzles-btn {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Dimensões */
+  width: 38px;
+  height: 38px;
+  
+  /* Aparência */
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 17px;
+  
+  /* Cursor */
+  cursor: pointer;
+  
+  /* Transições */
+  transition: all 0.3s ease;
+  
+  /* Remove padrões de botão */
+  outline: none;
+  padding: 0;
+}
+
+.puzzles-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.15);
+}
+
+.puzzles-btn:active {
+  transform: scale(0.95);
+}
+
+.puzzles-btn:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* Botão de colapsar (→) */
+.puzzles-collapse-btn {
+  /* Visível apenas no modo ticket */
+  display: flex;
+}
+
+#puzzlesListModal.expanded .puzzles-collapse-btn {
+  display: none;
+}
+
+.puzzles-collapse-btn i {
+  transition: transform 0.3s ease;
+}
+
+.puzzles-collapse-btn:hover i {
+  transform: translateX(4px);
+}
+
+/* Botão de fechar (X) */
+.puzzles-close-btn {
+  /* Oculto no modo ticket */
+  display: none;
+}
+
+#puzzlesListModal.expanded .puzzles-close-btn {
+  display: flex;
+}
+
+.puzzles-close-btn:hover {
+  background: rgba(244, 67, 54, 0.35);
+  border-color: rgba(244, 67, 54, 0.6);
+}
+
+/* =============================================================
+   CONTEÚDO DO TICKET (Resumido)
+   ============================================================= */
+
+.ticket-content {
+  /* Oculto por padrão */
+  display: none;
+  
+  /* Espaçamento */
+  padding: 14px 20px 16px;
+  
+  /* Tipografia */
+  color: #ffffff;
+  text-align: center;
+}
+
+/* Visível apenas no modo ticket */
+#puzzlesListModal.ticket .ticket-content {
+  display: block;
+}
+
+.ticket-content p {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 600;
+  line-height: 1.5;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-content .highlight {
+  display: block;
+  font-size: 1.15em;
+  font-weight: 800;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* =============================================================
+   CORPO DO MODAL (Lista Expandida)
+   ============================================================= */
+
+.puzzles-modal-body {
+  /* Oculto no modo ticket */
+  display: none;
+  
+  /* Layout */
+  width: 100%;
+  
+  /* Aparência */
+  background: #f8f9fa;
+  
+  /* Scroll */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Visível apenas no modo expandido */
+#puzzlesListModal.expanded .puzzles-modal-body {
+  display: block;
+  max-height: calc(85vh - 100px);
+  padding: 24px;
+}
+
+/* =============================================================
+   SCROLLBAR CUSTOMIZADA
+   ============================================================= */
+
+.puzzles-modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.puzzles-modal-body::-webkit-scrollbar-track {
+  background: #e9ecef;
+  border-radius: 10px;
+  margin: 5px 0;
+}
+
+.puzzles-modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: background 0.3s ease;
+}
+
+.puzzles-modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #ffca28 0%, #ffa726 100%);
+}
+
+/* Firefox */
+.puzzles-modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 #e9ecef;
+}
+
+/* =============================================================
+   CONTAINER DA LISTA DE PUZZLES
+   ============================================================= */
+
+#puzzlesListContent {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+/* =============================================================
+   ITEM INDIVIDUAL DE PUZZLE
+   ============================================================= */
+
+.puzzle-item {
+  /* Layout */
+  width: 100%;
+  
+  /* Espaçamento */
+  padding: 18px;
+  
+  /* Aparência */
+  background: #ffffff;
+  border: 2px solid transparent;
+  border-left: 6px solid #ffc107;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  
+  /* Transições */
+  transition: all 0.3s ease;
+  
+  /* Animação de entrada */
+  animation: slideInItem 0.5s ease-out backwards;
+}
+
+@keyframes slideInItem {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Delay progressivo para cada item */
+.puzzle-item:nth-child(1) { animation-delay: 0.05s; }
+.puzzle-item:nth-child(2) { animation-delay: 0.1s; }
+.puzzle-item:nth-child(3) { animation-delay: 0.15s; }
+.puzzle-item:nth-child(4) { animation-delay: 0.2s; }
+.puzzle-item:nth-child(5) { animation-delay: 0.25s; }
+.puzzle-item:nth-child(6) { animation-delay: 0.3s; }
+.puzzle-item:nth-child(7) { animation-delay: 0.35s; }
+.puzzle-item:nth-child(8) { animation-delay: 0.4s; }
+.puzzle-item:nth-child(n+9) { animation-delay: 0.45s; }
+
+/* Hover no item */
+.puzzle-item:hover {
+  transform: translateY(-5px) translateX(5px);
+  box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+  border-color: #ff9800;
+  border-left-color: #ff9800;
+}
+
+/* =============================================================
+   HEADER DO ITEM
+   ============================================================= */
+
+.puzzle-header {
+  /* Layout */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  
+  /* Espaçamento */
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  
+  /* Borda */
+  border-bottom: 2px solid #f0f0f0;
+}
+
+/* Número do puzzle */
+.puzzle-number {
+  font-size: 1.3em;
+  font-weight: 900;
+  color: #ffc107;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.puzzle-number::before {
+  content: "🏆";
+  font-size: 1.4em;
+  animation: rotateTrophy 4s ease-in-out infinite;
+}
+
+@keyframes rotateTrophy {
+  0%, 100% { 
+    transform: rotate(0deg); 
+  }
+  25% { 
+    transform: rotate(-12deg) scale(1.1); 
+  }
+  75% { 
+    transform: rotate(12deg) scale(1.1); 
+  }
+}
+
+/* Timestamp */
+.puzzle-timestamp {
+  font-size: 0.85em;
+  color: #6c757d;
+  font-weight: 600;
+  background: #f8f9fa;
+  padding: 5px 12px;
+  border-radius: 14px;
+  border: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+/* =============================================================
+   DETALHES DO PUZZLE
+   ============================================================= */
+
+.puzzle-details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+/* Linha de detalhe */
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+
+/* Label do campo */
+.detail-label {
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-label::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #ffc107;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+/* Valor do campo */
+.detail-value {
+  /* Layout */
+  width: 100%;
+  
+  /* Espaçamento */
+  padding: 12px 16px;
+  
+  /* Aparência */
+  font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+  font-size: 0.95em;
+  color: #212529;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  border-left: 5px solid #ffc107;
+  word-break: break-all;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  
+  /* Transições */
+  transition: all 0.3s ease;
+  
+  /* Seleção de texto */
+  user-select: all;
+}
+
+.detail-value:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  border-left-color: #ff9800;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.08);
+  transform: translateX(3px);
+}
+
+/* Variações de cor por tipo */
+.detail-value.address {
+  color: #28a745;
+  font-weight: 700;
+  border-left-color: #28a745;
+}
+
+.detail-value.address:hover {
+  border-left-color: #218838;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+}
+
+.detail-value.wif {
+  color: #007bff;
+  font-weight: 700;
+  border-left-color: #007bff;
+}
+
+.detail-value.wif:hover {
+  border-left-color: #0056b3;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+/* =============================================================
+   ESTADO VAZIO (Sem Puzzles Encontrados)
+   ============================================================= */
+
+.empty-state {
+  /* Layout */
+  width: 100%;
+  text-align: center;
+  
+  /* Espaçamento */
+  padding: 60px 30px;
+  
+  /* Aparência */
+  color: #6c757d;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 3px dashed #dee2e6;
+}
+
+.empty-state i {
+  font-size: 5em;
+  color: #dee2e6;
+  margin-bottom: 24px;
+  display: block;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-15px); 
+  }
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1.15em;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+/* =============================================================
+   ANIMAÇÃO DE ATUALIZAÇÃO (Quando Encontra Novo Puzzle)
+   ============================================================= */
+
+#puzzlesListModal.updating {
+  animation: updatePulse 0.7s ease-out;
+}
+
+@keyframes updatePulse {
+  0%, 100% { 
+    transform: translateY(-50%) scale(1); 
+  }
+  25% { 
+    transform: translateY(-50%) scale(1.03); 
+  }
+  75% { 
+    transform: translateY(-50%) scale(0.98); 
+  }
+}
+
+#puzzlesListModal.expanded.updating {
+  animation: updatePulseExpanded 0.7s ease-out;
+}
+
+@keyframes updatePulseExpanded {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  25% { 
+    transform: translate(-50%, -50%) scale(1.02); 
+  }
+  75% { 
+    transform: translate(-50%, -50%) scale(0.99); 
+  }
+}
+
+/* =============================================================
+   ANIMAÇÕES DE TRANSIÇÃO ENTRE ESTADOS
+   ============================================================= */
+
+/* Transição: Ticket → Expandido */
+#puzzlesListModal.ticket-to-expanded {
+  animation: ticketToExpanded 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes ticketToExpanded {
+  0% {
+    top: 50%;
+    right: 0;
+    left: auto;
+    transform: translateY(-50%);
+    width: 320px;
+    max-width: 90vw;
+    border-radius: 12px 0 0 12px;
+  }
+  100% {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px;
+    border-radius: 16px;
+  }
+}
+
+/* Transição: Expandido → Ticket */
+#puzzlesListModal.expanded-to-ticket {
+  animation: expandedToTicket 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes expandedToTicket {
+  0% {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 700px;
+    border-radius: 16px;
+  }
+  100% {
+    top: 50%;
+    right: 0;
+    left: auto;
+    transform: translateY(-50%);
+    width: 320px;
+    max-width: 90vw;
+    border-radius: 12px 0 0 12px;
+  }
+}
+
+/* =============================================================
+   RESPONSIVIDADE - TABLET (768px - 1024px)
+   ============================================================= */
+
+@media (max-width: 1024px) {
+  /* Ticket menor */
+  #puzzlesListModal.ticket {
+    width: 280px;
+  }
+  
+  /* Modal expandido ocupa mais espaço */
+  #puzzlesListModal.expanded {
+    width: 92%;
+    max-width: 650px;
+  }
+}
+
+/* =============================================================
+   RESPONSIVIDADE - MOBILE (até 768px)
+   ============================================================= */
+
+@media (max-width: 768px) {
+  /* Ticket ajustado */
+  #puzzlesListModal.ticket {
+    width: 260px;
+    max-width: 85vw;
+    max-height: 120px;
+  }
+  
+  /* Modal expandido maior */
+  #puzzlesListModal.expanded {
+    width: 95%;
+    max-width: 95vw;
+    max-height: 90vh;
+    border-radius: 12px;
+  }
+  
+  /* Header compacto */
+  .puzzles-modal-header {
+    padding: 12px 16px;
+  }
+  
+  #puzzlesModalTitle {
+    font-size: 0.95em;
+  }
+  
+  #puzzlesListModal.expanded #puzzlesModalTitle {
+    font-size: 1.2em;
+  }
+  
+  /* Botões menores */
+  .puzzles-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  
+  /* Badge menor */
+  .puzzle-count-badge {
+    min-width: 28px;
+    height: 28px;
+    font-size: 0.85em;
+  }
+  
+  /* Corpo ajustado */
+  #puzzlesListModal.expanded .puzzles-modal-body {
+    max-height: calc(90vh - 80px);
+    padding: 18px;
+  }
+  
+  /* Itens de puzzle */
+  .puzzle-item {
+    padding: 14px;
+  }
+  
+  .puzzle-number {
+    font-size: 1.1em;
+  }
+  
+  .puzzle-timestamp {
+    font-size: 0.75em;
+  }
+  
+  .detail-value {
+    font-size: 0.85em;
+    padding: 10px 12px;
+  }
+  
+  /* Scrollbar mais fina */
+  .puzzles-modal-body::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+
+/* =============================================================
+   RESPONSIVIDADE - MOBILE PEQUENO (até 480px)
+   ============================================================= */
+
+@media (max-width: 480px) {
+  /* Ticket ainda menor */
+  #puzzlesListModal.ticket {
+    width: 240px;
+    max-height: 110px;
+  }
+  
+  /* Modal expandido full screen */
+  #puzzlesListModal.expanded {
+    width: 98%;
+    max-height: 92vh;
+  }
+  
+  /* Header do puzzle em coluna */
+  .puzzle-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .puzzle-timestamp {
+    align-self: flex-end;
+  }
+  
+  /* Título compacto */
+  #puzzlesModalTitle {
+    font-size: 0.85em;
+    gap: 6px;
+  }
+  
+  /* Ícone do troféu menor */
+  #puzzlesModalTitle i.fa-trophy {
+    font-size: 1.2em;
+  }
+  
+  /* Empty state menor */
+  .empty-state {
+    padding: 40px 20px;
+  }
+  
+  .empty-state i {
+    font-size: 3.5em;
+  }
+}
+
+/* =============================================================
+   TEMA ESCURO (Auto-detectado)
+   ============================================================= */
+
+@media (prefers-color-scheme: dark) {
+  /* Modal expandido */
+  #puzzlesListModal.expanded {
+    background: #1e1e1e;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8),
+                0 10px 40px rgba(0, 0, 0, 0.6);
+  }
+  
+  /* Backdrop mais escuro */
+  #puzzlesListModal.expanded::before {
+    background: rgba(0, 0, 0, 0.85);
+  }
+  
+  /* Corpo do modal */
+  .puzzles-modal-body {
+    background: #121212;
+  }
+  
+  /* Items de puzzle */
+  .puzzle-item {
+    background: #2d2d2d;
+    border-color: #444;
+    border-left-color: #ffa726;
+  }
+  
+  .puzzle-item:hover {
+    box-shadow: 0 10px 30px rgba(255, 167, 38, 0.4);
+    border-left-color: #ff9800;
+  }
+  
+  /* Header do item */
+  .puzzle-header {
+    border-bottom-color: #444;
+  }
+  
+  /* Timestamp */
+  .puzzle-timestamp {
+    background: #2d2d2d;
+    border-color: #444;
+    color: #aaa;
+  }
+  
+  /* Labels */
+  .detail-label {
+    color: #bbb;
+  }
+  
+  /* Valores */
+  .detail-value {
+    background: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%);
+    color: #e0e0e0;
+    border-left-color: #ffa726;
+  }
+  
+  .detail-value:hover {
+    background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
+    border-left-color: #ff9800;
+  }
+  
+  .detail-value.address {
+    color: #4caf50;
+    border-left-color: #4caf50;
+  }
+  
+  .detail-value.address:hover {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  }
+  
+  .detail-value.wif {
+    color: #64b5f6;
+    border-left-color: #64b5f6;
+  }
+  
+  .detail-value.wif:hover {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+  }
+  
+  /* Estado vazio */
+  .empty-state {
+    background: #2d2d2d;
+    border-color: #444;
+    color: #888;
+  }
+  
+  .empty-state i {
+    color: #444;
+  }
+  
+  /* Scrollbar */
+  .puzzles-modal-body::-webkit-scrollbar-track {
+    background: #2d2d2d;
+  }
+  
+  .puzzles-modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+    border-color: #2d2d2d;
+  }
+  
+  .puzzles-modal-body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%);
+  }
+}
+
+/* =============================================================
+   ACESSIBILIDADE
+   ============================================================= */
+
+/* Redução de movimento para usuários sensíveis */
+@media (prefers-reduced-motion: reduce) {
+  #puzzlesListModal,
+  #puzzlesListModal *,
+  #puzzlesListModal *::before,
+  #puzzlesListModal *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Foco visível para navegação por teclado */
+*:focus-visible {
+  outline: 3px solid rgba(255, 193, 7, 0.6);
+  outline-offset: 2px;
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .puzzle-item {
+    border: 3px solid #000;
+  }
+  
+  .detail-value {
+    border-left-width: 6px;
+  }
+  
+  .puzzles-modal-header {
+    border-bottom: 4px solid #000;
+  }
+}
+
+/* =============================================================
+   PRINT (Oculta o modal ao imprimir)
+   ============================================================= */
+
+@media print {
+  #puzzlesListModal {
+    display: none !important;
+  }
+}
+
+/* Botão "Nenhuma" para desmarcar altura/base */
+.range-btn-none {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.range-btn-none:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.range-btn-none.active {
+  background: #bd2130 !important;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+}
+
+/* =============================================================
+   FIM DO CSS DO MODAL DE PUZZLES
+   ========================================================================
+   
+   Total de linhas: ~1100+
+   Tamanho aproximado: 35KB
+   
+   Compatibilidade:
+   - Chrome 90+
+   - Firefox 88+
+   - Safari 14+
+   - Edge 90+
+   
+   Características:
+   ✅ Sistema de 3 estados (oculto/ticket/expandido)
+   ✅ Animações suaves e profissionais
+   ✅ Responsividade completa
+   ✅ Tema escuro automático
+   ✅ Acessibilidade WCAG 2.1 AA
+   ✅ Redução de movimento
+   ✅ Alto contraste
+   ✅ Suporte a impressão
+   
+   ======================================================================== */

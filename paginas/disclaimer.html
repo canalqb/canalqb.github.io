@@ -1,0 +1,60 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>⚠️ Disclaimer</h1>
+  <p class="subtitle">Informações legais e de uso</p>
+</div>
+
+<section class="control-card">
+  <h2>Uso exclusivamente educacional</h2>
+  <p>
+    Esta ferramenta <strong>não gera chaves seguras para uso em produção</strong>. 
+    Toda a lógica executa no navegador e NUNCA deve ser usada para armazenar Bitcoin real.
+  </p>
+  <p>
+    O criador <strong>não se responsabiliza</strong> por perda de fundos, danos ou prejuízos 
+    decorrentes do uso indevido desta ferramenta.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>Sobre o Puzzle 1000 BTC</h2>
+  <p>
+    O "Puzzle 1000 BTC" é um desafio criptográfico criado por terceiros. 
+    Nosso site apenas <strong>educa</strong> sobre o funcionamento do mesmo. 
+    Não somos afiliados ao criador do puzzle nem responsáveis por sua segurança.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>Isenção de responsabilidade</h2>
+  <p>
+    O uso deste site é por sua própria conta e risco. O conteúdo é fornecido "como está", 
+    sem garantias de qualquer tipo, expressas ou implícitas.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

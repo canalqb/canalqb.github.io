@@ -1,0 +1,49 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>🚫 Não Vendemos Seus Dados</h1>
+  <p class="subtitle">Compromisso com sua privacidade</p>
+</div>
+
+<section class="control-card">
+  <p>
+    <strong>Nós não vendemos, alugamos, trocamos ou compartilhamos seus dados pessoais com terceiros.</strong>
+  </p>
+  <p>
+    Isso inclui:
+    <ul>
+      <li>Dados de navegação;</li>
+      <li>Preferências de cookies;</li>
+      <li>Informações de dispositivo;</li>
+      <li>Endereços IP (não armazenados).</li>
+    </ul>
+  </p>
+  <p>
+    Mesmo se coletássemos dados (o que não fazemos), esta política proibiria sua venda.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>

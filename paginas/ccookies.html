@@ -1,0 +1,111 @@
+<!--
+  📌 PROMPT PARA NOVAS PÁGINAS
+-->
+<div class="hero-section">
+  <h1>🍪 Política de Cookies</h1>
+  <p class="subtitle">Como usamos cookies e tecnologias de rastreamento neste site educacional</p>
+</div>
+
+<section class="control-card">
+  <h2>O que são cookies?</h2>
+  <p>
+    Cookies são pequenos arquivos de texto armazenados no seu dispositivo quando você visita um site. 
+    Eles permitem que o site lembre suas ações e preferências (como login, idioma, tamanho da fonte, etc.) 
+    por um período de tempo, para que você não precise reinseri-las ao navegar de uma página para outra.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>Cookies utilizados neste site</h2>
+  <ul>
+    <li>
+      <strong>Necessários</strong><br>
+      <span class="small text-muted">Essenciais para o funcionamento básico do site (ex: lembrar seu consentimento). Sempre ativados. Não podem ser desativados.</span>
+    </li>
+    <li>
+      <strong>Analytics (Google Analytics)</strong><br>
+      <span class="small text-muted">Coletam dados anônimos sobre como você usa o site (páginas visitadas, tempo, origem). Usamos para melhorar a experiência educacional.</span>
+    </li>
+    <li>
+      <strong>Marketing (Google AdSense)</strong><br>
+      <span class="small text-muted">Permite exibir anúncios relevantes com base em seu comportamento. Essencial para a monetização que sustenta este projeto educacional gratuito.</span>
+    </li>
+    <li>
+      <strong>Preferências</strong><br>
+      <span class="small text-muted">Memoriza suas escolhas (ex: configurações do gerador de chaves) para visitas futuras.</span>
+    </li>
+  </ul>
+</section>
+
+<section class="control-card">
+  <h2>Como gerenciar suas preferências?</h2>
+  <p>
+    Você pode alterar ou retirar seu consentimento a qualquer momento:
+  </p>
+  <ol>
+    <li>Clique no link <strong>“Preferências de Cookies”</strong> no canto inferior direito da tela;</li>
+    <li>Marque ou desmarque as categorias que deseja permitir;</li>
+    <li>Clique em <strong>“Salvar Preferências”</strong>.</li>
+  </ol>
+</section>
+
+<section class="control-card">
+  <h2>Controle via navegador</h2>
+  <p>
+    Além do painel integrado, você pode:
+  </p>
+  <ul>
+    <li><strong>Excluir cookies</strong> nas configurações do seu navegador;</li>
+    <li><strong>Bloquear cookies de terceiros</strong> nas configurações de privacidade;</li>
+    <li><strong>Usar modo anônimo</strong> (navegação privativa);</li>
+    <li><strong>Instalar extensões</strong> como uBlock Origin, Privacy Badger ou Ghostery.</li>
+  </ul>
+</section>
+
+<section class="control-card">
+  <h2>Compromisso com a educação e segurança</h2>
+  <p>
+    Este site <strong>não coleta dados pessoais</strong>, <strong>não armazena chaves privadas</strong> e 
+    <strong>não compartilha dados com terceiros fora do escopo do consentimento</strong>. 
+    Toda a geração de chaves ocorre localmente no seu navegador.
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>Última atualização</h2>
+  <p>
+    Esta política foi revisada em: <strong>25 de dezembro de 2025</strong>.
+  </p>
+</section>
+
+<div class="text-center mt-5">
+  <a href="#" id="homeButton" class="btn-custom btn-start">
+    <i class="fas fa-home"></i> Voltar à Página Inicial
+  </a>
+</div>
+<!-- Exemplo: na sidebar direita -->
+<div class="sidebar-widget">
+  <h4><i class="fas fa-cookie-bite"></i> Privacidade</h4>
+  <p style="font-size:0.9em;">
+    <a href="#" id="open-cookie-preferences" style="color:#28a745; text-decoration: underline;">
+      <i class="fas fa-user-shield"></i> Preferências de Cookies
+    </a>
+  </p>
+</div>
+<script>
+  (function() {
+    function getRootUrl() {
+      const path = window.location.pathname;
+      const root = path.includes('/paginas/') 
+        ? path.substring(0, path.indexOf('/paginas/') + 1)
+        : path.substring(0, path.lastIndexOf('/') + 1) || '/';
+      return window.location.origin + root;
+    }
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('#homeButton')) {
+        e.preventDefault();
+        window.location.href = getRootUrl();
+      }
+    });
+  })();
+</script>
