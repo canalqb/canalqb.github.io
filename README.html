@@ -135,13 +135,12 @@
                                        placeholder="ex: Puzzle Bitcoin Finder" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="accessType" class="form-label">
-                                    <i class="fas fa-lock"></i> Tipo de Acesso
+                                <label for="tableType" class="form-label">
+                                    <i class="fas fa-tag"></i> Tipo de Tabela
                                 </label>
-                                <select class="form-select" id="accessType" required>
-                                    <option value="public">Público (leitura/escrita)</option>
-                                    <option value="read-only">Somente leitura pública</option>
-                                    <option value="restricted">Acesso restrito</option>
+                                <select class="form-select" id="tableType" required>
+                                    <option value="normal">Normal (sem prefixo)</option>
+                                    <option value="chat">Chat (com prefixo ovo_ia_)</option>
                                 </select>
                             </div>
                         </div>
@@ -538,8 +537,9 @@
             const tableName = document.getElementById('tableName').value;
             const purpose = document.getElementById('tablePurpose').value;
             const project = document.getElementById('projectName').value;
-            const accessType = document.getElementById('accessType').value;
+            const tableType = document.getElementById('tableType').value;
             const uniqueIndex = document.getElementById('uniqueIndex').checked;
+            const compositeIndex = document.getElementById('compositeIndex').checked;
             
             // Coletar campos
             const fields = [];
@@ -561,8 +561,9 @@
                 purpose,
                 project,
                 fields,
-                accessType,
-                uniqueIndex
+                tableType,
+                uniqueIndex,
+                compositeIndex
             });
 
             return sql;
@@ -570,7 +571,10 @@
 
         // Gerar SQL a partir do template
         function generateSQLFromTemplate(params) {
-            const { tableName, purpose, project, fields, accessType, uniqueIndex } = params;
+            const { tableName, purpose, project, fields, tableType, uniqueIndex, compositeIndex } = params;
+            
+            // Determinar prefixo
+            const prefixo = tableType === 'chat' ? 'ovo_ia_' : '';
             
             // Campos SQL
             let fieldsSQL = '';
@@ -583,7 +587,7 @@
             fields.forEach(field => {
                 if (field.type.includes('VARCHAR') && field.type.match(/\d+/)) {
                     const length = field.type.match(/\d+/)[0];
-                    constraintsSQL += `    CONSTRAINT ovo_ia_${tableName}_${field.name}_check \n        CHECK (length(${field.name}) = ${length}),\n`;
+                    constraintsSQL += `    CONSTRAINT ${prefixo}${tableName}_${field.name}_check \n        CHECK (length(${field.name}) = ${length}),\n`;
                 }
             });
 
@@ -591,9 +595,9 @@
             let indexesSQL = '';
             fields.forEach(field => {
                 if (field.type.includes('VARCHAR') || field.type.includes('TEXT')) {
-                    indexesSQL += `CREATE INDEX IF NOT EXISTS idx_ovo_ia_${tableName}_${field.name} ON ovo_ia_${tableName} USING hash (${field.name});\n`;
+                    indexesSQL += `CREATE INDEX IF NOT EXISTS idx_${prefixo}${tableName}_${field.name} ON ${prefixo}${tableName} USING hash (${field.name});\n`;
                 } else {
-                    indexesSQL += `CREATE INDEX IF NOT EXISTS idx_ovo_ia_${tableName}_${field.name} ON ovo_ia_${tableName}(${field.name});\n`;
+                    indexesSQL += `CREATE INDEX IF NOT EXISTS idx_${prefixo}${tableName}_${field.name} ON ${prefixo}${tableName}(${field.name});\n`;
                 }
             });
 
@@ -601,20 +605,16 @@
             let uniqueSQL = '';
             if (uniqueIndex && fields.length > 0) {
                 const firstField = fields[0].name;
-                uniqueSQL = `DO $$\nBEGIN\n    IF NOT EXISTS (\n        SELECT 1 FROM pg_constraint \n        WHERE conname = 'ovo_ia_${tableName}_${firstField}_unique'\n    ) THEN\n        ALTER TABLE ovo_ia_${tableName} \n        ADD CONSTRAINT ovo_ia_${tableName}_${firstField}_unique \n        UNIQUE (${firstField});\n    END IF;\nEND $$;\n\n`;
+                uniqueSQL = `DO $$\nBEGIN\n    IF NOT EXISTS (\n        SELECT 1 FROM pg_constraint \n        WHERE conname = '${prefixo}${tableName}_${firstField}_unique'\n    ) THEN\n        ALTER TABLE ${prefixo}${tableName} \n        ADD CONSTRAINT ${prefixo}${tableName}_${firstField}_unique \n        UNIQUE (${firstField});\n    END IF;\nEND $$;\n\n`;
             }
 
             // RLS Policies
             let rlsSQL = '';
-            if (accessType === 'public') {
-                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ovo_ia_${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir inserções públicas\nCREATE POLICY "Allow insert ${tableName}" ON ovo_ia_${tableName}\n    FOR INSERT\n    TO anon\n    WITH CHECK (true);\n\n-- Política para permitir leituras públicas\nCREATE POLICY "Allow read ${tableName}" ON ovo_ia_${tableName}\n    FOR SELECT\n    TO anon\n    USING (true);\n\n-- Política para permitir atualizações apenas pelo serviço\nCREATE POLICY "Allow service updates" ON ovo_ia_${tableName}\n    FOR UPDATE\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n\n-- Política para permitir exclusões apenas pelo serviço\nCREATE POLICY "Allow service deletes" ON ovo_ia_${tableName}\n    FOR DELETE\n    TO service_role\n    USING (true);\n`;
-            } else if (accessType === 'read-only') {
-                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ovo_ia_${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir leituras públicas\nCREATE POLICY "Allow read ${tableName}" ON ovo_ia_${tableName}\n    FOR SELECT\n    TO anon\n    USING (true);\n\n-- Política para permitir operações completas ao serviço\nCREATE POLICY "Allow service ${tableName}" ON ovo_ia_${tableName}\n    FOR ALL\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n`;
-            } else {
-                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ovo_ia_${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir operações apenas ao serviço\nCREATE POLICY "Allow service ${tableName}" ON ovo_ia_${tableName}\n    FOR ALL\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n`;
+            if (tableType === 'chat') {
+                rlsSQL = `-- POLÍTICA DE SEGURANÇA (RLS - Row Level Security)\nALTER TABLE ${prefixo}${tableName} ENABLE ROW LEVEL SECURITY;\n\n-- Política para permitir inserções públicas\nCREATE POLICY "Allow insert ${tableName}" ON ${prefixo}${tableName}\n    FOR INSERT\n    TO anon\n    WITH CHECK (true);\n\n-- Política para permitir leituras públicas\nCREATE POLICY "Allow read ${tableName}" ON ${prefixo}${tableName}\n    FOR SELECT\n    TO anon\n    USING (true);\n\n-- Política para permitir atualizações apenas pelo serviço\nCREATE POLICY "Allow service updates" ON ${prefixo}${tableName}\n    FOR UPDATE\n    TO service_role\n    USING (true)\n    WITH CHECK (true);\n\n-- Política para permitir exclusões apenas pelo serviço\nCREATE POLICY "Allow service deletes" ON ${prefixo}${tableName}\n    FOR DELETE\n    TO service_role\n    USING (true);\n`;
             }
 
-            return `-- ============================================\n-- TABELA: ${purpose.toUpperCase()}\n-- ============================================\n-- Finalidade: ${purpose}\n-- Prefixo: ovo_ia_ (conforme regras do usuário)\n-- Projeto: ${project}\n\nCREATE TABLE IF NOT EXISTS ovo_ia_${tableName} (\n    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n    \n${fieldsSQL}    -- Controle e Auditoria\n    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n    \n${constraintsSQL});\n\n-- ÍNDICES OTIMIZADOS\n${indexesSQL}\n-- ${uniqueIndex ? '-- ÍNDICE UNIQUE' : ''}\n${uniqueSQL}\n-- TRIGGER PARA ATUALIZAR updated_at AUTOMATICAMENTE\nCREATE OR REPLACE FUNCTION update_ovo_ia_${tableName}_updated_at()\nRETURNS TRIGGER AS $$\nBEGIN\n    NEW.updated_at = NOW();\n    RETURN NEW;\nEND;\n$$ language 'plpgsql';\n\nCREATE TRIGGER trigger_ovo_ia_${tableName}_updated_at\n    BEFORE UPDATE ON ovo_ia_${tableName}\n    FOR EACH ROW\n    EXECUTE FUNCTION update_ovo_ia_${tableName}_updated_at();\n\n-- COMENTÁRIOS\nCOMMENT ON TABLE ovo_ia_${tableName} IS '${purpose}';\n${fields.map(field => `COMMENT ON COLUMN ovo_ia_${tableName}.${field.name} IS '${field.description}';`).join('\n')}\n\n${rlsSQL}`;
+            return `-- ============================================\n-- TABELA: ${purpose.toUpperCase()}\n-- ============================================\n-- Finalidade: ${purpose}\n-- Prefixo: ${prefixo || '(nenhum)'}\n-- Projeto: ${project}\n\nCREATE TABLE IF NOT EXISTS ${prefixo}${tableName} (\n    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,\n    \n${fieldsSQL}    -- Controle e Auditoria\n    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),\n    \n${constraintsSQL});\n\n-- ÍNDICES OTIMIZADOS\n${indexesSQL}\n-- ${uniqueIndex ? '-- ÍNDICE UNIQUE' : ''}\n${uniqueSQL}\n-- TRIGGER PARA ATUALIZAR updated_at AUTOMATICAMENTE\nCREATE OR REPLACE FUNCTION update_${prefixo}${tableName}_updated_at()\nRETURNS TRIGGER AS $$\nBEGIN\n    NEW.updated_at = NOW();\n    RETURN NEW;\nEND;\n$$ language 'plpgsql';\n\nCREATE TRIGGER trigger_${prefixo}${tableName}_updated_at\n    BEFORE UPDATE ON ${prefixo}${tableName}\n    FOR EACH ROW\n    EXECUTE FUNCTION update_${prefixo}${tableName}_updated_at();\n\n-- COMENTÁRIOS\nCOMMENT ON TABLE ${prefixo}${tableName} IS '${purpose}';\n${fields.map(field => `COMMENT ON COLUMN ${prefixo}${tableName}.${field.name} IS '${field.description}';`).join('\n')}\n\n${rlsSQL}`;
         }
 
         // Copiar SQL

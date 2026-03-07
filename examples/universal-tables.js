@@ -14,9 +14,10 @@
 // ============================================
 // 🏗️ TEMPLATE BASE PARA MANAGERS
 // ============================================
-class OvoIaTableManager {
-  constructor(tableName, supabaseUrl, supabaseKey) {
-    this.tableName = `ovo_ia_${tableName}`;
+class TableManager {
+  constructor(tableName, supabaseUrl, supabaseKey, isChatTable = false) {
+    this.prefixo = isChatTable ? 'ovo_ia_' : '';
+    this.tableName = `${this.prefixo}${tableName}`;
     this.supabaseUrl = supabaseUrl;
     this.supabaseKey = supabaseKey;
     this.apiVersion = 'v20240301';
@@ -303,9 +304,9 @@ class OvoIaTableManager {
 // ============================================
 // 🧩 EXEMPLO: MANAGER DE PUZZLES
 // ============================================
-class OvoIaPuzzlesManager extends OvoIaTableManager {
+class PuzzlesManager extends TableManager {
   constructor(supabaseUrl, supabaseKey) {
-    super('puzzles_encontrados', supabaseUrl, supabaseKey);
+    super('puzzles_encontrados', supabaseUrl, supabaseKey, false);
   }
 
   /**
@@ -408,9 +409,9 @@ class OvoIaPuzzlesManager extends OvoIaTableManager {
 // ============================================
 // 📊 EXEMPLO: MANAGER DE ESTATÍSTICAS
 // ============================================
-class OvoIaStatisticsManager extends OvoIaTableManager {
+class StatisticsManager extends TableManager {
   constructor(supabaseUrl, supabaseKey) {
-    super('estatisticas', supabaseUrl, supabaseKey);
+    super('statistics', supabaseUrl, supabaseKey, false);
   }
 
   /**
@@ -471,9 +472,9 @@ class OvoIaStatisticsManager extends OvoIaTableManager {
 // ============================================
 // 📝 EXEMPLO: MANAGER DE LOGS
 // ============================================
-class OvoIaLogsManager extends OvoIaTableManager {
+class LogsManager extends TableManager {
   constructor(supabaseUrl, supabaseKey) {
-    super('logs_processamento', supabaseUrl, supabaseKey);
+    super('logs_processamento', supabaseUrl, supabaseKey, false);
   }
 
   /**
@@ -562,32 +563,36 @@ class OvoIaLogsManager extends OvoIaTableManager {
 // ============================================
 // 🚀 EXPORTAÇÃO E USO
 // ============================================
-window.OvoIaExamples = {
+window.TableExamples = {
   // Classes base
-  OvoIaTableManager,
-  
+  TableManager,  
   // Managers específicos
-  OvoIaPuzzlesManager,
-  OvoIaStatisticsManager,
-  OvoIaLogsManager,
+  PuzzlesManager,
+  StatisticsManager,
+  LogsManager,
   
   // Factory para criar managers
-  createManager: (tableName, supabaseUrl, supabaseKey) => {
-    return new OvoIaTableManager(tableName, supabaseUrl, supabaseKey);
+  createManager: (tableName, supabaseUrl, supabaseKey, isChatTable = false) => {
+    return new TableManager(tableName, supabaseUrl, supabaseKey, isChatTable);
   },
   
-  // Factory para managers especializados
+  // Factory para managers específicos
   createPuzzlesManager: (supabaseUrl, supabaseKey) => {
-    return new OvoIaPuzzlesManager(supabaseUrl, supabaseKey);
+    return new PuzzlesManager(supabaseUrl, supabaseKey);
   },
   
   createStatisticsManager: (supabaseUrl, supabaseKey) => {
-    return new OvoIaStatisticsManager(supabaseUrl, supabaseKey);
+    return new StatisticsManager(supabaseUrl, supabaseKey);
   },
   
   createLogsManager: (supabaseUrl, supabaseKey) => {
-    return new OvoIaLogsManager(supabaseUrl, supabaseKey);
+    return new LogsManager(supabaseUrl, supabaseKey);
+  },
+  
+  // Factory para tabelas de chat (com prefixo)
+  createChatManager: (tableName, supabaseUrl, supabaseKey) => {
+    return new TableManager(tableName, supabaseUrl, supabaseKey, true);
   }
 };
 
-console.log('✅ Exemplos universais de tabelas carregados. Use window.OvoIaExamples');
+console.log('✅ Exemplos universais de tabelas carregados. Use window.TableExamples');

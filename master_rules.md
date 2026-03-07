@@ -9,12 +9,12 @@ Definir regras e padrões para desenvolvimento de projetos OVO IA, garantindo co
 ## 🗄️ REGRAS DE BANCO DE DADOS
 
 ### **🔧 Nomenclatura de Tabelas:**
-- **Prefixo Obrigatório**: `ovo_ia_`
-- **Formato**: `ovo_ia_{nome_descritivo_snake_case}`
+- **Tabelas Normais**: Sem prefixo (ex: `puzzles_encontrados`)
+- **Tabelas de Chat**: Prefixo `ovo_ia_` (ex: `ovo_ia_chat_messages`)
+- **Formato**: `snake_case`
 - **Exemplos**: 
-  - `ovo_ia_puzzles_encontrados`
-  - `ovo_ia_estatisticas`
-  - `ovo_ia_logs_processamento`
+  - Normal: `puzzles_encontrados`, `statistics`, `logs_processamento`
+  - Chat: `ovo_ia_chat_messages`, `ovo_ia_user_sessions`
 
 ### **📋 Campos Obrigatórios:**
 ```sql
@@ -24,7 +24,8 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ```
 
 ### **🔐 Segurança (RLS):**
-- **Sempre habilitado**: `ALTER TABLE ovo_ia_* ENABLE ROW LEVEL SECURITY`
+- **Tabelas Normais**: Sem RLS (acesso aberto)
+- **Tabelas de Chat**: RLS habilitado
 - **Políticas mínimas**: 
   - `INSERT` para `anon` (dados públicos)
   - `SELECT` para `anon` (leitura pública)
@@ -41,7 +42,7 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ### **🗄️ SQL Template:**
 - **Arquivo**: `templates/sql-template.md`
 - **Finalidade**: Template universal para criação de tabelas
-- **Variáveis**: `{{NOME_TABELA}}`, `{{FINALIDADE}}`, etc.
+- **Variáveis**: `{{NOME_TABELA}}`, `{{FINALIDADE}}`, `{{PREFIXO}}`, etc.
 - **Uso**: Copiar, substituir variáveis, executar
 
 ### **📋 Exemplos Universais:**
@@ -61,7 +62,7 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
    - Nome da tabela
    - Finalidade
    - Campos necessários
-   - Tipo de acesso (público/restrito)
+   - Tipo de tabela (normal/chat)
 
 ### **📋 Passo 2: Geração Automática**
 1. **Sistema**: Lê `master_rules.md`
@@ -112,11 +113,11 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ## 📋 VALIDAÇÃO AUTOMÁTICA
 
 ### **✅ Checklist SQL:**
-- [ ] Prefixo `ovo_ia_` presente
+- [ ] Prefixo correto para tipo de tabela
 - [ ] Nomenclatura snake_case
 - [ ] Campos obrigatórios incluídos
 - [ ] Índices otimizados
-- [ ] RLS configurado
+- [ ] RLS configurado (apenas chat)
 - [ ] Comentários documentados
 
 ### **✅ Checklist JavaScript:**
@@ -152,29 +153,34 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 
 ## 📋 EXEMPLOS UNIVERSAIS
 
-### **🧩 Tabela de Puzzles:**
+### **🧩 Tabela Normal (sem prefixo):**
 - **Finalidade**: Registrar WIFs encontrados
+- **Nome**: `puzzles_encontrados`
 - **Campos**: hex_private_key, wif_compressed, mode, etc.
 - **Índices**: hash para chaves, btree para consultas
-- **Segurança**: Pública para leitura, restrita para escrita
+- **Segurança**: Pública para leitura/escrita
 
 ### **📊 Tabela de Estatísticas:**
 - **Finalidade**: Contadores e métricas
+- **Nome**: `statistics`
 - **Campos**: preset, total_puzzles, last_discovery
 - **Índices**: unique em preset
 - **Segurança**: Pública para leitura
 
 ### **📝 Tabela de Logs:**
 - **Finalidade**: Auditoria de processos
+- **Nome**: `logs_processamento`
 - **Campos**: timestamp, action, details, user_id
 - **Índices**: timestamp, action
 - **Segurança**: Restrita ao serviço
 
-### **⚙️ Tabela de Configurações:**
-- **Finalidade**: Parâmetros do sistema
-- **Campos**: key, value, description
-- **Índices**: unique em key
-- **Segurança**: Pública para leitura
+### **💬 Tabela de Chat (com prefixo):**
+- **Finalidade**: Mensagens do chat
+- **Nome**: `ovo_ia_chat_messages`
+- **Prefixo**: `ovo_ia_`
+- **Campos**: message, role, timestamp, session_id
+- **Índices**: timestamp, session_id
+- **Segurança**: RLS habilitado
 
 ---
 
@@ -251,5 +257,6 @@ Este documento serve como fonte única de verdade para desenvolvimento no projet
 ✅ **Produtividade** com templates e exemplos  
 ✅ **Manutenibilidade** com documentação clara  
 ✅ **Segurança** com melhores práticas  
+✅ **Flexibilidade** para diferentes tipos de tabelas  
 
 **Todos os desenvolvedores devem seguir estas regras rigorosamente.** 🎯✨
