@@ -51,8 +51,9 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 - [ ] `regra_php_component_hanging_icons.md`
 - [ ] `regra_php_component_custom_cards.md`
 - [ ] `regra_php_component_icon_grid.md`
+- [x] `estrutura_sql_criacao_tabelas.md` 
 
-### 🎨 Modelos e Exemplos (`regras/templates_php/`)
+### Modelos e Exemplos (`regras/templates_php/`)
 - [ ] `estrutura_abnt_doc_modelo_trabalho.md`
 - [ ] `estrutura_php_web_standards_checklist.md`
 - [ ] `estrutura_php_workflow_criacao_paginas.md`
@@ -77,8 +78,8 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 - [ ] `estrutura_php_component_custom_cards.php`
 - [ ] `estrutura_php_component_icon_grid.php`
 
-### 🤖 Configurações de IA e OS (`regras/prompt_de_llms/`)
-- [ ] `regra_llms_windows_powershel_cmd.md`
+### Configurações de IA e OS (`regras/prompt_de_llms/`)
+- [ ] `regra_llms_windows_powershell_cmd.md`
 - [ ] `regra_llms_comandos_proibidos.md`
 - [ ] `regra_llms_handoff_continuidade_projeto.md`
 - [ ] `regra_llms_correcao_otimizacao_sistema.md`
@@ -87,13 +88,14 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 - [ ] `regra_llms_estado_projeto_contexto.json`
 - [ ] `regra_llms_windows_admin_seo.md`
 - [ ] `regra_llms_windows_admin_layout.md`
-- [ ] `regra_llms_metricas_qualidade_severa.md` 🚨 **REGRA SEVERA OBRIGATÓRIA**
+- [ ] `regra_llms_metricas_qualidade_severa.md` 
+- [x] `regra_llms_criacao_tabelas_supabase.md` 
 
 ---
 
-## 🎨 6. Páginas Administrativas Universais
+## 6. Páginas Administrativas Universais
 
-### 📋 Sistema de Criação de Páginas Admin
+### Sistema de Criação de Páginas Admin
 O LLM deve **obrigatoriamente** usar os templates universais para criar páginas administrativas:
 
 **🎯 Templates Disponíveis:**
