@@ -49,6 +49,9 @@
   <link rel="stylesheet" href="css/database-status.css" />
   <link rel="stylesheet" href="css/background-processor-styles.css" />
 
+  <!-- Theme Manager -->
+  <script src="js/theme-manager.js"></script>
+
   <!-- BitcoinJS -->
   <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
 
@@ -135,6 +138,12 @@
         rel="noopener noreferrer" aria-label="Visitar sistema de troca de inscritos">
         <i class="fas fa-right-left" aria-hidden="true"></i> Troca de Inscritos
       </a>
+
+      <!-- Botão de Troca de Tema -->
+      <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2" 
+              aria-label="Alternar tema claro/escuro" title="Alternar tema">
+        <i class="fas fa-moon" id="theme-icon"></i>
+      </button>
 
       <!-- 🔧 BANNER DE DESENVOLVIMENTO - INTEGRADO AO NAV -->
       <div id="dev-banner" style="
