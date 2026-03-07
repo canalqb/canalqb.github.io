@@ -77,6 +77,7 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 - [ ] `estrutura_php_component_hanging_icons.php`
 - [ ] `estrutura_php_component_custom_cards.php`
 - [ ] `estrutura_php_component_icon_grid.php`
+- [x] `estrutura_readme_atualizacao_template.md`
 
 ### Configurações de IA e OS (`regras/prompt_de_llms/`)
 - [ ] `regra_llms_windows_powershell_cmd.md`
@@ -182,12 +183,14 @@ O LLM deve **obrigatoriamente** usar os templates universais para criar componen
    - **Alternância:** Permitir troca dinâmica entre temas
    - **Persistência:** Salvar preferência do usuário
 10. **Documentação no README.html**: Ao criar qualquer novo template, regra ou prompt, é **obrigatório** adicionar uma seção simplificada no arquivo `readme.html`:
-    - **Localização:** `c:/xampp/htdocs/pizzaria/regras/readme.html`
+    - **Localização:** `c:/xampp/htdocs/canalqb.github.io/regras/readme.html`
     - **Formato:** Seção simplificada com cards, tabelas ou callouts
     - **Conteúdo:** Nome do arquivo, uso principal, tipo, exemplo de solicitação
     - **Busca:** Incluir `data-search` com palavras-chave para busca
     - **Atualização:** Manter estrutura visual consistente com o design existente
     - **Categorias:** Adicionar nas seções apropriadas (Regras, Templates, Componentes)
+    - **Validação Obrigatória:** Toda criação de template/prompt deve ser validada e documentada no README.html antes de finalizar
+    - **Processo Automático:** Ao finalizar criação, o LLM deve automaticamente orientar o usuário a verificar/atualizar o README.html
 
 **🚨 ESTE ARQUIVO SOBREPÕE QUALQUER OUTRA REGRA!**
 **📖 VARRER RECURSIVAMENTE A PASTA /REGRAS/ ANTES DE QUALQUER AÇÃO!**
