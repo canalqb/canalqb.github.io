@@ -18,16 +18,16 @@ class ConfigManager {
    */
   detectLocalEnvironment() {
     const hostname = window.location.hostname;
-    const isLocal = hostname === 'localhost' || 
-                   hostname === '127.0.0.1' || 
-                   hostname === '0.0.0.0' ||
-                   hostname.includes('192.168.') ||
-                   hostname.includes('10.') ||
-                   hostname.includes('172.');
-    
+    const isLocal = hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '0.0.0.0' ||
+      hostname.includes('192.168.') ||
+      hostname.includes('10.') ||
+      hostname.includes('172.');
+
     console.log(`🔍 Ambiente detectado: ${isLocal ? 'LOCAL (XAMPP)' : 'PRODUÇÃO'}`);
     console.log(`🌐 Hostname: ${hostname}`);
-    
+
     return isLocal;
   }
 
@@ -67,7 +67,7 @@ class ConfigManager {
       // Configurações para ambiente de produção (GitHub Pages)
       // Tenta carregar dos secrets do GitHub
       const githubSecrets = this.loadGitHubSecrets();
-      
+
       if (githubSecrets) {
         return {
           supabase: {
@@ -137,7 +137,7 @@ class ConfigManager {
       console.log('🔑 Secrets do GitHub carregados via Config Manager');
       return secrets;
     }
-    
+
     // Verifica se as variáveis foram injetadas diretamente
     if (typeof window.SUPABASE_URL !== 'undefined' && typeof window.SUPABASE_KEY !== 'undefined') {
       console.log('🔑 Secrets do GitHub encontrados como variáveis globais');
@@ -146,7 +146,7 @@ class ConfigManager {
         SUPABASE_KEY: window.SUPABASE_KEY
       };
     }
-    
+
     console.log('🚫 Secrets do GitHub não disponíveis');
     return null;
   }
@@ -294,51 +294,6 @@ class ConfigManager {
       timestamp: new Date().toISOString()
     };
   }
-
-  /**
-   * Cria um banner informativo no ambiente de desenvolvimento
-   */
-  showDevelopmentBanner() {
-    if (!this.isLocal) return;
-
-    const banner = document.createElement('div');
-    banner.id = 'dev-banner';
-    banner.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(90deg, #28a745, #20c997);
-      color: white;
-      padding: 8px 16px;
-      text-align: center;
-      font-size: 12px;
-      font-weight: 600;
-      z-index: 10000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    `;
-    
-    banner.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-        <span>🔧</span>
-        <span>Ambiente de Desenvolvimento (XAMPP)</span>
-        <span>•</span>
-        <span>Supabase: ATIVO</span>
-        <span>•</span>
-        <span>Debug: ON</span>
-        <button onclick="this.parentElement.parentElement.remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 2px 8px; border-radius: 4px; cursor: pointer; margin-left: 10px;">×</button>
-      </div>
-    `;
-    
-    document.body.appendChild(banner);
-    
-    // Remove automaticamente após 10 segundos
-    setTimeout(() => {
-      if (banner.parentNode) {
-        banner.remove();
-      }
-    }, 10000);
-  }
 }
 
 // Instância global do Config Manager
@@ -356,12 +311,5 @@ window.ConfigManager = {
   clearLocal: () => window.configManager.clearLocalConfig(),
   getEnvironment: () => window.configManager.getEnvironmentInfo()
 };
-
-// Mostra banner de desenvolvimento se estiver em ambiente local
-if (window.configManager.isLocal) {
-  setTimeout(() => {
-    window.configManager.showDevelopmentBanner();
-  }, 1000);
-}
 
 console.log('🔧 Config Manager API disponível globalmente');

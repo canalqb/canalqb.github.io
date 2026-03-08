@@ -139,60 +139,37 @@
         <i class="fas fa-right-left" aria-hidden="true"></i> Troca de Inscritos
       </a>
 
-      <!-- Botão de Troca de Tema -->
-      <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2" 
-              aria-label="Alternar tema claro/escuro" title="Alternar tema">
-        <i class="fas fa-moon" id="theme-icon"></i>
+      <!-- Botão para Ver Carteiras Localizadas -->
+      <button onclick="if(window.PuzzleFinder) window.PuzzleFinder.showModal()"
+        class="btn btn-warning btn-sm ms-2 fw-bold" title="Ver carteiras encontradas no banco de dados">
+        <i class="fas fa-trophy"></i> Localizadas
       </button>
 
-      <!-- 🔧 BANNER DE DESENVOLVIMENTO - INTEGRADO AO NAV -->
-      <div id="dev-banner" style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        background: linear-gradient(90deg, rgba(40, 167, 69, 0.9), rgba(32, 201, 151, 0.9));
-        color: white;
-        padding: 4px 12px;
-        font-size: 11px;
-        font-weight: 600;
-        border-radius: 4px;
-        margin: 0 10px;
-        transition: all 0.3s ease;
-      " title="Ambiente de Desenvolvimento - XAMPP">
-        <span>🔧</span>
-        <span>Dev (XAMPP)</span>
-        <span>•</span>
-        <span>Supabase: ATIVO</span>
-        <span>•</span>
-        <span>Debug: ON</span>
-        <button onclick="this.parentElement.style.display='none'" style="
-          background: rgba(255,255,255,0.2);
-          border: none;
-          color: white;
-          padding: 2px 6px;
-          border-radius: 3px;
-          cursor: pointer;
-          margin-left: 8px;
-          font-size: 10px;
-        " title="Fechar banner">×</button>
-      </div>
-
-      <!-- 🚀 AUTO-REMOVE BANNER APÓS TEMPO -->
-      <script>
-        // Remove o banner de desenvolvimento automaticamente após 10 segundos
-        setTimeout(() => {
-          const devBanner = document.getElementById('dev-banner');
-          if (devBanner) {
-            devBanner.style.opacity = '0';
-            setTimeout(() => {
-              devBanner.style.display = 'none';
-            }, 300);
-          }
-        }, 10000); // 10 segundos
-      </script>
+      <!-- Botão de Troca de Tema -->
+      <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2" aria-label="Alternar tema claro/escuro"
+        title="Alternar tema">
+        <i class="fas fa-moon" id="theme-icon"></i>
+      </button>
     </div>
   </nav>
+
+  <!-- 🔧 BANNER DE DESENVOLVIMENTO - FAIXA FIXA ABAIXO DA NAVBAR -->
+  <div id="dev-banner" title="Ambiente de Desenvolvimento - XAMPP">
+    <span>🔧 Dev (XAMPP)</span>
+    <span class="dev-sep">•</span>
+    <span>Supabase: ATIVO</span>
+    <span class="dev-sep">•</span>
+    <span>Debug: ON</span>
+    <button onclick="document.getElementById('dev-banner').classList.add('dev-banner-hidden')" title="Fechar">×</button>
+  </div>
+
+  <!-- 🚀 AUTO-REMOVE BANNER APÓS TEMPO -->
+  <script>
+    setTimeout(function () {
+      var b = document.getElementById('dev-banner');
+      if (b) b.classList.add('dev-banner-hidden');
+    }, 10000);
+  </script>
 
   <!-- SEÇÃO AD #1: Banner Top -->
   <div id="ad-banner-top" class="ad-banner-top" role="region" aria-label="Publicidade - Topo">
@@ -282,18 +259,31 @@
         <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
       </div>
 
+      <!-- Preencher a matriz com Private Key HEX -->
+      <div class="hex-display" style="margin-bottom: 12px;">
+        <label for="privateKeyInput" class="output-label">
+          <i class="fas fa-key"></i> Private Key HEX (para preencher matriz):
+        </label>
+        <textarea id="privateKeyInput" class="output-box" rows="1"
+          placeholder="Cole ou digite uma chave HEX aqui para preencher automaticamente a matriz..."
+          aria-label="Campo para inserir Private Key HEX"></textarea>
+      </div>
+
       <!-- Canvas Centralizado - MATRIZ 16x16 INTACTA -->
       <div class="canvas-wrapper">
         <canvas id="grid" aria-label="Matriz interativa 16x16 para seleção de células" width="1200"
           height="900"></canvas>
       </div>
-
+      <!-- Label HEX das Células Selecionadas -->
+      <div class="hex-display" aria-live="polite">
+        <strong>🔢 HEX Selecionado:</strong> <span id="hexValue">0</span>
+      </div>
       <!-- Preset (combobox) -->
-      <div class="d-flex align-items-center gap-3">
-        <label for="presetBits" class="fw-semibold mb-0"><i class="fas fa-layer-group"></i> Preset (bits):</label>
+      <div class="preset-row">
+        <label for="presetBits" class="preset-label"><i class="fas fa-layer-group"></i> Puzzle:</label>
         <select class="form-select" id="presetBits" aria-label="Selecionar quantidade de bits">
-          <option value="70">Puzzle 71 (2^70 a 2^71 - 1)</option>
-          <option value="71" selected>Puzzle 72 (2^71 a 2^72 - 1)</option>
+          <option value="70" selected>Puzzle 71 (2^70 a 2^71 - 1)</option>
+          <option value="71">Puzzle 72 (2^71 a 2^72 - 1)</option>
           <option value="72">Puzzle 73 (2^72 a 2^73 - 1)</option>
           <option value="73">Puzzle 74 (2^73 a 2^74 - 1)</option>
           <option value="75">Puzzle 76 (2^75 a 2^76 - 1)</option>
@@ -466,20 +456,18 @@
           <option value="253">Puzzle 254 (2^253 a 2^254 - 1)</option>
           <option value="254">Puzzle 255 (2^254 a 2^255 - 1)</option>
           <option value="255">Puzzle 256 (2^255 a 2^256 - 1)</option>
-          <option value="256">Puzzle 257 (2^256 a 2^257 - 1)</option>
           <option value="">Nenhuma carteira com saldo</option>
         </select>
-        <button class="btn btn-primary" id="applyPresetBtn" aria-label="Aplicar preset selecionado">
+        <button class="btn-custom btn-start" id="applyPresetBtn" aria-label="Aplicar preset selecionado">
           <i class="fas fa-check"></i> Aplicar
         </button>
       </div>
 
-      <!-- Intervalos HEX e WIF - ALINHADOS À ESQUERDA -->
+      <!-- Intervalos HEX e WIF -->
       <section id="database-status-section" class="database-status-section" style="display: block;">
         <!-- O conteúdo será carregado via JavaScript -->
-        <div
-          style="padding: 20px; text-align: center; color: #718096; background: #f7fafc; border-radius: 12px; border: 1px dashed #e2e8f0; margin: 15px 0;">
-          <i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> Carregando informações do banco de dados...
+        <div class="db-loading-placeholder">
+          <i class="fas fa-spinner fa-spin"></i> Carregando informações do banco de dados...
         </div>
       </section>
 
@@ -496,27 +484,17 @@
           }
         }
       </style>
-      </section>
-
-      <!-- Indicador de Faixa -->
-      <div class="range-indicator" aria-live="polite">
-        Faixa ativa: Linha <span id="activeRangeLabel">12 até 16</span>
-      </div>
 
       <!-- ============================================
-           GRID: Esquerda (Cards 1+3) | Direita (Card 2)
+           GRID: Esquerda (Config + Controles) | Direita (Seleção de Linhas)
            ============================================ -->
       <div class="cards-grid-container">
 
-        <!-- COLUNA ESQUERDA: Card 1 (Config) + Card 3 (Controles) -->
+        <!-- COLUNA ESQUERDA: Configurações + Controles -->
         <div class="control-card config-avancadas-card">
 
-          <!-- PARTE 1: Configurações Avançadas -->
-          <h2><i class="fas fa-cogs"></i> Configurações Avançadas</h2>
-
-          <div class="d-flex align-items-center gap-3">
-            <!-- Espaço para futuras configurações -->
-          </div>
+          <!-- PARTE 1: Modo de varredura -->
+          <h2><i class="fas fa-cogs"></i> Configurações</h2>
           <div class="options-grid">
             <label class="option-card">
               <input type="radio" name="mode" value="horizontal" checked aria-checked="true" />
@@ -527,61 +505,66 @@
               <span><i class="fas fa-arrows-alt-v"></i> Sequencial (V)</span>
             </label>
             <label class="option-card">
-              <input type="radio" name="mode" value="randomize" aria-checked="false" />
-              <span><i class="fas fa-random"></i> Aleatorizar no passo</span>
+              <input type="radio" name="mode" value="randomize_h" aria-checked="false" />
+              <span><i class="fas fa-random"></i> Aleatorizar (H)</span>
             </label>
             <label class="option-card">
-              <input type="checkbox" id="toggleOnClick" checked aria-checked="true" />
-              <span><i class="fas fa-mouse-pointer"></i> Adicionar células</span>
+              <input type="radio" name="mode" value="randomize_v" aria-checked="false" />
+              <span><i class="fas fa-random"></i> Aleatorizar (V)</span>
             </label>
           </div>
 
-          <!-- PARTE 2: Controles Principais (DENTRO do mesmo card) -->
+          <!-- PARTE 2: Controles Principais -->
           <div class="main-controls-section controles-principais-card">
-            <h2><i class="fas fa-gamepad"></i> Controles Principais</h2>
-            <div class="d-flex gap-2">
-              <button id="startBtn" class="btn-custom btn-start" aria-pressed="false" aria-label="Iniciar geração">
-                <i class="fas fa-play"></i> Iniciar
+            <h3><i class="fas fa-gamepad"></i> Controles</h3>
+            <div class="action-buttons-row">
+              <button id="startBtn" class="btn-icon btn-start" aria-pressed="false" aria-label="Iniciar geração"
+                title="Iniciar">
+                <i class="fas fa-play"></i>
               </button>
-              <button id="stopBtn" class="btn-custom btn-stop" disabled aria-pressed="false" aria-label="Parar geração">
-                <i class="fas fa-pause"></i> Parar
+              <button id="stopBtn" class="btn-icon btn-stop" disabled aria-pressed="false" aria-label="Parar geração"
+                title="Pausar">
+                <i class="fas fa-pause"></i>
               </button>
-              <button id="clearBtn" class="btn-custom btn-clear" aria-label="Limpar seleção">
-                <i class="fas fa-trash"></i> Limpar
+              <button id="clearBtn" class="btn-icon btn-clear" aria-label="Limpar seleção" title="Limpar">
+                <i class="fas fa-trash"></i>
               </button>
-              <button id="randBtn" class="btn-custom btn-random" aria-label="Aleatorizar matriz">
-                <i class="fas fa-dice"></i> Aleatorizar
+              <button id="randBtnH" class="btn-icon btn-random" aria-label="Aleatorizar (H)" title="Aleatorizar (H)">
+                <i class="fas fa-dice"></i> H
               </button>
-              <button id="debugBtn" class="btn-custom btn-debug" onclick="window.startDebug()"
-                aria-label="Iniciar debug automatizado" title="Executa testes automáticos do sistema">
-                <i class="fas fa-bug"></i> Debug
+              <button id="randBtnV" class="btn-icon btn-random" aria-label="Aleatorizar (V)" title="Aleatorizar (V)">
+                <i class="fas fa-dice"></i> V
+              </button>
+              <button id="debugBtn" class="btn-icon btn-debug" onclick="window.startDebug()" aria-label="Iniciar debug"
+                title="Debug automático">
+                <i class="fas fa-bug"></i>
               </button>
             </div>
 
-            <!-- 🚀 Controle de Velocidade (ESTAVA FALTANDO!) -->
-            <div class="speed-control" style="margin-top: 10px;">
-              <label for="speed" class="fw-semibold mb-2">
-                <i class="fas fa-tachometer-alt"></i> Velocidade (ms): <span id="speedValue">50</span>
+            <!-- Velocidade -->
+            <div class="speed-row">
+              <label for="speed" class="speed-label">
+                <i class="fas fa-tachometer-alt"></i> Velocidade: <span id="speedValue">50</span>ms
               </label>
               <input type="range" id="speed" min="1" max="50" value="50" step="1" class="form-range"
                 aria-label="Controle de velocidade de execução">
-              <div class="d-flex justify-content-between">
-                <small>1ms (rápido)</small>
-                <small>50ms (lento)</small>
+              <div class="speed-hints">
+                <small>Rápido (1ms)</small>
+                <small>Lento (50ms)</small>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- COLUNA DIREITA: Card 2 (Seleção de Linhas) - ESTENDE TODA ALTURA -->
+        <!-- COLUNA DIREITA: Seleção de Linhas -->
         <div class="control-card selecao-linhas-card">
-          <h2><i class="fas fa-sliders-h"></i> Selecionar Altura (Linha Inicial)</h2>
+          <h2><i class="fas fa-sliders-h"></i> Selecionar Altura <small>(Linha Inicial)</small></h2>
           <div id="heightButtons" class="button-grid" role="group" aria-label="Botões para selecionar altura"></div>
 
-          <h2><i class="fas fa-arrows-alt-v"></i> Selecionar Base (Linha Final)</h2>
+          <h2><i class="fas fa-arrows-alt-v"></i> Selecionar Base <small>(Linha Final)</small></h2>
           <div id="baseButtons" class="button-grid" role="group" aria-label="Botões para selecionar base"></div>
 
-          <h2>➕ Selecionar Linha Extra</h2>
+          <h3><i class="fas fa-plus-circle"></i> Linha Extra</h3>
           <div id="extra-buttons" class="button-group"></div>
         </div>
 
@@ -591,56 +574,78 @@
       <!-- Seção de Outputs -->
       <div class="outputs-section">
         <h2><i class="fas fa-key"></i> Chaves Geradas</h2>
-        <div class="output-group">
-          <label for="hexBox" class="output-label">
-            <i class="fas fa-hashtag"></i> 🔐 Private Key HEX
-          </label>
-          <textarea id="hexBox" class="output-box form-control" readonly aria-readonly="true"
-            aria-label="Chave privada em formato HEX"></textarea>
-        </div>
-        <div class="output-group">
-          <label for="wifBox" class="output-label">
-            <i class="fas fa-wallet"></i> 💼 WIF Comprimido
-          </label>
-          <textarea id="wifBox" class="output-box form-control" readonly aria-readonly="true"
-            aria-label="Chave privada WIF comprimida"></textarea>
-        </div>
-        <div class="output-group">
-          <label for="wifBoxUncompressed" class="output-label">
-            <i class="fas fa-box-open"></i> 📦 WIF Não Comprimido
-          </label>
-          <textarea id="wifBoxUncompressed" class="output-box form-control" readonly aria-readonly="true"
-            aria-label="Chave privada WIF não comprimida"></textarea>
+        <div class="outputs-grid">
+          <div class="output-group">
+            <label for="hexBox" class="output-label">
+              <i class="fas fa-hashtag"></i> Private Key HEX
+            </label>
+            <textarea id="hexBox" class="output-box" rows="1" readonly aria-readonly="true"
+              aria-label="Chave privada em formato HEX"></textarea>
+          </div>
+          <div class="output-group">
+            <label for="wifBox" class="output-label">
+              <i class="fas fa-wallet"></i> WIF Comprimido
+            </label>
+            <textarea id="wifBox" class="output-box" rows="1" readonly aria-readonly="true"
+              aria-label="Chave privada WIF comprimida"></textarea>
+          </div>
+          <div class="output-group">
+            <label for="wifBoxUncompressed" class="output-label">
+              <i class="fas fa-box-open"></i> WIF Não Comprimido
+            </label>
+            <textarea id="wifBoxUncompressed" class="output-box" rows="1" readonly aria-readonly="true"
+              aria-label="Chave privada WIF não comprimida"></textarea>
+          </div>
         </div>
       </div>
 
       <!-- Seção de Conversores -->
       <div class="control-card">
-        <h2><i class="fas fa-exchange-alt"></i> Conversores</h2>
-        <div class="speed-control d-flex flex-column gap-2">
-          <div>
-            <label for="converterInput" class="fw-semibold mb-2"><i class="fas fa-keyboard"></i> Insira
-              (WIF/HEX/Binário/Inteiro):</label>
-            <textarea id="converterInput" class="form-control" rows="2"
+        <h2><i class="fas fa-exchange-alt"></i> Conversor de Chaves</h2>
+        <div class="converter-body">
+          <div class="converter-input-group">
+            <label for="converterInput" class="output-label"><i class="fas fa-keyboard"></i> Insira (WIF / HEX / Binário
+              / Inteiro):</label>
+            <textarea id="converterInput" class="output-box" rows="1"
               placeholder="WIF, HEX, binário ou número inteiro..." aria-label="Entrada para conversão"></textarea>
+            <small style="opacity:0.8;color:var(--text-muted,#555);">
+              Dica: se o HEX tiver apenas números, use prefixo 0x (ex.: 0x4000...). Sem 0x será tratado como inteiro.
+            </small>
           </div>
-          <div class="d-flex gap-2">
-            <button type="button" class="btn-custom btn-start" id="convertBtn"
-              aria-label="Converter entrada">Converter</button>
-            <button type="button" class="btn-custom btn-clear" id="clearConverterBtn"
-              aria-label="Limpar campos">Limpar</button>
+          <div class="converter-actions">
+            <button type="button" class="btn-custom btn-start" id="convertBtn" aria-label="Converter entrada"><i
+                class="fas fa-sync-alt"></i> Converter</button>
+            <button type="button" class="btn-custom btn-clear" id="clearConverterBtn" aria-label="Limpar campos"><i
+                class="fas fa-times"></i> Limpar</button>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-hashtag"></i> HEX</label>
-            <textarea id="converterHex" class="output-box" readonly aria-readonly="true"></textarea>
+            <textarea id="converterHex" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-wallet"></i> WIF Comprimido</label>
-            <textarea id="converterWifCompressed" class="output-box" readonly aria-readonly="true"></textarea>
+            <textarea id="converterWifCompressed" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-wallet"></i> WIF Não Comprimido</label>
-            <textarea id="converterWifUncompressed" class="output-box" readonly aria-readonly="true"></textarea>
+            <textarea id="converterWifUncompressed" class="output-box" rows="1" readonly
+              aria-readonly="true"></textarea>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-sort-numeric-up"></i> Inteiro</label>
+            <textarea id="converterInt" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-stream"></i> Binário</label>
+            <textarea id="converterBin" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-bolt"></i> Maior potência antes (2^k)</label>
+            <textarea id="converterPower" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+          </div>
+          <div class="output-group">
+            <label class="output-label"><i class="fas fa-project-diagram"></i> Menor Mersenne depois (2^(k+1)-1)</label>
+            <textarea id="converterMersenne" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
           </div>
         </div>
       </div>
@@ -717,13 +722,13 @@
           data-ad-slot="8052390745" data-ad-format="auto" data-full-width-responsive="true"></ins>
       </div>
 
-      <div class="sidebar-widget">
+      <!-- Widget: Saldo das Carteiras BTC -->
+      <div class="btc-wallet-section">
         <div id="btc-wallet-widget"
-          style="font-family: 'Courier New', Courier, monospace; background: #fafafa; padding: 10px; border-radius: 8px; color: #222; max-width: 600px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-          <h3 style="text-align:center; margin: 0 0 8px; font-weight: 700; color: #111;">Saldo das Carteiras BTC</h3>
-          <div
-            style="max-height: 400px; overflow-y: auto; border: 1px solid #e1e7f0; border-radius: 5px; padding: 4px;">
-            <div id="btc-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
+          style="font-family:'Courier New',Courier,monospace;background:#fafafa;padding:10px;border-radius:8px;color:#222;max-width:600px;margin:auto;box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+          <h3 style="text-align:center;margin:0 0 8px;font-weight:700;color:#111;">Saldo das Carteiras BTC</h3>
+          <div style="max-height:400px;overflow-y:auto;border:1px solid #e1e7f0;border-radius:5px;padding:4px;">
+            <div id="btc-list" style="display:flex;flex-direction:column;gap:4px;"></div>
           </div>
         </div>
       </div>
@@ -884,7 +889,7 @@
       const countText = document.getElementById('puzzlesCountText');
       const countBadge = document.getElementById('puzzlesCountBadge');
 
-      let currentState = 'hidden'; // Estados: hidden, ticket, expanded
+      let currentState = 'ticket'; // Estados: hidden, ticket, expanded
       let puzzlesCount = 0;
 
       // =================================================================
@@ -1960,7 +1965,7 @@
 
   <!-- 🚀 PUZZLE FINDER - REGISTRO DE PUZZLES ENCONTRADOS -->
   <script src="js/puzzle-finder.js"></script>
-  
+
   <!-- 🚀 EXEMPLOS DE USO DO PUZZLE FINDER -->
   <script src="examples/puzzle-finder-usage.js"></script>
 

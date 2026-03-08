@@ -110,7 +110,7 @@ class WalletCounter {
       z-index: 20000;
       animation: slideInRight 0.3s ease;
     `;
-    toast.innerHTML = `💰 Carteira encontrada! Total: ${this.count}`;
+    toast.innerHTML = `💰 Carteira encontrada!`;
     
     document.body.appendChild(toast);
     

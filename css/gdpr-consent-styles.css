@@ -65,6 +65,31 @@
 }
 
 /* ============================================
+   SUPORTE A TEMAS (CLARO/ESCURO)
+   ============================================ */
+[data-theme="dark"] {
+  --gdpr-white: #1c2128;
+  --gdpr-gray-50: #0d1117;
+  --gdpr-gray-100: #161b22;
+  --gdpr-gray-200: #21262d;
+  --gdpr-gray-300: #30363d;
+  --gdpr-gray-400: #484f58;
+  --gdpr-gray-500: #6e7681;
+  --gdpr-gray-600: #8b949e;
+  --gdpr-gray-700: #afb8c1;
+  --gdpr-gray-800: #c9d1d9;
+  --gdpr-gray-900: #e6edf3;
+  
+  --gdpr-primary-light: rgba(40, 167, 69, 0.15);
+  --gdpr-secondary-light: rgba(79, 70, 229, 0.15);
+  
+  --gdpr-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --gdpr-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --gdpr-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --gdpr-shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================
    BANNER PRINCIPAL
    ============================================ */
 .gdpr-consent-banner {

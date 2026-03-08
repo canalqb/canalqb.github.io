@@ -322,13 +322,23 @@
           'apikey': CONFIG.SUPABASE_ANON_KEY,
           'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
-          'Prefer': 'resolution=merge-duplicates' // Importante para o Upsert baseado na PK
+          // Solicita retorno da linha atualizada e permite upsert
+          'Prefer': 'return=representation, resolution=merge-duplicates'
         },
         body: JSON.stringify(data)
       });
 
       if (response.ok) {
-        const result = await response.json();
+        // Alguns ambientes podem retornar corpo vazio (204/201 sem body).
+        // Faz parse seguro apenas se houver JSON.
+        const ct = (response.headers.get('content-type') || '').toLowerCase();
+        let result = null;
+        if (response.status === 204 || ct.indexOf('application/json') === -1) {
+          result = { preset, inicio, fim, status: response.status };
+        } else {
+          const text = await response.text();
+          result = text && text.trim().length > 0 ? JSON.parse(text) : { preset, inicio, fim, status: response.status };
+        }
         console.log(`✅ [REST] Preset ${preset} atualizado via puzzle_progress:`, { inicio, fim });
         return result;
       } else {

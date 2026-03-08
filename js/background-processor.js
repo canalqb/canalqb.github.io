@@ -88,10 +88,13 @@ class BackgroundProcessor {
   hasActiveProcessors() {
     let hasActive = false;
     this.processors.forEach((processor, name) => {
-      if (processor.isRunning && processor.isRunning()) {
-        // DEBUG MODE - DESABILITADO PARA ECONOMIZAR MEMÓRIA
-        const DEBUG_MODE = false;
-      }
+      try {
+        if (typeof processor.isRunning === 'function') {
+          if (processor.isRunning()) hasActive = true;
+        } else if (typeof processor.isRunning === 'boolean') {
+          if (processor.isRunning) hasActive = true;
+        }
+      } catch (_) {}
     });
     return hasActive;
   }

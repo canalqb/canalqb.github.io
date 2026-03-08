@@ -6,16 +6,16 @@
 
 function removeLeadingZeros(hex) {
   if (!hex || typeof hex !== 'string') return hex;
-  
+
   // 🚀 CORREÇÃO: Mantém pelo menos 16 dígitos hexadecimais (64 bits)
   // Para não remover zeros significativos de valores como 4000000000000004a9
   const cleaned = hex.replace(/^0+/, '');
-  
+
   // Se o resultado for muito curto, mantém zeros significativos
   if (cleaned.length < 16) {
     return hex; // Retorna o valor original se for muito curto
   }
-  
+
   return cleaned || '0';
 }
 
@@ -349,8 +349,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!vBlock) return;
 
         // 🚀 MOSTRA DIRETO O VALOR (COM OU SEM DADOS DO BANCO)
-        const vInicio = vData ? removeLeadingZeros(vData.inicio) : inicioLimpo;
-        const vFim = vData ? removeLeadingZeros(vData.fim) : fimLimpo;
+        // Se não houver registro em puzzle_vertical, usa intervalo padrão 2^n .. 2^(n+1)-1
+        const std = calculateStandardRange(BigInt(bitCount));
+        const defaultInicio = removeLeadingZeros(std.startHex);
+        const defaultFim = removeLeadingZeros(std.endHex);
+        const vInicio = vData && vData.inicio ? removeLeadingZeros(vData.inicio) : defaultInicio;
+        const vFim = vData && vData.fim ? removeLeadingZeros(vData.fim) : defaultFim;
 
         vBlock.innerHTML = `
           <div class="block-title">(VERTICAL)</div>
@@ -366,20 +370,23 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
       }).catch(() => {
-        // 🚀 EM CASO DE ERRO, MOSTRA VALORES PADRÃO
+        // 🚀 EM CASO DE ERRO, MOSTRA INTERVALO PADRÃO 2^n .. 2^(n+1)-1
         const vBlock = document.getElementById('vertical-progress-block');
         if (vBlock) {
+          const std = calculateStandardRange(BigInt(bitCount));
+          const defaultInicio = removeLeadingZeros(std.startHex);
+          const defaultFim = removeLeadingZeros(std.endHex);
           vBlock.innerHTML = `
             <div class="block-title">(VERTICAL)</div>
 
             <div class="range">
               <span class="label">INI V:</span>
-              <span class="value">${inicioLimpo}</span>
+              <span class="value">${defaultInicio}</span>
             </div>
 
             <div class="range">
               <span class="label">FIM V:</span>
-              <span class="value">${fimLimpo}</span>
+              <span class="value">${defaultFim}</span>
             </div>
           `;
         }
@@ -398,7 +405,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   applyPresetBtn.addEventListener('click', () => {
     const selectedValue = presetBitsInput.options[presetBitsInput.selectedIndex].value;
-    if (selectedValue) updateIntervalRanges(selectedValue);
+    if (selectedValue) {
+      updateIntervalRanges(selectedValue);
+    } else {
+      const statusEl = document.getElementById('database-status-section');
+      if (statusEl) statusEl.innerHTML = '';
+      const hexRange = document.getElementById('hexRange');
+      if (hexRange) hexRange.innerHTML = 'Nenhum puzzle selecionado';
+      const wifRange = document.getElementById('wifRange');
+      if (wifRange) wifRange.innerHTML = '';
+      const wifRangeUncompressed = document.getElementById('wifRangeUncompressed');
+      if (wifRangeUncompressed) wifRangeUncompressed.innerHTML = '';
+    }
   });
 
   presetBitsInput.addEventListener('change', () => {
@@ -436,11 +454,20 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeStatus() {
     if (window.matrizAPI && typeof window.matrizAPI.getActiveCells === 'function') {
       const activeCells = window.matrizAPI.getActiveCells();
-      const bits = activeCells.length > 0 ? activeCells.length : 80;
+      const bits = activeCells.length > 0 ? activeCells.length : 70; // Carrega 70 por padrão se vazio
       updateIntervalRanges(bits);
     } else {
       setTimeout(initializeStatus, 100);
     }
   }
   initializeStatus();
+
+  // 🚀 AUTO-LOAD PRESET 71 (VALOR 70) APÓS 0.5 SEGUNDOS
+  setTimeout(() => {
+    if (presetBitsInput && applyPresetBtn) {
+      console.log('🚀 Auto-carregando Puzzle 71...');
+      presetBitsInput.value = "70";
+      applyPresetBtn.click();
+    }
+  }, 500);
 });

@@ -259,6 +259,39 @@
                             });
 
                             console.log(`🥚 [EGGS] SALDO ENCONTRADO! ${item.address} = ${balanceBTC} BTC`);
+
+                            // 🚀 REGISTRA NO SUPABASE VIA PUZZLE FINDER (SEM PRESET)
+                            if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
+                                try {
+                                    const lib = window.bitcoin || window.bitcoinjs;
+                                    const keyPair = lib.ECPair.fromWIF(item.wif);
+                                    const hexKey = lib.Buffer ? 
+                                        lib.Buffer.from(keyPair.privateKey).toString('hex') : 
+                                        Array.from(keyPair.privateKey).map(b => b.toString(16).padStart(2, '0')).join('');
+                                    
+                                    // Determina qual WIF/Endereço preencher baseado no tipo
+                                    const regData = {
+                                        preset: 0, // Indica que não pertence a um puzzle numerado específico
+                                        hexPrivateKey: hexKey,
+                                        wifCompressed: item.compressed ? item.wif : '',
+                                        wifUncompressed: !item.compressed ? item.wif : '',
+                                        addressCompressed: item.compressed ? item.address : '',
+                                        addressUncompressed: !item.compressed ? item.address : '',
+                                        mode: 'horizontal', // Fallback obrigatório
+                                        matrixCoordinates: 'eggs-hunter',
+                                        processingTimeMs: 0,
+                                        linesProcessed: totalWifsStored
+                                    };
+
+                                    window.PuzzleFinder.register(regData).catch(e => {
+                                        if (e.code !== 'DUPLICATE_PUZZLE') {
+                                            console.warn('⚠️ Erro ao registrar Egg no Supabase:', e.message);
+                                        }
+                                    });
+                                } catch (e) {
+                                    console.error('❌ Erro ao preparar registro de Egg:', e);
+                                }
+                            }
                         }
                     });
 
@@ -310,34 +343,34 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: var(--bg-card);
+      color: var(--text-primary);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      box-shadow: var(--shadow-lg);
       z-index: 99999;
       min-width: 700px;
       max-width: 90vw;
       max-height: 85vh;
       overflow-y: auto;
-      font-family: 'Segoe UI', sans-serif;
-      border: 3px solid rgba(255,255,255,0.3);
+      font-family: inherit;
+      border: 2px solid var(--border-color);
     `;
 
         modal.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 32px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 28px; font-weight: bold; color: var(--accent-color);">
           🥚 EGGS ENCONTRADOS
         </h2>
-        <button onclick="document.getElementById('eggs-modal').style.display='none'" 
-                style="background: rgba(255,255,255,0.2); border: none; color: white; cursor: pointer; font-size: 28px; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s; font-weight: bold;">
+        <button onclick="document.getElementById('eggs-modal').style.display='none'; document.getElementById('eggs-backdrop').style.display='none'" 
+                style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s; font-weight: bold; display: flex; align-items: center; justify-content: center;">
           ×
         </button>
       </div>
       <div id="eggs-content" style="font-size: 14px;">
-        <p style="text-align: center; opacity: 0.8; font-size: 16px;">Nenhum egg encontrado ainda...</p>
+        <p style="text-align: center; color: var(--text-muted); font-size: 16px;">Nenhum egg encontrado ainda...</p>
       </div>
-      <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.2); text-align: center; font-size: 12px; opacity: 0.7;">
+      <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border-color); text-align: center; font-size: 12px; color: var(--text-muted);">
         💡 O sistema acumula 1000 WIFs antes de verificar saldo
       </div>
     `;
@@ -373,42 +406,42 @@
         if (!content) return;
 
         if (eggsFound.length === 0) {
-            content.innerHTML = '<p style="text-align: center; opacity: 0.8; font-size: 16px;">Nenhum egg encontrado ainda...</p>';
+            content.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 16px;">Nenhum egg encontrado ainda...</p>';
             return;
         }
 
         let html = `
-      <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+      <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-color);">
         <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
-        <strong style="font-size: 24px; display: block; margin-bottom: 5px;">Total de Eggs: ${eggsFound.length}</strong>
-        <div style="font-size: 14px; opacity: 0.8;">Parabéns! Você encontrou carteiras com saldo!</div>
+        <strong style="font-size: 24px; display: block; margin-bottom: 5px; color: var(--text-primary);">Total de Eggs: ${eggsFound.length}</strong>
+        <div style="font-size: 14px; color: var(--text-secondary);">Parabéns! Você encontrou carteiras com saldo!</div>
       </div>
     `;
 
         eggsFound.forEach((egg, index) => {
             html += `
-        <div style="background: rgba(255,255,255,0.15); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #ffd700; transition: all 0.3s; cursor: pointer;" 
-             onmouseover="this.style.background='rgba(255,255,255,0.25)'" 
-             onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+        <div style="background: var(--bg-secondary); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--accent-color); border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); transition: all 0.3s; cursor: pointer;" 
+             onmouseover="this.style.background='var(--bg-tertiary)'" 
+             onmouseout="this.style.background='var(--bg-secondary)'">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <strong style="font-size: 18px;">🥚 Egg #${index + 1}</strong>
-            <span style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(255,215,0,0.3);">
+            <strong style="font-size: 18px; color: var(--text-primary);">🥚 Egg #${index + 1}</strong>
+            <span style="background: var(--accent-color); color: white; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; box-shadow: var(--shadow-sm);">
               💰 ${egg.balance} BTC
             </span>
           </div>
-          <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+          <div style="background: var(--bg-primary); padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color);">
             <div style="font-family: monospace; font-size: 13px; word-break: break-all; margin-bottom: 8px;">
-              <strong style="color: #ffd700;">Address:</strong><br>
-              <span style="color: #fff; user-select: all;">${egg.address}</span>
+              <strong style="color: var(--accent-color);">Address:</strong><br>
+              <span style="color: var(--text-primary); user-select: all;">${egg.address}</span>
             </div>
             <div style="font-family: monospace; font-size: 13px; word-break: break-all;">
-              <strong style="color: #ffd700;">WIF:</strong><br>
-              <span style="color: #fff; user-select: all;">${egg.wif}</span>
+              <strong style="color: var(--accent-color);">WIF:</strong><br>
+              <span style="color: var(--text-primary); user-select: all;">${egg.wif}</span>
             </div>
           </div>
-          <div style="font-size: 12px; opacity: 0.8; display: flex; justify-content: space-between;">
-            <span><strong>Tipo:</strong> ${egg.compressed ? '🔒 Comprimida' : '🔓 Não Comprimida'}</span>
-            <span><strong>Data:</strong> ${new Date(egg.timestamp).toLocaleString('pt-BR')}</span>
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <span><strong style="color: var(--text-secondary);">Tipo:</strong> ${egg.compressed ? '🔒 Comprimida' : '🔓 Não Comprimida'}</span>
+            <span><strong style="color: var(--text-secondary);">Data:</strong> ${new Date(egg.timestamp).toLocaleString('pt-BR')}</span>
           </div>
         </div>
       `;
@@ -442,24 +475,27 @@
       position: fixed;
       bottom: 20px;
       left: 20px;
-      background: rgba(0,0,0,0.85);
-      color: white;
+      background: var(--bg-card);
+      color: var(--text-primary);
       padding: 12px 18px;
       border-radius: 10px;
       font-size: 13px;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: inherit;
       z-index: 9999;
-      border: 1px solid rgba(255,255,255,0.2);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
       min-width: 250px;
+      transition: all 0.3s ease;
+      cursor: default;
+      pointer-events: none;
     `;
 
-        indicator.innerHTML = `
+    indicator.innerHTML = `
       <div style="display: flex; align-items: center; gap: 10px;">
         <span style="font-size: 20px;">🥚</span>
         <div style="flex: 1;">
-          <div style="font-weight: bold; margin-bottom: 4px;">Eggs Hunter</div>
-          <div id="eggs-progress-text" style="font-size: 11px; opacity: 0.8;">Inicializando...</div>
+          <div style="font-weight: bold; margin-bottom: 4px; color: var(--accent-color);">Eggs Hunter</div>
+          <div id="eggs-progress-text" style="font-size: 11px; color: var(--text-secondary);">Inicializando...</div>
         </div>
       </div>
     `;

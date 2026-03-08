@@ -1,138 +1,349 @@
 /* ========================================
-   CSS OTIMIZADO - LAYOUT COMPACTO
-   Mantém funcionalidade, reduz espaçamentos
+   CSS REFATORADO - LAYOUT & VISUAL APRIMORADO
+   Lógica preservada | Design elevado
    ======================================== */
 
-/* Variáveis CSS para Temas */
+/* ============================================================
+   DESIGN TOKENS - SISTEMA DE CORES E ESPAÇAMENTO
+   ============================================================ */
 :root {
-  /* Tema Claro */
+  /* Paleta principal */
+  --green-500: #28a745;
+  --green-600: #218838;
+  --green-700: #1e7e34;
+  --green-100: #e8f5e9;
+  --green-200: #c8e6c9;
+
+  /* Paleta Bitcoin */
+  --btc-orange: #F7931A;
+  --btc-orange-dark: #e07b0a;
+
+  /* Neutros - Tema Claro */
   --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
-  --text-primary: #000000;
-  --text-secondary: #495057;
-  --text-muted: #6c757d;
-  --border-color: #dee2e6;
-  --shadow-color: rgba(0,0,0,0.08);
-  --accent-color: #28a745;
-  --accent-hover: #218838;
+  --bg-secondary: #f8fafb;
+  --bg-tertiary: #edf0f2;
+  --bg-card: #ffffff;
+
+  /* Texto */
+  --text-primary: #1a2332;
+  --text-secondary: #4a5568;
+  --text-muted: #718096;
+
+  /* Borda */
+  --border-color: #e2e8f0;
+  --border-focus: #28a745;
+
+  /* Sombras em 3 níveis */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+
+  /* Accent */
+  --accent-color: var(--green-500);
+  --accent-hover: var(--green-600);
+
+  /* Border-radius consistente */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 }
 
 [data-theme="dark"] {
-  /* Tema Escuro */
-  --bg-primary: #000000;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #2d2d2d;
-  --text-primary: #ffffff;
-  --text-secondary: #e9ecef;
-  --text-muted: #adb5bd;
-  --border-color: #495057;
-  --shadow-color: rgba(255,255,255,0.1);
-  --accent-color: #28a745;
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-card: #1c2128;
+  --text-primary: #e6edf3;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --border-color: #30363d;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
   --accent-hover: #34ce57;
 }
 
-/* Transições suaves entre temas */
+/* ============================================================
+   RESET E BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 * {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 body {
   margin: 0;
   padding: 0;
-  padding-top: 70px; /* Compensa navbar fixa */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: var(--bg-primary);
+  padding-top: 64px;
+  font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
+  line-height: 1.6;
+  font-size: 15px;
 }
 
-/* Animação para célula ativa */
+/* ============================================================
+   ANIMAÇÃO - CÉLULA ATIVA (mantida)
+   ============================================================ */
 .cell.animating-start {
   animation: pulse-cell 1s ease-in-out infinite;
 }
 
 @keyframes pulse-cell {
-  0% { 
+  0% {
     background-color: #28a745;
     transform: scale(1);
     box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
   }
-  50% { 
+
+  50% {
     background-color: #343a40;
     transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+    box-shadow: 0 0 18px rgba(40, 167, 69, 0.45);
   }
-  100% { 
+
+  100% {
     background-color: #28a745;
     transform: scale(1);
     box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
   }
 }
 
-/* --- LAYOUT PRINCIPAL COM DUAS SIDEBARS --- */
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--green-500);
+  padding: 0 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 12px rgba(40, 167, 69, 0.12);
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.navbar-brand {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--green-600) !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-right: 0;
+}
+
+.navbar-brand:hover {
+  background: var(--green-100);
+  border-color: var(--green-500);
+  color: var(--green-700) !important;
+  transform: translateY(-1px);
+}
+
+.navbar-brand i {
+  font-size: 0.95em;
+  opacity: 0.85;
+}
+
+/* Botão tema */
+#theme-toggle {
+  margin-left: auto;
+  border-radius: 20px !important;
+  padding: 5px 12px !important;
+  font-size: 0.82em;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+#theme-toggle:hover {
+  background: var(--green-100);
+  border-color: var(--green-500);
+  color: var(--green-600);
+}
+
+/* Banner de desenvolvimento - faixa fixa abaixo da navbar */
+#dev-banner {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(90deg, rgba(40, 167, 69, 0.92), rgba(32, 201, 151, 0.92));
+  color: #fff;
+  padding: 4px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  height: 26px;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
+  animation: devBannerSlide 0.4s ease-out forwards;
+  transition: opacity 0.4s ease, transform 0.4s ease, height 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes devBannerSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#dev-banner.dev-banner-hidden {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+#dev-banner .dev-sep {
+  opacity: 0.5;
+}
+
+#dev-banner button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 12px;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+#dev-banner button:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Quando o banner está visível, body precisa de espaço extra */
+body:has(#dev-banner:not(.dev-banner-hidden)) {
+  padding-top: 86px;
+  /* navbar 60px + banner 26px */
+}
+
+body:has(#dev-banner.dev-banner-hidden) {
+  padding-top: 64px;
+}
+
+/* ============================================================
+   AD - TOPO
+   ============================================================ */
+.ad-banner-top {
+  max-width: 1400px;
+  margin: 10px auto 0;
+  padding: 0 15px;
+}
+
+.ad-label {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
 .main-wrapper {
   display: flex;
-  gap: 15px; /* 20px → 15px */
-  margin: 15px auto; /* 20px → 15px */
+  gap: 14px;
+  margin: 14px auto;
   max-width: 1400px;
-  padding: 0 15px;
+  padding: 0 14px;
   position: relative;
+  align-items: flex-start;
 }
 
+/* ============================================================
+   SIDEBAR ESQUERDA
+   ============================================================ */
 .sidebar-left {
-  width: 260px; /* 280px → 260px */
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-  border-radius: 12px; /* 15px → 12px */
-  padding: 15px; /* 25px → 15px */
-  box-shadow: 0 3px 10px var(--shadow-color);
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
   position: sticky;
-  top: 15px; /* 20px → 15px */
+  top: 90px;
+  /* navbar 60px + dev-banner 26px + gap 4px */
+  align-self: flex-start;
   height: fit-content;
   z-index: 10;
-}
-
-.main-content {
-  flex: 1;
-  min-width: 0;
-  font-size: 0.9em;
-  margin-right: 280px; /* 300px → 280px */
-}
-
-.sidebar-right {
-  position: sticky;
-  top: 15px; /* 20px → 15px */
-  width: 260px; /* 280px → 260px */
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-  border-radius: 12px; /* 15px → 12px */
-  padding: 15px; /* 25px → 15px */
-  box-shadow: 0 3px 10px var(--shadow-color);
-  height: fit-content;
-  z-index: 10;
-  margin-left: -280px; /* -300px → -280px */
 }
 
 .sidebar-left .sidebar-widget,
 .sidebar-right .sidebar-widget {
-  background: var(--bg-primary);
-  padding: 12px; /* 20px → 12px */
-  border-radius: 8px; /* 10px → 8px */
-  margin-top: 12px; /* 20px → 12px */
-  box-shadow: 0 2px 6px var(--shadow-color);
+  background: var(--bg-secondary);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  margin-top: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.sidebar-left .sidebar-widget:first-child,
+.sidebar-right .sidebar-widget:first-child {
+  margin-top: 0;
 }
 
 .sidebar-left h3,
 .sidebar-right h3,
 .sidebar-left h4,
 .sidebar-right h4 {
-  color: #28a745;
-  margin-bottom: 10px; /* 15px → 10px */
+  color: var(--green-600);
+  margin-bottom: 10px;
+  font-size: 0.9em;
 }
 
 .sidebar-left h3,
 .sidebar-right h3 {
-  font-size: 1.15em; /* 1.3em → 1.15em */
-  border-bottom: 2px solid #28a745; /* 3px → 2px */
-  padding-bottom: 8px; /* 10px → 8px */
+  font-size: 0.95em;
+  font-weight: 700;
+  border-bottom: 2px solid var(--green-200);
+  padding-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sidebar-left .sidebar-links,
@@ -144,7 +355,7 @@ body {
 
 .sidebar-left .sidebar-links li,
 .sidebar-right .sidebar-links li {
-  margin-bottom: 8px; /* 12px → 8px */
+  margin-bottom: 4px;
 }
 
 .sidebar-left .sidebar-links a,
@@ -153,144 +364,197 @@ body {
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 8px; /* 10px → 8px */
-  padding: 8px; /* 10px → 8px */
-  border-radius: 6px; /* 8px → 6px */
-  transition: all 0.3s ease;
-  font-size: 0.9em;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  font-size: 0.85em;
+  font-weight: 500;
+  border: 1px solid transparent;
 }
 
 .sidebar-left .sidebar-links a:hover,
 .sidebar-right .sidebar-links a:hover {
-  background: var(--accent-color);
-  color: var(--text-primary);
-  color: #fff;
-  transform: translateX(5px);
+  background: var(--green-100);
+  color: var(--green-700);
+  border-color: var(--green-200);
+  transform: translateX(3px);
 }
 
-/* --- HIERARQUIA DE TÍTULOS E ESPAÇAMENTOS --- */
-.main-content h1 { 
-  font-size: 1.8em; /* 2em → 1.8em */
+.sidebar-left p,
+.sidebar-right p {
+  font-size: 0.84em;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ============================================================
+   CONTEÚDO PRINCIPAL
+   ============================================================ */
+.main-content {
+  flex: 1;
+  min-width: 0;
+  margin-right: 240px;
+}
+
+/* ============================================================
+   SIDEBAR DIREITA
+   ============================================================ */
+.sidebar-right {
+  position: sticky;
+  top: 90px;
+  align-self: flex-start;
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  height: fit-content;
+  z-index: 10;
+  margin-left: -240px;
+}
+
+/* ============================================================
+   TIPOGRAFIA HIERÁRQUICA
+   ============================================================ */
+.main-content h1 {
+  font-size: 1.6em;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.main-content h2 {
+  font-size: 1.15em;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 10px 0; /* 15px → 10px */
-  line-height: 1.3;
+  margin: 14px 0 8px;
+  line-height: 1.35;
 }
 
-.main-content h2 { 
-  font-size: 1.3em; /* 1.5em → 1.3em */
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 15px 0 10px 0; /* 25px → 15px, 15px → 10px */
-  line-height: 1.4;
-}
-
-.main-content h3 { 
-  font-size: 1.15em; /* 1.25em → 1.15em */
+.main-content h3 {
+  font-size: 1.02em;
   font-weight: 600;
   color: var(--text-secondary);
-  margin: 12px 0 8px 0; /* 20px → 12px, 12px → 8px */
+  margin: 10px 0 6px;
   line-height: 1.4;
 }
 
-.main-content h4 { 
-  font-size: 1.05em; /* 1.1em → 1.05em */
+.main-content h4 {
+  font-size: 0.94em;
   font-weight: 600;
   color: var(--text-muted);
-  margin: 10px 0 8px 0; /* 15px → 10px */
+  margin: 8px 0 6px;
   line-height: 1.4;
 }
 
-.main-content p { 
-  font-size: 0.9em; /* 0.95em → 0.9em */
-  line-height: 1.6; /* 1.7 → 1.6 */
-  margin: 0 0 10px 0; /* 12px → 10px */
+.main-content p {
+  font-size: 0.9em;
+  line-height: 1.65;
+  margin: 0 0 8px;
   color: var(--text-secondary);
 }
 
-.main-content li { 
-  font-size: 0.9em; /* 0.95em → 0.9em */
-  line-height: 1.5; /* 1.6 → 1.5 */
-  margin-bottom: 6px; /* 8px → 6px */
+.main-content li {
+  font-size: 0.9em;
+  line-height: 1.55;
+  margin-bottom: 5px;
   color: var(--text-secondary);
 }
 
 .main-content ul,
 .main-content ol {
-  margin: 10px 0; /* 12px → 10px */
-  padding-left: 20px; /* 25px → 20px */
+  margin: 8px 0;
+  padding-left: 20px;
 }
 
-.main-content button { 
-  font-size: 0.85em; /* 0.9em → 0.85em */
-  padding: 8px 15px; /* 10px 18px → 8px 15px */
-  line-height: 1.2;
+.main-content button {
+  font-size: 0.85em;
 }
 
-.main-content .btn-custom { 
-  padding: 10px 18px; /* 12px 20px → 10px 18px */
-  font-size: 0.9em; /* 0.95em → 0.9em */
-  line-height: 1.2;
+.main-content .output-label {
+  font-size: 0.88em;
+  margin-bottom: 6px;
 }
 
-.main-content .output-label { 
-  font-size: 0.95em; /* 1em → 0.95em */
-  margin-bottom: 8px; /* 10px → 8px */
+.main-content .output-box {
+  font-size: 0.83em;
+  padding: 10px 12px;
 }
 
-.main-content .output-box { 
-  font-size: 0.85em; /* 0.9em → 0.85em */
-  padding: 10px; /* 12px → 10px */
-}
-
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
 .hero-section {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 50%, #c3e6cb 100%);
   color: #1b5e20;
-  padding: 15px 20px; /* 30px 25px → 15px 20px */
-  border-radius: 15px; /* 20px → 15px */
+  padding: 20px 24px;
+  border-radius: var(--radius-xl);
   text-align: center;
-  margin-bottom: 15px; /* 30px → 15px */
-  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.15); /* reduzido */
-  border: 2px solid #a5d6a7;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 20px rgba(40, 167, 69, 0.18), 0 1px 4px rgba(40, 167, 69, 0.1);
+  border: 1.5px solid #a5d6a7;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '₿';
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  font-size: 90px;
+  opacity: 0.07;
+  color: #28a745;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
 }
 
 .hero-section h1 {
-  font-size: 1.8em; /* 2.2em → 1.8em */
-  font-weight: 700;
-  margin-bottom: 5px; /* 8px → 5px */
-  text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+  font-size: 1.7em;
+  font-weight: 800;
+  margin-bottom: 4px;
   color: #1b5e20;
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .hero-section .subtitle {
-  font-size: 1em; /* 1.1em → 1em */
-  margin-bottom: 0;
-  margin-top: 3px; /* 5px → 3px */
+  font-size: 0.96em;
+  margin: 0;
   color: #2e7d32;
-  text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
-  line-height: 1.3;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
+/* ============================================================
+   CANVAS - MATRIZ 16x16
+   ============================================================ */
 .canvas-wrapper {
   display: flex;
   justify-content: center;
-  margin: 1rem 0; /* 1.5rem → 1rem */
+  margin: 10px 0;
   width: 100%;
   overflow-x: auto;
+  border-radius: var(--radius-md);
 }
 
-/* CANVAS - MANTÉM TAMANHO ORIGINAL */
 #grid {
   min-width: 100%;
   max-width: 100%;
   height: auto;
   width: 100%;
-  border: 3px solid #2d3748;
-  border-radius: 8px;
-  background: #fff;
+  border: 2px solid #2d3748;
+  border-radius: var(--radius-md);
+  background: #ffffff;
   cursor: crosshair;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   display: block;
   touch-action: none;
 }
@@ -301,845 +565,23 @@ body {
   }
 }
 
+/* ============================================================
+   INDICADORES - FAIXA E HEX
+   ============================================================ */
 .range-indicator {
-  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
-  border: 2px solid #ffc107;
-  border-radius: 10px; /* 12px → 10px */
-  padding: 6px 10px; /* 8px 12px → 6px 10px */
+  background: linear-gradient(135deg, #fffdf0, #fff8dc);
+  border: 1.5px solid #f0b429;
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
   text-align: center;
   font-weight: 600;
-  color: #856404;
-  font-size: 0.95em; /* 1em → 0.95em */
-  margin-bottom: 10px; /* adicionado para separar do próximo elemento */
-}
-
-.control-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 12px; /* 15px → 12px */
-  padding: 12px; /* mantido */
-  margin-bottom: 10px; /* 8px → 10px */
-  box-shadow: 0 3px 10px rgba(0,0,0,0.06); /* reduzido */
-  border-left: 4px solid #28a745; /* 5px → 4px */
-}
-
-.control-card h2 {
-  color: #28a745;
-  font-size: 1.25em; /* 1.4em → 1.25em */
-  font-weight: 600;
-  margin: 0 0 10px 0; /* 8px → 10px */
-  display: flex;
-  align-items: center;
-  gap: 8px; /* 10px → 8px */
-  line-height: 1.3;
-}
-
-.button-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
-  gap: 5px; /* 6px → 5px */
-  margin-top: 10px; /* 12px → 10px */
-}
-
-.button-grid button {
-  padding: 6px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid #28a745;
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  color: #28a745;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.75em;
-  line-height: 1;
-}
-
-.button-grid button:hover {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-}
-
-.button-grid button.active {
-  background: #28a745;
-  color: #fff;
-}
-
-.button-grid button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* BOTÕES EXTRAS - ESTILO VERMELHO */
-#extra-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(32px, 32px));
-  gap: 5px; /* 6px → 5px */
-  margin-top: 10px; /* 12px → 10px */
-}
-
-#extra-buttons button {
-  padding: 6px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid #dc3545;
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  color: #dc3545;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.75em;
-  line-height: 1;
-}
-
-#extra-buttons button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-#extra-buttons button.active {
-  background: #dc3545;
-  color: #fff;
-  border-color: #dc3545;
-}
-
-#extra-buttons button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.main-controls-section {
-  background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
-  border-radius: 12px; /* 15px → 12px */
-  padding: 12px; /* 10px → 12px */
-  margin-bottom: 10px; /* 8px → 10px */
-  box-shadow: 0 3px 10px rgba(0,0,0,0.06); /* reduzido */
-}
-
-.main-controls-section h2 {
-  color: #2e7d32;
-  font-size: 1.25em; /* 1.4em → 1.25em */
-  font-weight: 600;
-  margin: 0 0 10px 0; /* 8px → 10px */
-  line-height: 1.3;
-}
-
-.btn-custom {
-  padding: 10px 20px; /* 12px 24px → 10px 20px */
-  font-size: 0.95em; /* 1em → 0.95em */
-  font-weight: 600;
-  border-radius: 8px; /* 10px → 8px */
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.12); /* reduzido */
-  line-height: 1.2;
-}
-
-.btn-start {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: #fff;
-}
-
-.btn-start:hover:not(:disabled) {
-  background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(40, 167, 69, 0.3);
-}
-
-.btn-stop {
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  color: #fff;
-}
-
-.btn-stop:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-}
-
-.btn-stop:disabled,
-.btn-start:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-clear {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-  color: #fff;
-}
-
-.btn-clear:hover {
-  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-}
-
-.btn-random {
-  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
-  color: #fff;
-}
-
-.btn-random:hover {
-  background: linear-gradient(135deg, #5a32a3 0%, #4c2a8f 100%);
-}
-
-.btn-debug {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-debug:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ee5a24 0%, #dc3545 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(255, 107, 107, 0.3);
-}
-
-.btn-debug::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.btn-debug:hover::before {
-  left: 100%;
-}
-
-.speed-control {
-  background: #fff;
-  padding: 10px; /* 8px → 10px */
-  border-radius: 8px; /* 10px → 8px */
-  margin-bottom: 10px; /* 8px → 10px */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04); /* reduzido */
-  display: flex;
-  align-items: center;
-  gap: 12px; /* 15px → 12px */
-}
-
-.speed-control label {
-  font-weight: 600;
-  margin: 0;
-  font-size: 0.9em;
-}
-
-.speed-control input[type="range"] {
-  flex: 1;
-  min-width: 180px; /* 200px → 180px */
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* 200px → 180px */
-  gap: 10px; /* 15px → 10px */
-  margin-top: 10px; /* 15px → 10px */
-}
-
-.option-card {
-  background: #fff;
-  padding: 10px 12px; /* 15px → 10px 12px */
-  border: 2px solid #e9ecef;
-  border-radius: 8px; /* 10px → 8px */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* 10px → 8px */
-  font-size: 0.9em;
-}
-
-.option-card:hover {
-  border-color: #28a745;
-  background: #f8fff9;
-  transform: translateY(-2px);
-}
-
-.option-card input {
-  margin-right: 6px; /* 8px → 6px */
-}
-
-.outputs-section {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 12px; /* 15px → 12px */
-  padding: 12px; /* 10px → 12px */
-  margin: 10px 0; /* 8px → 10px */
-  box-shadow: 0 5px 16px rgba(0,0,0,0.08); /* reduzido */
-  border-top: 4px solid #28a745; /* 5px → 4px */
-}
-
-.outputs-section h2 {
-  color: #28a745;
-  font-size: 1.5em; /* 1.8em → 1.5em */
-  font-weight: 600;
-  margin: 0 0 12px 0; /* 8px → 12px */
-  text-align: center;
-  line-height: 1.3;
-}
-
-.output-group {
-  background: #fff;
-  padding: 10px;
-  border-radius: 10px; /* 12px → 10px */
-  margin-bottom: 10px; /* 8px → 10px */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06); /* reduzido */
-  border-left: 3px solid #28a745; /* 4px → 3px */
-  width: 100%;
-}
-
-/* Garante que os output-group dentro da seção de conversores ocupem toda a largura */
-.control-card .output-group {
-  width: 100%;
-}
-
-.output-label {
-  display: block;
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 8px; /* 12px → 8px */
-  font-size: 0.95em; /* 1.05em → 0.95em */
-  line-height: 1.3;
-}
-
-.output-box {
-  width: 100%;
-  min-height: 70px; /* 80px → 70px */
-  padding: 12px; /* 15px → 12px */
-  border: 2px solid #dee2e6;
-  border-radius: 6px; /* 8px → 6px */
-  font-family: 'Courier New', monospace;
-  font-size: 0.85em; /* 0.95em → 0.85em */
-  background: #f8f9fa;
-  resize: vertical;
-  transition: all 0.3s ease;
-  line-height: 1.5;
-}
-
-.output-box:focus {
-  outline: none;
-  border-color: #28a745;
-  background: #fff;
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-}
-
-.content-divider {
-  border: none;
-  height: 2px; /* 3px → 2px */
-  background: linear-gradient(90deg, transparent, #28a745, transparent);
-  margin: 30px 0; /* 50px → 30px */
-}
-
-/* === SEÇÕES COLAPSÁVEIS === */
-.post_puzzle-section,
-.post_edu-intro-section,
-.post_edu-warning-section {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 12px; /* 15px → 12px */
-  padding: 0;
-  margin: 20px 0; /* 30px → 20px */
-  box-shadow: 0 3px 12px rgba(0,0,0,0.08); /* reduzido */
-  overflow: hidden;
-  max-height: 60px; /* 65px → 60px */
-  transition: max-height 0.4s ease, box-shadow 0.3s ease;
-  border: 2px solid #e9ecef;
-}
-
-.post_puzzle-section.expanded,
-.post_edu-intro-section.expanded,
-.post_edu-warning-section.expanded {
-  max-height: 2000px;
-}
-
-.post_puzzle-section:hover,
-.post_edu-intro-section:hover,
-.post_edu-warning-section:hover {
-  box-shadow: 0 5px 16px rgba(0,0,0,0.12);
-}
-
-.post_puzzle-section h2,
-.post_edu-intro-section h2,
-.post_edu-warning-section h3 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px; /* 18px 25px → 15px 20px */
-  margin: 0;
-  cursor: pointer;
-  user-select: none;
-  font-weight: 600;
-  position: relative;
-  background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  font-size: 1.2em; /* 1.3em → 1.2em */
-  color: #2d3748;
-  line-height: 1.3;
-}
-
-.post_puzzle-section h2 .toggle-icon,
-.post_edu-intro-section h2 .toggle-icon,
-.post_edu-warning-section h3 .toggle-icon {
-  transition: transform 0.3s ease;
-  font-size: 0.8em;
-  color: #718096;
-}
-
-.post_puzzle-section.expanded h2 .toggle-icon,
-.post_edu-intro-section.expanded h2 .toggle-icon,
-.post_edu-warning-section.expanded h3 .toggle-icon {
-  transform: rotate(180deg);
-}
-
-.post_puzzle-section .section-content,
-.post_edu-intro-section .section-content,
-.post_edu-warning-section .section-content {
-  padding: 20px; /* 25px → 20px */
-}
-
-.post_puzzle-section .section-content h3,
-.post_edu-intro-section .section-content h3,
-.post_edu-warning-section .section-content h3 {
-  color: #28a745;
-  font-size: 1.15em; /* 1.2em → 1.15em */
-  font-weight: 600;
-  margin: 15px 0 10px 0; /* 20px → 15px, 12px → 10px */
-  line-height: 1.4;
-}
-
-.post_puzzle-section .section-content p,
-.post_edu-intro-section .section-content p,
-.post_edu-warning-section .section-content p {
-  margin-bottom: 12px; /* 15px → 12px */
-  line-height: 1.6; /* 1.7 → 1.6 */
-  font-size: 0.9em;
-}
-
-.post_puzzle-section .section-content ul,
-.post_edu-intro-section .section-content ul,
-.post_edu-warning-section .section-content ul {
-  margin: 12px 0; /* 15px → 12px */
-  padding-left: 20px; /* 25px → 20px */
-}
-
-.post_puzzle-section .section-content li,
-.post_edu-intro-section .section-content li,
-.post_edu-warning-section .section-content li {
-  font-size: 0.9em;
-  margin-bottom: 6px;
-}
-
-/* Navbar */
-.navbar {
-  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-  border-bottom: 3px solid #28a745;
-  margin-bottom: 0;
-  padding: 10px 0; /* 15px → 10px */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  width: 100%;
-}
-
-.navbar-brand {
-  font-size: 1em; /* 1.1em → 1em */
-  transition: all 0.3s ease;
-  margin-right: 15px; /* 20px → 15px */
-  padding: 6px 12px; /* adicionado para melhor clicabilidade */
-}
-
-.navbar-brand:hover {
-  transform: translateY(-2px);
-  color: #20c997 !important;
-}
-
-/* Footer */
-.site-footer {
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-  color: #ecf0f1;
-  padding: 30px 0 15px; /* 40px → 30px, 20px → 15px */
-  margin-top: 40px; /* 60px → 40px */
-}
-
-.footer-nav a {
-  color: #ecf0f1;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.9em;
-}
-
-.footer-nav a:hover {
-  color: #28a745;
-  text-decoration: underline;
-}
-
-.footer-nav ul {
-  margin-bottom: 12px;
-}
-
-/* Ícones de cópia */
-.fa-copy {
-  font-size: 18px; /* 20px → 18px */
-  cursor: pointer;
-  color: #4CAF50;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.fa-copy:hover {
-  color: #FF5722;
-  transform: scale(1.0);
-}
-
-.fa-copy:active {
-  color: #2196F3;
-  transform: scale(0.7);
-}
-
-.fa-copy.text-success {
-  color: #28a745 !important;
-}
-
-#wifList {
-  max-height: 180px; /* 200px → 180px */
-  overflow-y: auto;
-  padding-right: 8px; /* 10px → 8px */
-}
-
-/* Diminuir fonte dos puzzles encontrados */
-#wifList .list-group-item {
-  font-size: 0.8em !important;
-  padding: 8px 12px !important;
-}
-
-#wifList .list-group-item .puzzle-title {
-  font-weight: 600;
-  color: #28a745;
-  font-size: 0.85em !important;
-}
-
-#wifList .list-group-item .puzzle-wif {
-  font-family: 'Courier New', monospace;
-  font-size: 0.75em !important;
-  color: #6c757d;
-  word-break: break-all;
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 1200px) {
-  .main-content {
-    margin-right: 0;
-  }
-  .sidebar-right {
-    position: static;
-    margin-left: 0;
-    margin-top: 20px; /* 30px → 20px */
-    width: 100%;
-  }
-}
-
-@media (max-width: 992px) {
-  .main-wrapper {
-    flex-direction: column;
-  }
-  .sidebar-left {
-    position: static;
-    width: 100%;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 15px 15px; /* 25px 20px → 15px 15px */
-  }
-  .hero-section h1 {
-    font-size: 1.5em; /* 1.6em → 1.5em */
-  }
-  .hero-section .subtitle {
-    font-size: 0.95em;
-  }
-  .button-grid,
-  #extra-buttons {
-    grid-template-columns: repeat(auto-fit, minmax(55px, 1fr)); /* 60px → 55px */
-  }
-  .btn-custom {
-    width: 100%;
-    padding: 8px 16px; /* mais compacto em mobile */
-  }
-  .post_puzzle-section,
-  .post_edu-intro-section,
-  .post_edu-warning-section {
-    padding: 0;
-    margin: 15px 0; /* 25px → 15px */
-  }
-  .post_puzzle-section h2,
-  .post_edu-intro-section h2,
-  .post_edu-warning-section h3 {
-    font-size: 1.1em !important; /* 1.2em → 1.1em */
-    padding: 12px 15px; /* 15px 20px → 12px 15px */
-  }
-  .post_puzzle-section .section-content,
-  .post_edu-intro-section .section-content,
-  .post_edu-warning-section .section-content {
-    padding: 15px; /* 20px → 15px */
-  }
-  
-  .main-content h1 {
-    font-size: 1.6em; /* 1.7em → 1.6em */
-  }
-  
-  .main-content h2 {
-    font-size: 1.25em; /* 1.3em → 1.25em */
-  }
-  
-  .main-content h3 {
-    font-size: 1.1em; /* 1.15em → 1.1em */
-  }
-
-  .control-card,
-  .main-controls-section,
-  .outputs-section {
-    padding: 10px; /* mais compacto em mobile */
-  }
-
-  .sidebar-left,
-  .sidebar-right {
-    padding: 12px;
-  }
-
-  .sidebar-left .sidebar-widget,
-  .sidebar-right .sidebar-widget {
-    padding: 10px;
-    margin-top: 10px;
-  }
-}
-/* ========================================
-   LAYOUT GRID - SIDEBAR DIREITA ESTENDIDA
-   Card 2 ocupa toda altura à direita
-   Cards 1 e 3 empilhados à esquerda
-   ======================================== */
-
-/* === GRID CONTAINER === */
-.cards-grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 colunas: esquerda e direita */
-  grid-template-rows: auto; /* altura automática baseada no conteúdo */
-  gap: 12px;
-  margin: 10px 0;
-  align-items: stretch; /* estica cards para mesma altura */
-}
-
-/* Garante que ambos os cards tenham a mesma altura */
-.cards-grid-container > * {
-  min-height: 100%;
-}
-
-/* === CARD 1: Configurações Avançadas (topo esquerdo) === */
-.config-avancadas-card {
-  grid-column: 1; /* coluna 1 (esquerda) */
-  grid-row: 1;    /* linha 1 (topo) */
-}
-
-.config-avancadas-card h2 {
-  font-size: 1.1em !important;
-  margin-bottom: 12px !important;
-}
-
-.config-avancadas-card .speed-control {
-  padding: 8px !important;
-  margin-bottom: 8px !important;
-  flex-wrap: wrap;
-}
-
-.config-avancadas-card .speed-control label {
-  font-size: 0.85em !important;
-  white-space: nowrap;
-}
-
-.config-avancadas-card #speedLabel {
-  font-size: 0.85em !important;
-  min-width: 50px;
-}
-
-.config-avancadas-card .form-range {
-  flex: 1;
-  min-width: 120px;
-}
-
-/* Options grid - 2 colunas */
-.config-avancadas-card .options-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 6px !important;
-  margin-top: 8px !important;
-}
-
-.config-avancadas-card .option-card {
-  padding: 8px 10px !important;
-  font-size: 0.85em !important;
-}
-
-.config-avancadas-card .option-card span {
-  font-size: 0.85em !important;
-}
-
-/* === CARD 3: Controles Principais (base esquerda, DENTRO do Card 1) === */
-.config-avancadas-card .controles-principais-card {
-  margin-top: 8px; /* 12px → 8px */
-  padding-top: 8px; /* 12px → 8px */
-  border-top: 2px solid #e9ecef;
-}
-
-.config-avancadas-card .controles-principais-card h2 {
-  font-size: 1.1em !important;
-  margin-bottom: 10px !important;
-}
-
-.config-avancadas-card .controles-principais-card .d-flex {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 8px !important;
-}
-
-.config-avancadas-card .controles-principais-card .btn-custom {
-  width: 100% !important;
-  padding: 10px 12px !important;
-  font-size: 0.85em !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.config-avancadas-card .controles-principais-card .btn-custom i {
-  font-size: 0.9em;
-}
-
-/* === CARD 2: Seleção de Linhas (TODA altura à direita) === */
-.selecao-linhas-card {
-  grid-column: 2;    /* coluna 2 (direita) */
-  grid-row: 1 / 3;   /* ocupa linhas 1 e 2 (toda altura) */
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;  /* garante altura mínima */
-  height: 100%;      /* preenche todo espaço disponível */
-}
-
-.selecao-linhas-card h2 {
-  font-size: 1.05em !important;
-  margin-bottom: 8px !important;
-  margin-top: 12px !important;
-  flex-shrink: 0; /* não encolhe os títulos */
-}
-
-.selecao-linhas-card h2:first-child {
-  margin-top: 0 !important;
-}
-
-/* Área de botões com flex-grow para preencher espaço */
-.selecao-linhas-card .button-grid {
-  margin-top: 6px !important;
-  gap: 4px !important;
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  flex-shrink: 0; /* mantém tamanho dos botões */
-}
-
-.selecao-linhas-card .button-grid button {
-  width: 100% !important;
-  aspect-ratio: 1 / 1; /* mantém botões quadrados */
-  font-size: 0.7em !important;
-  padding: 4px !important;
-  min-width: 24px;
-  min-height: 24px;
-}
-
-.selecao-linhas-card #extra-buttons {
-  margin-top: 6px !important;
-  gap: 4px !important;
-  display: grid;
-  grid-template-columns: repeat(16, 1fr);
-  margin-bottom: auto; /* empurra para cima, preenchendo espaço abaixo */
-  flex-shrink: 0;
-}
-
-.selecao-linhas-card #extra-buttons button {
-  width: 100% !important;
-  aspect-ratio: 1 / 1; /* mantém botões quadrados */
-  font-size: 0.7em !important;
-  padding: 4px !important;
-  min-width: 24px;
-  min-height: 24px;
-}
-
-/* === INTERVALOS HEX/WIF - 100% À ESQUERDA === */
-#hexRange,
-#wifRange,
-#wifRangeUncompressed {
-  text-align: left !important;
-  display: block !important;
-  width: 100% !important;
-  word-break: break-all !important;
-}
-
-/* === AJUSTES PARA PRESET === */
-.speed-control:has(#presetBits) {
-  flex-wrap: wrap;
-}
-
-.speed-control:has(#presetBits) label {
-  font-size: 0.9em !important;
-}
-
-.speed-control:has(#presetBits) #presetBits {
-  flex: 1;
-  min-width: 160px;
-  font-size: 0.85em !important;
-  padding: 6px 10px !important;
-}
-
-.speed-control:has(#presetBits) #applyPresetBtn {
-  padding: 6px 16px !important;
-  font-size: 0.85em !important;
-}
-
-/* === CONVERSOR INPUT EXPANDIDO === */
-#converterInput {
-  width: 100% !important;
-  min-width: 300px;
-  padding: 12px 16px !important;
-  font-size: 0.95em !important;
-  border: 2px solid #dee2e6;
-  border-radius: 8px;
-  resize: horizontal;
-  transition: all 0.3s ease;
-}
-
-#converterInput:focus {
-  outline: none;
-  border-color: #28a745;
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-}
-
-/* === RANGE INDICATOR === */
-.range-indicator {
-  padding: 5px 10px !important;
-  font-size: 0.9em !important;
-  margin: 8px 0 !important;
+  color: #7d5a00;
+  font-size: 0.88em;
+  margin: 8px 0;
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(240, 180, 41, 0.15);
 }
 
 .range-indicator.show {
@@ -1152,45 +594,1053 @@ body {
 }
 
 @keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-10px); }
-  20% { opacity: 1; transform: translateY(0); }
-  80% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-10px); }
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 }
 
-/* === COLUNAS EXTRAS === */
+/* HEX Display */
+.hex-display {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1.5px solid #3b82f6;
+  border-radius: var(--radius-md);
+  padding: 9px 14px;
+  text-align: center;
+  font-weight: 600;
+  color: #1d4ed8;
+  font-size: 0.88em;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
+  transition: all 0.25s ease;
+  word-break: break-all;
+}
+
+.hex-display:hover {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);
+}
+
+.hex-display strong {
+  color: #1e3a8a;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+.hex-display #hexValue {
+  font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+  font-weight: 700;
+  color: #1d4ed8;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+  word-break: break-all;
+  letter-spacing: 0.3px;
+  font-size: 0.92em;
+}
+
+/* ============================================================
+   CARDS DE CONTROLE
+   ============================================================ */
+.control-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--green-500);
+}
+
+.control-card h2 {
+  color: var(--green-600);
+  font-size: 1.05em;
+  font-weight: 700;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1.3;
+}
+
+.control-card h2 i {
+  font-size: 0.95em;
+  opacity: 0.8;
+}
+
+/* ============================================================
+   GRID DE BOTÕES (Altura/Base)
+   ============================================================ */
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30px, 30px));
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.button-grid button {
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--green-500);
+  background: var(--bg-card);
+  color: var(--green-600);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-size: 0.72em;
+  line-height: 1;
+}
+
+.button-grid button:hover {
+  background: linear-gradient(135deg, var(--green-500), #20c997);
+  color: #fff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.35);
+  border-color: var(--green-500);
+}
+
+.button-grid button.active {
+  background: var(--green-500);
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+.button-grid button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Botões extras (vermelho) */
+#extra-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30px, 30px));
+  gap: 4px;
+  margin-top: 8px;
+}
+
+#extra-buttons button {
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #dc3545;
+  background: var(--bg-card);
+  color: #dc3545;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-size: 0.72em;
+  line-height: 1;
+}
+
+#extra-buttons button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: #fff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.35);
+}
+
+#extra-buttons button.active {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+#extra-buttons button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   SEÇÃO DE CONTROLES PRINCIPAIS (dentro do card)
+   ============================================================ */
+.main-controls-section {
+  background: linear-gradient(135deg, #f0faf3, #e8f5e9);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-top: 12px;
+  border-top: 2px solid #c8e6c9;
+  border: 1px solid #c8e6c9;
+}
+
+.main-controls-section h2 {
+  color: #2e7d32;
+  font-size: 1.02em;
+  font-weight: 700;
+  margin: 0 0 10px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================================================
+   BOTÕES DE AÇÃO PERSONALIZADOS
+   ============================================================ */
+.btn-custom {
+  padding: 9px 18px;
+  font-size: 0.88em;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: #fff;
+}
+
+.btn-start:hover:not(:disabled) {
+  background: linear-gradient(135deg, #20c997, #17a2b8);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(40, 167, 69, 0.35);
+}
+
+.btn-stop {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  color: #fff;
+}
+
+.btn-stop:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fd7e14, #e55300);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(255, 193, 7, 0.35);
+}
+
+.btn-stop:disabled,
+.btn-start:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-clear {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: #fff;
+}
+
+.btn-clear:hover {
+  background: linear-gradient(135deg, #c82333, #a71d2a);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(220, 53, 69, 0.35);
+}
+
+.btn-random {
+  background: linear-gradient(135deg, #6f42c1, #5a32a3);
+  color: #fff;
+}
+
+.btn-random:hover {
+  background: linear-gradient(135deg, #5a32a3, #4a298d);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(111, 66, 193, 0.35);
+}
+
+.btn-debug {
+  background: linear-gradient(135deg, #ff6b35, #ee5a24);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-debug:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ee5a24, #dc3545);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(238, 90, 36, 0.35);
+}
+
+.btn-debug::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-debug:hover::before {
+  left: 100%;
+}
+
+/* ============================================================
+   CONTROLE DE VELOCIDADE
+   ============================================================ */
+.speed-control {
+  background: var(--bg-secondary);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.speed-control label {
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.speed-control input[type="range"] {
+  flex: 1;
+  min-width: 140px;
+  accent-color: var(--green-500);
+}
+
+/* Preset selector específico */
+.d-flex:has(#presetBits) {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin: 10px 0;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.d-flex:has(#presetBits) label {
+  font-size: 0.88em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+#presetBits {
+  flex: 1;
+  min-width: 160px;
+  font-size: 0.85em;
+  padding: 6px 10px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+#presetBits:focus {
+  outline: none;
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+#applyPresetBtn {
+  padding: 7px 16px;
+  font-size: 0.85em;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   GRID DE LAYOUT - 2 COLUNAS (Cards)
+   ============================================================ */
+.cards-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0;
+  align-items: stretch;
+}
+
+.cards-grid-container>* {
+  min-height: 100%;
+}
+
+/* Card 1 - Configurações Avançadas */
+.config-avancadas-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.config-avancadas-card h2 {
+  font-size: 1.0em !important;
+  margin-bottom: 10px !important;
+}
+
+.config-avancadas-card .options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+  margin-top: 8px !important;
+}
+
+.config-avancadas-card .option-card {
+  padding: 8px 10px !important;
+  font-size: 0.83em !important;
+}
+
+.config-avancadas-card .option-card span {
+  font-size: 0.85em !important;
+}
+
+/* Sub-seção Controles Principais */
+.config-avancadas-card .controles-principais-card {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1.5px solid var(--border-color);
+}
+
+.config-avancadas-card .controles-principais-card h2 {
+  font-size: 1.0em !important;
+  margin-bottom: 8px !important;
+}
+
+.config-avancadas-card .controles-principais-card .d-flex {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 7px !important;
+}
+
+.config-avancadas-card .controles-principais-card .btn-custom {
+  width: 100% !important;
+  padding: 9px 10px !important;
+  font-size: 0.83em !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Card 2 - Seleção de Linhas (altura total direita) */
+.selecao-linhas-card {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  height: 100%;
+}
+
+.selecao-linhas-card h2 {
+  font-size: 0.95em !important;
+  margin-bottom: 6px !important;
+  margin-top: 10px !important;
+  flex-shrink: 0;
+  color: var(--green-600) !important;
+}
+
+.selecao-linhas-card h2:first-child {
+  margin-top: 0 !important;
+}
+
+.selecao-linhas-card .button-grid {
+  margin-top: 4px !important;
+  gap: 3px !important;
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  flex-shrink: 0;
+}
+
+.selecao-linhas-card .button-grid button {
+  width: 100% !important;
+  aspect-ratio: 1 / 1;
+  font-size: 0.68em !important;
+  padding: 3px !important;
+  min-width: 22px;
+  min-height: 22px;
+}
+
+.selecao-linhas-card #extra-buttons {
+  margin-top: 4px !important;
+  gap: 3px !important;
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  margin-bottom: auto;
+  flex-shrink: 0;
+}
+
+.selecao-linhas-card #extra-buttons button {
+  width: 100% !important;
+  aspect-ratio: 1 / 1;
+  font-size: 0.68em !important;
+  padding: 3px !important;
+  min-width: 22px;
+  min-height: 22px;
+}
+
+/* Ajustes gerais de cards no grid */
+.control-card,
+.main-controls-section {
+  margin-bottom: 0 !important;
+}
+
+.cards-grid-container .control-card,
+.cards-grid-container .main-controls-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   OPTIONS GRID (Radio/Checkbox)
+   ============================================================ */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.option-card {
+  background: var(--bg-card);
+  padding: 9px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.option-card:hover {
+  border-color: var(--green-500);
+  background: var(--green-100);
+  color: var(--green-700);
+  transform: translateY(-1px);
+}
+
+.option-card input {
+  accent-color: var(--green-500);
+  margin: 0;
+}
+
+/* ============================================================
+   SEÇÃO DE OUTPUTS - CHAVES GERADAS
+   ============================================================ */
+.outputs-section {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin: 10px 0;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--green-500);
+}
+
+.outputs-section h2 {
+  color: var(--green-600);
+  font-size: 1.12em;
+  font-weight: 700;
+  margin: 0 0 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.3;
+}
+
+.outputs-section .output-box {
+  text-align: left;
+  padding: 13px 12px;
+  line-height: 1;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.output-group {
+  background: var(--bg-secondary);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--green-500);
+  width: 100%;
+}
+
+.control-card .output-group {
+  width: 100%;
+}
+
+.output-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-size: 0.86em;
+  line-height: 1.3;
+}
+
+.output-box {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 0.83em;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  resize: none;
+  transition: all 0.2s ease;
+  line-height: 1.55;
+  overflow: hidden;
+}
+
+.output-box:focus {
+  outline: none;
+  border-color: var(--green-500);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+/* ============================================================
+   DIVISOR DE CONTEÚDO
+   ============================================================ */
+.content-divider {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green-500), transparent);
+  margin: 24px 0;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   SEÇÕES COLAPSÁVEIS
+   ============================================================ */
+.post_puzzle-section,
+.post_edu-intro-section,
+.post_edu-warning-section {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  margin: 14px 0;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  max-height: 56px;
+  transition: max-height 0.4s ease, box-shadow 0.25s ease;
+  border: 1px solid var(--border-color);
+}
+
+.post_puzzle-section.expanded,
+.post_edu-intro-section.expanded,
+.post_edu-warning-section.expanded {
+  max-height: 2000px;
+  box-shadow: var(--shadow-md);
+}
+
+.post_puzzle-section:hover,
+.post_edu-intro-section:hover,
+.post_edu-warning-section:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.post_puzzle-section h2,
+.post_edu-intro-section h2,
+.post_edu-warning-section h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1.02em;
+  color: var(--text-primary);
+  line-height: 1.3;
+  transition: background 0.2s ease;
+}
+
+.post_puzzle-section h2:hover,
+.post_edu-intro-section h2:hover,
+.post_edu-warning-section h3:hover {
+  background: linear-gradient(135deg, var(--green-100), #e8f5e9);
+}
+
+.post_puzzle-section h2 .toggle-icon,
+.post_edu-intro-section h2 .toggle-icon,
+.post_edu-warning-section h3 .toggle-icon {
+  transition: transform 0.3s ease;
+  font-size: 0.8em;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.post_puzzle-section.expanded h2 .toggle-icon,
+.post_edu-intro-section.expanded h2 .toggle-icon,
+.post_edu-warning-section.expanded h3 .toggle-icon {
+  transform: rotate(180deg);
+  color: var(--green-500);
+}
+
+.post_puzzle-section .section-content,
+.post_edu-intro-section .section-content,
+.post_edu-warning-section .section-content {
+  padding: 18px 20px;
+}
+
+.post_puzzle-section .section-content h3,
+.post_edu-intro-section .section-content h3,
+.post_edu-warning-section .section-content h3 {
+  color: var(--green-600);
+  font-size: 1.0em;
+  font-weight: 700;
+  margin: 12px 0 8px;
+  line-height: 1.4;
+}
+
+.post_puzzle-section .section-content p,
+.post_edu-intro-section .section-content p,
+.post_edu-warning-section .section-content p {
+  margin-bottom: 10px;
+  line-height: 1.65;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+.post_puzzle-section .section-content ul,
+.post_edu-intro-section .section-content ul,
+.post_edu-warning-section .section-content ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.post_puzzle-section .section-content li,
+.post_edu-intro-section .section-content li,
+.post_edu-warning-section .section-content li {
+  font-size: 0.9em;
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   DATABASE STATUS SECTION
+   ============================================================ */
+#database-status-section {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   WIDGET BTC WALLET
+   ============================================================ */
+#btc-wallet-widget {
+  font-family: 'Courier New', monospace;
+  background: var(--bg-secondary) !important;
+  padding: 12px !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-primary) !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid var(--border-color);
+}
+
+#btc-wallet-widget h3 {
+  font-size: 0.95em !important;
+  color: var(--text-primary) !important;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 8px !important;
+}
+
+#btc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ============================================================
+   INTERVALOS HEX/WIF
+   ============================================================ */
+#hexRange,
+#wifRange,
+#wifRangeUncompressed {
+  text-align: left !important;
+  display: block !important;
+  width: 100% !important;
+  word-break: break-all !important;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8em;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   BOTÃO NONE (DESMARCAR ALTURA/BASE)
+   ============================================================ */
+.range-btn-none {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-color: #c82333 !important;
+}
+
+.range-btn-none:hover {
+  background: linear-gradient(135deg, #c82333, #a71d2a) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.range-btn-none.active {
+  background: #a71d2a !important;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.35);
+}
+
+/* ============================================================
+   PRESET SELECTOR AJUSTES
+   ============================================================ */
+.speed-control:has(#presetBits) {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.speed-control:has(#presetBits) label {
+  font-size: 0.88em !important;
+}
+
+.speed-control:has(#presetBits) #presetBits {
+  flex: 1;
+  min-width: 160px;
+  font-size: 0.85em !important;
+  padding: 6px 10px !important;
+}
+
+.speed-control:has(#presetBits) #applyPresetBtn {
+  padding: 6px 14px !important;
+  font-size: 0.85em !important;
+}
+
+/* ============================================================
+   CONVERSOR INPUT
+   ============================================================ */
+#converterInput {
+  width: 100% !important;
+  padding: 10px 14px !important;
+  font-size: 0.9em !important;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  font-family: 'Courier New', monospace;
+}
+
+#converterInput:focus {
+  outline: none;
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+/* ============================================================
+   COLUNAS EXTRAS
+   ============================================================ */
 .extra-cols-container {
   margin-top: 8px;
-  flex-grow: 1; /* preenche espaço restante */
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 
 .extra-cols-container h4 {
-  font-size: 0.95em !important;
-  margin-bottom: 6px !important;
+  font-size: 0.9em !important;
+  margin-bottom: 5px !important;
   color: #dc3545;
   flex-shrink: 0;
+  font-weight: 700;
 }
 
 .extra-cols-container .button-grid {
-  gap: 4px !important;
+  gap: 3px !important;
   grid-template-columns: repeat(16, 1fr);
   flex-shrink: 0;
 }
 
 .extra-cols-container .button-grid button {
   width: 100% !important;
-  aspect-ratio: 1 / 1; /* mantém quadrados */
-  font-size: 0.7em !important;
-  min-width: 24px;
-  min-height: 24px;
+  aspect-ratio: 1 / 1;
+  font-size: 0.68em !important;
+  min-width: 22px;
+  min-height: 22px;
 }
 
-/* === RESPONSIVIDADE === */
+/* ============================================================
+   NAVBAR (navbar de rodapé)
+   ============================================================ */
+.site-footer {
+  background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
+  color: #c9d1d9;
+  padding: 24px 0 16px;
+  margin-top: 30px;
+  border-top: 2px solid var(--green-500);
+}
 
-/* Tablet: manter 2 colunas mas ajustar */
+.footer-nav a {
+  color: #c9d1d9;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.88em;
+  font-weight: 500;
+}
+
+.footer-nav a:hover {
+  color: var(--green-500);
+}
+
+.footer-nav ul {
+  margin-bottom: 10px;
+}
+
+.site-footer .text-center {
+  font-size: 0.82em;
+  color: #8b949e;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   ÍCONE COPIAR
+   ============================================================ */
+.fa-copy {
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--green-500);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.fa-copy:hover {
+  color: #fd7e14;
+}
+
+.fa-copy:active {
+  color: #3b82f6;
+  transform: scale(0.75);
+}
+
+.fa-copy.text-success {
+  color: var(--green-500) !important;
+}
+
+/* ============================================================
+   WIF LIST
+   ============================================================ */
+#wifList {
+  max-height: 170px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+#wifList .list-group-item {
+  font-size: 0.8em !important;
+  padding: 7px 10px !important;
+}
+
+#wifList .list-group-item .puzzle-title {
+  font-weight: 700;
+  color: var(--green-500);
+  font-size: 0.85em !important;
+}
+
+#wifList .list-group-item .puzzle-wif {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75em !important;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+/* ============================================================
+   INDICADOR DE BACKGROUND (floating)
+   ============================================================ */
+.background-indicator {
+  transition: all 0.3s ease;
+}
+
+/* ============================================================
+   AD CONTAINERS
+   ============================================================ */
+.ad-container {
+  margin: 14px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ============================================================
+   GDPR BANNER
+   ============================================================ */
+.gdpr-consent-banner {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* ============================================================
+   RESPONSIVIDADE - TABLET (992px - 1200px)
+   ============================================================ */
+@media (max-width: 1200px) {
+  .main-content {
+    margin-right: 0;
+  }
+
+  .sidebar-right {
+    position: static;
+    margin-left: 0;
+    margin-top: 14px;
+    width: 100%;
+  }
+}
+
 @media (max-width: 992px) {
+  .main-wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar-left {
+    position: static;
+    width: 100%;
+    top: auto;
+  }
+
   .cards-grid-container {
     grid-template-columns: 1fr 1fr;
   }
@@ -1202,7 +1652,7 @@ body {
 
   .selecao-linhas-card {
     grid-column: 2;
-    grid-row: 1 / 2; /* só primeira linha em tablet */
+    grid-row: 1 / 2;
   }
 
   .config-avancadas-card .controles-principais-card .d-flex {
@@ -1210,8 +1660,82 @@ body {
   }
 }
 
-/* Mobile: 1 coluna (tudo empilhado) */
+/* ============================================================
+   RESPONSIVIDADE - MOBILE (até 768px)
+   ============================================================ */
 @media (max-width: 768px) {
+  body {
+    padding-top: 58px;
+  }
+
+  .navbar {
+    height: 56px;
+  }
+
+  .hero-section {
+    padding: 14px 16px;
+  }
+
+  .hero-section h1 {
+    font-size: 1.35em;
+  }
+
+  .hero-section .subtitle {
+    font-size: 0.88em;
+  }
+
+  .button-grid,
+  #extra-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(28px, 1fr));
+  }
+
+  .btn-custom {
+    width: 100%;
+    padding: 8px 14px;
+  }
+
+  .post_puzzle-section,
+  .post_edu-intro-section,
+  .post_edu-warning-section {
+    margin: 10px 0;
+  }
+
+  .post_puzzle-section h2,
+  .post_edu-intro-section h2,
+  .post_edu-warning-section h3 {
+    font-size: 0.95em !important;
+    padding: 11px 14px;
+  }
+
+  .post_puzzle-section .section-content,
+  .post_edu-intro-section .section-content,
+  .post_edu-warning-section .section-content {
+    padding: 14px 16px;
+  }
+
+  .main-content h1 {
+    font-size: 1.4em;
+  }
+
+  .main-content h2 {
+    font-size: 1.06em;
+  }
+
+  .main-content h3 {
+    font-size: 0.96em;
+  }
+
+  .control-card,
+  .main-controls-section,
+  .outputs-section {
+    padding: 10px 12px;
+  }
+
+  .sidebar-left,
+  .sidebar-right {
+    padding: 10px 12px;
+  }
+
   .cards-grid-container {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
@@ -1237,44 +1761,29 @@ body {
 
   .selecao-linhas-card .button-grid,
   .selecao-linhas-card #extra-buttons {
-    grid-template-columns: repeat(auto-fit, minmax(30px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)) !important;
   }
 }
 
-/* === AJUSTES GERAIS === */
-.control-card,
-.main-controls-section {
-  margin-bottom: 0 !important;
+/* ============================================================
+   ANIMAÇÃO - KEYFRAME GLOBAL
+   ============================================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.cards-grid-container .control-card,
-.cards-grid-container .main-controls-section {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ========================================
-/* ========================================================================
-   MODAL DE PUZZLES BITCOIN - CSS COMPLETO
-   Sistema de 3 Estados: Oculto → Ticket Lateral → Modal Expandido
-   ========================================================================
-   
-   INSTRUÇÕES DE USO:
-   1. Cole este CSS no final do seu arquivo styles.css
-   2. Ou crie um arquivo separado e importe: @import 'puzzles-modal.css';
-   3. Substitua qualquer CSS antigo do modal de puzzles
-   
-   ESTADOS:
-   - hidden: Modal completamente invisível (padrão)
-   - ticket: Ticket lateral colado à direita da tela
-   - expanded: Modal centralizado com backdrop
-   
-   ======================================================================== */
-
-/* =============================================================
-   RESET E CONFIGURAÇÕES BASE
-   ============================================================= */
+/* ============================================================
+   ====== MODAL DE PUZZLES BITCOIN ======
+   Sistema de 3 Estados: Oculto → Ticket → Expandido
+   ============================================================ */
 
 #puzzlesListModal,
 #puzzlesListModal *,
@@ -1285,76 +1794,49 @@ body {
   padding: 0;
 }
 
-/* =============================================================
-   ESTADO 1: OCULTO (Padrão - Sem Puzzles)
-   ============================================================= */
-
+/* Estado 1: OCULTO */
 #puzzlesListModal {
-  /* Posicionamento */
   position: fixed;
   top: 50%;
   right: 0;
-  
-  /* Transform inicial */
   transform: translateY(-50%);
-  
-  /* Z-index alto */
   z-index: 9999;
-  
-  /* Estado inicial: COMPLETAMENTE OCULTO */
   display: none;
   opacity: 0;
   visibility: hidden;
-  
-  /* Transições suaves */
   transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  
-  /* Desabilita interação */
   pointer-events: none;
 }
 
-/* =============================================================
-   ESTADO 2: TICKET LATERAL (Quando Encontra Puzzles)
-   ============================================================= */
-
+/* Estado 2: TICKET LATERAL */
 #puzzlesListModal.ticket {
-  /* Visibilidade */
   display: block;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  
-  /* Posicionamento: colado à direita */
-  top: 50%;
-  right: 0;
+  top: 70%;
+  right: 12px;
   left: auto;
   transform: translateY(-50%);
-  
-  /* Dimensões do ticket */
-  width: 320px;
-  max-width: 90vw;
-  height: auto;
-  max-height: 140px;
-  
-  /* Aparência */
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  border-radius: 12px 0 0 12px;
-  box-shadow: -5px 0 25px rgba(255, 152, 0, 0.4),
-              -2px 0 10px rgba(255, 152, 0, 0.2);
-  
-  /* Overflow */
+  width: 56px;
+  height: 56px;
+  max-width: 56px;
+  max-height: 56px;
+  /* Substitui amarelos por azul/teal */
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  border-radius: 50%;
+  box-shadow: -5px 0 25px rgba(59, 130, 246, 0.35), -2px 0 10px rgba(6, 182, 212, 0.25);
   overflow: visible;
-  
-  /* Animação de entrada */
   animation: slideInTicket 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes slideInTicket {
   0% {
-    right: -350px;
+    right: -320px;
     opacity: 0;
     transform: translateY(-50%) scale(0.9);
   }
+
   100% {
     right: 0;
     opacity: 1;
@@ -1362,46 +1844,29 @@ body {
   }
 }
 
-/* Hover no ticket */
 #puzzlesListModal.ticket:hover {
-  box-shadow: -8px 0 35px rgba(255, 152, 0, 0.6),
-              -4px 0 15px rgba(255, 152, 0, 0.3);
-  transform: translateY(-50%) translateX(-5px);
+  box-shadow: -8px 0 35px rgba(59, 130, 246, 0.55), -4px 0 15px rgba(6, 182, 212, 0.3);
+  transform: translateY(-50%) translateX(0);
 }
 
-/* =============================================================
-   ESTADO 3: MODAL EXPANDIDO (Quando Usuário Clica)
-   ============================================================= */
-
+/* Estado 3: EXPANDIDO */
 #puzzlesListModal.expanded {
-  /* Visibilidade */
   display: block;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  
-  /* Centralização */
   top: 50%;
   left: 50%;
   right: auto;
   transform: translate(-50%, -50%);
-  
-  /* Dimensões expandidas */
   width: 90%;
   max-width: 700px;
   height: auto;
   max-height: 85vh;
-  
-  /* Aparência */
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5),
-              0 10px 40px rgba(0, 0, 0, 0.3);
-  
-  /* Overflow para scroll */
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 10px 40px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  
-  /* Animação de expansão */
   animation: expandModal 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
@@ -1410,13 +1875,13 @@ body {
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
   }
+
   100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 }
 
-/* Backdrop escuro quando expandido */
 #puzzlesListModal.expanded::before {
   content: '';
   position: fixed;
@@ -1431,201 +1896,155 @@ body {
 }
 
 @keyframes fadeInBackdrop {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
   }
-  to { 
-    opacity: 1; 
+
+  to {
+    opacity: 1;
   }
 }
 
-/* =============================================================
-   HEADER DO MODAL (Sempre Visível)
-   ============================================================= */
-
+/* Header do Modal */
 .puzzles-modal-header {
-  /* Layout */
   position: relative;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  
-  /* Espaçamento */
-  padding: 16px 20px;
-  
-  /* Aparência */
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  gap: 10px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
   color: #ffffff;
-  
-  /* Border radius (ajusta conforme estado) */
   border-radius: inherit;
-  
-  /* Cursor */
   cursor: pointer;
   user-select: none;
-  
-  /* Transições */
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-/* Header no modo ticket */
 #puzzlesListModal.ticket .puzzles-modal-header {
-  border-radius: 12px 0 0 12px;
-  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
 }
 
-/* Header no modo expandido - não clicável */
 #puzzlesListModal.expanded .puzzles-modal-header {
   border-radius: 16px 16px 0 0;
   cursor: default;
-  border-bottom: 3px solid rgba(255, 152, 0, 0.3);
+  border-bottom: 2px solid rgba(255, 152, 0, 0.25);
 }
 
-/* Hover no header (apenas ticket) */
 #puzzlesListModal.ticket .puzzles-modal-header:hover {
-  background: linear-gradient(135deg, #ffca28 0%, #ffa726 100%);
-  padding-left: 24px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  padding-left: 0;
 }
 
-/* Focus para acessibilidade */
 .puzzles-modal-header:focus {
   outline: 3px solid rgba(255, 255, 255, 0.5);
   outline-offset: -3px;
 }
 
-/* =============================================================
-   TÍTULO DO HEADER
-   ============================================================= */
-
+/* Título do modal */
 #puzzlesModalTitle {
   margin: 0;
-  font-size: 1.15em;
+  font-size: 1.05em;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
   line-height: 1.3;
   color: #ffffff;
 }
 
-/* Título no ticket (menor) */
 #puzzlesListModal.ticket #puzzlesModalTitle {
-  font-size: 1em;
+  font-size: 0;
+  /* oculta o texto no modo ícone */
 }
 
-/* Título expandido (maior) */
 #puzzlesListModal.expanded #puzzlesModalTitle {
-  font-size: 1.4em;
+  font-size: 1.3em;
 }
 
-/* Ícone do troféu */
 #puzzlesModalTitle i.fa-trophy {
-  font-size: 1.4em;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+  font-size: 1.35em;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.25));
   animation: trophyPulse 2.5s ease-in-out infinite;
 }
 
 @keyframes trophyPulse {
-  0%, 100% { 
-    transform: scale(1) rotate(0deg); 
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
   }
-  25% { 
-    transform: scale(1.15) rotate(-8deg); 
+
+  25% {
+    transform: scale(1.15) rotate(-8deg);
   }
-  75% { 
-    transform: scale(1.15) rotate(8deg); 
+
+  75% {
+    transform: scale(1.15) rotate(8deg);
   }
 }
 
-/* Texto do contador */
-#puzzlesCountText {
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* =============================================================
-   BADGE DE CONTAGEM
-   ============================================================= */
-
+/* Badge de contagem */
 .puzzle-count-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 10px;
-  
-  /* Aparência */
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
   background: rgba(255, 255, 255, 0.25);
   border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 16px;
-  
-  /* Tipografia */
-  font-size: 0.95em;
+  border-radius: 15px;
+  font-size: 0.92em;
   font-weight: 900;
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  
-  /* Animação de pop */
   animation: badgePop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 @keyframes badgePop {
-  0% { 
-    transform: scale(0); 
+  0% {
+    transform: scale(0);
     opacity: 0;
   }
-  50% { 
-    transform: scale(1.3); 
+
+  50% {
+    transform: scale(1.3);
   }
-  100% { 
-    transform: scale(1); 
+
+  100% {
+    transform: scale(1);
     opacity: 1;
   }
 }
 
-/* =============================================================
-   CONTAINER DE BOTÕES DO HEADER
-   ============================================================= */
-
+/* Botões do header */
 .puzzles-header-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   flex-shrink: 0;
 }
 
-/* =============================================================
-   BOTÕES DE CONTROLE
-   ============================================================= */
-
 .puzzles-btn {
-  /* Layout */
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Dimensões */
-  width: 38px;
-  height: 38px;
-  
-  /* Aparência */
+  width: 36px;
+  height: 36px;
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.35);
   border-radius: 50%;
   color: #ffffff;
-  font-size: 17px;
-  
-  /* Cursor */
+  font-size: 16px;
   cursor: pointer;
-  
-  /* Transições */
-  transition: all 0.3s ease;
-  
-  /* Remove padrões de botão */
+  transition: all 0.2s ease;
   outline: none;
   padding: 0;
 }
@@ -1633,7 +2052,7 @@ body {
 .puzzles-btn:hover {
   background: rgba(255, 255, 255, 0.4);
   border-color: rgba(255, 255, 255, 0.6);
-  transform: scale(1.15);
+  transform: scale(1.12);
 }
 
 .puzzles-btn:active {
@@ -1645,9 +2064,7 @@ body {
   outline-offset: 2px;
 }
 
-/* Botão de colapsar (→) */
 .puzzles-collapse-btn {
-  /* Visível apenas no modo ticket */
   display: flex;
 }
 
@@ -1656,16 +2073,14 @@ body {
 }
 
 .puzzles-collapse-btn i {
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .puzzles-collapse-btn:hover i {
   transform: translateX(4px);
 }
 
-/* Botão de fechar (X) */
 .puzzles-close-btn {
-  /* Oculto no modo ticket */
   display: none;
 }
 
@@ -1678,716 +2093,574 @@ body {
   border-color: rgba(244, 67, 54, 0.6);
 }
 
-/* =============================================================
-   CONTEÚDO DO TICKET (Resumido)
-   ============================================================= */
-
+/* Conteúdo do ticket */
 .ticket-content {
-  /* Oculto por padrão */
   display: none;
-  
-  /* Espaçamento */
-  padding: 14px 20px 16px;
-  
-  /* Tipografia */
+  padding: 12px 18px 14px;
   color: #ffffff;
   text-align: center;
 }
 
-/* Visível apenas no modo ticket */
 #puzzlesListModal.ticket .ticket-content {
   display: block;
 }
 
 .ticket-content p {
   margin: 0;
-  font-size: 0.95em;
+  font-size: 0.9em;
   font-weight: 600;
   line-height: 1.5;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .ticket-content .highlight {
   display: block;
-  font-size: 1.15em;
+  font-size: 1.1em;
   font-weight: 800;
-  margin-top: 6px;
-  letter-spacing: 0.5px;
+  margin-top: 5px;
+  letter-spacing: 0.3px;
 }
 
-/* =============================================================
-   CORPO DO MODAL (Lista Expandida)
-   ============================================================= */
-
+/* Corpo do modal expandido */
 .puzzles-modal-body {
-  /* Oculto no modo ticket */
   display: none;
-  
-  /* Layout */
   width: 100%;
-  
-  /* Aparência */
   background: #f8f9fa;
-  
-  /* Scroll */
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-/* Visível apenas no modo expandido */
 #puzzlesListModal.expanded .puzzles-modal-body {
   display: block;
   max-height: calc(85vh - 100px);
-  padding: 24px;
+  padding: 22px;
 }
 
-/* =============================================================
-   SCROLLBAR CUSTOMIZADA
-   ============================================================= */
-
+/* Scrollbar customizada */
 .puzzles-modal-body::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 .puzzles-modal-body::-webkit-scrollbar-track {
   background: #e9ecef;
-  border-radius: 10px;
-  margin: 5px 0;
+  border-radius: 8px;
 }
 
 .puzzles-modal-body::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  border-radius: 10px;
+  border-radius: 8px;
   border: 2px solid #e9ecef;
-  transition: background 0.3s ease;
 }
 
 .puzzles-modal-body::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #ffca28 0%, #ffa726 100%);
 }
 
-/* Firefox */
 .puzzles-modal-body {
   scrollbar-width: thin;
   scrollbar-color: #ffc107 #e9ecef;
 }
 
-/* =============================================================
-   CONTAINER DA LISTA DE PUZZLES
-   ============================================================= */
-
+/* Lista de puzzles */
 #puzzlesListContent {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   width: 100%;
 }
 
-/* =============================================================
-   ITEM INDIVIDUAL DE PUZZLE
-   ============================================================= */
-
+/* Item de puzzle */
 .puzzle-item {
-  /* Layout */
   width: 100%;
-  
-  /* Espaçamento */
-  padding: 18px;
-  
-  /* Aparência */
+  padding: 16px;
   background: #ffffff;
-  border: 2px solid transparent;
-  border-left: 6px solid #ffc107;
+  border: 1.5px solid transparent;
+  border-left: 5px solid #ffc107;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  
-  /* Transições */
-  transition: all 0.3s ease;
-  
-  /* Animação de entrada */
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  transition: all 0.25s ease;
   animation: slideInItem 0.5s ease-out backwards;
 }
 
 @keyframes slideInItem {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(-25px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
-/* Delay progressivo para cada item */
-.puzzle-item:nth-child(1) { animation-delay: 0.05s; }
-.puzzle-item:nth-child(2) { animation-delay: 0.1s; }
-.puzzle-item:nth-child(3) { animation-delay: 0.15s; }
-.puzzle-item:nth-child(4) { animation-delay: 0.2s; }
-.puzzle-item:nth-child(5) { animation-delay: 0.25s; }
-.puzzle-item:nth-child(6) { animation-delay: 0.3s; }
-.puzzle-item:nth-child(7) { animation-delay: 0.35s; }
-.puzzle-item:nth-child(8) { animation-delay: 0.4s; }
-.puzzle-item:nth-child(n+9) { animation-delay: 0.45s; }
+.puzzle-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
 
-/* Hover no item */
+.puzzle-item:nth-child(2) {
+  animation-delay: 0.10s;
+}
+
+.puzzle-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.puzzle-item:nth-child(4) {
+  animation-delay: 0.20s;
+}
+
+.puzzle-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.puzzle-item:nth-child(n+6) {
+  animation-delay: 0.30s;
+}
+
 .puzzle-item:hover {
-  transform: translateY(-5px) translateX(5px);
-  box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+  transform: translateY(-4px) translateX(4px);
+  box-shadow: 0 10px 28px rgba(255, 193, 7, 0.28);
   border-color: #ff9800;
   border-left-color: #ff9800;
 }
 
-/* =============================================================
-   HEADER DO ITEM
-   ============================================================= */
-
+/* Header do item */
 .puzzle-header {
-  /* Layout */
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  
-  /* Espaçamento */
-  margin-bottom: 14px;
-  padding-bottom: 14px;
-  
-  /* Borda */
-  border-bottom: 2px solid #f0f0f0;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #f0f0f0;
 }
 
 /* Número do puzzle */
 .puzzle-number {
-  font-size: 1.3em;
-  font-weight: 900;
-  color: #ffc107;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  letter-spacing: 0.5px;
-}
-
-.puzzle-number::before {
-  content: "🏆";
-  font-size: 1.4em;
-  animation: rotateTrophy 4s ease-in-out infinite;
-}
-
-@keyframes rotateTrophy {
-  0%, 100% { 
-    transform: rotate(0deg); 
-  }
-  25% { 
-    transform: rotate(-12deg) scale(1.1); 
-  }
-  75% { 
-    transform: rotate(12deg) scale(1.1); 
-  }
+  font-size: 1.2em;
+  font-weight: 800;
+  color: #e65100;
 }
 
 /* Timestamp */
 .puzzle-timestamp {
-  font-size: 0.85em;
-  color: #6c757d;
-  font-weight: 600;
-  background: #f8f9fa;
-  padding: 5px 12px;
-  border-radius: 14px;
-  border: 1px solid #e9ecef;
-  white-space: nowrap;
+  font-size: 0.78em;
+  color: #718096;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 3px 10px;
 }
 
-/* =============================================================
-   DETALHES DO PUZZLE
-   ============================================================= */
-
-.puzzle-details {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-}
-
-/* Linha de detalhe */
-.detail-row {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  width: 100%;
-}
-
-/* Label do campo */
+/* Labels e valores */
 .detail-label {
-  font-size: 0.8em;
+  font-size: 0.78em;
   font-weight: 700;
-  color: #495057;
+  color: #718096;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  letter-spacing: 0.05em;
+  margin-bottom: 5px;
 }
 
-.detail-label::before {
-  content: '';
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  background: #ffc107;
-  border-radius: 50%;
-  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
-}
-
-/* Valor do campo */
 .detail-value {
-  /* Layout */
-  width: 100%;
-  
-  /* Espaçamento */
-  padding: 12px 16px;
-  
-  /* Aparência */
-  font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
-  font-size: 0.95em;
-  color: #212529;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 10px;
-  border-left: 5px solid #ffc107;
+  font-family: 'Courier New', monospace;
+  font-size: 0.88em;
+  padding: 9px 12px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #edf2f7 100%);
+  border-left: 3px solid #ffc107;
+  border-radius: 0 6px 6px 0;
   word-break: break-all;
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-  
-  /* Transições */
-  transition: all 0.3s ease;
-  
-  /* Seleção de texto */
-  user-select: all;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+  color: #2d3748;
 }
 
 .detail-value:hover {
-  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  background: linear-gradient(135deg, #edf2f7 0%, #e2e8f0 100%);
   border-left-color: #ff9800;
-  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.08);
-  transform: translateX(3px);
 }
 
-/* Variações de cor por tipo */
 .detail-value.address {
   color: #28a745;
-  font-weight: 700;
   border-left-color: #28a745;
 }
 
 .detail-value.address:hover {
-  border-left-color: #218838;
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  background: linear-gradient(135deg, #f0fff4, #e8f5e9);
 }
 
 .detail-value.wif {
-  color: #007bff;
-  font-weight: 700;
-  border-left-color: #007bff;
+  color: #2563eb;
+  border-left-color: #3b82f6;
 }
 
 .detail-value.wif:hover {
-  border-left-color: #0056b3;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
 }
 
-/* =============================================================
-   ESTADO VAZIO (Sem Puzzles Encontrados)
-   ============================================================= */
-
+/* Estado vazio */
 .empty-state {
-  /* Layout */
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
   text-align: center;
-  
-  /* Espaçamento */
-  padding: 60px 30px;
-  
-  /* Aparência */
-  color: #6c757d;
-  background: #ffffff;
+  background: #f8f9fa;
   border-radius: 12px;
-  border: 3px dashed #dee2e6;
+  border: 2px dashed #dee2e6;
+  color: #adb5bd;
 }
 
 .empty-state i {
-  font-size: 5em;
+  font-size: 4em;
+  margin-bottom: 14px;
   color: #dee2e6;
-  margin-bottom: 24px;
-  display: block;
-  animation: floatIcon 3s ease-in-out infinite;
-}
-
-@keyframes floatIcon {
-  0%, 100% { 
-    transform: translateY(0); 
-  }
-  50% { 
-    transform: translateY(-15px); 
-  }
 }
 
 .empty-state p {
-  margin: 0;
-  font-size: 1.15em;
+  font-size: 1em;
   font-weight: 600;
-  color: #6c757d;
+  color: #adb5bd;
+  margin: 0;
 }
 
-/* =============================================================
-   ANIMAÇÃO DE ATUALIZAÇÃO (Quando Encontra Novo Puzzle)
-   ============================================================= */
-
-#puzzlesListModal.updating {
-  animation: updatePulse 0.7s ease-out;
-}
-
-@keyframes updatePulse {
-  0%, 100% { 
-    transform: translateY(-50%) scale(1); 
-  }
-  25% { 
-    transform: translateY(-50%) scale(1.03); 
-  }
-  75% { 
-    transform: translateY(-50%) scale(0.98); 
-  }
-}
-
-#puzzlesListModal.expanded.updating {
-  animation: updatePulseExpanded 0.7s ease-out;
-}
-
-@keyframes updatePulseExpanded {
-  0%, 100% { 
-    transform: translate(-50%, -50%) scale(1); 
-  }
-  25% { 
-    transform: translate(-50%, -50%) scale(1.02); 
-  }
-  75% { 
-    transform: translate(-50%, -50%) scale(0.99); 
-  }
-}
-
-/* =============================================================
-   ANIMAÇÕES DE TRANSIÇÃO ENTRE ESTADOS
-   ============================================================= */
-
-/* Transição: Ticket → Expandido */
-#puzzlesListModal.ticket-to-expanded {
-  animation: ticketToExpanded 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-}
-
-@keyframes ticketToExpanded {
-  0% {
-    top: 50%;
-    right: 0;
-    left: auto;
-    transform: translateY(-50%);
-    width: 320px;
-    max-width: 90vw;
-    border-radius: 12px 0 0 12px;
-  }
-  100% {
-    top: 50%;
-    left: 50%;
-    right: auto;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 700px;
-    border-radius: 16px;
-  }
-}
-
-/* Transição: Expandido → Ticket */
-#puzzlesListModal.expanded-to-ticket {
-  animation: expandedToTicket 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-}
-
-@keyframes expandedToTicket {
-  0% {
-    top: 50%;
-    left: 50%;
-    right: auto;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 700px;
-    border-radius: 16px;
-  }
-  100% {
-    top: 50%;
-    right: 0;
-    left: auto;
-    transform: translateY(-50%);
-    width: 320px;
-    max-width: 90vw;
-    border-radius: 12px 0 0 12px;
-  }
-}
-
-/* =============================================================
-   RESPONSIVIDADE - TABLET (768px - 1024px)
-   ============================================================= */
-
+/* ============================================================
+   RESPONSIVIDADE - MODAL PUZZLES
+   ============================================================ */
 @media (max-width: 1024px) {
-  /* Ticket menor */
   #puzzlesListModal.ticket {
-    width: 280px;
+    width: 270px;
   }
-  
-  /* Modal expandido ocupa mais espaço */
+
   #puzzlesListModal.expanded {
     width: 92%;
     max-width: 650px;
   }
 }
 
-/* =============================================================
-   RESPONSIVIDADE - MOBILE (até 768px)
-   ============================================================= */
-
 @media (max-width: 768px) {
-  /* Ticket ajustado */
   #puzzlesListModal.ticket {
-    width: 260px;
+    width: 250px;
     max-width: 85vw;
     max-height: 120px;
   }
-  
-  /* Modal expandido maior */
+
   #puzzlesListModal.expanded {
     width: 95%;
     max-width: 95vw;
     max-height: 90vh;
     border-radius: 12px;
   }
-  
-  /* Header compacto */
+
   .puzzles-modal-header {
-    padding: 12px 16px;
+    padding: 11px 15px;
   }
-  
+
   #puzzlesModalTitle {
-    font-size: 0.95em;
+    font-size: 0.9em;
   }
-  
+
   #puzzlesListModal.expanded #puzzlesModalTitle {
-    font-size: 1.2em;
+    font-size: 1.15em;
   }
-  
-  /* Botões menores */
+
   .puzzles-btn {
-    width: 34px;
-    height: 34px;
-    font-size: 15px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
   }
-  
-  /* Badge menor */
+
   .puzzle-count-badge {
-    min-width: 28px;
-    height: 28px;
-    font-size: 0.85em;
+    min-width: 26px;
+    height: 26px;
+    font-size: 0.82em;
   }
-  
-  /* Corpo ajustado */
+
   #puzzlesListModal.expanded .puzzles-modal-body {
     max-height: calc(90vh - 80px);
-    padding: 18px;
+    padding: 16px;
   }
-  
-  /* Itens de puzzle */
+
   .puzzle-item {
-    padding: 14px;
+    padding: 13px;
   }
-  
+
   .puzzle-number {
-    font-size: 1.1em;
+    font-size: 1.05em;
   }
-  
-  .puzzle-timestamp {
-    font-size: 0.75em;
-  }
-  
+
   .detail-value {
-    font-size: 0.85em;
-    padding: 10px 12px;
+    font-size: 0.82em;
+    padding: 8px 10px;
   }
-  
-  /* Scrollbar mais fina */
+
   .puzzles-modal-body::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
   }
 }
 
-/* =============================================================
-   RESPONSIVIDADE - MOBILE PEQUENO (até 480px)
-   ============================================================= */
-
 @media (max-width: 480px) {
-  /* Ticket ainda menor */
   #puzzlesListModal.ticket {
-    width: 240px;
+    width: 230px;
     max-height: 110px;
   }
-  
-  /* Modal expandido full screen */
+
   #puzzlesListModal.expanded {
     width: 98%;
     max-height: 92vh;
   }
-  
-  /* Header do puzzle em coluna */
+
   .puzzle-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px;
   }
-  
+
   .puzzle-timestamp {
     align-self: flex-end;
   }
-  
-  /* Título compacto */
+
   #puzzlesModalTitle {
-    font-size: 0.85em;
-    gap: 6px;
+    font-size: 0.82em;
+    gap: 5px;
   }
-  
-  /* Ícone do troféu menor */
+
   #puzzlesModalTitle i.fa-trophy {
-    font-size: 1.2em;
+    font-size: 1.15em;
   }
-  
-  /* Empty state menor */
+
   .empty-state {
-    padding: 40px 20px;
+    padding: 35px 16px;
   }
-  
+
   .empty-state i {
-    font-size: 3.5em;
+    font-size: 3.2em;
   }
 }
 
-/* =============================================================
-   TEMA ESCURO (Auto-detectado)
-   ============================================================= */
+/* ============================================================
+   TEMA ESCURO (data-theme="dark")
+   ============================================================ */
+[data-theme="dark"] .control-card,
+[data-theme="dark"] .outputs-section {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
 
+[data-theme="dark"] .output-box {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .option-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .speed-control {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .button-grid button {
+  background: var(--bg-secondary);
+  color: var(--green-500);
+}
+
+[data-theme="dark"] #extra-buttons button {
+  background: var(--bg-secondary);
+  color: #dc3545;
+}
+
+[data-theme="dark"] .hero-section {
+  background: linear-gradient(135deg, #1a3a1a, #1b3d1b);
+  border-color: #2d5a2d;
+}
+
+[data-theme="dark"] .hero-section h1,
+[data-theme="dark"] .hero-section .subtitle {
+  color: #a5d6a7;
+}
+
+[data-theme="dark"] .output-group {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] #puzzlesListModal.expanded {
+  background: #1e1e1e;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .puzzles-modal-body {
+  background: #121212;
+}
+
+[data-theme="dark"] .puzzle-item {
+  background: #2d2d2d;
+  border-color: #444;
+  border-left-color: #ffa726;
+}
+
+[data-theme="dark"] .puzzle-item:hover {
+  box-shadow: 0 10px 30px rgba(255, 167, 38, 0.4);
+}
+
+[data-theme="dark"] .puzzle-header {
+  border-bottom-color: #444;
+}
+
+[data-theme="dark"] .puzzle-timestamp {
+  background: #2d2d2d;
+  border-color: #444;
+  color: #aaa;
+}
+
+[data-theme="dark"] .detail-label {
+  color: #bbb;
+}
+
+[data-theme="dark"] .detail-value {
+  background: linear-gradient(135deg, #2d2d2d, #1e1e1e);
+  color: #e0e0e0;
+  border-left-color: #ffa726;
+}
+
+[data-theme="dark"] .detail-value:hover {
+  background: linear-gradient(135deg, #1e1e1e, #121212);
+}
+
+[data-theme="dark"] .detail-value.address {
+  color: #4caf50;
+  border-left-color: #4caf50;
+}
+
+[data-theme="dark"] .detail-value.wif {
+  color: #64b5f6;
+  border-left-color: #64b5f6;
+}
+
+[data-theme="dark"] .empty-state {
+  background: #2d2d2d;
+  border-color: #444;
+  color: #888;
+}
+
+[data-theme="dark"] .empty-state i {
+  color: #444;
+}
+
+[data-theme="dark"] .puzzles-modal-body::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+[data-theme="dark"] .puzzles-modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #ffa726, #ff9800);
+  border-color: #2d2d2d;
+}
+
+/* ============================================================
+   TEMA ESCURO AUTOMÁTICO (prefers-color-scheme)
+   ============================================================ */
 @media (prefers-color-scheme: dark) {
-  /* Modal expandido */
   #puzzlesListModal.expanded {
     background: #1e1e1e;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8),
-                0 10px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 10px 40px rgba(0, 0, 0, 0.6);
   }
-  
-  /* Backdrop mais escuro */
+
   #puzzlesListModal.expanded::before {
     background: rgba(0, 0, 0, 0.85);
   }
-  
-  /* Corpo do modal */
+
   .puzzles-modal-body {
     background: #121212;
   }
-  
-  /* Items de puzzle */
+
   .puzzle-item {
     background: #2d2d2d;
     border-color: #444;
     border-left-color: #ffa726;
   }
-  
+
   .puzzle-item:hover {
     box-shadow: 0 10px 30px rgba(255, 167, 38, 0.4);
     border-left-color: #ff9800;
   }
-  
-  /* Header do item */
+
   .puzzle-header {
     border-bottom-color: #444;
   }
-  
-  /* Timestamp */
+
   .puzzle-timestamp {
     background: #2d2d2d;
     border-color: #444;
     color: #aaa;
   }
-  
-  /* Labels */
+
   .detail-label {
     color: #bbb;
   }
-  
-  /* Valores */
+
   .detail-value {
-    background: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%);
+    background: linear-gradient(135deg, #2d2d2d, #1e1e1e);
     color: #e0e0e0;
     border-left-color: #ffa726;
   }
-  
+
   .detail-value:hover {
-    background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
-    border-left-color: #ff9800;
+    background: linear-gradient(135deg, #1e1e1e, #121212);
   }
-  
+
   .detail-value.address {
     color: #4caf50;
     border-left-color: #4caf50;
   }
-  
+
   .detail-value.address:hover {
-    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    background: linear-gradient(135deg, #1b5e20, #2e7d32);
   }
-  
+
   .detail-value.wif {
     color: #64b5f6;
     border-left-color: #64b5f6;
   }
-  
+
   .detail-value.wif:hover {
-    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+    background: linear-gradient(135deg, #0d47a1, #1565c0);
   }
-  
-  /* Estado vazio */
+
   .empty-state {
     background: #2d2d2d;
     border-color: #444;
     color: #888;
   }
-  
+
   .empty-state i {
     color: #444;
   }
-  
-  /* Scrollbar */
+
   .puzzles-modal-body::-webkit-scrollbar-track {
     background: #2d2d2d;
   }
-  
+
   .puzzles-modal-body::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+    background: linear-gradient(135deg, #ffa726, #ff9800);
     border-color: #2d2d2d;
-  }
-  
-  .puzzles-modal-body::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%);
   }
 }
 
-/* =============================================================
+/* ============================================================
    ACESSIBILIDADE
-   ============================================================= */
-
-/* Redução de movimento para usuários sensíveis */
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
+
   #puzzlesListModal,
   #puzzlesListModal *,
   #puzzlesListModal *::before,
@@ -2398,76 +2671,305 @@ body {
   }
 }
 
-/* Foco visível para navegação por teclado */
 *:focus-visible {
-  outline: 3px solid rgba(255, 193, 7, 0.6);
+  outline: 2px solid rgba(40, 167, 69, 0.7);
   outline-offset: 2px;
 }
 
-/* Alto contraste */
 @media (prefers-contrast: high) {
   .puzzle-item {
-    border: 3px solid #000;
+    border: 2px solid #000;
   }
-  
+
   .detail-value {
-    border-left-width: 6px;
+    border-left-width: 5px;
   }
-  
+
   .puzzles-modal-header {
-    border-bottom: 4px solid #000;
+    border-bottom: 3px solid #000;
   }
 }
 
-/* =============================================================
-   PRINT (Oculta o modal ao imprimir)
-   ============================================================= */
-
+/* Print */
 @media print {
   #puzzlesListModal {
     display: none !important;
   }
 }
 
-/* Botão "Nenhuma" para desmarcar altura/base */
-.range-btn-none {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
-  color: white !important;
-  font-weight: bold !important;
+/* ============================================================
+   NOVOS ELEMENTOS - INDEX.HTML REFATORADO
+   ============================================================ */
+
+/* Preset row */
+.preset-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  margin: 8px 0;
+  flex-wrap: nowrap;
 }
 
-.range-btn-none:hover {
-  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%) !important;
+.preset-label {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.preset-row .form-select {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.83em;
+  padding: 4px 28px 4px 8px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  height: 30px;
+}
+
+.preset-row .form-select:focus {
+  outline: none;
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.15);
+}
+
+.preset-row .btn-custom {
+  padding: 4px 12px;
+  font-size: 0.82em;
+  height: 30px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* DB Loading placeholder */
+.db-loading-placeholder {
+  padding: 14px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-color);
+  font-size: 0.88em;
+  margin: 8px 0;
+}
+
+.db-loading-placeholder i {
+  margin-right: 8px;
+  color: var(--green-500);
+}
+
+/* Botões de ação ÍCONE (sem texto) */
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-icon.btn-start {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+}
+
+.btn-icon.btn-stop {
+  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  color: #fff;
+}
+
+.btn-icon.btn-clear {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: #fff;
+}
+
+.btn-icon.btn-random {
+  background: linear-gradient(135deg, #6f42c1, #5a32a3);
+  color: #fff;
+}
+
+.btn-icon.btn-debug {
+  background: linear-gradient(135deg, #ff6b35, #ee5a24);
+  color: #fff;
+}
+
+.btn-icon.btn-start:hover:not(:disabled) {
+  background: linear-gradient(135deg, #20c997, #17a2b8);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
 }
 
-.range-btn-none.active {
-  background: #bd2130 !important;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+.btn-icon.btn-stop:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fd7e14, #e55300);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(253, 126, 20, 0.4);
 }
 
-/* =============================================================
-   FIM DO CSS DO MODAL DE PUZZLES
-   ========================================================================
-   
-   Total de linhas: ~1100+
-   Tamanho aproximado: 35KB
-   
-   Compatibilidade:
-   - Chrome 90+
-   - Firefox 88+
-   - Safari 14+
-   - Edge 90+
-   
-   Características:
-   ✅ Sistema de 3 estados (oculto/ticket/expandido)
-   ✅ Animações suaves e profissionais
-   ✅ Responsividade completa
-   ✅ Tema escuro automático
-   ✅ Acessibilidade WCAG 2.1 AA
-   ✅ Redução de movimento
-   ✅ Alto contraste
-   ✅ Suporte a impressão
-   
-   ======================================================================== */
+.btn-icon.btn-clear:hover {
+  background: linear-gradient(135deg, #c82333, #a71d2a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+}
+
+.btn-icon.btn-random:hover {
+  background: linear-gradient(135deg, #5a32a3, #4a298d);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(111, 66, 193, 0.4);
+}
+
+.btn-icon.btn-debug:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ee5a24, #dc3545);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(238, 90, 36, 0.4);
+}
+
+/* Linha de botões de ação */
+.action-buttons-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+/* Linha de velocidade */
+.speed-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.speed-label {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.speed-hints {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75em;
+  color: var(--text-muted);
+}
+
+/* Outputs grid - 3 colunas lado a lado */
+.outputs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* Widget BTC Wallet - como seção de conteúdo */
+.btc-wallet-section {
+  margin: 10px 0;
+}
+
+#btc-wallet-widget {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#btc-wallet-widget h3 {
+  font-size: 0.9em;
+  font-weight: 700;
+  color: var(--btc-orange, #F7931A);
+  margin: 0 0 8px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btc-list-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+}
+
+#btc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Conversor */
+.converter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.converter-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.converter-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.converter-actions .btn-custom {
+  font-size: 0.83em;
+  padding: 6px 14px;
+}
+
+/* Controles principais - ajuste do h3 */
+.controles-principais-card h3 {
+  font-size: 0.88em !important;
+  font-weight: 700 !important;
+  color: #2e7d32 !important;
+  margin: 0 0 8px !important;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Selecao linhas h3 */
+.selecao-linhas-card h3 {
+  font-size: 0.88em !important;
+  font-weight: 600 !important;
+  color: var(--text-muted) !important;
+  margin: 8px 0 4px !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.selecao-linhas-card h2 small {
+  font-size: 0.78em;
+  font-weight: 400;
+  opacity: 0.75;
+  margin-left: 3px;
+}

@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.presetExpressoAtivo = false; // 🚀 DESATIVA MODO PRESET
 
     if (window.matrizAPI) {
-      window.matrizAPI.setRange(12, 16);
+      window.matrizAPI.setRange(null, null);
       window.matrizAPI.setExtraRow(null, []);
     }
     updateSpeedControlVisibility();
@@ -185,7 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (applyPresetBtn && presetBitsInput) {
       applyPresetBtn.addEventListener('click', () => {
         const selectedValue = presetBitsInput.options[presetBitsInput.selectedIndex].value;
-        applyPresetBits(selectedValue);
+        if (selectedValue === "") {
+          resetPreset();
+          if (window.matrizAPI && typeof window.matrizAPI.reset === 'function') {
+            window.matrizAPI.reset();
+          }
+        } else {
+          applyPresetBits(selectedValue);
+        }
       });
     }
     window.addEventListener('presetChanged', () => updateSpeedControlVisibility());

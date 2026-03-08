@@ -38,5 +38,25 @@
     "dependencias": [
       "regras/*"
     ]
+  },
+  {
+    "timestamp": "2026-03-06 14:50:00",
+    "nome_arquivo": "js/eggs-hunter.js",
+    "tipo_arquivo": "script|feature",
+    "descricao_tarefa": "Implementação do Eggs Hunter V2 com IndexedDB para verificação de saldo em lote (1000 WIFs).",
+    "codigo_gerado": "Sistema de fila pendingWifs e processamento em lotes de 20 endereços via blockchain.info.",
+    "dependencias": [
+      "docs/EGGS_HUNTER.md"
+    ]
+  },
+  {
+    "timestamp": "2026-03-06 22:52:00",
+    "nome_arquivo": "js/theme-manager.js",
+    "tipo_arquivo": "script|regra",
+    "descricao_tarefa": "Implementação de temas universais (claro/escuro) com persistência e detecção de sistema.",
+    "codigo_gerado": "Classe ThemeManager com [data-theme] no <html> e variáveis CSS no styles.css.",
+    "dependencias": [
+      "regras/master_rules.md"
+    ]
   }
 ]
