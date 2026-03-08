@@ -542,6 +542,49 @@
   }
 }
 </style>
+  <!-- =============================================
+     FIX MOBILE — Linha Extra (#extra-buttons)
+     Corrige botões empilhados → grid compacto
+     ============================================= -->
+<style>
+@media (max-width: 768px) {
+
+  /* -----------------------------------------------
+     LINHA EXTRA — força grid igual ao button-grid
+  ----------------------------------------------- */
+  #extra-buttons,
+  .button-group {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  #extra-buttons button,
+  .button-group button {
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    padding: 6px 2px !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    /* Remove qualquer display:block ou flex inline */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* Telas muito pequenas (≤480px) — 3 colunas */
+@media (max-width: 480px) {
+  #extra-buttons,
+  .button-group {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+</style>
 </head>
 
 <body>
