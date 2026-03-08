@@ -108,12 +108,15 @@ class VerticalProgressManager {
   // 🚀 Calcula valor inverso (Simetria/Espelhamento dentro do intervalo)
   calculateInverse(hexValue, startHex, endHex) {
     try {
-      const val = BigInt('0x' + hexValue);
-      const start = BigInt('0x' + startHex);
-      const end = BigInt('0x' + endHex);
+      const cleanHex = (h) => h.replace(/^0x/, '');
+      const val = BigInt('0x' + cleanHex(hexValue));
+      const start = BigInt('0x' + cleanHex(startHex));
+      const end = BigInt('0x' + cleanHex(endHex));
       
       // Cálculo de simetria: Distância do início é aplicada a partir do fim para trás
       const inverted = end - (val - start);
+      
+      if (inverted < 0n) return null;
       
       return inverted.toString(16).padStart(64, '0');
     } catch (error) {

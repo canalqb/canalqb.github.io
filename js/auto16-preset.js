@@ -59,60 +59,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const presetBits = window.presetManager.getCurrentBits();
     const mode = getMode();
     let matrixValue = 0n;
-
-    if (mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v') {
-      console.log(`🎲 Passo Aleatório: ${mode}`);
-    }
-
-    // 🚀 RETOMADA VERTICAL agora em startPreset() para não sobrecarregar cada tick.
+    let keysToProcess = [];
 
     if (mode === 'horizontal') {
       // 🚀 LÓGICA DE PINÇA (CONVERGÊNCIA)
+      const startVal = hexToBigInt(currentInicio);
+      const endVal = hexToBigInt(currentFim);
 
+      // Para se os ponteiros se cruzarem (intervalo esgotado)
+      if (startVal >= endVal) {
+        console.log('🏁 [PINÇA] O intervalo se encontrou. Busca concluída.');
+        stopPreset();
+        return;
+      }
 
+      // Adiciona AMBOS os valores para processamento (Pinça Real)
+      const keyInicio = bigIntToHex(startVal);
+      const keyFim = bigIntToHex(endVal);
+      
+      keysToProcess.push(keyInicio);
+      keysToProcess.push(keyFim);
 
-      const startVal = hexToBigInt(currentInicio) + 1n;
-      const endVal = hexToBigInt(currentFim) - 1n;
-
-
-
-      currentInicio = bigIntToHex(startVal);
-      currentFim = bigIntToHex(endVal);
-
-
+      // Atualiza os ponteiros para o PRÓXIMO passo
+      currentInicio = bigIntToHex(startVal + 1n);
+      currentFim = bigIntToHex(endVal - 1n);
 
       // A matriz reflete o avanço do início
       matrixValue = startVal - (1n << BigInt(presetBits));
 
-      linhasProcessadas++;
-
       // Atualiza UI de Progresso (Lote de 1000)
       updateProgressUI(linhasProcessadas);
 
-      // A lógica de persistência vertical não deve rodar aqui, rodará na seção do Vertical!
-
       if (linhasProcessadas >= LINHAS_POR_ATUALIZACAO && !isSyncing) {
-        updateDatabase(Number(presetBits)); // Removemos o await daqui para não travar o motor
+        updateDatabase(Number(presetBits));
       }
-
-      // Gera saída para AMBOS os valores (Pinça)
-      updatePresetOutput(currentInicio);
-      updatePresetOutput(currentFim);
     }
     else if (mode === 'vertical') {
-      // 🎯 MODO VERTICAL COM PRESET: segue lógica exata do modo sem preset + ESPELHAMENTO
+      // 🎯 MODO VERTICAL COM PRESET
       const offset = presetStateCounter;
-
-      // 🚀 CORREÇÃO: Usa currentInicio como base (já está definido)
       let baseHex = currentInicio || '0';
 
-      // 🚀 CORREÇÃO: Usa a lógica exata do modo sem preset
+      // Garante que o gerenciador vertical esteja pronto
+      if (!window.verticalManagerInstance && window.VerticalProgressManager) {
+        window.verticalManagerInstance = new window.VerticalProgressManager();
+      }
+
       if (window.matrizAPI) {
         const activeCells = window.matrizAPI.getActiveCellsVertical();
         const totalCells = activeCells.length;
         const binary = offset.toString(2).padStart(totalCells, '0');
 
-        // 🚀 Ordenação vertical igual ao modo sem preset
         const sortedCells = [...activeCells].sort((a, b) => {
           if (a.col !== b.col) return b.col - a.col;
           return b.row - a.row;
@@ -126,128 +122,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         window.matrizAPI.setGridState(newGridState);
 
-        // 🚀 CORREÇÃO: Converte grid state para hex usando a mesma lógica do modo sem preset
         let decimalValue = 0n;
         for (let row = 0; row < 16; row++) {
           for (let col = 0; col < 16; col++) {
             const idx = row * 16 + col;
             if (newGridState[idx]) {
-              // 🚀 BIT INDEX CORRETO: (16-row)*16 + (16-col) - 1
               const bit_index = (16 - (row + 1)) * 16 + (16 - (col + 1));
               decimalValue |= (1n << BigInt(bit_index));
             }
           }
         }
 
-        // 🚀 CORREÇÃO: Combina base do preset com valor vertical (como modo sem preset)
-        if (baseHex === '0' || !baseHex) {
-          // Modo sem preset: usa apenas decimalValue
-          currentHex = decimalValue.toString(16).padStart(64, '0');
-        } else {
-          // 🚀 Modo com preset: base + valor vertical
-          const baseValue = BigInt('0x' + baseHex);
-          // 🚀 GARANTE que nunca inicie com 0
-          const finalValue = baseValue + decimalValue;
-          currentHex = finalValue.toString(16).padStart(64, '0');
-        }
+        const baseValue = BigInt('0x' + baseHex);
+        const finalValue = baseValue + decimalValue;
+        currentHex = finalValue.toString(16).padStart(64, '0');
 
-        // 🚀 ESPELHAMENTO VERTICAL: calcula e processa o inverso (DESATIVADO TEMPORARIAMENTE)
-        // if (window.VerticalProgressManager && baseHex !== '0') {
-        //   const verticalManager = new window.VerticalProgressManager();
-        //   const invertedHex = verticalManager.calculateInverse(currentHex);
-        //   
-        //   // 🚀 Verifica se o inverso está dentro do intervalo do preset
-        //   if (invertedHex && currentFim) {
-        //     const invertedValue = BigInt('0x' + invertedHex);
-        //     const fimValue = BigInt('0x' + currentFim);
-        //     const inicioValue = BigInt('0x' + currentInicio);
-        //     
-        //     if (invertedValue >= inicioValue && invertedValue <= fimValue) {
-        //       // 🚀 Processa o inverso também
-        //       setTimeout(() => {
-        //         checkWallet(invertedHex, 'vertical');
-        //       }, 100);
-        //       
-        //       console.log('🔄 Espelhamento vertical:', currentHex, '→', invertedHex);
-        //     }
-        //   }
-        // }
+        // Adiciona o valor vertical original
+        keysToProcess.push(currentHex);
+
+        // 🚀 ESPELHAMENTO VERTICAL (Relativo ao Intervalo do Preset)
+        if (window.verticalManagerInstance) {
+          const mirrorStartHex = dbInicio || (1n << BigInt(presetBits)).toString(16);
+          const mirrorEndHex = dbFim || ((1n << (BigInt(presetBits) + 1n)) - 1n).toString(16);
+          const invertedHex = window.verticalManagerInstance.calculateInverse(currentHex, mirrorStartHex, mirrorEndHex);
+          if (invertedHex && invertedHex !== currentHex) {
+            keysToProcess.push(invertedHex);
+          }
+        }
       } else {
-        // Fallback
         const baseValue = BigInt('0x' + baseHex);
         currentHex = (baseValue + BigInt(offset)).toString(16).padStart(64, '0');
+        keysToProcess.push(currentHex);
       }
 
       matrixValue = offset;
       presetStateCounter++;
-      linhasProcessadas++; // Contabilizar linha processada no modo Vertical
 
-      // 🚀 PARADA AUTOMÁTICA NO VERTICAL APÓS EXAURIR COMBINAÇÕES SELECIONADAS
+      // 🚀 VERIFICAÇÃO DE PARADA ANTES DO PROCESSAMENTO DAS CHAVES
       if (window.matrizAPI) {
         const totalCells = window.matrizAPI.getActiveCellsVertical().length;
         const maxComb = 1n << BigInt(totalCells);
-        if (presetStateCounter >= maxComb) {
+        if (presetStateCounter > maxComb) { // Mudado para > para processar a última chave
           stopPreset();
           return;
         }
       }
-
-      // 🚀 PERSISTÊNCIA VERTICAL ATIVA AQUI
-      if (linhasProcessadas % 1000 === 0 && window.VerticalProgressManager) {
-        if (!window.verticalManagerInstance) {
-          window.verticalManagerInstance = new window.VerticalProgressManager();
-        }
-        // Define preset atual para salvamento: INI = currentHex, FIM = espelho dentro de 2^n..2^(n+1)-1
-        const startRangeHex = (1n << BigInt(presetBits)).toString(16);
-        const endRangeHex = ((1n << (BigInt(presetBits) + 1n)) - 1n).toString(16);
-        const mirrorHex = window.verticalManagerInstance.calculateInverse(
-          currentHex,
-          startRangeHex,
-          endRangeHex
-        ) || endRangeHex;
-        window.verticalManagerInstance.setCurrentPreset(
-          Number(presetBits),
-          currentHex,
-          mirrorHex
-        );
-
-        // Salva progresso vertical
-        window.verticalManagerInstance.saveVerticalProgress(
-          currentHex,
-          linhasProcessadas
-        );
-        
-        // Atualiza UI de Progresso Vertical (Lote de 1000)
-        updateVerticalProgressUI(linhasProcessadas % 1000);
-        
-        // 🚀 ATUALIZA OS CARDS DE STATUS NA PÁGINA (INI/FIM)
-        window.dispatchEvent(new CustomEvent('progressUpdated', {
-           detail: { preset: Number(presetBits) }
-        }));
-        
-        console.log(`💾 Progresso vertical salvo: ${linhasProcessadas} linhas (hex: ${currentHex})`);
-      }
-      
-      // Sempre atualiza o contador do modal vertical
-      if (getMode() === 'vertical') {
-        updateVerticalProgressUI(linhasProcessadas % 1000);
-      }
     }
     else if (mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v') {
-      // Aleatorizar respeitando o intervalo atual do modo selecionado
       const bitsNum = Number(presetBits || 0n);
       const subMode = mode === 'randomize_v' ? 'vertical' : 'horizontal';
-
       let startHex = null;
       let endHex = null;
 
-      // Tenta obter valores atualizados dos cards de progresso na UI
       if (window.matrizAPI && typeof window.matrizAPI.getInitHexFromCard === 'function') {
         startHex = window.matrizAPI.getInitHexFromCard(subMode);
         endHex = window.matrizAPI.getEndHexFromCard(subMode);
       }
 
-      // Fallbacks
       if (!startHex || !endHex) {
         startHex = currentInicio || (1n << BigInt(bitsNum)).toString(16);
         endHex = currentFim || ((1n << (BigInt(bitsNum) + 1n)) - 1n).toString(16);
@@ -257,11 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const endVal = BigInt('0x' + endHex);
       const span = endVal > startVal ? (endVal - startVal + 1n) : 1n;
 
-      // Lógica de Densidade Sequencial
       const densities = [0.3, 0.7, 0.4, 0.6, 0.5];
       const density = densities[Math.floor(Number(presetStateCounter % 5n))];
       const targetPoint = startVal + (span * BigInt(Math.floor(density * 1000))) / 1000n;
-      const windowSize = span / 20n; // Janela de 5%
+      const windowSize = span / 20n;
       let rndOffset = (BigInt(Math.floor(Math.random() * 0x7FFFFFFF)) << 32n) | BigInt(Math.floor(Math.random() * 0x7FFFFFFF));
       rndOffset = rndOffset % (windowSize > 0n ? windowSize : 1n);
 
@@ -269,110 +199,143 @@ document.addEventListener('DOMContentLoaded', () => {
       if (val < startVal) val = startVal;
       if (val > endVal) val = endVal;
 
-      // 50% de chance de usar o espelho
-      if (Math.random() < 0.5) {
-        val = startVal + (endVal - val);
+      // 🚀 PROCESSA O PAR (RANDOM + ESPELHO)
+      const mirrorVal = startVal + (endVal - val);
+      
+      const key1 = val.toString(16).padStart(64, '0');
+      const key2 = mirrorVal.toString(16).padStart(64, '0');
+
+      keysToProcess.push(key1);
+      if (key1 !== key2) {
+        keysToProcess.push(key2);
       }
 
-      currentHex = val.toString(16).padStart(64, '0');
+      currentHex = key1; // Matriz reflete o primeiro valor
       const base = 1n << BigInt(bitsNum);
       matrixValue = val - base >= 0n ? (val - base) : 0n;
       presetStateCounter++;
-      linhasProcessadas++;
     }
 
-    if (mode !== 'horizontal' && currentHex) {
-      if (mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v') {
-        updatePresetMatrix(matrixValue, mode === 'randomize_v' ? 'vertical' : 'horizontal');
-      } else {
-        updatePresetMatrix(matrixValue, mode);
+    // 🚀 PROCESSAMENTO DE TODAS AS CHAVES COLETADAS NO PASSO
+    const numKeys = keysToProcess.length;
+    linhasProcessadas += numKeys;
+
+    if (numKeys > 0) {
+      await updatePresetOutputBatch(keysToProcess, matrixValue);
+    }
+
+    // 🚀 PERSISTÊNCIA E UI (Pós-incremento)
+    if (mode === 'vertical') {
+      if (linhasProcessadas >= 1000 && window.verticalManagerInstance) {
+        const startRangeHex = (1n << BigInt(presetBits)).toString(16);
+        const endRangeHex = ((1n << (BigInt(presetBits) + 1n)) - 1n).toString(16);
+        const mirrorHex = window.verticalManagerInstance.calculateInverse(currentHex, startRangeHex, endRangeHex) || endRangeHex;
         
-        // 🚀 ESPELHAMENTO VERTICAL (Inverso Simétrico) dentro de 2^n .. 2^(n+1)-1
-        if (mode === 'vertical' && window.verticalManagerInstance) {
-           const startRangeHex = (1n << BigInt(presetBits)).toString(16);
-           const endRangeHex = ((1n << (BigInt(presetBits) + 1n)) - 1n).toString(16);
-           const invertedHex = window.verticalManagerInstance.calculateInverse(currentHex, startRangeHex, endRangeHex);
-           if (invertedHex) {
-              updatePresetOutput(invertedHex);
-           }
-        }
+        window.verticalManagerInstance.setCurrentPreset(Number(presetBits), currentHex, mirrorHex);
+        await window.verticalManagerInstance.saveVerticalProgress(currentHex, linhasProcessadas);
+        
+        // Reseta contador após salvar (como no horizontal)
+        linhasProcessadas = 0; 
+        vezesAjudadas++;
+        updateVerticalProgressUI(0);
+        
+        window.dispatchEvent(new CustomEvent('progressUpdated', { detail: { preset: Number(presetBits) } }));
+      } else {
+        updateVerticalProgressUI(linhasProcessadas);
       }
-      if (window.matrizAPI) window.matrizAPI.draw();
-      updatePresetOutput(currentHex);
-    } else if (mode === 'horizontal') {
-      // No modo H, a matriz já foi atualizada pela lógica de pinça acima
-      updatePresetMatrix(matrixValue, mode);
-      if (window.matrizAPI) window.matrizAPI.draw();
     }
 
+    // Atualiza Matriz apenas uma vez
+    if (mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v') {
+      updatePresetMatrix(matrixValue, mode === 'randomize_v' ? 'vertical' : 'horizontal');
+    } else {
+      updatePresetMatrix(matrixValue, mode);
+    }
+    
+    if (window.matrizAPI) window.matrizAPI.draw();
+
+    // Check stop conditions
     if (mode !== 'randomize' && mode !== 'randomize_h' && mode !== 'randomize_v') {
       const rangeStart = 1n << BigInt(presetBits);
       const startOff = hexToBigInt(currentInicio) - rangeStart;
-      const endOff = hexToBigInt(currentFim) - rangeStart;
-
-      // Para se os ponteiros se cruzarem (intervalo esgotado)
-      if (hexToBigInt(currentInicio) >= hexToBigInt(currentFim)) {
-        console.log('🏁 [PINÇA] O intervalo se encontrou. Busca concluída.');
-        stopPreset();
-      }
-
       if (window.presetManager.shouldStop(startOff, presetBits)) {
         stopPreset();
       }
     }
   }
 
-  function updatePresetOutput(hex) {
-    if (!hexBox || !hex) return;
-    const cleanHex = hex.replace(/^0+/, '') || '0';
-    const paddedHex = hex.padStart(64, '0');
+  /**
+   * Atualiza a interface com um lote de chaves encontradas (Modo Pinça/Espelho)
+   */
+  async function updatePresetOutputBatch(hexList, matrixValue) {
+    if (!hexBox || !hexList || hexList.length === 0) return;
 
-    const lines = hexBox.value.trim().split('\n').filter(l => l.trim());
-    if (!lines.includes(cleanHex)) {
-      lines.push(cleanHex);
-      if (lines.length > 100) lines.shift();
-      hexBox.value = lines.join('\n');
-      hexBox.scrollTop = hexBox.scrollHeight;
+    const currentMode = getMode();
+    const startTimeLocal = startTime;
+    const linesTotal = linhasProcessadas;
+
+    // 1. Atualiza HEX Box
+    const hexLines = hexBox.value.trim().split('\n').filter(l => l.trim());
+    for (const hex of hexList) {
+      const cleanHex = hex.replace(/^0+/, '') || '0';
+      if (!hexLines.includes(cleanHex)) {
+        hexLines.push(cleanHex);
+      }
     }
+    
+    // Log para depuração de espelhamento
+    if (hexList.length > 1) {
+      console.log(`🔄 [ESPELHAMENTO] Processando par: ${hexList[0]} | ${hexList[1]}`);
+    }
+    if (hexLines.length > 100) hexLines.splice(0, hexLines.length - 100);
+    hexBox.value = hexLines.join('\n');
+    hexBox.scrollTop = hexBox.scrollHeight;
 
-    if (window.toWIF) {
-      window.toWIF(paddedHex, true).then(wif => {
+    // 2. Processa cada chave (WIF e Verificação)
+    for (const hex of hexList) {
+      const paddedHex = hex.padStart(64, '0');
+
+      // Gera WIFs (Comprimida e Não Comprimida)
+      if (window.toWIF) {
+        const wifC = await window.toWIF(paddedHex, true);
+        const wifU = await window.toWIF(paddedHex, false);
+
+        // Atualiza UI de WIFs
         if (wifBox) {
-          const l = wifBox.value.trim().split('\n').filter(x => x.trim());
-          if (!l.includes(wif)) {
-            l.push(wif);
-            if (l.length > 100) l.shift();
-            wifBox.value = l.join('\n');
+          const lines = wifBox.value.trim().split('\n').filter(x => x.trim());
+          if (!lines.includes(wifC)) {
+            lines.push(wifC);
+            if (lines.length > 100) lines.shift();
+            wifBox.value = lines.join('\n');
             wifBox.scrollTop = wifBox.scrollHeight;
           }
         }
-        // 🥚 EGGS HUNTER: Adiciona WIF comprimida
-        if (window.EggsHunter) window.EggsHunter.addWif(wif, true);
-      });
-      window.toWIF(paddedHex, false).then(wif => {
         if (wifBoxUncompressed) {
-          const l = wifBoxUncompressed.value.trim().split('\n').filter(x => x.trim());
-          if (!l.includes(wif)) {
-            l.push(wif);
-            if (l.length > 100) l.shift();
-            wifBoxUncompressed.value = l.join('\n');
+          const lines = wifBoxUncompressed.value.trim().split('\n').filter(x => x.trim());
+          if (!lines.includes(wifU)) {
+            lines.push(wifU);
+            if (lines.length > 100) lines.shift();
+            wifBoxUncompressed.value = lines.join('\n');
             wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
           }
         }
-        // 🥚 EGGS HUNTER: Adiciona WIF não comprimida
-        if (window.EggsHunter) window.EggsHunter.addWif(wif, false);
-      });
-    }
 
-    // 🚀 VERIFICAÇÃO OCULTA DE CARTEIRA ALVO
-    // 🚀 VERIFICAÇÃO DE VENCEDOR (INTEGRADA COM TABELA "ENCONTRADOS")
-    if (window.checkTargetWallet) {
-      window.checkTargetWallet(paddedHex, {
-        mode: getMode(),
-        startTime: startTime,
-        linesProcessed: linhasProcessadas,
-        matrixCoordinates: matrixValue ? { value: matrixValue.toString() } : null
-      });
+        // Eggs Hunter
+        if (window.EggsHunter) {
+          window.EggsHunter.addWif(wifC, true);
+          window.EggsHunter.addWif(wifU, false);
+        }
+      }
+
+      // Verificação de Vencedor
+      if (window.checkTargetWallet) {
+        window.checkTargetWallet(paddedHex, {
+          mode: currentMode,
+          startTime: startTimeLocal,
+          linesProcessed: linesTotal,
+          matrixCoordinates: matrixValue ? { value: matrixValue.toString() } : null
+        });
+      }
     }
   }
 
@@ -561,7 +524,14 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(`🚀 Iniciando Preset para ${bits} bits no modo ${getMode()}`);
 
     presetRunning = true;
-    presetStateCounter = 0n;
+    
+    // 🚀 INICIALIZAÇÃO DO CONTADOR: 
+    // Se linhasProcessadas > 0, mantemos o presetStateCounter atual (Resume em memória).
+    // Caso contrário (linhasProcessadas == 0), o resetamos para 0 e deixamos a retomada de banco agir.
+    if (linhasProcessadas === 0) {
+      presetStateCounter = 0n;
+    }
+
     if (startBtn) startBtn.disabled = true;
     if (stopBtn) stopBtn.disabled = false;
 
@@ -672,7 +642,13 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('🛑 Salvando progresso vertical final antes de parar...');
       await window.verticalManagerInstance.saveVerticalProgress(currentHex, linhasProcessadas);
       
-      // Dispara evento para atualizar o card na tela (preset-ranges.js vai ouvir)
+      // Se tiver acumulado o suficiente, conta como ajuda
+      if (linhasProcessadas >= 1000) {
+        vezesAjudadas++;
+        linhasProcessadas = 0;
+      }
+      
+      // Dispara evento para atualizar o card na tela
       window.dispatchEvent(new CustomEvent('verticalProgressStopped', {
          detail: { preset: Number(window.presetManager.getCurrentBits()) }
       }));
@@ -685,11 +661,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (startBtn) startBtn.disabled = false;
     if (stopBtn) stopBtn.disabled = true;
     
+    // Oculta modais apenas se não for aleatório (para não piscar na troca de modo)
     const hModal = document.getElementById('preset-progress-modal');
-    if (hModal) hModal.style.display = 'none';
+    if (hModal && getMode() === 'horizontal') hModal.style.display = 'none';
     
     const vModal = document.getElementById('vertical-progress-modal');
-    if (vModal) vModal.style.display = 'none';
+    if (vModal && getMode() === 'vertical') vModal.style.display = 'none';
   }
 
   /**
