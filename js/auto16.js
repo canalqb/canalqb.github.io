@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // 🚀 CONTADOR PARA LIMPEZA DE MEMÓRIA
   let verificationCount = 0;
+  
+  // 🔄 BACKGROUND EXECUTION MANAGER
+  let backgroundManager = null;
+  let useBackgroundExecution = false;
 
   /* =====================================================
      ELEMENTOS DOM (EXCLUINDO MATRIZ)
@@ -542,6 +546,146 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     registerWithBackgroundProcessor();
   }, 100);
+  
+  // 🔄 Inicializa Background Execution Manager
+  setTimeout(() => {
+    initBackgroundExecution();
+  }, 200);
+
+  /* =====================================================
+     FUNÇÕES DE BACKGROUND EXECUTION
+     ===================================================== */
+  
+  function initBackgroundExecution() {
+    // Verifica se o Background Execution Manager está disponível
+    if (window.BackgroundExecutionManager) {
+      backgroundManager = window.BackgroundExecutionManager;
+      useBackgroundExecution = true;
+      
+      console.log('🔄 Background Execution habilitado para auto16');
+      
+      // Configura handlers para o worker
+      if (backgroundManager.worker) {
+        backgroundManager.worker.onmessage = (e) => {
+          const { type, data } = e.data;
+          
+          if (type === 'EXECUTE_CYCLE') {
+            executeCycle();
+          }
+        };
+      }
+    }
+  }
+  
+  function executeCycle() {
+    if (!running) return;
+    
+    try {
+      // Executa o ciclo principal
+      if (dualFromLow) {
+        dualLowOffset += 1n;
+        if (dualLowOffset >= 100000000n) {
+          dualLowOffset = 0n;
+          dualFromLow = false;
+        }
+      } else {
+        dualHighOffset += 1n;
+        if (dualHighOffset >= 100000000n) {
+          dualHighOffset = 0n;
+          dualFromLow = true;
+        }
+      }
+      
+      stateCounter += 1n;
+      
+      // Atualiza displays
+      updateDisplays();
+      
+      // Limpeza de memória periódica
+      verificationCount++;
+      if (verificationCount >= 1000) {
+        verificationCount = 0;
+        // Força garbage collection se disponível
+        if (window.gc) {
+          window.gc();
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ Erro no ciclo de background:', error);
+    }
+  }
+  
+  function updateDisplays() {
+    // Atualiza os displays apenas se a página estiver visível
+    if (!document.hidden) {
+      try {
+        if (hexBox) {
+          const hex = (dualLowOffset + dualHighOffset * 100000000n).toString(16).padStart(16, '0').toUpperCase();
+          hexBox.value = hex;
+        }
+        
+        if (wifBox) {
+          const hex = (dualLowOffset + dualHighOffset * 100000000n).toString(16).padStart(64, '0');
+          toWIF(hex, true).then(wif => {
+            if (wifBox) wifBox.value = wif;
+          });
+        }
+        
+        if (wifBoxUncompressed) {
+          const hex = (dualLowOffset + dualHighOffset * 100000000n).toString(16).padStart(64, '0');
+          toWIF(hex, false).then(wif => {
+            if (wifBoxUncompressed) wifBoxUncompressed.value = wif;
+          });
+        }
+      } catch (error) {
+        console.warn('⚠️ Erro ao atualizar displays:', error);
+      }
+    }
+  }
+  
+  // Modifica as funções start/stop para usar background
+  const originalStart = start;
+  const originalStop = stop;
+  
+  start = function(speed = 100) {
+    if (running) return;
+    
+    running = true;
+    
+    if (useBackgroundExecution && backgroundManager) {
+      // Usa background execution
+      backgroundManager.start(speed);
+      console.log('🚀 Iniciando execução em background');
+    } else {
+      // Fallback para execução normal
+      originalStart(speed);
+    }
+  };
+  
+  stop = function() {
+    if (!running) return;
+    
+    running = false;
+    
+    if (useBackgroundExecution && backgroundManager) {
+      backgroundManager.stop();
+      console.log('⏹️ Parando execução em background');
+    } else {
+      originalStop();
+    }
+  };
+  
+  // Exporta funções para uso externo
+  window.auto16 = {
+    start: start,
+    stop: stop,
+    clear: clear,
+    randomize: randomize,
+    running: () => running,
+    executeCycle: executeCycle,
+    updateDisplay: updateDisplays
+  };
 
   // API pública
   window.auto16API = {
