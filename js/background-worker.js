@@ -6,6 +6,8 @@
 let isRunning = false;
 let interval = null;
 let currentSpeed = 100;
+let batchCounter = 0;
+let batchSize = 50; // Executa múltiplos ciclos por mensagem
 
 // Comunicar com o thread principal
 self.onmessage = function(e) {
@@ -38,8 +40,8 @@ function startExecution(speed) {
         data: { running: true, message: 'Worker iniciado' } 
     });
     
-    // Inicia o loop de execução
-    runLoop();
+    // Inicia o loop de execução otimizado
+    runOptimizedLoop();
 }
 
 function stopExecution() {
@@ -61,7 +63,7 @@ function updateSpeed(newSpeed) {
     
     if (isRunning && interval) {
         clearInterval(interval);
-        runLoop();
+        runOptimizedLoop();
     }
     
     self.postMessage({ 
@@ -70,8 +72,11 @@ function updateSpeed(newSpeed) {
     });
 }
 
-function runLoop() {
+function runOptimizedLoop() {
     if (!isRunning) return;
+    
+    // Usa intervalo menor para maior velocidade
+    const optimizedSpeed = Math.max(currentSpeed / 10, 10); // 10x mais rápido
     
     interval = setInterval(() => {
         if (!isRunning) {
@@ -79,12 +84,36 @@ function runLoop() {
             return;
         }
         
-        // Envia comando para executar o próximo ciclo
-        self.postMessage({ 
-            type: 'EXECUTE_CYCLE', 
-            data: { timestamp: Date.now() } 
-        });
-    }, currentSpeed);
+        // Executa múltiplos ciclos em batch
+        for (let i = 0; i < batchSize && isRunning; i++) {
+            self.postMessage({ 
+                type: 'EXECUTE_CYCLE', 
+                data: { 
+                    timestamp: Date.now(),
+                    batchIndex: i,
+                    batchSize: batchSize
+                } 
+            });
+        }
+        
+        batchCounter++;
+        
+        // Ajusta dinamicamente o batch size baseado na velocidade
+        if (batchCounter % 100 === 0) {
+            adjustBatchSize();
+        }
+    }, optimizedSpeed);
+}
+
+function adjustBatchSize() {
+    // Ajusta o batch size baseado na velocidade atual
+    if (currentSpeed < 50) {
+        batchSize = 100; // Muito rápido
+    } else if (currentSpeed < 200) {
+        batchSize = 50; // Rápido
+    } else {
+        batchSize = 25; // Normal
+    }
 }
 
 // Manter o worker vivo

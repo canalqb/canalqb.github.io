@@ -570,10 +570,57 @@ document.addEventListener('DOMContentLoaded', () => {
           const { type, data } = e.data;
           
           if (type === 'EXECUTE_CYCLE') {
-            executeCycle();
+            // Verifica se é um batch execution
+            if (data.batchIndex !== undefined) {
+              // Último item do batch - atualiza displays
+              if (data.batchIndex === data.batchSize - 1) {
+                executeBatch(data.batchSize);
+              } else {
+                // Itens intermediários - executa sem atualizar displays
+                executeCycleNoDisplay();
+              }
+            } else {
+              // Execução normal (fallback)
+              executeCycle();
+            }
           }
         };
       }
+    }
+  }
+  
+  function executeCycleNoDisplay() {
+    // Executa o ciclo sem atualizar displays (otimização para batch)
+    if (!running) return;
+    
+    try {
+      if (dualFromLow) {
+        dualLowOffset += 1n;
+        if (dualLowOffset >= 100000000n) {
+          dualLowOffset = 0n;
+          dualFromLow = false;
+        }
+      } else {
+        dualHighOffset += 1n;
+        if (dualHighOffset >= 100000000n) {
+          dualHighOffset = 0n;
+          dualFromLow = true;
+        }
+      }
+      
+      stateCounter += 1n;
+      verificationCount++;
+      
+      // Limpeza de memória se necessário
+      if (verificationCount >= 1000) {
+        verificationCount = 0;
+        if (window.gc) {
+          window.gc();
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ Erro no ciclo rápido:', error);
     }
   }
   
@@ -598,8 +645,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       stateCounter += 1n;
       
-      // Atualiza displays
-      updateDisplays();
+      // Atualiza displays apenas periodicamente para otimizar performance
+      if (stateCounter % 10n === 0n) {
+        updateDisplays();
+      }
       
       // Limpeza de memória periódica
       verificationCount++;
@@ -613,6 +662,46 @@ document.addEventListener('DOMContentLoaded', () => {
       
     } catch (error) {
       console.error('❌ Erro no ciclo de background:', error);
+    }
+  }
+  
+  // Função para executar múltiplos ciclos em batch (otimização)
+  function executeBatch(cycles) {
+    if (!running) return;
+    
+    try {
+      for (let i = 0; i < cycles && running; i++) {
+        if (dualFromLow) {
+          dualLowOffset += 1n;
+          if (dualLowOffset >= 100000000n) {
+            dualLowOffset = 0n;
+            dualFromLow = false;
+          }
+        } else {
+          dualHighOffset += 1n;
+          if (dualHighOffset >= 100000000n) {
+            dualHighOffset = 0n;
+            dualFromLow = true;
+          }
+        }
+        
+        stateCounter += 1n;
+        verificationCount++;
+      }
+      
+      // Atualiza displays após o batch
+      updateDisplays();
+      
+      // Limpeza de memória se necessário
+      if (verificationCount >= 1000) {
+        verificationCount = 0;
+        if (window.gc) {
+          window.gc();
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ Erro no batch execution:', error);
     }
   }
   
