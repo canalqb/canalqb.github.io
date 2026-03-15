@@ -583,7 +583,7 @@
 
   <!-- ═══ HERO ═══ -->
   <header class="hero">
-    <div class="hero-badge"><span></span>v4.0 — Sistema Ativo</div>
+    <div class="hero-badge"><span></span>v5.4 — Segurança & Conformidade</div>
     <h1>
       <span class="line1">Guia de Requisitos</span>
       <span class="line2">Master Rules LLM</span>
@@ -592,8 +592,8 @@
       Tudo que um desenvolvedor — humano ou IA — precisa saber para trabalhar com o sistema de regras universais de desenvolvimento PHP.
     </p>
     <div class="hero-stats">
-      <div class="stat"><span class="stat-value">09</span><span class="stat-label">Regras PHP/IA</span></div>
-      <div class="stat"><span class="stat-value">10</span><span class="stat-label">Templates</span></div>
+      <div class="stat"><span class="stat-value">14</span><span class="stat-label">Regras PHP/IA</span></div>
+      <div class="stat"><span class="stat-value">14</span><span class="stat-label">Templates</span></div>
       <div class="stat"><span class="stat-value">04</span><span class="stat-label">Componentes UI</span></div>
       <div class="stat"><span class="stat-value">100%</span><span class="stat-label">Qualidade</span></div>
     </div>
@@ -704,6 +704,13 @@
           <div class="card-title">Proteção CSRF</div>
           <div class="card-desc">Geração e validação obrigatória de tokens CSRF em todos os formulários e endpoints POST.</div>
         </div>
+        <div class="card" data-search="protocolo dinamico http https ambiente local producao">
+          <div class="card-icon">🌐</div>
+          <div class="card-file">regra_php_protocolo_dinamico.md</div>
+          <div class="card-title">Protocolo Dinâmico</div>
+          <div class="card-desc">Detecção automática de ambiente (Local/Server) para forçar HTTP em redes privadas e HTTPS em produção.</div>
+          <div class="chips" style="margin-top:12px;"><span class="chip blue">ambiente</span><span class="chip green">SSL</span></div>
+        </div>
         <div class="card" data-search="paginas admin administracao universal">
           <div class="card-icon">🏗️</div>
           <div class="card-file">regra_php_paginas_admin_universais.md</div>
@@ -772,6 +779,20 @@
           <div class="card-title">Harmonia Visual</div>
           <div class="card-desc">Regras de consistência visual: espaçamentos, tipografia, sombras, bordas e variáveis CSS obrigatórias em todos os componentes.</div>
           <div class="chips" style="margin-top:12px;"><span class="chip blue">design</span><span class="chip green">UI</span></div>
+        </div>
+        <div class="card" data-search="paginas legais footer modal adsense qualidade csr dmca privacidade termos">
+          <div class="card-icon">⚖️</div>
+          <div class="card-file">regra_php_paginas_legais_footer_modal.md</div>
+          <div class="card-title">Páginas Legais no Footer (Modal)</div>
+          <div class="card-desc">Regra de obrigação na criação do footer. Exige a criação de páginas de Qualidade/AdSense em modals AJAX.</div>
+          <div class="chips" style="margin-top:12px;"><span class="chip yellow">AdSense</span><span class="chip blue">Legal</span></div>
+        </div>
+        <div class="card" data-search="output buffering buffering flushing ob_start ob_clean ajax silenciamento">
+          <div class="card-icon">🌀</div>
+          <div class="card-file">master_rules.md (Regra 11)</div>
+          <div class="card-title">Segurança de Output Buffering</div>
+          <div class="card-desc">Garante que o uso de ob_start não silencie a renderização da página ou retornos AJAX. Flush obrigatório.</div>
+          <div class="chips" style="margin-top:12px;"><span class="chip yellow">AJAX</span><span class="chip blue">PHP</span></div>
         </div>
       </div>
 
@@ -1071,6 +1092,11 @@
               <td><code>estrutura_php_adsense_checklist.md</code></td>
               <td>Checklist de aprovação AdSense 2025-2026 preenchível por projeto (56 itens)</td>
               <td><span class="badge-green">Conformidade</span></td>
+            </tr>
+            <tr>
+              <td><code>estrutura_php_footer_pagina_modal.php</code></td>
+              <td>Template de conteúdo legal para carregamento dinâmico em Footer/Modals</td>
+              <td><span class="badge-blue">Componente</span></td>
             </tr>
           </tbody>
         </table>
@@ -1397,8 +1423,128 @@ marcação exigida pelo SGE usando a <span class="hl">estrutura_php_schema_perso
       <h2 class="sec-title">Histórico de Atualizações</h2>
       <p class="sec-desc" style="color:var(--text-sec); font-size:0.95rem; margin-bottom:24px;">Acompanhe as últimas adições, regras e melhorias no ecossistema.</p>
       
-      <div class="release-timeline" style="border-left: 2px solid var(--border2); padding-left: 24px; margin-left: 12px;">
-      
+      <div class="release-timeline"style="border-left: 2px solid var(--border2); padding-left: 24px; margin-left: 12px;">
+            
+        <!-- Release v5.4 -->
+        <div class="release-item" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; margin-bottom: 24px;">
+          <div style="content: ''; position: absolute; left: -31px; top: 28px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
+          <div class="release-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="font-family: var(--sans); font-size: 1.25rem; color: var(--text); margin: 0;">Versão 5.4 — Segurança de Fluxo e Conformidade</h3>
+            <span class="release-date" style="font-family: var(--mono); font-size: 0.85rem; color: var(--text-sec);">13/03/2026</span>
+          </div>
+          <p class="release-summary" style="font-size: 0.95rem; color: var(--text-sec); margin-bottom: 16px;">Correção crítica de fluxo de renderização e alinhamento com protocolos de interface do CanalQB.</p>
+          <ul class="release-list" style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">NOVO</span> 
+              <div><strong>REGRA 11 (Master):</strong> Implementada regra de segurança para Output Buffering, evitando o silenciamento acidental de renderização em AJAX/Includes.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-green" style="font-family: var(--mono); font-size: 0.72rem; color: #4ade80; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); padding: 2px 8px; border-radius: 100px;">FIX</span> 
+              <div><strong>CONFORMIDADE UI:</strong> Removidos calls nativos de <code>alert/confirm</code> em <code>descobrir-canais.php</code>, migrando para o sistema de confirmação centralizado.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-purple" style="font-family: var(--mono); font-size: 0.72rem; color: #c084fc; background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); padding: 2px 8px; border-radius: 100px;">ESTRUTURA</span> 
+              <div><strong>SISTEMA DE FLUXO:</strong> Corrigido erro de escopo em <code>video-flow-functions.js</code> e seletor de modal em <code>descobrir-canais.php</code>.</div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Release v5.3 -->
+        <div class="release-item" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; margin-bottom: 24px;">
+          <div style="content: ''; position: absolute; left: -31px; top: 28px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
+          <div class="release-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="font-family: var(--sans); font-size: 1.25rem; color: var(--text); margin: 0;">Versão 5.3 — Layout Universal Obrigatório</h3>
+            <span class="release-date" style="font-family: var(--mono); font-size: 0.85rem; color: var(--text-sec);">12/03/2026</span>
+          </div>
+          <p class="release-summary" style="font-size: 0.95rem; color: var(--text-sec); margin-bottom: 16px;">Expansão do padrão de container centralizado para TODAS as páginas do sistema, não apenas administrativas.</p>
+          <ul class="release-list" style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">NOVO</span> 
+              <div><strong>REGRA UNIVERSAL:</strong> <code>regra_php_layout_universal_container.md</code> tornando container centralizado OBRIGATÓRIO para TODAS as páginas.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-green" style="font-family: var(--mono); font-size: 0.72rem; color: #4ade80; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); padding: 2px 8px; border-radius: 100px;">TEMPLATE</span> 
+              <div><strong>TEMPLATE UNIVERSAL:</strong> <code>estrutura_php_pagina_universal_container.php</code> como base OBRIGATÓRIA para qualquer página.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-purple" style="font-family: var(--mono); font-size: 0.72rem; color: #c084fc; background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); padding: 2px 8px; border-radius: 100px;">ESCOPO</span> 
+              <div><strong>ESCOPO EXPANDIDO:</strong> Aplica-se a páginas admin, usuário, públicas e sistema - SEM EXCEÇÕES.</div>
+            </li>
+          </ul>
+        </div>
+            
+        <!-- Release v5.2 -->
+        <div class="release-item" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; margin-bottom: 24px;">
+          <div style="content: ''; position: absolute; left: -31px; top: 28px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
+          <div class="release-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="font-family: var(--sans); font-size: 1.25rem; color: var(--text); margin: 0;">Versão 5.2 — Layout Padrão Administrativo</h3>
+            <span class="release-date" style="font-family: var(--mono); font-size: 0.85rem; color: var(--text-sec);">12/03/2026</span>
+          </div>
+          <p class="release-summary" style="font-size: 0.95rem; color: var(--text-sec); margin-bottom: 16px;">Implementação de container centralizado responsivo em todas as páginas administrativas com template universal.</p>
+          <ul class="release-list" style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">NOVO</span> 
+              <div><strong>NOVA REGRA:</strong> <code>regra_php_layout_admin_container.md</code> definindo padrão obrigatório de container centralizado para todas as páginas admin.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-green" style="font-family: var(--mono); font-size: 0.72rem; color: #4ade80; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); padding: 2px 8px; border-radius: 100px;">TEMPLATE</span> 
+              <div><strong>TEMPLATE UNIVERSAL:</strong> <code>estrutura_php_pagina_admin_container_universal.php</code> para criação padronizada de páginas com layout responsivo.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-purple" style="font-family: var(--mono); font-size: 0.72rem; color: #c084fc; background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); padding: 2px 8px; border-radius: 100px;">IMPLEMENTAÇÃO</span> 
+              <div><strong>8 PÁGINAS ATUALIZADAS:</strong> Container centralizado aplicado em todas as páginas administrativas existentes.</div>
+            </li>
+          </ul>
+        </div>
+            
+        <!-- Release v5.1 -->
+        <div class="release-item" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; margin-bottom: 24px;">
+          <div style="content: ''; position: absolute; left: -31px; top: 28px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
+          <div class="release-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="font-family: var(--sans); font-size: 1.25rem; color: var(--text); margin: 0;">Versão 5.1 — Sistema de Confirmação Centralizado</h3>
+            <span class="release-date" style="font-family: var(--mono); font-size: 0.85rem; color: var(--text-sec);">11/03/2026</span>
+          </div>
+          <p class="release-summary" style="font-size: 0.95rem; color: var(--text-sec); margin-bottom: 16px;">Implementação de sistema de confirmação centralizado com temas claro/escuro e eliminação completa de alert().</p>
+          <ul class="release-list" style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">NOVO</span> 
+              <div><strong>NOVA REGRA:</strong> <code>regra_php_sistema_confirmacao_centralizado.md</code> definindo padrões obrigatórios para modais de confirmação centralizados, respeitando temas claro/escuro e WCAG AA.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-green" style="font-family: var(--mono); font-size: 0.72rem; color: #4ade80; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); padding: 2px 8px; border-radius: 100px;">MELHORIA</span> 
+              <div><strong>ELIMINAÇÃO COMPLETA:</strong> Remoção de todos os alert() e confirm() do sistema, substituídos por showToast() centralizado com callbacks.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-purple" style="font-family: var(--mono); font-size: 0.72rem; color: #c084fc; background: rgba(192,132,252,0.1); border: 1px solid rgba(192,132,252,0.2); padding: 2px 8px; border-radius: 100px;">ACESSIBILIDADE</span> 
+              <div><strong>CONTRASTE WCAG AA:</strong> Proibição de cores fixas como amarelo, obrigatório uso de CSS variables (--cqb-*) para temas claro/escuro.</div>
+            </li>
+          </ul>
+        </div>
+            
+        <!-- Release v5.0 -->
+        <div class="release-item" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; margin-bottom: 24px;">
+          <div style="content: ''; position: absolute; left: -31px; top: 28px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
+          <div class="release-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="font-family: var(--sans); font-size: 1.25rem; color: var(--text); margin: 0;">Versão 5.0 — Protocolo Dinâmico & Ambiente</h3>
+            <span class="release-date" style="font-family: var(--mono); font-size: 0.85rem; color: var(--text-sec);">10/03/2026</span>
+          </div>
+          <p class="release-summary" style="font-size: 0.95rem; color: var(--text-sec); margin-bottom: 16px;">Implementação de detecção universal de ambiente local vs. produção para automação de HTTP/HTTPS.</p>
+          <ul class="release-list" style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">CORE</span> 
+              <div><strong>NOVA REGRA:</strong> <code>regra_php_protocolo_dinamico.md</code> definindo ranges de IP locais (192.168.x.x, 10.x.x.x) e força de HTTPS em produção.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">CORE</span> 
+              <div><strong>NOVO TPL:</strong> <code>estrutura_php_config_protocolo_dinamico.md</code> template pronto para inicializar ambiente em novos projetos.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-green" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent3); background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); padding: 2px 8px; border-radius: 100px;">FIX</span> 
+              <div><strong>AUTOMAÇÃO:</strong> <code>app-config.php</code> e <code>conecta.php</code> agora detectam <code>$localhost</code> automaticamente, eliminando erro humano.</div>
+            </li>
+          </ul>
+        </div>
+
         <!-- Release v4.0 -->
         <div class="release-item" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; margin-bottom: 24px;">
           <div style="content: ''; position: absolute; left: -31px; top: 28px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
@@ -1423,6 +1569,10 @@ marcação exigida pelo SGE usando a <span class="hl">estrutura_php_schema_perso
             <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
               <span class="badge-purple" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent2); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); padding: 2px 8px; border-radius: 100px;">Update</span> 
               <div><code>master_rules.md</code>: Adicionada regra rigorosa sobre métricas SEO e obrigatoriedade do fluxo de Release Notes.</div>
+            </li>
+            <li style="margin-bottom: 10px; font-size: 0.9rem; line-height: 1.5; color: var(--text); display: flex; align-items: flex-start; gap: 12px;">
+              <span class="badge-blue" style="font-family: var(--mono); font-size: 0.72rem; color: var(--accent); background: rgba(99,210,255,0.1); border: 1px solid rgba(99,210,255,0.2); padding: 2px 8px; border-radius: 100px;">UX/UI</span> 
+              <div><strong>NOVA REGRA #16:</strong> Criação do modal padrão de páginas adicionais (AdSense/Qualidade) com <code>estrutura_php_footer_pagina_modal.php</code> e <code>regra_php_paginas_legais_footer_modal.md</code>.</div>
             </li>
           </ul>
         </div>
@@ -1504,6 +1654,14 @@ marcação exigida pelo SGE usando a <span class="hl">estrutura_php_schema_perso
   <span class="inv-item-file" style="color:#63d2ff;" title="regra_php_csrf_tokens.md">regra_php_csrf_tokens.md</span>
   <span class="inv-item-desc">Tokens CSRF obrigatórios em formulários e POST</span>
 </div>
+        <div class="inv-item" data-inv="regra_php_sistema_confirmacao_centralizado">
+  <span class="inv-item-file" style="color:#63d2ff;" title="regra_php_sistema_confirmacao_centralizado.md">regra_php_sistema_confirmacao_centralizado.md</span>
+  <span class="inv-item-desc">Sistema de confirmação centralizado com temas claro/escuro</span>
+</div>
+        <div class="inv-item" data-inv="regra_php_seguranca_output_buffering">
+  <span class="inv-item-file" style="color:#63d2ff;" title="master_rules.md">master_rules.md (Regra 11)</span>
+  <span class="inv-item-desc">Garante o flush de buffers PHP para evitar o silenciamento da página</span>
+</div>
         <div class="inv-item" data-inv="regra_abnt_doc_2026">
   <span class="inv-item-file" style="color:#63d2ff;" title="regra_abnt_doc_2026.md">regra_abnt_doc_2026.md</span>
   <span class="inv-item-desc">Normas ABNT 2026 para documentos técnicos</span>
@@ -1535,6 +1693,14 @@ marcação exigida pelo SGE usando a <span class="hl">estrutura_php_schema_perso
         <div class="inv-item" data-inv="regra_php_ui_harmonia_visual">
   <span class="inv-item-file" style="color:#63d2ff;" title="regra_php_ui_harmonia_visual.md">regra_php_ui_harmonia_visual.md</span>
   <span class="inv-item-desc">Consistência visual: espaçamentos e tipografia</span>
+</div>
+        <div class="inv-item" data-inv="regra_php_paginas_legais_footer_modal">
+  <span class="inv-item-file" style="color:#63d2ff;" title="regra_php_paginas_legais_footer_modal.md">regra_php_paginas_legais_footer_modal.md</span>
+  <span class="inv-item-desc">Modais padronizados com paginas legais e úteis no Footer</span>
+</div>
+        <div class="inv-item" data-inv="regra_php_protocolo_dinamico">
+  <span class="inv-item-file" style="color:#63d2ff;" title="regra_php_protocolo_dinamico.md">regra_php_protocolo_dinamico.md</span>
+  <span class="inv-item-desc">Detecção de ambiente local/produção e protocolo HTTP/HTTPS</span>
 </div>
       </div>
     </div>
@@ -1652,9 +1818,17 @@ marcação exigida pelo SGE usando a <span class="hl">estrutura_php_schema_perso
   <span class="inv-item-desc">Template de página admin de SEO</span>
 </div>
         <div class="inv-item" data-inv="estrutura_php_simulador_perfis">
-  <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_simulador_perfis_universal.php">estrutura_php_simulador_perfis_universal.php</span>
-  <span class="inv-item-desc">Template de simulador de perfis de usuário</span>
-</div>
+          <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_simulador_perfis_universal.php">estrutura_php_simulador_perfis_universal.php</span>
+          <span class="inv-item-desc">Template de simulador de perfis de usuário</span>
+        </div>
+        <div class="inv-item" data-inv="estrutura_php_pagina_admin_container">
+          <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_pagina_admin_container_universal.php">estrutura_php_pagina_admin_container_universal.php</span>
+          <span class="inv-item-desc">Template padrão de página admin com container centralizado</span>
+        </div>
+        <div class="inv-item" data-inv="estrutura_php_pagina_universal_container">
+          <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_pagina_universal_container.php">estrutura_php_pagina_universal_container.php</span>
+          <span class="inv-item-desc">Template OBRIGATÓRIO para TODAS as páginas com container centralizado</span>
+        </div>
         <div class="inv-item" data-inv="estrutura_php_component_columns_with_icons_php">
   <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_component_columns_with_icons.php">estrutura_php_component_columns_with_icons.php</span>
   <span class="inv-item-desc">Colunas com ícones gradientes (componente)</span>
@@ -1730,6 +1904,14 @@ marcação exigida pelo SGE usando a <span class="hl">estrutura_php_schema_perso
         <div class="inv-item" data-inv="estrutura_php_adsense_checklist">
   <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_adsense_checklist.md">estrutura_php_adsense_checklist.md</span>
   <span class="inv-item-desc">Checklist AdSense 2025-2026 por projeto</span>
+</div>
+        <div class="inv-item" data-inv="estrutura_php_footer_pagina_modal">
+  <span class="inv-item-file"style="color:#fbbf24;" title="estrutura_php_footer_pagina_modal.php">estrutura_php_footer_pagina_modal.php</span>
+  <span class="inv-item-desc">Corpo HTML formatado para modal focado em AdSense e Legal</span>
+</div>
+        <div class="inv-item" data-inv="estrutura_php_config_protocolo_dinamico">
+  <span class="inv-item-file" style="color:#fbbf24;" title="estrutura_php_config_protocolo_dinamico.md">estrutura_php_config_protocolo_dinamico.md</span>
+  <span class="inv-item-desc">Template para detecção automática de ambiente e protocolo</span>
 </div>
       </div>
     </div>

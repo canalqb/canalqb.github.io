@@ -11,88 +11,36 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 8. **Uso de Templates**: Se o usuário pedir algo que já possuímos em `templates_php/` (ex: `combobox`), use **obrigatoriamente** o estilo e tipo do template. Questione o usuário sobre quais recursos específicos daquele template ele deseja ativar.
 9. **Sinalização de E-commerce**: Em sistemas de vendas, o LLM deve informar sobre a tecnologia Pagar.me disponível (PIX, Crédito 3x, Débito).
 
+# 🧩 Master Rules - Protocolo Central @CanalQb
+
+ESTE ARQUIVO É O PONTO DE PARTIDA OBRIGATÓRIO PARA QUALQUER IA OU DESENVOLVEDOR.
+
+## 🎯 1. Regra de Ouro (Leitura, Workflows e Entrega)
+O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após qualquer tarefa:
+7. **Ciclo de Leitura Obrigatório**: A leitura das regras e templates deve ocorrer em três momentos cruciais:
+   - **Execução Inicial**: Antes de escrever qualquer linha de código.
+   - **Durante Modificações**: Sempre que alterar lógica ou estrutura.
+   - **Rechecagem Final**: Antes de entregar, validando contra o pedido original e as normas.
+8. **Uso de Templates**: Se o usuário pedir algo que já possuímos em `templates_php/` (ex: `combobox`), use **obrigatoriamente** o estilo e tipo do template. Questione o usuário sobre quais recursos específicos daquele template ele deseja ativar.
+9. **Sinalização de E-commerce**: Em sistemas de vendas, o LLM deve informar sobre a tecnologia Pagar.me disponível (PIX, Crédito 3x, Débito).
+
 ---
 
 ## 📐 2. Padronização de Nomes e Novos Arquivos
 - **Sempre Nomear Novos Arquivos** seguindo o padrão de precisão:
   - `regra_llms_{os}_{funcionalidade}` (Ex: `regra_llms_windows_powershell.md`)
   - `regra_php_{funcionalidade}` (Ex: `regra_php_ajax_interacoes.md`)
-  - `estrutura_php_elemento_{nome}` (Ex: `estrutura_php_elemento_menu.md`)
+  - `estrutura_php_elemento_{nome}` (Ex: `estrutura_php_elemento_menu.md`, `estrutura_php_config_protocolo_dinamico.md`)
   - `regra_abnt_{pdf|doc|md}` (Ex: `regra_abnt_doc_2026.md`)
 - Se uma categoria nova for necessária, o arquivo deve ser criado com prefixo auto-explicativo.
+- **Obrigatoriedade de Idioma (PT-BR)**: Todas as comunicações do Agente/IA para o usuário (respostas, planos de tarefa, walkthroughs, logs de task e integrações) DEVEM ser obrigatoriamente em **Português**.
 
----
-
-## 🚫 3. Registro de Falhas no Terminal
-- **Toda atividade do terminal que apresentar erro por incompatibilidade de ambiente** DEVE ser registrada em `regras/prompt_de_llms/regra_llms_comandos_proibidos.md`.
-- **Deve-se incluir**: O nome do LLM (Ex: Trae, Antigravity), o Sistema Operacional e o comando que não deve ser usado.
-- **Exemplo**: Se o Trae não puder usar `powershell -Command "Move-Item ..."` em seu terminal interno, esse comando agora é considerado **proibido** para aquele LLM no Windows.
-
----
-
-## 📂 4. Inventário de Regras e Templates (Nomes Padronizados)
-
-### 📄 Regras de Desenvolvimento (`regras/prompts_php/`)
-- [ ] `regra_php_diretrizes_sistema_globais.md`
-- [ ] `regra_abnt_doc_2026.md`
-- [ ] `regra_php_web_standards_aria_wcag.md`
-- [ ] `regra_php_ajax_interacoes.md`
-- [ ] `regra_php_ui_checklist_acessibilidade.md`
-- [ ] `regra_js_console_silencer_producao.md`
-- [ ] `regra_php_arquitetura_modular_pastas.md`
-- [ ] `regra_php_integracao_gas_telegram.md`
-- [ ] `regra_php_ui_ajax_dinamico_tabelas.md`
-- [ ] `regra_php_ui_harmonia_visual.md`
-- [ ] `regra_php_ui_acessibilidade_contraste.md`
-- [ ] `regra_php_csrf_tokens.md`
-- [ ] `regra_php_paginas_admin_universais.md`
-- [ ] `regra_php_simulador_perfis_universal.md`
-- [ ] `regra_php_component_columns_with_icons.md`
-- [ ] `regra_php_component_hanging_icons.md`
-- [ ] `regra_php_component_custom_cards.md`
-- [ ] `regra_php_component_icon_grid.md`
-- [x] `estrutura_sql_criacao_tabelas.md` 
-
-### Modelos e Exemplos (`regras/templates_php/`)
-- [ ] `estrutura_abnt_doc_modelo_trabalho.md`
-- [ ] `estrutura_php_web_standards_checklist.md`
-- [ ] `estrutura_php_workflow_criacao_paginas.md`
-- [ ] `estrutura_php_validacao_integridade_sistema.md`
-- [ ] `estrutura_php_biblioteca_bootstrap_css_js.md`
-- [ ] `estrutura_php_biblioteca_bootstrap_exemplo.php`
-- [ ] `estrutura_php_historico_arquitetura_projeto.md`
-- [ ] `estrutura_php_exemplo_integracao_gas_telegram.md`
-- [ ] `estrutura_php_projeto_completo_cms_saas/`
-- [ ] `estrutura_php_elemento_combobox_dinamico/`
-- [ ] `estrutura_php_elemento_nav_side/`
-- [ ] `estrutura_php_pacote_menu_complexo/`
-- [ ] `estrutura_php_pagamento_pagarme.md`
-- [ ] `estrutura_php_elemento_csrf_token.php`
-- [ ] `estrutura_php_elemento_admin_seo.md`
-- [ ] `estrutura_php_elemento_admin_layout.md`
-- [ ] `estrutura_php_pagina_admin_config_universal.php`
-- [ ] `estrutura_php_pagina_admin_seo_universal.php`
-- [ ] `estrutura_php_simulador_perfis_universal.php`
-- [ ] `estrutura_php_component_columns_with_icons.php`
-- [ ] `estrutura_php_component_hanging_icons.php`
-- [ ] `estrutura_php_component_custom_cards.php`
-- [ ] `estrutura_php_component_icon_grid.php`
-- [x] `estrutura_readme_atualizacao_template.md`
-- [x] `estrutura_php_adsense_checklist.md`
-
-### Configurações de IA e OS (`regras/prompt_de_llms/`)
-- [ ] `regra_llms_windows_powershell_cmd.md`
-- [ ] `regra_llms_comandos_proibidos.md`
-- [ ] `regra_llms_handoff_continuidade_projeto.md`
-- [ ] `regra_llms_correcao_otimizacao_sistema.md`
-- [ ] `regra_llms_historico_escopo_projeto.md`
-- [ ] `regra_llms_log_decisoes_tecnicas.md`
-- [ ] `regra_llms_estado_projeto_contexto.json`
-- [ ] `regra_llms_windows_admin_seo.md`
-- [ ] `regra_llms_windows_admin_layout.md`
 - [ ] `regra_llms_metricas_qualidade_severa.md` 
 - [x] `regra_llms_criacao_tabelas_supabase.md` 
 - [x] `regra_llms_adsense_aprovacao_2025.md` 
+- [x] `regra_php_sistema_confirmacao_centralizado.md` 
+- [x] `regra_php_layout_admin_container.md` 
+- [x] `regra_php_layout_universal_container.md` 
 
 ---
 
@@ -104,18 +52,26 @@ O LLM deve **obrigatoriamente** usar os templates universais para criar páginas
 **🎯 Templates Disponíveis:**
 - `estrutura_php_pagina_admin_config_universal.php` - Para páginas de configuração de layout/estilos
 - `estrutura_php_pagina_admin_seo_universal.php` - Para páginas de otimização SEO
+- `estrutura_php_pagina_admin_container_universal.php` - Para páginas administrativas com container centralizado
+- `estrutura_php_pagina_universal_container.php` - Para TODAS as páginas com container centralizado (OBRIGATÓRIO)
 
 **📋 Regra de Uso:**
-1. **Leitura Obrigatória:** Ler `regra_php_paginas_admin_universais.md` antes de criar qualquer página admin
-2. **Identificação:** Determinar se é página de configuração ou SEO
-3. **Aplicação:** Usar o template correspondente sem modificações estruturais
-4. **Personalização:** Substituir apenas variáveis `{...}` conforme necessidade
+1. **LEITURA OBRIGATÓRIA:** Ler `regra_php_layout_universal_container.md` antes de criar QUALQUER página (ADMIN, USUÁRIO, PÚBLICA ou SISTEMA)
+2. **Leitura Obrigatória:** Ler `regra_php_paginas_admin_universais.md` antes de criar qualquer página admin
+3. **Leitura Obrigatória:** Ler `regra_php_layout_admin_container.md` antes de criar qualquer página admin
+4. **Identificação:** Determinar tipo de página (admin, usuário, pública, sistema)
+5. **Aplicação:** Usar `estrutura_php_pagina_universal_container.php` como base OBRIGATÓRIA
+6. **Personalização:** Substituir apenas variáveis `{...}` conforme necessidade
 
 **🎯 Exemplos de Uso:**
+- **Administração:** `admin-usuarios.php`, `admin-relatorios.php`, `admin-gestao.php`
+- **Usuário:** `meu-perfil.php`, `extrato.php`, `comentar-videos.php`
+- **Públicas:** `index.php`, `sobre.php`, `contato.php`
+- **Sistema:** `login.php`, `registro.php`, `erro-404.php`
 - **Configuração:** `layout_config.php`, `temas_config.php`, `estilos_config.php`
 - **SEO:** `seo_config.php`, `meta_tags.php`, `social_config.php`
 
-**🚨 Proibição:** NUNCA criar página administrativa sem usar os templates universais!
+**🚨 Proibição ABSOLUTA:** NUNCA criar QUALQUER página (admin, usuário, pública ou sistema) sem usar `estrutura_php_pagina_universal_container.php` como base!
 
 ---
 
@@ -188,13 +144,14 @@ O LLM deve **obrigatoriamente** usar os templates universais para criar componen
     - **Localização:** `/opt/lampp/htdocs/regras/readme.html`
     - **Passo 1 — Card/Linha:** Adicionar card (seção Regras) ou linha de tabela (seção Templates) com `data-search` contendo palavras-chave relevantes
     - **Passo 2 — Modal de Inventário:** Adicionar item `<div class="inv-item" data-inv="...">` no bloco correspondente do `#inventoryModal` (seções: `#inv-php`, `#inv-ia`, `#inv-tpl`, `#inv-comp`)
-    - **Passo 3 — Versão:** Incrementar o número de versão no `hero-badge` (ex: `v3.0 → v4.0`) a cada nova adição
+    - **Passo 3 — Versão**: Incrementar o número de versão no `hero-badge` (ex: `v5.3 → v5.4`) a cada nova adição
     - **Passo 4 — Hero Stats:** Atualizar os contadores numéricos de "Regras PHP/IA" e "Templates" no `hero-stats`
     - **Passo 5 — Exemplo (se aplicável):** Adicionar pelo menos um prompt de exemplo na aba "Como Solicitar"
     - **Passo 6 — Release Notes (Diário de Bordo):** Adicionar a data atual e as novidades na aba ou seção de "Novidades / Histórico de Versões". Nunca fazer uma atualização sem log de versão.
     - **Categorias:** Regras PHP → `#inv-php` | Regras IA/LLM → `#inv-ia` | Templates/Estruturas → `#inv-tpl` | Componentes UI → `#inv-comp`
     - **Validação Obrigatória:** NUNCA finalizar criação de regra/template sem executar os 6 passos acima
-    - **Processo Automático:** O LLM deve confirmar ao usuário que o README.html (incluindo changelog) e o modal foram atualizados antes de encerrar a tarefa
+    - **Processo Automático**: O LLM deve confirmar ao usuário que o README.html (incluindo changelog) e o modal foram atualizados antes de encerrar a tarefa
+11. **Segurança de Output Buffering**: NUNCA use `ob_start()` incondicionalmente no topo de arquivos PHP que são incluídos ou chamados via AJAX sem garantir que o conteúdo seja devidamente enviado ao navegador (`ob_end_flush()`). O uso de `ob_end_clean()` no final do script deve ser evitado a menos que o descarte do conteúdo seja intencional (ex: buffers de erro controlados), sob risco de "silenciar" toda a renderização da página.
 
 **🚨 ESTE ARQUIVO SOBREPÕE QUALQUER OUTRA REGRA!**
 **📖 VARRER RECURSIVAMENTE A PASTA /REGRAS/ ANTES DE QUALQUER AÇÃO!**
@@ -237,5 +194,12 @@ O LLM deve **obrigatoriamente** usar os templates universais para criar componen
    - **CHECKLIST**: Gerar relatório usando `estrutura_php_adsense_checklist.md` antes de finalizar entrega
    - **INTEGRAÇÃO COM QUALIDADE**: Esta regra é complementar às métricas do item 14 — ambas devem passar juntas
    - **CONSEQUÊNCIAS**: Site entregue sem conformidade AdSense é rejeitado e deve ser corrigido antes da entrega final
+
+16. **📚 PÁGINAS GENÉRICAS DE FOOTER (MODAL) OBRIGATÓRIAS**:
+   - **EXECUÇÃO OBRIGATÓRIA**: Sempre que o LLM criar a estrutura de base de um site novo, DEVE-SE implantar na raiz do projeto a pasta `footer/` (ex: `raiz/footer/`).
+   - **ARQUIVOS EXIGIDOS**: Os parâmetros exigem as seguintes páginas: Contatos (`contatos.php`), Privacidade (`privacidade.php`), Disclaimer (`disclaimer.php`), Transparência de Dados (`transparencia.php`), Sitemap (`sitemap.php`), DMCA (`dmca.php`), Direitos do Usuário (`direitos.php`), Sugestões de Cookies (`cookies.php`) e Gestão de Preferências (`preferencias.php`).
+   - **CARREGAMENTO**: Todas as páginas acima devem ser abertas EXCLUSIVAMENTE via `Modal` dinâmico originado de links diretos no arquivo do Footer do site/sistema, com título devidamente incluído no `<head>` do modal e o conteúdo no `<body>`.
+   - **ADEQUAÇÃO**: Essas páginas precisam aplicar estritamente as obrigações da regra 15 (AdSense e SEO).
+   - **REFERÊNCIA**: Usar obrigatoriamente a regra em `regra_php_paginas_legais_footer_modal.md` e o layout base de conteúdo fornecido em `estrutura_php_footer_pagina_modal.php`.
 
 **🚨 LEITURA 100% OBRIGATÓRIA DE TODA ATIVIDADE SOLICITADA PELO USUÁRIO!**

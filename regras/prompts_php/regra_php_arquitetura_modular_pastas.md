@@ -93,7 +93,7 @@ require_once(
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'seubanco');
+define('DB_NAME', 'nome_banco');
 ```
 
 ### Constantes do Sistema

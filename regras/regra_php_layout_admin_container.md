@@ -1,0 +1,272 @@
+# 🧩 Prompt Padrão - Layout Administrativo com Container Centralizado
+
+## 📋 Descrição
+Este prompt define o padrão obrigatório para criação de todas as páginas administrativas filhas do CanalQB, garantindo layout profissional com container centralizado, responsividade e consistência visual em todo o painel administrativo.
+
+## 🎯 Objetivo
+Criar páginas administrativas que:
+- Usem container centralizado com largura limitada
+- Sejam responsivas com breakpoints inteligentes
+- Mantenham consistência com o design system do CanalQB
+- Sigam as diretrizes do master_rules.md
+- Implementem acessibilidade WCAG AA e semântica HTML5
+
+## 🎨 Regras de Layout Obrigatórias
+
+### Container Centralizado
+- **Classe CSS**: `.cqb-container`
+- **Largura base**: `max-width: 1200px`
+- **Centralização**: `margin: 0 auto`
+- **Espaçamento**: `padding: 0 20px`
+
+### Breakpoints Responsivos
+- **1400px+**: `max-width: 1280px`
+- **1600px+**: `max-width: 1440px`
+- **Mobile**: 100% - 40px (20px cada lado)
+
+### Estrutura HTML Obrigatória
+```html
+<div class="admin-content-wrapper">
+    <style>
+        .cqb-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        @media (min-width: 1400px) {
+            .cqb-container {
+                max-width: 1280px;
+            }
+        }
+        
+        @media (min-width: 1600px) {
+            .cqb-container {
+                max-width: 1440px;
+            }
+        }
+    </style>
+    
+    <!-- Container Centralizado -->
+    <div class="cqb-container">
+        <!-- Todo o conteúdo da página aqui -->
+    </div> <!-- Fecha .cqb-container -->
+</div> <!-- Fecha .admin-content-wrapper -->
+```
+
+## 📋 Estrutura Obrigatória da Página
+
+### 1. Cabeçalho PHP
+```php
+<?php
+/**
+ * [Nome da Página] (Content Only)
+ * Versão para carregamento via AJAX sem conflitos de scripts
+ */
+
+// Verificar se sessão já foi iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once(__DIR__ . '/../config/database.php');
+
+// Verificação básica de segurança (via AJAX)
+if (!isset($_SESSION['tipo_usuario']) && !isset($_SESSION['canal_id'])) {
+    echo '<div class="alert alert-warning">Sessão não encontrada! <a href="../index.php">Clique aqui para recarregar</a></div>';
+    exit;
+}
+?>
+```
+
+### 2. Container Centralizado
+- Aplicar CSS do container conforme acima
+- Incluir dentro de `.admin-content-wrapper`
+- Fechar tags corretamente
+
+### 3. Header da Página
+```html
+<!-- Header -->
+<div class="admin-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">
+            <i class="fas fa-[icone] [cor]"></i>
+            [Título da Página]
+        </h4>
+        <p class="text-muted mb-0">[Descrição da página]</p>
+    </div>
+    <button class="btn btn-outline-secondary btn-sm" onclick="carregar2('./pages/admin-dashboard-content.php')">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+</div>
+```
+
+### 4. Conteúdo Principal
+- Cards Bootstrap para agrupar conteúdo
+- Tabelas responsivas com `table-responsive`
+- Formulários com validação HTML5
+- Botões com ícones FontAwesome
+
+### 5. JavaScript
+- Usar `showConfirmation()` para confirmações
+- `showToast()` para feedback
+- AJAX com fetch API
+- Recarregar conteúdo com `carregar2()`
+
+## 🎨 Diretrizes de Design
+
+### Cores e Temas
+- Usar variáveis CSS do tema: `--cqb-*`
+- Respeitar tema claro/escuro
+- Contraste WCAG AA obrigatório
+- Sem cores fixas (amarelo proibido)
+
+### Tipografia
+- Font-family: Outfit (definido no styles.css)
+- Hierarquia clara: h1 > h2 > h3 > h4 > h5 > h6
+- Tamanhos responsivos com clamp()
+
+### Espaçamento
+- Usar classes Bootstrap: `mb-4`, `mt-3`, `p-4`
+- Consistência em todo o layout
+- Grid system Bootstrap 5
+
+### Ícones
+- FontAwesome 6 exclusivamente
+- Ícones semânticos para ações
+- Tamanhos consistentes: `fa-sm`, `fa-lg`
+
+## 📋 Componentes Obrigatórios
+
+### Cards
+```html
+<div class="card mb-4">
+    <div class="card-header bg-gradient-[primary|success|warning|danger|info]">
+        <h6 class="mb-0">
+            <i class="fas fa-[icone]"></i>
+            [Título do Card]
+        </h6>
+    </div>
+    <div class="card-body">
+        [Conteúdo do card]
+    </div>
+</div>
+```
+
+### Tabelas
+```html
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>[Coluna 1]</th>
+                <th>[Coluna 2]</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas da tabela -->
+        </tbody>
+    </table>
+</div>
+```
+
+### Botões de Ação
+```html
+<button 
+    type="button" 
+    class="btn btn-sm btn-[primary|success|warning|danger|info|secondary]"
+    onclick="[funcao]([id])"
+    title="[Tooltip descritivo]"
+>
+    <i class="fas fa-[icone]"></i>
+    [Texto opcional]
+</button>
+```
+
+## ♿ Acessibilidade Obrigatória
+
+### Semântica HTML5
+- `<main>` para conteúdo principal
+- `<section>` para seções
+- `<header>` para cabeçalhos
+- `<nav>` para navegação
+- `<footer>` para rodapés
+
+### ARIA
+- `aria-label` para botões sem texto
+- `aria-describedby` para descrições
+- `role="dialog"` para modais
+- `aria-modal="true"` para modais ativos
+
+### Teclado
+- Tab order lógico
+- Enter/Space para ativação
+- Esc para fechar modais
+- Focus visível em todos os elementos
+
+## 🔧 Integrações Obrigatórias
+
+### CSS
+- Link para `/yt2/css/confirmation-modal.css` se usar confirmações
+- Variáveis CSS do tema: `--cqb-primary`, `--cqb-bg-white`, etc.
+- Media queries para responsividade
+
+### JavaScript
+- `showConfirmation()` para confirmações críticas
+- `showToast()` para feedback ao usuário
+- `carregar2()` para navegação AJAX
+- CSRF tokens em requisições POST
+
+### Backend
+- Sessão validada
+- Prepared statements para SQL
+- Sanitização de inputs
+- Respostas AJAX em JSON
+
+## 📋 Validação Obrigatória
+
+### Checklist de Implementação
+- [ ] Container centralizado implementado
+- [ ] Breakpoints responsivos definidos
+- [ ] Semântica HTML5 correta
+- [ ] Atributos ARIA presentes
+- [ ] Cores do tema respeitadas
+- [ ] Contraste WCAG AA
+- [ ] Ícones FontAwesome 6
+- [ ] Validação HTML5
+- [ ] CSRF tokens implementados
+- [ ] Feedback visual adequado
+- [ ] Responsividade testada
+
+## 🚨 Proibições Estritas
+
+1. **NUNCA** usar largura 100% sem container
+2. **NUNCA** usar cores fixas (amarelo, vermelho, etc.)
+3. **NUNCA** usar `alert()` ou `confirm()`
+4. **NUNCA** ignorar tema claro/escuro
+5. **NUNCA** omitir atributos ARIA
+6. **NUNCA** esquecer validação de sessão
+7. **NUNCA** usar SQL sem prepared statements
+8. **NUNCA** esquecer sanitização de inputs
+
+## 📚 Referências Obrigatórias
+- master_rules.md - Regras gerais do projeto
+- regra_php_sistema_confirmacao_centralizado.md - Sistema de confirmação
+- regra_php_web_standards_aria_wcag.md - Acessibilidade
+- regra_php_ajax_interacoes.md - Interações AJAX
+- regra_php_csrf_tokens.md - Proteção CSRF
+
+## 🎯 Exemplo de Uso
+
+### Para Criar Nova Página Administrativa:
+1. Ler este prompt completamente
+2. Copiar estrutura HTML obrigatória
+3. Implementar container centralizado
+4. Seguir checklist de validação
+5. Testar responsividade
+6. Validar acessibilidade
+7. Integrar com sistema existente
+
+### Resultado Esperado:
+Página administrativa profissional, responsiva, acessível e consistente com todo o painel CanalQB.
