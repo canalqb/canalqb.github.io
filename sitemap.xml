@@ -112,63 +112,9 @@
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/leitura/GUIA-AUTO16-SISTEMA.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
   <loc>https://canalqb.github.io/leitura/GUIA-ADSENSE-ANALYTICS-GDPR.html</loc>
   <lastmod>2026-03-15T17:30:00-03:00</lastmod>
   <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-CELL-PERCENT-CONFIG.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-DEBUG-CELL-PERCENT.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-DEBUG-NO-LOGS.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-VALIDACAO-TESTES.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-CELL-PERCENT-HIGH-PRECISION.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-MELHORIAS-SUMMARY.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-MYSQL-CONFIG.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-CELL-RANDOMIZATION-PROGRESSIVE.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
 </url>
 
 <url>
@@ -184,12 +130,6 @@
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/leitura/GUIA-RANDOM-ON-OFF.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
   <loc>https://canalqb.github.io/leitura/README-PUZZLE-FINDER.html</loc>
   <lastmod>2026-03-15T17:30:00-03:00</lastmod>
   <priority>0.75</priority>
@@ -197,30 +137,6 @@
 
 <url>
   <loc>https://canalqb.github.io/leitura/README-SECRETS-SISTEMA.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-SPEED-CONTROL-UPDATE.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-SQL-UPDATE-SUMMARY.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-SUPABASE-CREDENTIALS.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.75</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-TEST-LOOP-RANDOMIZATION.html</loc>
   <lastmod>2026-03-15T17:30:00-03:00</lastmod>
   <priority>0.75</priority>
 </url>
