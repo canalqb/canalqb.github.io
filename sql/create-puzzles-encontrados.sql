@@ -2,7 +2,8 @@
 -- TABELA: PUZZLES ENCONTRADOS (WIF REGISTRADOS)
 -- ============================================
 -- Finalidade: Registrar WIFs quando o puzzle Bitcoin é encontrado
--- Prefixo: ovo_ia_ (conforme regras do usuário)
+-- Prefixo: nenhum (tabela normal, não é chat)
+-- Compatibilidade: PostgreSQL (Supabase) e MySQL (localhost)
 
 CREATE TABLE IF NOT EXISTS ovo_ia_puzzles_encontrados (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,

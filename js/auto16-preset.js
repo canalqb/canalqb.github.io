@@ -8,9 +8,95 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let presetRunning = false;
   let presetInterval = null;
-  let presetStateCounter = 0n;
+  let presetStateCounter= 0n;
   let presetRealValue = 0n;
-
+  
+  // ============================================
+  // NOVO SISTEMA DE RANDOMIZAÇÃO ON/OFF PROGRESSIVO
+  // ============================================
+  let randomCyclePhase = 'ascending'; // 'ascending' (1%→99%) ou 'descending' (98%→1%)
+  let currentRandomPercent= 1; // Começa em 1%
+  let randomCycleSequence = []; // Sequência pré-calculada para randomização
+  let currentCycleIndex = 0; // Índice atual na sequência
+  let useRandomMode = false; // true = aleatório, false = sequencial
+  
+  // 🎯 NOVO: SISTEMA DE PROGRESSÃO ACUMULATIVA CONFIGURÁVEL (variáveis ajustáveis via UI)
+  window.minCellPercent = 0.001;  // Mínimo configurável (padrão: 0.001%)
+  window.maxCellPercent = 99.999; // Máximo configurável (padrão: 99.999%)
+  let horizontalCellCount = 1; // Começa com 1 célula
+  let verticalCellCount = 1;   // Começa com 1 célula
+  const MAX_CELLS = 99;        // Máximo de células antes de reiniciar
+  
+  /**
+  * Gera sequência de ciclos de randomização
+  * Ex: [1, 2, 3, ..., 99, 98, 97, ..., 2] embaralhado
+  */
+  function generateRandomCycleSequence() {
+  const sequence = [];
+     
+   // Fase ascendente: 1% até 99%
+   for (let i = 1; i <= 99; i++) {
+     sequence.push(i);
+   }
+     
+   // Fase descendente: 98% até 1%
+   for (let i = 98; i >= 1; i--) {
+     sequence.push(i);
+   }
+     
+   // Embaralha a sequência usando Fisher-Yates shuffle
+   for (let i = sequence.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i +1));
+     [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+   }
+     
+   return sequence;
+  }
+  
+  /**
+  * Atualiza estado de randomização ON/OFF
+  * Determina se próximo passo é aleatório ou sequencial
+  */
+  function updateRandomOnOffState() {
+   // Se sequência está vazia ou chegou ao fim, gera nova sequência
+   if (randomCycleSequence.length === 0 || currentCycleIndex >= randomCycleSequence.length) {
+     randomCycleSequence = generateRandomCycleSequence();
+     currentCycleIndex = 0;
+    console.log('🎲 Nova sequência de randomização gerada:', randomCycleSequence.slice(0, 10), '...');
+   }
+     
+   // Pega porcentagem atual da sequência
+   currentRandomPercent = randomCycleSequence[currentCycleIndex];
+   currentCycleIndex++;
+     
+   // Determina se usa modo aleatório baseado na porcentagem
+  const randomThreshold = Math.random() * 100;
+   useRandomMode = randomThreshold < currentRandomPercent;
+     
+  console.log(`🎯 Random ON/OFF: ${currentRandomPercent}% chance → ${useRandomMode ? 'ALEATÓRIO' : 'SEQUENCIAL'}`);
+  }
+  
+  /**
+   * 🎯 NOVO: Converte porcentagem para número de células
+   * Ex: 0.001% = 1 célula, 50% = 50 células, 99.999% = 99 células
+   * ALTA PRECISÃO: Suporta 16+ casas decimais
+   */
+  function convertPercentToCells(percent) {
+    // Mapeia porcentagem (0.0000000000000001-100) para células (1-99)
+    const minPercent = 0.0000000000000001; // Suporta até 16 casas decimais
+    const maxPercent = 100.0;
+    const minCells = 1;
+    const maxCells = 99;
+    
+    // Normaliza porcentagem para range 0-1
+    const normalized = (percent - minPercent) / (maxPercent - minPercent);
+    
+    // Mapeia para número de células (arredonda para baixo)
+    const cells = Math.floor(normalized * (maxCells - minCells + 1)) + minCells;
+    
+    return Math.min(Math.max(cells, minCells), maxCells); // Garante 1-99
+  }
+  
   // Variáveis do range
   let dbInicio = null;
   let dbFim = null;
@@ -725,19 +811,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Utilitário: alterna colapso com ícone circular
   function toggleCollapse(modalEl, contentEl, btnEl) {
-    const isHidden = contentEl.style.display === 'none';
+   const isHidden = contentEl.style.display === 'none';
     if (isHidden) {
-      contentEl.style.display = 'block';
+     contentEl.style.display = 'block';
       modalEl.style.width = '';
       modalEl.style.height = '';
       modalEl.style.borderRadius = '15px';
-      btnEl.textContent = '×';
+      btnEl.textContent= '×';
+      modalEl.classList.remove('collapsed');
     } else {
-      contentEl.style.display = 'none';
+     contentEl.style.display = 'none';
       modalEl.style.width = '46px';
       modalEl.style.height = '46px';
       modalEl.style.borderRadius = '50%';
-      btnEl.textContent = '▢';
+      
+      // Show H or V icon based on modal type
+     const modalId = modalEl.id;
+      if (modalId === 'preset-progress-modal') {
+        btnEl.textContent = 'H'; // Horizontal
+      } else if (modalId === 'vertical-progress-modal') {
+        btnEl.textContent= 'V'; // Vertical
+      } else {
+        btnEl.textContent= '▢';
+      }
+      
+      modalEl.classList.add('collapsed');
     }
   }
 
@@ -828,70 +926,133 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function randomizeWithinRange(mode) {
-    const bitsNum = Number(window.presetManager ? window.presetManager.getCurrentBits() || 0n : 0);
+  const bitsNum = Number(window.presetManager ? window.presetManager.getCurrentBits() || 0n : 0);
     if (!bitsNum) return;
-
-    let startHex = null;
+  
+   // 🎯 ATUALIZA ESTADO ON/OFF ANTES DE RANDOMIZAR
+   updateRandomOnOffState();
+  
+   let startHex = null;
     let endHex = null;
-
+  
     // Tenta obter valores atualizados dos cards de progresso na UI
     if (window.matrizAPI && typeof window.matrizAPI.getInitHexFromCard === 'function') {
       startHex = window.matrizAPI.getInitHexFromCard(mode);
       endHex = window.matrizAPI.getEndHexFromCard(mode);
     }
-
+  
     // Fallbacks para quando os cards não estão disponíveis ou carregados
     if (!startHex || !endHex) {
       if (mode === 'horizontal') {
         startHex = currentInicio || (1n << BigInt(bitsNum)).toString(16);
-        endHex = currentFim || ((1n << (BigInt(bitsNum) + 1n)) - 1n).toString(16);
+        endHex = currentFim || ((1n << (BigInt(bitsNum) +1n)) - 1n).toString(16);
       } else {
         startHex = (1n << BigInt(bitsNum)).toString(16);
         endHex = ((1n << (BigInt(bitsNum) + 1n)) - 1n).toString(16);
       }
     }
+  
+  console.log(`\n🎯 ========== ALEATORIZAR (${mode.toUpperCase()}) ==========`);
+  console.log(`🎲 Aleatorizando (${mode}): Range [${startHex} ... ${endHex}] | Modo: ${useRandomMode ? 'ALEATÓRIO' : 'SEQUENCIAL'}`);
+    
+  // 🆕 VERIFICAR VARIÁVEIS GLOBAIS
+  console.log('🔍 window.minCellPercent:', window.minCellPercent, '(tipo:', typeof window.minCellPercent + ')');
+  console.log('🔍 window.maxCellPercent:', window.maxCellPercent, '(tipo:', typeof window.maxCellPercent + ')');
+  
+  const startVal = BigInt('0x' + startHex);
+  const endVal = BigInt('0x' + endHex);
+  const span = endVal > startVal ? (endVal- startVal +1n) : 1n;
+  
+   // 🎯 OBTEM CONTADOR DE CÉLULAS ATUAL (PROGRESSIVO) E CONVERTE PORCENTAGEM
+   const cellCount = mode === 'horizontal' ? horizontalCellCount : verticalCellCount;
+   const targetPercent = mode === 'horizontal' ? minCellPercent : maxCellPercent;
+   const calculatedCells = convertPercentToCells(targetPercent);
+    
+  console.log(`📊 Configuração: ${targetPercent}% → ${calculatedCells} células`);
+  console.log(`📊 Progressão Atual: ${cellCount}/${MAX_CELLS} células (PRÓXIMO: ${cellCount + 1})`);
+  console.log(`🔥 VAI GERAR ${cellCount} CÉLULA(S) AGORA!`);
 
-    console.log(`🎲 Aleatorizando (${mode}): Range [${startHex} ... ${endHex}]`);
-
-    const startVal = BigInt('0x' + startHex);
-    const endVal = BigInt('0x' + endHex);
-    const span = endVal > startVal ? (endVal - startVal + 1n) : 1n;
-
-    // Lógica de Densidade e Espelhamento para aleatórios manuais (dados)
-    const densities = [0.3, 0.7, 0.4, 0.6, 0.5];
-    const density = densities[Math.floor(Math.random() * densities.length)];
-    const targetPoint = startVal + (span * BigInt(Math.floor(density * 1000))) / 1000n;
-    const windowSize = span / 20n; // Janela de 5%
-    let rndOffset = (BigInt(Math.floor(Math.random() * 0x7FFFFFFF)) << 32n) | BigInt(Math.floor(Math.random() * 0x7FFFFFFF));
-    rndOffset = rndOffset % (windowSize > 0n ? windowSize : 1n);
-
-    let val = targetPoint + (rndOffset - windowSize / 2n);
-    if (val < startVal) val = startVal;
-    if (val > endVal) val = endVal;
-
-    // 50% de chance de usar o espelho
-    if (Math.random() < 0.5) {
-      val = startVal + (endVal - val);
+   let val;
+  const generatedValues = [];
+  
+   // 🎯 GERA MÚLTIPLAS CÉLULAS (PROGRESSIVO)
+   for (let i = 0; i < cellCount; i++) {
+     if (useRandomMode) {
+      // 🎲 MODO ALEATÓRIO: Randomização tradicional com densidade
+     const densities = [0.3, 0.7, 0.4, 0.6, 0.5];
+      const density = densities[Math.floor(Math.random() * densities.length)];
+     const targetPoint= startVal + (span * BigInt(Math.floor(density * 1000))) / 1000n;
+     const windowSize = span / 20n; // Janela de 5%
+      let rndOffset= (BigInt(Math.floor(Math.random() * 0x7FFFFFFF)) << 32n) | BigInt(Math.floor(Math.random() * 0x7FFFFFFF));
+      rndOffset = rndOffset % (windowSize > 0n ? windowSize : 1n);
+  
+      val = targetPoint + (rndOffset - windowSize / 2n);
+      if (val < startVal) val = startVal;
+      if (val > endVal) val = endVal;
+  
+      // 50% de chance de usar o espelho
+      if (Math.random() < 0.5) {
+        val = startVal + (endVal- val);
+      }
+  
+    console.log(`🎲 ALEATÓRIO (${currentRandomPercent}%) [${i+1}/${cellCount}]: ${val.toString(16).padStart(64, '0')}`);
+     } else {
+      // 🔢 MODO SEQUENCIAL: Usa próximo valor sequencial do range
+      // Alterna entre início e fim para cobertura balanceada
+    const useStart = Math.random() < 0.5;
+        
+      if (useStart) {
+        // Pega valor próximo do início
+        val = startVal + BigInt(Math.floor(Math.random() * 1000));
+      } else {
+        // Pega valor próximo do fim
+        val = endVal - BigInt(Math.floor(Math.random() * 1000));
+      }
+        
+      if (val < startVal) val = startVal;
+      if (val > endVal) val = endVal;
+  
+    console.log(`🔢 SEQUENCIAL (${100 - currentRandomPercent}%) [${i+1}/${cellCount}]: ${val.toString(16).padStart(64, '0')}`);
+     }
+       
+     generatedValues.push(val);
+   }
+  
+  // 🎯 USA O ÚLTIMO VALOR GERADO PARA EXIBIÇÃO
+  val = generatedValues[generatedValues.length - 1];
+  const hexVal = val.toString(16).padStart(64, '0');
+   currentHex = hexVal;
+  const base = 1n << BigInt(bitsNum);
+  const matrixOffset = val- base >= 0n ? (val - base) : 0n;
+  
+   updatePresetMatrix(matrixOffset, mode === 'vertical' ? 'vertical' : 'horizontal');
+  
+   if (mode === 'vertical' && window.verticalManagerInstance) {
+   const inv = window.verticalManagerInstance.calculateInverse(
+      hexVal,
+      (1n << BigInt(bitsNum)).toString(16),
+      ((1n << (BigInt(bitsNum) +1n)) - 1n).toString(16)
+    );
+    if (inv) updatePresetOutput(inv);
+  }
+  
+  if (window.matrizAPI) window.matrizAPI.draw();
+  updatePresetOutput(hexVal);
+    
+  // 🎯 ATUALIZA CONTADOR PROGRESSIVO PARA PRÓXIMA EXECUÇÃO
+  if (mode === 'horizontal') {
+    horizontalCellCount++;
+    if (horizontalCellCount > MAX_CELLS) {
+      horizontalCellCount = 1; // Reinicia ciclo
+    console.log('🔄 Horizontal reiniciou: 1→ 99 completado!');
     }
-
-    const hexVal = val.toString(16).padStart(64, '0');
-    currentHex = hexVal;
-    const base = 1n << BigInt(bitsNum);
-    const matrixOffset = val - base >= 0n ? (val - base) : 0n;
-
-    updatePresetMatrix(matrixOffset, mode === 'vertical' ? 'vertical' : 'horizontal');
-
-    if (mode === 'vertical' && window.verticalManagerInstance) {
-      const inv = window.verticalManagerInstance.calculateInverse(
-        hexVal,
-        (1n << BigInt(bitsNum)).toString(16),
-        ((1n << (BigInt(bitsNum) + 1n)) - 1n).toString(16)
-      );
-      if (inv) updatePresetOutput(inv);
+  } else {
+    verticalCellCount++;
+    if (verticalCellCount > MAX_CELLS) {
+      verticalCellCount = 1; // Reinicia ciclo
+    console.log('🔄 Vertical reiniciou: 1→ 99 completado!');
     }
-
-    if (window.matrizAPI) window.matrizAPI.draw();
-    updatePresetOutput(hexVal);
+  }
   }
 
   const randBtnH = document.getElementById('randBtnH');

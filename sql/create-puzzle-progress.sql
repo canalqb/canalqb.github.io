@@ -1,9 +1,12 @@
 -- =====================================================
 -- TABELA DE PROGRESSO HORIZONTAL - PUZZLE PROGRESS
 -- =====================================================
+-- Finalidade: Armazenar progresso do modo horizontal
+-- Prefixo: nenhum (tabela normal, não é chat)
 
 CREATE TABLE IF NOT EXISTS puzzle_progress (
-  id SERIAL PRIMARY KEY,
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   preset INTEGER UNIQUE NOT NULL,           -- Número do preset (ex: 71) como chave única
   inicio VARCHAR(64) NOT NULL,              -- Valor hexadecimal atual/inicial salvo
   fim VARCHAR(64) NOT NULL,                 -- Valor hexadecimal final do preset
@@ -30,6 +33,8 @@ CREATE TRIGGER update_puzzle_progress_updated_at
 
 -- Comentários
 COMMENT ON TABLE puzzle_progress IS 'Tabela de progresso horizontal para presets do puzzle Bitcoin';
+COMMENT ON COLUMN puzzle_progress.id IS 'Identificador único do registro';
+COMMENT ON COLUMN puzzle_progress.created_at IS 'Data e hora de criação do registro';
 COMMENT ON COLUMN puzzle_progress.preset IS 'Número do preset (ex: 71 para 71 bits)';
 COMMENT ON COLUMN puzzle_progress.inicio IS 'Valor hexadecimal atual/inicial do preset';
 COMMENT ON COLUMN puzzle_progress.fim IS 'Valor hexadecimal final do preset';

@@ -1,9 +1,12 @@
 -- =====================================================
 -- TABELA DE PROGRESSO VERTICAL - OVO IA
 -- =====================================================
+-- Finalidade: Armazenar progresso do modo vertical por usuário
+-- Prefixo: nenhum (tabela normal, não é chat)
 
 CREATE TABLE IF NOT EXISTS vertical_progress (
-  id SERIAL PRIMARY KEY,
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   user_id VARCHAR(255) NOT NULL,
   preset_bits INTEGER NOT NULL,
   preset_inicio VARCHAR(64) NOT NULL,
@@ -11,7 +14,6 @@ CREATE TABLE IF NOT EXISTS vertical_progress (
   last_hex_value VARCHAR(64) NOT NULL,
   last_verification_count BIGINT NOT NULL DEFAULT 0,
   last_inverted_value VARCHAR(64),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -35,6 +37,8 @@ CREATE TRIGGER update_vertical_progress_updated_at
 
 -- Comentários
 COMMENT ON TABLE vertical_progress IS 'Tabela de progresso vertical para presets do OVO IA';
+COMMENT ON COLUMN vertical_progress.id IS 'Identificador único do registro';
+COMMENT ON COLUMN vertical_progress.created_at IS 'Data e hora de criação do registro';
 COMMENT ON COLUMN vertical_progress.user_id IS 'ID do usuário que está usando o preset';
 COMMENT ON COLUMN vertical_progress.preset_bits IS 'Número de bits do preset (ex: 73 para 2^73)';
 COMMENT ON COLUMN vertical_progress.preset_inicio IS 'Valor hexadecimal inicial do preset';

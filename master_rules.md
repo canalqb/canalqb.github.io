@@ -96,16 +96,22 @@ updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 ### **📁 Estrutura de Arquivos:**
 ```
 /
-├── templates/
-│   └── sql-template.md
-├── sql/
-│   └── create-{tabela}.sql
-├── js/
-│   └── {modulo}-manager.js
-├── examples/
-│   └── {modulo}-usage.js
-├── master_rules.md
-└── README.html
+├── leitura/                    # Documentação e guias
+│   └── *.md                   # Arquivos de documentação
+├── paginas/                   # Páginas HTML do site
+│   └── *.html                # Páginas de conteúdo
+├── css/                       # Estilos do site
+│   └── *.css                 # Arquivos CSS
+├── js/                        # JavaScript do site
+│   └── *.js                  # Scripts e funcionalidades
+├── regras/                    # Regras e templates
+│   ├── prompt_de_llms/        # Prompts para LLMs
+│   ├── prompts_php/           # Prompts PHP
+│   └── templates_php/         # Templates PHP
+├── master_rules.md            # Regras mestras do projeto
+├── sitemap.xml               # Sitemap para SEO
+├── index.html                # Página principal
+└── README.html               # Documentação principal
 ```
 
 ---

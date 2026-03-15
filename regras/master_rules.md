@@ -78,6 +78,7 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 - [ ] `estrutura_php_component_custom_cards.php`
 - [ ] `estrutura_php_component_icon_grid.php`
 - [x] `estrutura_readme_atualizacao_template.md`
+- [x] `estrutura_php_adsense_checklist.md`
 
 ### Configurações de IA e OS (`regras/prompt_de_llms/`)
 - [ ] `regra_llms_windows_powershell_cmd.md`
@@ -91,6 +92,7 @@ O LLM deve **obrigatoriamente** seguir o seguinte fluxo antes, durante e após q
 - [ ] `regra_llms_windows_admin_layout.md`
 - [ ] `regra_llms_metricas_qualidade_severa.md` 
 - [x] `regra_llms_criacao_tabelas_supabase.md` 
+- [x] `regra_llms_adsense_aprovacao_2025.md` 
 
 ---
 
@@ -182,15 +184,17 @@ O LLM deve **obrigatoriamente** usar os templates universais para criar componen
    - **Contraste Acessível:** Garantir WCAG AA compliance em ambos os temas
    - **Alternância:** Permitir troca dinâmica entre temas
    - **Persistência:** Salvar preferência do usuário
-10. **Documentação no README.html**: Ao criar qualquer novo template, regra ou prompt, é **obrigatório** adicionar uma seção simplificada no arquivo `readme.html`:
-    - **Localização:** `c:/xampp/htdocs/canalqb.github.io/regras/readme.html`
-    - **Formato:** Seção simplificada com cards, tabelas ou callouts
-    - **Conteúdo:** Nome do arquivo, uso principal, tipo, exemplo de solicitação
-    - **Busca:** Incluir `data-search` com palavras-chave para busca
-    - **Atualização:** Manter estrutura visual consistente com o design existente
-    - **Categorias:** Adicionar nas seções apropriadas (Regras, Templates, Componentes)
-    - **Validação Obrigatória:** Toda criação de template/prompt deve ser validada e documentada no README.html antes de finalizar
-    - **Processo Automático:** Ao finalizar criação, o LLM deve automaticamente orientar o usuário a verificar/atualizar o README.html
+10. **Documentação no README.html**: Ao criar qualquer novo template, regra ou prompt, é **obrigatório** executar os **6 passos** abaixo no arquivo `readme.html`:
+    - **Localização:** `/opt/lampp/htdocs/regras/readme.html`
+    - **Passo 1 — Card/Linha:** Adicionar card (seção Regras) ou linha de tabela (seção Templates) com `data-search` contendo palavras-chave relevantes
+    - **Passo 2 — Modal de Inventário:** Adicionar item `<div class="inv-item" data-inv="...">` no bloco correspondente do `#inventoryModal` (seções: `#inv-php`, `#inv-ia`, `#inv-tpl`, `#inv-comp`)
+    - **Passo 3 — Versão:** Incrementar o número de versão no `hero-badge` (ex: `v3.0 → v4.0`) a cada nova adição
+    - **Passo 4 — Hero Stats:** Atualizar os contadores numéricos de "Regras PHP/IA" e "Templates" no `hero-stats`
+    - **Passo 5 — Exemplo (se aplicável):** Adicionar pelo menos um prompt de exemplo na aba "Como Solicitar"
+    - **Passo 6 — Release Notes (Diário de Bordo):** Adicionar a data atual e as novidades na aba ou seção de "Novidades / Histórico de Versões". Nunca fazer uma atualização sem log de versão.
+    - **Categorias:** Regras PHP → `#inv-php` | Regras IA/LLM → `#inv-ia` | Templates/Estruturas → `#inv-tpl` | Componentes UI → `#inv-comp`
+    - **Validação Obrigatória:** NUNCA finalizar criação de regra/template sem executar os 6 passos acima
+    - **Processo Automático:** O LLM deve confirmar ao usuário que o README.html (incluindo changelog) e o modal foram atualizados antes de encerrar a tarefa
 
 **🚨 ESTE ARQUIVO SOBREPÕE QUALQUER OUTRA REGRA!**
 **📖 VARRER RECURSIVAMENTE A PASTA /REGRAS/ ANTES DE QUALQUER AÇÃO!**
@@ -219,9 +223,19 @@ O LLM deve **obrigatoriamente** usar os templates universais para criar componen
 
 14. **🎯 MÉTRICAS DE QUALIDADE 100% OBRIGATÓRIAS**: 
    - **EXECUÇÃO OBRIGATÓRIA**: Antes de entregar QUALQUER coisa, o LLM deve executar validação 100% em todas as métricas de qualidade conforme `regra_llms_metricas_qualidade_severa.md`
+   - **SEO 2026 TÉCNICO**: INP (Interaction to Next Paint) obrigatoriamente `< 200ms`, E-E-A-T embutido e estrutura semântica preparada para Answer Engine Optimization (AEO). Aplique a diretriz `regra_llms_seo_avancado_2026.md`.
    - **RELATÓRIO OBRIGATÓRIO**: Gerar relatório detalhado mostrando 100% em cada uma das 9 métricas (HTML W3C, CSS Performance, JavaScript Security, WCAG 2.1 AA, SEO, Lighthouse, Security, Mobile-First, Master Rules)
    - **GARANTIA DE QUALIDADE**: O trabalho entregue deve atender a TODOS os padrões web modernos com garantia de 100% compliance
    - **REGISTRO DE EXECUÇÃO**: Documentar que a regra de métricas foi seguida com timestamp e evidências
    - **CONSEQUÊNCIAS**: Trabalho sem 100% compliance é rejeitado e deve ser refeito até atender todas as métricas
+
+15. **🏆 CONFORMIDADE GOOGLE ADSENSE 2025-2026 OBRIGATÓRIA**:
+   - **EXECUÇÃO OBRIGATÓRIA**: Ao criar ou entregar QUALQUER site, o LLM deve executar a validação completa conforme `regra_llms_adsense_aprovacao_2025.md`
+   - **PÁGINAS LEGAIS**: Todo site entregue DEVE ter Política de Privacidade (800+ palavras, mencionando AdSense), Sobre (500+ palavras), Contato funcional e Termos de Uso
+   - **E-E-A-T OBRIGATÓRIO**: Experience, Expertise, Authoritativeness e Trustworthiness devem ser demonstrados em todo conteúdo
+   - **TÉCNICO**: HTTPS obrigatório, responsividade mobile, PageSpeed 60+, zero 404s, Google Analytics + Search Console configurados
+   - **CHECKLIST**: Gerar relatório usando `estrutura_php_adsense_checklist.md` antes de finalizar entrega
+   - **INTEGRAÇÃO COM QUALIDADE**: Esta regra é complementar às métricas do item 14 — ambas devem passar juntas
+   - **CONSEQUÊNCIAS**: Site entregue sem conformidade AdSense é rejeitado e deve ser corrigido antes da entrega final
 
 **🚨 LEITURA 100% OBRIGATÓRIA DE TODA ATIVIDADE SOLICITADA PELO USUÁRIO!**
