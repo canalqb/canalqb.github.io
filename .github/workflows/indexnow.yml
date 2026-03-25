@@ -1,0 +1,19 @@
+name: Send URL to IndexNow
+
+on:
+  push:
+    branches:
+      - main  # ou a branch que você usa para publicar
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Send URL to IndexNow
+        uses: devops-infra/action-indexnow@v1
+        with:
+          key: ${{ secrets.INDEXNOW_KEY }}
+          url: https://canalqb.github.io/  # Substitua pela URL do seu site ou página
