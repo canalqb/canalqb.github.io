@@ -64,6 +64,10 @@ jobs:
           mkdir dist
           # Copia apenas o necessário para produção
           cp -r css js paginas regras index.html ads.txt favicon.ico canalqb.ico robots.txt sitemap.xml .nojekyll dist/ 2>/dev/null || true
+          - name: Prepare Dist
+          # Copia arquivos IndexNow para a build
+          cp indexnow.txt dist/
+          cp 401d492e65fa47d3b34a0d4aaf092636.txt dist/
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
