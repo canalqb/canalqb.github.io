@@ -1,19 +1,54 @@
-name: Send URL to IndexNow
+name: IndexNow URL Submission
 
 on:
   push:
     branches:
-      - main  # ou a branch que você usa para publicar
+      - main
+  workflow_dispatch:
 
 jobs:
-  indexnow:
+  submit-indexnow:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Send URL to IndexNow
-        uses: devops-infra/action-indexnow@v1
-        with:
-          key: ${{ secrets.INDEXNOW_KEY }}
-          url: https://canalqb.github.io/  # Substitua pela URL do seu site ou página
+      - name: Wait for deployment to complete
+        run: |
+          echo "⏳ Aguardando 2 minutos para o deploy completar..."
+          sleep 120
+
+      - name: Set variables
+        run: |
+          # URL base do seu site
+          echo "BASE_URL=https://index.canalqb.com.br" >> $GITHUB_ENV
+          # Sua chave IndexNow
+          echo "INDEXNOW_KEY=401d492e65fa47d3b34a0d4aaf092636" >> $GITHUB_ENV
+
+      - name: Generate URLs list
+        run: |
+          # Adicionar página principal
+          URLS="$BASE_URL/"
+          
+          # Lista todos os arquivos HTML na pasta 'paginas'
+          FILES=$(find paginas -name '*.html')
+          for f in $FILES; do
+            PATH_URL=$(echo $f | sed 's|paginas/||')
+            URLS="$URLS $BASE_URL/$PATH_URL"
+          done
+          
+          # Adicionar outras páginas importantes
+          URLS="$URLS $BASE_URL/index.html"
+          URLS="$URLS $BASE_URL/README.html"
+          
+          echo "URLS=$URLS" >> $GITHUB_ENV
+
+      - name: Submit URLs to IndexNow
+        run: |
+          for url in $URLS; do
+            echo "Submitting $url..."
+            curl -s -G "https://www.bing.com/indexnow" \
+              --data-urlencode "url=$url" \
+              --data-urlencode "key=$INDEXNOW_KEY" \
+              --data-urlencode "keyLocation=$BASE_URL/401d492e65fa47d3b34a0d4aaf092636.txt"
+          done
