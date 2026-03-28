@@ -21,7 +21,7 @@ jobs:
       - name: Set variables
         run: |
           # URL base do seu site
-          echo "BASE_URL=https://index.canalqb.com.br" >> $GITHUB_ENV
+          echo "BASE_URL=https://puzzlebtc.canalqb.com.br" >> $GITHUB_ENV
           # Sua chave IndexNow
           echo "INDEXNOW_KEY=401d492e65fa47d3b34a0d4aaf092636" >> $GITHUB_ENV
 

@@ -1,7 +1,162 @@
-User-agent: *
-Disallow: /css
-Disallow: /js
-Disallow: /cgi-bin
-Disallow: /.git
+# ==========================================
+# 🤖 ROBOTS.TXT - SEO OPTIMIZED 2026
+# ==========================================
+# Domínio: puzzlebtc.canalqb.com.br
+# Padrão: Google SEO Best Practices
+# Atualizado: 2026-03-28
 
-Sitemap: https://canalqb.github.io/sitemap.xml
+# ----- User Agents Globais -----
+User-agent: *
+Allow: /
+Crawl-delay: 1
+
+# ----- Googlebot Específico -----
+User-agent: Googlebot
+Allow: /
+Allow: /paginas/
+Allow: /leitura/
+Allow: /css/
+Allow: /js/
+Allow: *.css
+Allow: *.js
+Allow: *.ico
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.gif
+Allow: *.svg
+Disallow: /.git/
+Disallow: /cgi-bin/
+Disallow: /tmp/
+Disallow: /*.json$
+Disallow: /*?*query=
+
+# ----- Googlebot-Image -----
+User-agent: Googlebot-Image
+Allow: /
+Allow: /css/
+Allow: /images/
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.gif
+Allow: *.svg
+Allow: *.ico
+
+# ----- Googlebot-News -----
+User-agent: Googlebot-News
+Allow: /
+Allow: /paginas/
+Disallow: /leitura/
+Disallow: /css/
+Disallow: /js/
+
+# ----- Bingbot -----
+User-agent: Bingbot
+Allow: /
+Allow: /paginas/
+Allow: /leitura/
+Crawl-delay: 2
+
+# ----- DuckDuckBot -----
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+# ----- Baidu Spider -----
+User-agent: Baiduspider
+Allow: /
+Allow: /paginas/
+Disallow: /leitura/
+Crawl-delay: 3
+
+# ----- Yandex Bot -----
+User-agent: YandexBot
+Allow: /
+Allow: /paginas/
+Crawl-delay: 2
+
+# ----- Facebook External Hit -----
+User-agent: facebookexternalhit
+Allow: /
+Allow: /paginas/
+Allow: /*.html
+Allow: /*.htm
+
+# ----- Twitter Bot -----
+User-agent: Twitterbot
+Allow: /
+Allow: /paginas/
+Allow: /*.html
+
+# ----- LinkedIn Bot -----
+User-agent: LinkedInBot
+Allow: /
+Allow: /paginas/
+
+# ----- Bad Bots Bloqueados -----
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: BacklinkCrawler
+Disallow: /
+
+# ----- Diretórios Privados -----
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /cgi-bin/
+Disallow: /wp-admin/
+Disallow: /wp-includes/
+Disallow: /wp-content/plugins/
+Disallow: /tmp/
+Disallow: /cache/
+Disallow: /*.log$
+Disallow: /*.env$
+
+# ----- Parâmetros Bloqueados -----
+Disallow: /*?*utm_source=
+Disallow: /*?*utm_medium=
+Disallow: /*?*utm_campaign=
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+Disallow: /*?*msclkid=
+Disallow: /*?*page=
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+Disallow: /*?*search=
+Disallow: /*?*query=
+
+# ----- Arquivos Temporários -----
+Disallow: /*.tmp$
+Disallow: /*.bak$
+Disallow: /*.swp$
+Disallow: /*.old$
+Disallow: /*~$
+
+# ----- Sitemaps -----
+Sitemap: https://puzzlebtc.canalqb.com.br/sitemap.xml
+Sitemap: https://puzzlebtc.canalqb.com.br/sitemap.xml.gz
+
+# ----- Host Information -----
+Host: https://puzzlebtc.canalqb.com.br
+
+# ----- SEO Directives -----
+# IndexNow support
+User-agent: *
+Allow: /indexnow.txt
+Allow: /401d492e65fa47d3b34a0d4aaf092636.txt
+
+# AdSense verification
+Allow: /ads.txt
+Allow: /robots.txt
+
+# ----- End of robots.txt -----

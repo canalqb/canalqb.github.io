@@ -1,144 +1,232 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
 
+<!-- Página Principal - Highest Priority -->
 <url>
-  <loc>https://canalqb.github.io/</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>daily</changefreq>
   <priority>1.00</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/index.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/index.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>daily</changefreq>
   <priority>1.00</priority>
 </url>
 
+<!-- Páginas Institucionais - High Priority -->
 <url>
-  <loc>https://canalqb.github.io/README.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/sobre.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.90</priority>
 </url>
 
-<!-- Páginas Principais -->
 <url>
-  <loc>https://canalqb.github.io/paginas/sobre.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/contato.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/contatos.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/about.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<!-- Páginas Legais e Compliance - High Priority -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/privacidade.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/politicadeprivacidade.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/termos.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/direitos-autorais.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/dmca.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/disclaimer.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<!-- Monetização e Transparência - High Priority -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/monetizacao.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/transparencia.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<!-- GDPR e Cookies - High Priority -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/cookies.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/ccookies.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/paginas/contato.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/consentimento_de_cookies.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/preferencias_de_privacidade.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+
+<!-- Direitos do Usuário - Medium Priority -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/direitos-usuario.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/paginas/privacidade.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/app-privacidade.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/paginas/termos.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/nao-venda.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<!-- Parcerias e Serviços - Medium Priority -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/paginas/mercado-livre.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.75</priority>
+</url>
+
+<!-- Documentação Técnica - Medium Priority -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/leitura/GUIA-INTEGRACAO-SUPABASE.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/paginas/cookies.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/leitura/GUIA-ADSENSE-ANALYTICS-GDPR.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.80</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/paginas/disclaimer.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/direitos-autorais.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/dmca.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/monetizacao.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/transparencia.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/mercado-livre.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.70</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/app-privacidade.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.70</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/direitos-usuario.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.70</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/paginas/nao-venda.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.70</priority>
-</url>
-
-<!-- Documentação Técnica - Pasta Leitura -->
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-INTEGRACAO-SUPABASE.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/GUIA-ADSENSE-ANALYTICS-GDPR.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-<url>
-  <loc>https://canalqb.github.io/leitura/REGRAS-PROTECAO-SISTEMA.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/leitura/REGRAS-PROTECAO-SISTEMA.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.75</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/leitura/RELATORIO-METRICAS-QUALIDADE.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/leitura/RELATORIO-METRICAS-QUALIDADE.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.75</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/leitura/README-PUZZLE-FINDER.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/leitura/README-PUZZLE-FINDER.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.75</priority>
 </url>
 
 <url>
-  <loc>https://canalqb.github.io/leitura/README-SECRETS-SISTEMA.html</loc>
-  <lastmod>2026-03-15T17:30:00-03:00</lastmod>
+  <loc>https://puzzlebtc.canalqb.com.br/leitura/README-SECRETS-SISTEMA.html</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
   <priority>0.75</priority>
+</url>
+
+<!-- Arquivos de Verificação - Essential for SEO -->
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/ads.txt</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/robots.txt</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<url>
+  <loc>https://puzzlebtc.canalqb.com.br/sitemap.xml</loc>
+  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
 </url>
 
 </urlset>
