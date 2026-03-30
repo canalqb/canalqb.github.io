@@ -56,11 +56,27 @@
   <!-- BitcoinJS -->
   <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
   <script>
-    // Fallback se CDN não carregar (HTTP vs HTTPS)
-    if (!window.bitcoin) {
-      console.warn('⚠️ BitcoinJS CDN não carregou, tentando fallback...');
-      // Aqui poderíamos adicionar uma versão local se necessário
-    }
+    // Verificação robusta do BitcoinJS
+    setTimeout(() => {
+      if (!window.bitcoin || !window.bitcoin.ECPair) {
+        console.warn('⚠️ BitcoinJS não carregou do CDN, carregando fallback...');
+        // Carrega versão alternativa se disponível
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/bitcoinjs-lib@5.1.7/dist/bitcoinjs-lib.min.js';
+        script.onload = () => {
+          if (window.bitcoinjs) {
+            window.bitcoin = window.bitcoinjs;
+            console.log('✅ BitcoinJS fallback carregado com sucesso');
+          }
+        };
+        script.onerror = () => {
+          console.error('❌ BitcoinJS fallback também falhou');
+        };
+        document.head.appendChild(script);
+      } else {
+        console.log('✅ BitcoinJS carregado com sucesso do CDN principal');
+      }
+    }, 1000);
   </script>
 
   <!-- Supabase -->
@@ -1728,9 +1744,9 @@
   <!-- Wallet Counter - PARA CONTAR CARTEIRAS -->
   <script src="js/wallet-counter.js?v=20260330-1109"></script>
 
-  <script src="js/matriz.js?v=20260330-1302" defer></script>
-  <script src="js/auto16-preset.js?v=20260330-1301" defer></script>
-  <script src="js/eggs-hunter.js?v=20260330-1205" defer="defer"></script>
+  <script src="js/matriz.js?v=20260330-1600" defer></script>
+  <script src="js/auto16-preset.js?v=20260330-1600" defer></script>
+  <script src="js/eggs-hunter.js?v=20260330-1600" defer="defer"></script>
 
   <!-- SCRIPT DE NAVEGAÇÃO DINÂMICA -->
   <script>
@@ -2448,14 +2464,14 @@
   </script>
 
   <!-- CORE SCRIPTS COM CACHE BUSTING -->
-  <script src="js/auto16.js?v=20260330-1123"></script>
-  <script src="js/preset-ranges.js?v=20260330-1123"></script>
+  <script src="js/auto16.js?v=20260330-1600"></script>
+  <script src="js/preset-ranges.js?v=20260330-1600"></script>
   <script src="js/preset-manager.js?v=20260330-1123"></script>
   <script src="js/puzzle-finder.js?v=20260330-1123"></script>
   <script src="examples/puzzle-finder-usage.js?v=20260330-1123"></script>
   <script src="js/speed-control-update.js"></script>
   <script src="js/cell-percent-config.js"></script>
-  <script src="js/converter.js?v=20260330-1502" defer></script>
+  <script src="js/converter.js?v=20260330-1600" defer></script>
 
 </body>
 
