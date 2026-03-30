@@ -55,6 +55,13 @@
 
   <!-- BitcoinJS -->
   <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
+  <script>
+    // Fallback se CDN não carregar (HTTP vs HTTPS)
+    if (!window.bitcoin) {
+      console.warn('⚠️ BitcoinJS CDN não carregou, tentando fallback...');
+      // Aqui poderíamos adicionar uma versão local se necessário
+    }
+  </script>
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2448,7 +2455,7 @@
   <script src="examples/puzzle-finder-usage.js?v=20260330-1123"></script>
   <script src="js/speed-control-update.js"></script>
   <script src="js/cell-percent-config.js"></script>
-  <script src="js/converter.js?v=20260330-1501" defer></script>
+  <script src="js/converter.js?v=20260330-1502" defer></script>
 
 </body>
 

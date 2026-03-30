@@ -25,14 +25,19 @@
 
   async function toWIF(hex, compressed) {
     console.log(`🔍 [DEBUG] Converter toWIF chamado: hex=${hex.substring(0, 20)}..., compressed=${compressed}`);
+    console.log(`🔍 [DEBUG] URL atual: ${window.location.href}`);
+    console.log(`🔍 [DEBUG] Protocolo: ${window.location.protocol}`);
     console.log(`🔍 [DEBUG] BitcoinJS disponível: ${!!(window.bitcoin && window.bitcoin.ECPair)}`);
+    console.log(`🔍 [DEBUG] window.bitcoin:`, window.bitcoin);
     
     // Força uso do BitcoinJS se disponível (garante WIF correto)
     if (window.bitcoin && window.bitcoin.ECPair) {
       try {
+        console.log(`✅ [DEBUG] Tentando BitcoinJS com hex: ${hex}`);
         const keyPair = window.bitcoin.ECPair.fromPrivateKey(Buffer.from(hex, 'hex'));
         const result = keyPair.toWIF(compressed ? 0x01 : 0x00);
-        console.log(`✅ [DEBUG] BitcoinJS sucesso: ${result.substring(0, 20)}...`);
+        console.log(`✅ [DEBUG] BitcoinJS sucesso: ${result}`);
+        console.log(`✅ [DEBUG] Resultado completo: ${result}`);
         return result;
       } catch (error) {
         console.warn('⚠️ BitcoinJS falhou, tentando window.toWIF:', error);
@@ -43,7 +48,7 @@
     if (typeof window.toWIF === 'function') {
       try {
         const result = await window.toWIF(hex, compressed);
-        console.log(`✅ [DEBUG] window.toWIF sucesso: ${result.substring(0, 20)}...`);
+        console.log(`✅ [DEBUG] window.toWIF sucesso: ${result}`);
         return result;
       } catch (error) {
         console.warn('⚠️ window.toWIF falhou, usando fallback:', error);
@@ -58,7 +63,7 @@
     const h2 = await crypto.subtle.digest('SHA-256', h1);
     const full = new Uint8Array([...payload, ...new Uint8Array(h2).slice(0, 4)]);
     const result = base58(full);
-    console.log(`❌ [DEBUG] Fallback result (INVÁLIDO): ${result.substring(0, 20)}...`);
+    console.log(`❌ [DEBUG] Fallback result (INVÁLIDO): ${result}`);
     return result;
   }
 
