@@ -260,6 +260,11 @@
 
                             console.log(`🥚 [EGGS] SALDO ENCONTRADO! ${item.address} = ${balanceBTC} BTC`);
 
+                            // 🚀 NOTIFICAÇÃO IMEDIATA
+                            if (typeof showToast === 'function') {
+                                showToast(`🎉 CARTEIRA COM SALDO ENCONTRADA! ${item.address} = ${balanceBTC} BTC`, 'success');
+                            }
+
                             // 🚀 REGISTRA NO SUPABASE VIA PUZZLE FINDER (SEM PRESET)
                             if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
                                 try {
