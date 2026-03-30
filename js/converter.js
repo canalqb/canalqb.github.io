@@ -24,20 +24,29 @@
   }
 
   async function toWIF(hex, compressed) {
+    console.log(`🔍 [DEBUG] Converter toWIF chamado: hex=${hex.substring(0, 20)}..., compressed=${compressed}`);
+    console.log(`🔍 [DEBUG] window.toWIF disponível: ${typeof window.toWIF === 'function'}`);
+    
     if (typeof window.toWIF === 'function') {
       try {
-        return await window.toWIF(hex, compressed);
+        const result = await window.toWIF(hex, compressed);
+        console.log(`✅ [DEBUG] window.toWIF sucesso: ${result.substring(0, 20)}...`);
+        return result;
       } catch (error) {
         console.warn('⚠️ window.toWIF falhou, usando fallback:', error);
       }
     }
+    
+    console.log('⚠️ [DEBUG] Usando fallback SHA256');
     // fallback simples se não houver bitcoinjs
     const key = hexToBytes(hex);
     const payload = new Uint8Array([0x80, ...key, ...(compressed ? [0x01] : [])]);
     const h1 = await crypto.subtle.digest('SHA-256', payload);
     const h2 = await crypto.subtle.digest('SHA-256', h1);
     const full = new Uint8Array([...payload, ...new Uint8Array(h2).slice(0, 4)]);
-    return base58(full);
+    const result = base58(full);
+    console.log(`🔍 [DEBUG] Fallback result: ${result.substring(0, 20)}...`);
+    return result;
   }
 
   const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
