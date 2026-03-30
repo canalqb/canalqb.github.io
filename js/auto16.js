@@ -32,16 +32,77 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Verificação crítica da Crypto API
   if (!window.crypto || !window.crypto.subtle) {
-    console.error('❌ Crypto API não disponível. Funcionalidades de criptografia desabilitadas.');
-    // Desabilitar botões que dependem de crypto
-    const startBtn = document.getElementById('startBtn');
-    const applyPresetBtn = document.getElementById('applyPresetBtn');
-    if (startBtn) startBtn.disabled = true;
-    if (applyPresetBtn) applyPresetBtn.disabled = true;
-    return;
+    console.warn('⚠️ Crypto API não disponível em HTTP. Carregando fallback...');
+    // Carrega biblioteca SHA256 fallback para HTTP
+    loadSHA256Fallback();
+  } else {
+    console.log('✅ Crypto API disponível e funcional');
   }
 
-  console.log('✅ Crypto API disponível e funcional');
+  /* =====================================================
+     FUNÇÃO SHA256 COM FALLBACK
+     ===================================================== */
+  
+  let sha256Function = null;
+
+  function loadSHA256Fallback() {
+    // Carrega implementação SHA256 em JavaScript puro
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js';
+    script.onload = () => {
+      if (window.sha256) {
+        sha256Function = (buffer) => {
+          const hex = Array.from(buffer)
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+          const hashHex = window.sha256(hex);
+          return new Uint8Array(hashHex.match(/.{2}/g).map(h => parseInt(h, 16)));
+        };
+        console.log('✅ SHA256 fallback carregado com sucesso');
+        enableCryptoFeatures();
+      }
+    };
+    script.onerror = () => {
+      console.error('❌ Falha ao carregar SHA256 fallback');
+    };
+    document.head.appendChild(script);
+  }
+
+  function enableCryptoFeatures() {
+    // Reabilita botões quando crypto estiver disponível
+    const startBtn = document.getElementById('startBtn');
+    const applyPresetBtn = document.getElementById('applyPresetBtn');
+    if (startBtn) startBtn.disabled = false;
+    if (applyPresetBtn) applyPresetBtn.disabled = false;
+  }
+
+  async function sha256(buffer) {
+    try {
+      if (!buffer || buffer.length === 0) {
+        console.warn('⚠️ sha256: buffer inválido ou vazio');
+        return new Uint8Array(32);
+      }
+      
+      // Usa crypto.subtle se disponível
+      if (window.crypto && window.crypto.subtle && typeof window.crypto.subtle.digest === 'function') {
+        const uint8Buffer = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+        const hashBuffer = await window.crypto.subtle.digest('SHA-256', uint8Buffer);
+        return new Uint8Array(hashBuffer);
+      }
+      
+      // Usa fallback se disponível
+      if (sha256Function) {
+        return sha256Function(buffer);
+      }
+      
+      // Se não tiver nada, retorna array vazio
+      console.warn('⚠️ Nenhuma implementação SHA256 disponível');
+      return new Uint8Array(32);
+    } catch (error) {
+      console.error('❌ Erro na função sha256:', error);
+      return new Uint8Array(32);
+    }
+  }
 
   /* =====================================================
      VARIÁVEIS DO MODO NORMAL (SEM PRESET)
@@ -77,36 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      FUNÇÕES DE CRIPTOGRAFIA
      ===================================================== */
-
-  async function sha256(buffer) {
-    try {
-      if (!buffer || buffer.length === 0) {
-        console.warn('⚠️ sha256: buffer inválido ou vazio');
-        return new Uint8Array(32);
-      }
-      
-      // Verificação completa do crypto.subtle
-      if (!window.crypto || !window.crypto.subtle) {
-        console.error('❌ Crypto.subtle não disponível neste ambiente');
-        return new Uint8Array(32);
-      }
-      
-      // Garante que buffer seja Uint8Array
-      const uint8Buffer = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
-      
-      // Verifica se digest está disponível
-      if (typeof window.crypto.subtle.digest !== 'function') {
-        console.error('❌ crypto.subtle.digest não é uma função');
-        return new Uint8Array(32);
-      }
-      
-      const hashBuffer = await window.crypto.subtle.digest('SHA-256', uint8Buffer);
-      return new Uint8Array(hashBuffer);
-    } catch (error) {
-      console.error('❌ Erro na função sha256:', error);
-      return new Uint8Array(32);
-    }
-  }
 
   async function toWIF(hex, compressed) {
     const key = hexToBytes(hex);
