@@ -110,8 +110,16 @@
             return false;
         }
 
+        // 🚡 DEBUG: Log do WIF recebido
+        console.log(`🔍 [DEBUG] WIF recebido: ${wif.substring(0, 20)}... (comprimido: ${compressed})`);
+
         const address = wifToAddress(wif);
-        if (!address) return false;
+        if (!address) {
+            console.warn(`⚠️ [DEBUG] Falha ao converter WIF para endereço: ${wif.substring(0, 20)}...`);
+            return false;
+        }
+
+        console.log(`✅ [DEBUG] WIF válido: ${wif.substring(0, 20)}... → ${address.substring(0, 15)}...`);
 
         pendingWifs.push({
             address,
