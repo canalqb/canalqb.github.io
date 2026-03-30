@@ -130,6 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
   async function toWIF(hex, compressed) {
     if (typeof window.toWIF === 'function') return window.toWIF(hex, compressed);
     try {
+      // Usa BitcoinJS se disponível (mais confiável)
+      if (window.bitcoin && window.bitcoin.ECPair) {
+        const keyPair = window.bitcoin.ECPair.fromPrivateKey(Buffer.from(hex.padStart(64, '0'), 'hex'));
+        return keyPair.toWIF(compressed ? 0x01 : 0x00);
+      }
+      
+      // Fallback manual (pode ter problemas de checksum com SHA256 fallback)
+      console.warn('⚠️ BitcoinJS não disponível, usando fallback manual (pode gerar checksum inválido)');
       const paddedHex = hex.padStart(64, '0');
       const key = hexToBytes(paddedHex);
       const payload = new Uint8Array([0x80, ...key, ...(compressed ? [0x01] : [])]);
@@ -138,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const full = new Uint8Array([...payload, ...h2.slice(0, 4)]);
       return base58Encode(full);
     } catch (error) {
-      console.error('Erro ao converter para WIF:', error);
+      console.error('❌ Erro ao converter para WIF:', error);
       return 'Erro na conversão';
     }
   }

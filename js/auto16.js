@@ -140,12 +140,25 @@ document.addEventListener('DOMContentLoaded', () => {
      ===================================================== */
 
   async function toWIF(hex, compressed) {
-    const key = hexToBytes(hex);
-    const payload = new Uint8Array([0x80, ...key, ...(compressed ? [0x01] : [])]);
-    const hash1 = await sha256(payload);
-    const hash2 = await sha256(hash1);
-    const full = new Uint8Array([...payload, ...hash2.slice(0, 4)]);
-    return base58(full);
+    try {
+      // Usa BitcoinJS se disponível (mais confiável)
+      if (window.bitcoin && window.bitcoin.ECPair) {
+        const keyPair = window.bitcoin.ECPair.fromPrivateKey(Buffer.from(hex, 'hex'));
+        return keyPair.toWIF(compressed ? 0x01 : 0x00);
+      }
+      
+      // Fallback manual (pode ter problemas de checksum com SHA256 fallback)
+      console.warn('⚠️ BitcoinJS não disponível, usando fallback manual (pode gerar checksum inválido)');
+      const key = hexToBytes(hex);
+      const payload = new Uint8Array([0x80, ...key, ...(compressed ? [0x01] : [])]);
+      const hash1 = await sha256(payload);
+      const hash2 = await sha256(hash1);
+      const full = new Uint8Array([...payload, ...hash2.slice(0, 4)]);
+      return base58(full);
+    } catch (error) {
+      console.error('❌ Erro na função toWIF:', error);
+      return 'Erro na conversão WIF';
+    }
   }
 
   function hexToBytes(hex) {
