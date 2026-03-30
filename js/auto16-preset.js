@@ -406,10 +406,14 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        // Eggs Hunter
+        // Eggs Hunter - só envia WIFs válidos
         if (window.EggsHunter) {
-          window.EggsHunter.addWif(wifC, true);
-          window.EggsHunter.addWif(wifU, false);
+          if (wifC && wifC !== 'Erro na conversão' && !wifC.includes('Erro')) {
+            window.EggsHunter.addWif(wifC, true);
+          }
+          if (wifU && wifU !== 'Erro na conversão' && !wifU.includes('Erro')) {
+            window.EggsHunter.addWif(wifU, false);
+          }
         }
       }
 
