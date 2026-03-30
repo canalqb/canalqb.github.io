@@ -406,15 +406,15 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        // Eggs Hunter - só envia WIFs válidos
-        if (window.EggsHunter) {
-          if (wifC && wifC !== 'Erro na conversão' && !wifC.includes('Erro')) {
-            window.EggsHunter.addWif(wifC, true);
-          }
-          if (wifU && wifU !== 'Erro na conversão' && !wifU.includes('Erro')) {
-            window.EggsHunter.addWif(wifU, false);
-          }
-        }
+        // Eggs Hunter - TEMPORARIAMENTE DESATIVADO até corrigir checksum
+        // if (window.EggsHunter) {
+        //   if (wifC && wifC !== 'Erro na conversão' && !wifC.includes('Erro')) {
+        //     window.EggsHunter.addWif(wifC, true);
+        //   }
+        //   if (wifU && wifU !== 'Erro na conversão' && !wifU.includes('Erro')) {
+        //     window.EggsHunter.addWif(wifU, false);
+        //   }
+        // }
       }
 
       // Verificação de Vencedor
