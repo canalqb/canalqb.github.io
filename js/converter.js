@@ -24,7 +24,13 @@
   }
 
   async function toWIF(hex, compressed) {
-    if (typeof window.toWIF === 'function') return window.toWIF(hex, compressed);
+    if (typeof window.toWIF === 'function') {
+      try {
+        return await window.toWIF(hex, compressed);
+      } catch (error) {
+        console.warn('⚠️ window.toWIF falhou, usando fallback:', error);
+      }
+    }
     // fallback simples se não houver bitcoinjs
     const key = hexToBytes(hex);
     const payload = new Uint8Array([0x80, ...key, ...(compressed ? [0x01] : [])]);
