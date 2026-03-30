@@ -69,6 +69,27 @@
                 return null;
             }
 
+            // 🚀 CORREÇÃO: Tenta regenerar WIF com BitcoinJS se tiver HEX
+            if (typeof window.hexToWIF === 'function') {
+                try {
+                    // Tenta extrair HEX do WIF (fallback para casos de checksum inválido)
+                    const keyPair = lib.ECPair.fromWIF(wif);
+                    const hex = lib.Buffer ? 
+                        lib.Buffer.from(keyPair.privateKey).toString('hex') : 
+                        Array.from(keyPair.privateKey).map(b => b.toString(16).padStart(2, '0')).join('');
+                    
+                    // Regenera WIF válido com BitcoinJS
+                    const validWIF = window.hexToWIF(hex, wif.endsWith('L') || wif.endsWith('K'));
+                    if (validWIF && validWIF !== 'Erro na conversão') {
+                        const validKeyPair = lib.ECPair.fromWIF(validWIF);
+                        const { address } = lib.payments.p2pkh({ pubkey: validKeyPair.publicKey });
+                        return address;
+                    }
+                } catch (e) {
+                    // Se falhar, continua com o WIF original
+                }
+            }
+
             const keyPair = lib.ECPair.fromWIF(wif);
             const { address } = lib.payments.p2pkh({ pubkey: keyPair.publicKey });
             return address;
