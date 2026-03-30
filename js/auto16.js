@@ -62,8 +62,20 @@ document.addEventListener('DOMContentLoaded', () => {
      ===================================================== */
 
   async function sha256(buffer) {
-    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-    return new Uint8Array(hashBuffer);
+    try {
+      if (!buffer || buffer.length === 0) {
+        console.warn('⚠️ sha256: buffer inválido ou vazio');
+        return new Uint8Array(32);
+      }
+      
+      // Garante que buffer seja Uint8Array
+      const uint8Buffer = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', uint8Buffer);
+      return new Uint8Array(hashBuffer);
+    } catch (error) {
+      console.error('❌ Erro na função sha256:', error);
+      return new Uint8Array(32);
+    }
   }
 
   async function toWIF(hex, compressed) {

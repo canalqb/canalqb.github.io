@@ -29,7 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function sha256(buf) {
-    return new Uint8Array(await crypto.subtle.digest('SHA-256', buf));
+    try {
+      if (!buf || buf.length === 0) {
+        console.warn('⚠️ sha256: buffer inválido ou vazio');
+        return new Uint8Array(32);
+      }
+      
+      // Garante que buf seja Uint8Array
+      const uint8Buffer = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+      return new Uint8Array(await crypto.subtle.digest('SHA-256', uint8Buffer));
+    } catch (error) {
+      console.error('❌ Erro na função sha256:', error);
+      return new Uint8Array(32);
+    }
   }
 
   function hexToBytes(hex) {
