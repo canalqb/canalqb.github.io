@@ -28,6 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
+  /* =====================================================
+     VERIFICAÇÃO DE CRYPTO API
+     ===================================================== */
+  
+  // Verificação crítica da Crypto API
+  if (!window.crypto || !window.crypto.subtle) {
+    console.error('❌ Crypto API não disponível. Funcionalidades de preset desabilitadas.');
+    applyPresetBtn.disabled = true;
+    presetBitsInput.disabled = true;
+    return;
+  }
+
+  console.log('✅ Crypto API disponível para presets');
+
   async function sha256(buf) {
     try {
       if (!buf || buf.length === 0) {
@@ -35,9 +49,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Uint8Array(32);
       }
       
+      // Verificação completa do crypto.subtle
+      if (!window.crypto || !window.crypto.subtle) {
+        console.error('❌ Crypto.subtle não disponível neste ambiente');
+        return new Uint8Array(32);
+      }
+      
       // Garante que buf seja Uint8Array
       const uint8Buffer = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
-      return new Uint8Array(await crypto.subtle.digest('SHA-256', uint8Buffer));
+      
+      // Verifica se digest está disponível
+      if (typeof window.crypto.subtle.digest !== 'function') {
+        console.error('❌ crypto.subtle.digest não é uma função');
+        return new Uint8Array(32);
+      }
+      
+      return new Uint8Array(await window.crypto.subtle.digest('SHA-256', uint8Buffer));
     } catch (error) {
       console.error('❌ Erro na função sha256:', error);
       return new Uint8Array(32);

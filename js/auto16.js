@@ -27,6 +27,23 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* =====================================================
+     VERIFICAÇÃO DE CRYPTO API
+     ===================================================== */
+  
+  // Verificação crítica da Crypto API
+  if (!window.crypto || !window.crypto.subtle) {
+    console.error('❌ Crypto API não disponível. Funcionalidades de criptografia desabilitadas.');
+    // Desabilitar botões que dependem de crypto
+    const startBtn = document.getElementById('startBtn');
+    const applyPresetBtn = document.getElementById('applyPresetBtn');
+    if (startBtn) startBtn.disabled = true;
+    if (applyPresetBtn) applyPresetBtn.disabled = true;
+    return;
+  }
+
+  console.log('✅ Crypto API disponível e funcional');
+
+  /* =====================================================
      VARIÁVEIS DO MODO NORMAL (SEM PRESET)
      ===================================================== */
 
@@ -68,9 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return new Uint8Array(32);
       }
       
+      // Verificação completa do crypto.subtle
+      if (!window.crypto || !window.crypto.subtle) {
+        console.error('❌ Crypto.subtle não disponível neste ambiente');
+        return new Uint8Array(32);
+      }
+      
       // Garante que buffer seja Uint8Array
       const uint8Buffer = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', uint8Buffer);
+      
+      // Verifica se digest está disponível
+      if (typeof window.crypto.subtle.digest !== 'function') {
+        console.error('❌ crypto.subtle.digest não é uma função');
+        return new Uint8Array(32);
+      }
+      
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', uint8Buffer);
       return new Uint8Array(hashBuffer);
     } catch (error) {
       console.error('❌ Erro na função sha256:', error);
