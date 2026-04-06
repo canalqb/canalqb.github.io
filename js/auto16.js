@@ -349,9 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Se o preset estiver desativado no momento, podemos registrar como 0 no banco se o usuário preferir, 
             // mas manter o puzzleNum é mais informativo. Vamos seguir o desejo do usuário para preset=0 em manual.
-            const hasPreset = window.presetManager && window.presetManager.hasActivePreset();
-            const dbPreset = hasPreset ? puzzleNum : 0;
-            const dbBits = puzzleNum; // Bits corresponde ao número do puzzle
+            // 🚀 FIX: Sempre usa puzzleNum como preset para o banco de dados.
+            // Isso evita a violação da constraint "encontrados_preset_check" que exige preset > 0,
+            // e garante que a carteira seja categorizada corretamente mesmo no modo manual.
+            const dbPreset = puzzleNum;
+            const dbBits = puzzleNum; 
 
             await window.PuzzleFinder.register({
               preset: dbPreset, 
