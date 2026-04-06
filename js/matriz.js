@@ -828,7 +828,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof window.checkTargetWallet === 'function' && hexString !== "0") {
       window.checkTargetWallet(hexString, { 
         mode: 'manual',
-        preset: 0 
+        preset: 0,
+        source: 'manual'
       });
     }
 

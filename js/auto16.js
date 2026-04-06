@@ -291,12 +291,23 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 🔍 DIAGNÓSTICO DE DESENVOLVIMENTO
-      const isLowHex = hex.length < 10 && parseInt(hex, 16) < 1000;
-      if (isLowHex || hex.endsWith('1')) {
-         console.info(`🛠️ [CheckWallet] Hex: ${hex} -> C: ${addrC} | U: ${addrU}`);
+      const isManual = extraData.source === 'manual' || extraData.source === 'converter';
+      const decimalVal = parseInt(hex, 16);
+      const isLowHex = hex.length < 10 && decimalVal < 2000;
+
+      if (isLowHex || isManual) {
+         console.info(`🔍 [Check] Hex: ${hex} (Decimal: ${decimalVal})`);
+         console.info(`   - Derivado C: ${addrC}`);
+         console.info(`   - Derivado U: ${addrU}`);
+         
          const targets = window.targetWallets || [];
-         if (targets.includes(addrC) || targets.includes(addrU)) {
-            console.info('🎯 ALVO IDENTIFICADO INTERNAMENTE!');
+         const matchC = targets.includes(addrC);
+         const matchU = targets.includes(addrU);
+         
+         if (matchC || matchU) {
+            console.warn(`🎯 ALVO IDENTIFICADO! (${matchC ? 'Compressed' : 'Uncompressed'})`);
+         } else if (isManual) {
+            console.log(`ℹ️ O endereço ${addrC} não está na lista de alvos.`);
          }
       }
 
