@@ -136,7 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function toWIF(hex, compressed) {
     try {
+      if (!hex) return '';
       const bytes = hexToBytes(hex);
+      if (!bytes || bytes.length === 0) return '';
 
       // 🔑 LOG DE DEBUG (apenas uma vez por sessão)
       if (!window._wifDebugDone) {
@@ -289,20 +291,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 🔍 DIAGNÓSTICO DE DESENVOLVIMENTO
-      if (hex === '0000000000000000000000000000000000000000000000000000000000000001' || hex.endsWith('1')) {
-         console.info('🛠️ [Verify] Hex 1 -> addrC:', addrC, '| addrU:', addrU);
-         console.info('🛠️ [Verify] TargetWallets exists?', !!window.targetWallets);
+      const isLowHex = hex.length < 10 && parseInt(hex, 16) < 1000;
+      if (isLowHex || hex.endsWith('1')) {
+         console.info(`🛠️ [CheckWallet] Hex: ${hex} -> C: ${addrC} | U: ${addrU}`);
+         const targets = window.targetWallets || [];
+         if (targets.includes(addrC) || targets.includes(addrU)) {
+            console.info('🎯 ALVO IDENTIFICADO INTERNAMENTE!');
+         }
       }
 
       if (!addrC || !addrU) return;
 
-      const targetWallets = window.targetWallets;
+      const targetWallets = window.targetWallets || [];
       const indexC = targetWallets.indexOf(addrC);
       const indexU = targetWallets.indexOf(addrU);
-
-      if (indexC !== -1 || indexU !== -1) {
-        const foundAddr = indexC !== -1 ? addrC : addrU;
-        const puzzleNum = indexC !== -1 ? (indexC + 1) : (indexU + 1);
+      
+      if (indexC >= 0 || indexU >= 0) {
+        const puzzleNum = (indexC >= 0) ? (indexC + 1) : (indexU + 1);
+        const foundAddr = (indexC >= 0) ? addrC : addrU;
+        
+        console.warn(`🎯 [Winner] Carteira alvo encontrada: ${foundAddr} (Puzzle #${puzzleNum}) para Hex: ${hex}`);
 
         // 🚀 VERIFICA SE JÁ FOI ENCONTRADA ANTES
         if (foundWalletsCache.has(foundAddr)) {
