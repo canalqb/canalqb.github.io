@@ -7,6 +7,9 @@
   // Cache para páginas já carregadas
   const pageCache = new Map();
 
+  // Armazena o elemento que abriu o modal para retornar o foco
+  let lastActiveElement = null;
+
   /**
    * Cria um modal para exibir conteúdo da página
    */
@@ -128,9 +131,19 @@
       </div>
     `);
     
+    // Armazena o foco atual
+    lastActiveElement = document.activeElement;
+
     // Mostra o modal de loading
     loadingModal.style.display = 'flex';
     loadingModal.setAttribute('aria-hidden', 'false');
+    
+    // Foca no botão de fechar ou no título para acessibilidade
+    setTimeout(() => {
+      const closeBtn = loadingModal.querySelector('.modal-close-btn');
+      if (closeBtn) closeBtn.focus();
+    }, 100);
+
     document.getElementById(`footer-modal-backdrop-${pageId}`).style.display = 'block';
 
     // Carrega o conteúdo
@@ -162,6 +175,12 @@
     
     if (backdrop) {
       backdrop.style.display = 'none';
+    }
+
+    // Retorna o foco
+    if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
+      lastActiveElement.focus();
+      lastActiveElement = null;
     }
 
     console.log(`📄 Modal do footer fechado: ${pageId}`);

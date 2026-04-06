@@ -1,41 +1,89 @@
 <!--
-  📌 PROMPT PARA NOVAS PÁGINAS
+  📌 PROMPT PARA NOVAS PÁGINAS (privacy.html, contacts.html, etc.):
+  - Esta página é um FRAGMENTO HTML.
+  - NÃO inclua <html>, <head>, <body> ou scripts globais.
+  - Todo conteúdo deve estar dentro de <main> ou <div> que substituirá #main-content.
+  - Use estilos existentes (Bootstrap, styles.css).
+  - Os links DENTRO desta página NÃO devem ter class="dynamic-link" se forem sair do site.
+  - O botão "Home" usa JavaScript simples para retornar à raiz — mantenha-o se necessário.
 -->
+
 <div class="hero-section">
-  <h1>👥 Sobre Nós</h1>
-  <p class="subtitle">Educação em criptografia Bitcoin desde o zero</p>
+  <h1>📖 Sobre o Projeto</h1>
+  <p class="subtitle">Ferramenta educacional de código aberto para aprendizado de criptografia Bitcoin</p>
 </div>
 
 <section class="control-card">
+  <h2>Nossa Missão</h2>
   <p>
-    O <strong>Gerador Educativo de Private Keys Bitcoin</strong> é um projeto sem fins lucrativos criado por 
-    <strong>Rodrigo Carlos Moraes (@CanalQb)</strong>, com o objetivo de ensinar de forma visual e segura 
-    os fundamentos da criptografia usada no Bitcoin.
+    O Gerador de Private Keys Bitcoin foi criado com o objetivo de democratizar o conhecimento sobre 
+    criptografia e segurança no ecossistema Bitcoin. Acreditamos que a educação é fundamental para 
+    o uso seguro e responsável de criptomoedas.
   </p>
   <p>
-    Nosso foco está no <strong>Puzzle 1000 BTC</strong>, um desafio criptográfico que distribuiu 1000 BTC 
-    em 256 endereços com chaves privadas em faixas específicas de bits. Usamos uma matriz 16×16 interativa 
-    para demonstrar como bits binários geram private keys de 256 bits.
+    Esta ferramenta foi desenvolvida exclusivamente para fins educacionais, permitindo que estudantes, 
+    desenvolvedores e entusiastas compreendam os fundamentos matemáticos por trás da geração de 
+    chaves privadas usando a curva elíptica <strong>secp256k1</strong>.
   </p>
 </section>
 
 <section class="control-card">
-  <h2>🎯 Nossa Missão</h2>
+  <h2>🎯 Objetivos do Projeto</h2>
   <ul>
-    <li>Democratizar o conhecimento técnico sobre Bitcoin;</li>
-    <li>Ensinar segurança criptográfica sem jargões desnecessários;</li>
-    <li>Alertar contra o uso de ferramentas online para armazenamento real de BTC;</li>
-    <li>Manter tudo como <strong>código aberto</strong> e auditável.</li>
+    <li><strong>Educação:</strong> Interface visual para entender a geração de chaves privadas</li>
+    <li><strong>Transparência:</strong> Código aberto e auditável</li>
+    <li><strong>Segurança:</strong> Alertas claros contra uso em produção</li>
+    <li><strong>Acessibilidade:</strong> Funciona em qualquer dispositivo moderno</li>
+    <li><strong>Inovação:</strong> Integra conceitos como o <em>Puzzle 1000 BTC</em> de forma didática</li>
   </ul>
 </section>
 
 <section class="control-card">
-  <h2>🔗 Projetos Relacionados</h2>
+  <h2>👨‍💻 Sobre o Desenvolvedor</h2>
+  <h3>Rodrigo Carlos Moraes (@CanalQb)</h3>
   <p>
-    <a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer">BTCKeygen.com</a> – Ferramenta avançada para geração e visualização de chaves.<br>
-    <a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">CanalQb Blog</a> – Tutoriais, análise de segurança e educação em blockchain.<br>
-    <a href="https://github.com/canalqb" target="_blank" rel="noopener noreferrer">GitHub @CanalQb</a> – Todo o código fonte disponível publicamente.
+    Educador e desenvolvedor brasileiro, criador do <a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">CanalQb</a>, 
+    com foco em tecnologias descentralizadas, segurança criptográfica e educação em Bitcoin.
   </p>
+  <p>
+    Seus projetos incluem ferramentas como o <a href="https://btckeygen.com/" target="_blank" rel="noopener noreferrer">BTCKeygen</a> 
+    e experimentos educacionais com matrizes binárias 16×16 para visualização de chaves de 256 bits.
+  </p>
+  <p>
+    <strong>Links:</strong><br>
+    Blog: <a href="https://canalqb.blogspot.com/" target="_blank" rel="noopener noreferrer">canalqb.blogspot.com</a><br>
+    GitHub: <a href="https://github.com/canalqb" target="_blank" rel="noopener noreferrer">github.com/canalqb</a><br>
+    YouTube: <a href="https://www.youtube.com/@canalqb" target="_blank" rel="noopener noreferrer">@canalqb</a>
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>🛠️ Tecnologias Utilizadas</h2>
+  <ul>
+    <li><strong>HTML5 Canvas:</strong> Renderização interativa da matriz 16×16</li>
+    <li><strong>JavaScript puro:</strong> Geração de chaves e manipulação de bits</li>
+    <li><strong>Web Crypto API:</strong> Operações criptográficas seguras</li>
+    <li><strong>Bootstrap 5 + CSS customizado:</strong> Design responsivo e moderno</li>
+    <li><strong>bitcoinjs-lib:</strong> Biblioteca para derivação de WIF e endereços</li>
+  </ul>
+</section>
+
+<section class="control-card" style="background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%); border-left-color: #ffc107;">
+  <h3>⚠️ Aviso Importante</h3>
+  <p>
+    <strong>Esta ferramenta é 100% educacional.</strong> 
+    Nunca use chaves geradas aqui para armazenar Bitcoin real. 
+    Para uso seguro, prefira carteiras hardware (Ledger, Trezor) ou software offline auditado (Electrum, Bitcoin Core).
+  </p>
+</section>
+
+<section class="control-card">
+  <h2>📄 Licença</h2>
+  <p>
+    Este projeto é distribuído sob a licença <strong>MIT</strong> — livre para uso, estudo, modificação e compartilhamento, 
+    desde que mantidos os créditos ao autor.
+  </p>
+  <p>© 2025 Rodrigo Carlos Moraes (@CanalQb)</p>
 </section>
 
 <div class="text-center mt-5">
@@ -44,15 +92,18 @@
   </a>
 </div>
 
+<!-- Script mínimo para redirecionar ao Home (necessário pois não é carregado via SPA) -->
 <script>
   (function() {
     function getRootUrl() {
       const path = window.location.pathname;
+      // Detecta se está em /git/paginas/ ou /projeto/paginas/, etc.
       const root = path.includes('/paginas/') 
         ? path.substring(0, path.indexOf('/paginas/') + 1)
         : path.substring(0, path.lastIndexOf('/') + 1) || '/';
       return window.location.origin + root;
     }
+
     document.addEventListener('click', function(e) {
       if (e.target.closest('#homeButton')) {
         e.preventDefault();

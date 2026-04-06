@@ -92,7 +92,7 @@ class WalletCounter {
   }
 
   /**
-   * Mostra notificação silenciosa
+   * Mostra notificação de sincronização de lote (Ajudas)
    */
   showNotification() {
     // Cria toast temporário
@@ -101,16 +101,22 @@ class WalletCounter {
       position: fixed;
       top: 10px;
       right: 10px;
-      background: #28a745;
+      background: #3182ce;
       color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
       font-family: 'Segoe UI', sans-serif;
       z-index: 20000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.2);
       animation: slideInRight 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     `;
-    toast.innerHTML = `💰 Carteira encontrada!`;
+    toast.innerHTML = `✨ Lote sincronizado! (+1000)`;
     
     document.body.appendChild(toast);
     
@@ -120,7 +126,39 @@ class WalletCounter {
         toast.style.animation = 'slideOutRight 0.3s ease';
         setTimeout(() => toast.remove(), 300);
       }
-    }, 2000);
+    }, 2500);
+  }
+
+  /**
+   * Mostra notificação real de carteira encontrada (RECOMPENSA)
+   */
+  showWalletFoundNotification() {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 15px;
+      font-size: 20px;
+      font-weight: 800;
+      z-index: 30000;
+      box-shadow: 0 0 50px rgba(245, 158, 11, 0.5);
+      border: 2px solid gold;
+      text-align: center;
+      animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    `;
+    toast.innerHTML = `💰 🤑 CARTEIRA ALVO ENCONTRADA! 🚀 💎`;
+    
+    document.body.appendChild(toast);
+    
+    // Efeito de confete ou som poderia ser adicionado aqui
+    setTimeout(() => {
+       if (toast.parentNode) toast.remove();
+    }, 10000); // Fica 10 seg na tela
   }
 
   /**

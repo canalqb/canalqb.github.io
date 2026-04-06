@@ -9,26 +9,273 @@
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' 
-      www.google.com www.googletagmanager.com google-analytics.com adservice.google.com 
-      cdn.jsdelivr.net unpkg.com cdnjs.cloudflare.com;
+      *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net *.google 
+      cdn.jsdelivr.net unpkg.com cdnjs.cloudflare.com blob:;
     style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdnjs.cloudflare.com;
     font-src 'self' fonts.gstatic.com cdn.jsdelivr.net cdnjs.cloudflare.com;
-    img-src 'self' data: www.google.com www.googletagmanager.com google-analytics.com;
-    connect-src 'self' https://dhpzusdynwpnsejnlzvf.supabase.co https://blockchain.info;
+    img-src 'self' data: *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net;
+    connect-src 'self' https://puzzlebtc.canalqb.com.br https://canalqb.github.io 
+      https://*.supabase.co https://blockchain.info https://*.google.com https://*.doubleclick.net 
+      https://*.google https://*.google-analytics.com https://*.googlesyndication.com cdn.jsdelivr.net;
+    frame-src 'self' *.google.com *.googlesyndication.com *.doubleclick.net *.adtrafficquality.google;
+    worker-src 'self' blob:;
+    child-src 'self' blob:;
     media-src 'self';
     object-src 'none';
     base-uri 'self';
     form-action 'self';
-    frame-ancestors 'none';
     upgrade-insecure-requests;
   ">
-  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 - Puzzle 1000 BTC">
-  <meta name="keywords"
-    content="bitcoin, private key, bitcoin private key, puzzle bitcoin, puzzle 1000 btc, gerador bitcoin, bitcoin puzzle, matriz 16x16, cryptography, blockchain, chave privada bitcoin, estudo bitcoin, privatekeys, privatekeys.pw, puzzle, puzzles, bitcoin-puzzle-tx">
+  <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 interativa. Explore o Puzzle 1000 BTC e aprenda criptografia Bitcoin com Rodrigo Moraes — CanalQB.">
+  <meta name="keywords" content="bitcoin, private key, bitcoin private key, puzzle bitcoin, puzzle 1000 btc, gerador bitcoin, bitcoin puzzle, matriz 16x16, cryptography, blockchain, chave privada bitcoin, estudo bitcoin, privatekeys, privatekeys.pw, puzzle, puzzles, bitcoin-puzzle-tx, rodrigo moraes, canalqb, canalqb.blogspot.com">
+  <meta name="author" content="Rodrigo Moraes — CanalQB">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="google-site-verification" content="2Y9-oF7dxXk9Xq-MNVGlef1S9EP8f95jwU7gUl7FrA8" />
   <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
 
-  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC</title>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://canalqb.github.io/">
+  <meta property="og:site_name" content="CanalQB — Gerador de Private Keys Bitcoin">
+  <meta property="og:title" content="Gerador Private Keys Bitcoin — Puzzle 1000 BTC | CanalQB">
+  <meta property="og:description" content="Ferramenta educacional interativa para geração de Private Keys Bitcoin com matriz 16×16. Criado por Rodrigo Moraes do CanalQB para estudo de criptografia e puzzles Bitcoin.">
+  <meta property="og:locale" content="pt_BR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@CanalQB">
+  <meta name="twitter:creator" content="@CanalQB">
+  <meta name="twitter:title" content="Gerador Private Keys Bitcoin — Puzzle 1000 BTC | CanalQB">
+  <meta name="twitter:description" content="Ferramenta educacional interativa para geração de Private Keys Bitcoin com matriz 16×16. Criado por Rodrigo Moraes do CanalQB.">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://canalqb.github.io/">
+
+  <title>Gerador Private Keys Bitcoin - Puzzle 1000 BTC | CanalQB</title>
+
+  <!-- ============================================================
+       SCHEMA.ORG JSON-LD — SEO COMPLETO
+       Schemas: WebSite, Person (Autor), Organization, WebApplication,
+                BreadcrumbList, FAQPage, LearningResource
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+
+      {
+        "@type": "WebSite",
+        "@id": "https://canalqb.github.io/#website",
+        "url": "https://canalqb.github.io/",
+        "name": "CanalQB — Gerador de Private Keys Bitcoin",
+        "description": "Site educacional brasileiro sobre geração de chaves privadas Bitcoin, criptografia e puzzles BTC. Criado e mantido por Rodrigo Moraes.",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://canalqb.github.io/#organization" },
+        "author": { "@id": "https://canalqb.github.io/#person" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://canalqb.github.io/?s={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+
+      {
+        "@type": "Organization",
+        "@id": "https://canalqb.github.io/#organization",
+        "name": "CanalQB",
+        "url": "https://canalqb.github.io/",
+        "sameAs": [
+          "https://canalqb.blogspot.com/",
+          "https://github.com/canalqb",
+          "https://btckeygen.com/"
+        ],
+        "founder": { "@id": "https://canalqb.github.io/#person" },
+        "description": "Canal educacional brasileiro especializado em Bitcoin, criptografia, blockchain e ferramentas de estudo para entusiastas de criptomoedas.",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://canalqb.github.io/favicon.ico"
+        }
+      },
+
+      {
+        "@type": "Person",
+        "@id": "https://canalqb.github.io/#person",
+        "name": "Rodrigo Moraes",
+        "alternateName": "CanalQb",
+        "url": "https://canalqb.blogspot.com/",
+        "sameAs": [
+          "https://canalqb.blogspot.com/",
+          "https://github.com/canalqb",
+          "https://canalqb.github.io/"
+        ],
+        "jobTitle": "Desenvolvedor e Educador em Bitcoin & Blockchain",
+        "description": "Rodrigo Moraes é criador de conteúdo educacional e desenvolvedor especializado em Bitcoin, criptografia e blockchain. Mantém o blog CanalQB em canalqb.blogspot.com com tutoriais e ferramentas sobre criptomoedas.",
+        "knowsAbout": [
+          "Bitcoin",
+          "Criptografia",
+          "Blockchain",
+          "Private Keys",
+          "Puzzles Bitcoin",
+          "Desenvolvimento Web",
+          "JavaScript",
+          "Open Source"
+        ],
+        "nationality": {
+          "@type": "Country",
+          "name": "Brasil"
+        },
+        "worksFor": { "@id": "https://canalqb.github.io/#organization" },
+        "mainEntityOfPage": {
+          "@type": "ProfilePage",
+          "@id": "https://canalqb.blogspot.com/"
+        }
+      },
+
+      {
+        "@type": "WebApplication",
+        "@id": "https://canalqb.github.io/#webapp",
+        "name": "Gerador de Private Keys Bitcoin — Matriz 16×16",
+        "url": "https://canalqb.github.io/",
+        "applicationCategory": "EducationalApplication",
+        "applicationSubCategory": "CryptographyTool",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "inLanguage": "pt-BR",
+        "description": "Aplicação web educacional que permite gerar, visualizar e estudar Private Keys Bitcoin usando uma matriz binária interativa 16×16. Suporta geração sequencial e aleatória, compatível com o desafio Puzzle 1000 BTC.",
+        "featureList": [
+          "Geração de Private Keys Bitcoin via matriz 16×16",
+          "Conversão de HEX para WIF Comprimido e Não Comprimido",
+          "Modo sequencial horizontal e vertical",
+          "Modo aleatório de geração de chaves",
+          "Integração com banco de dados Supabase",
+          "Verificação de saldo de carteiras Bitcoin",
+          "Eggs Hunter — busca de carteiras com saldo",
+          "Conversor de formatos (HEX, WIF, Binário, Decimal)"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        },
+        "creator": { "@id": "https://canalqb.github.io/#person" },
+        "publisher": { "@id": "https://canalqb.github.io/#organization" }
+      },
+
+      {
+        "@type": "Blog",
+        "@id": "https://canalqb.blogspot.com/#blog",
+        "name": "CanalQB Blog",
+        "url": "https://canalqb.blogspot.com/",
+        "description": "Blog educacional de Rodrigo Moraes com tutoriais sobre Bitcoin, criptomoedas, blockchain, desenvolvimento web e tecnologia. Conteúdo gratuito e acessível para iniciantes e entusiastas.",
+        "inLanguage": "pt-BR",
+        "author": { "@id": "https://canalqb.github.io/#person" },
+        "publisher": { "@id": "https://canalqb.github.io/#organization" }
+      },
+
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://canalqb.github.io/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Início",
+            "item": "https://canalqb.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Gerador de Private Keys Bitcoin",
+            "item": "https://canalqb.github.io/#webapp"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Puzzle 1000 BTC",
+            "item": "https://canalqb.github.io/#puzzle"
+          }
+        ]
+      },
+
+      {
+        "@type": "LearningResource",
+        "@id": "https://canalqb.github.io/#learningresource",
+        "name": "Aprenda sobre Bitcoin Private Keys e Puzzle 1000 BTC",
+        "url": "https://canalqb.github.io/",
+        "educationalLevel": "Beginner to Intermediate",
+        "learningResourceType": ["Simulation", "Interactive Tool", "Tutorial"],
+        "teaches": [
+          "Como funciona uma Private Key Bitcoin",
+          "Conversão entre formatos: HEX, WIF Comprimido, WIF Não Comprimido",
+          "Criptografia de curva elíptica (secp256k1)",
+          "O desafio criptográfico Puzzle 1000 BTC",
+          "Geração segura de chaves privadas",
+          "Base58Check encoding"
+        ],
+        "about": [
+          { "@type": "Thing", "name": "Bitcoin" },
+          { "@type": "Thing", "name": "Criptografia" },
+          { "@type": "Thing", "name": "Blockchain" },
+          { "@type": "Thing", "name": "Chaves Privadas" },
+          { "@type": "Thing", "name": "Puzzle Bitcoin" }
+        ],
+        "author": { "@id": "https://canalqb.github.io/#person" },
+        "inLanguage": "pt-BR",
+        "isAccessibleForFree": true
+      },
+
+      {
+        "@type": "FAQPage",
+        "@id": "https://canalqb.github.io/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "O que é uma Private Key Bitcoin?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Uma Private Key (chave privada) Bitcoin é um número secreto de 256 bits que permite gastar os bitcoins associados a um endereço específico. É a prova matemática de propriedade de uma carteira Bitcoin e nunca deve ser compartilhada com ninguém."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O que é o Puzzle 1000 BTC?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "O Bitcoin Puzzle é um desafio criptográfico criado em 2015 onde um desenvolvedor distribuiu 1000 BTC em 256 endereços diferentes. Cada endereço tem uma private key dentro de uma faixa específica de bits, tornando-os progressivamente mais difíceis de encontrar."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O que é WIF Comprimido e Não Comprimido?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "WIF (Wallet Import Format) é uma codificação em Base58Check de uma chave privada. O formato Comprimido (prefixo K ou L) usa chaves públicas comprimidas de 33 bytes, enquanto o Não Comprimido (prefixo 5) usa chaves de 65 bytes. A versão comprimida é o padrão moderno."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Esta ferramenta é segura para uso real?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Esta ferramenta é exclusivamente para fins EDUCACIONAIS. Nunca use chaves geradas online para armazenar Bitcoin real. Para carteiras reais, use sempre hardware wallets ou software offline certificado."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Quem criou esta ferramenta?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Esta ferramenta foi criada por Rodrigo Moraes, criador do blog educacional CanalQB (canalqb.blogspot.com), como um projeto de código aberto para ensinar criptografia Bitcoin de forma interativa e visual."
+            }
+          }
+        ]
+      }
+
+    ]
+  }
+  </script>
+
 
   <!-- Favicon -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -70,30 +317,25 @@
   <!-- Theme Manager -->
   <script src="js/theme-manager.js"></script>
 
-  <!-- BitcoinJS -->
-  <script src="https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js"></script>
+  <!-- BitcoinJS: Arquivo Local (primário) + CDN (fallback emergencial) -->
+  <script src="js/bitcoinJS-lib.js"></script>
   <script>
-    // Verificação robusta do BitcoinJS
     setTimeout(() => {
-      if (!window.bitcoin || !window.bitcoin.ECPair) {
-        console.warn('⚠️ BitcoinJS não carregou do CDN, carregando fallback...');
-        // Carrega versão alternativa se disponível
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/bitcoinjs-lib@5.1.7/dist/bitcoinjs-lib.min.js';
-        script.onload = () => {
-          if (window.bitcoinjs) {
-            window.bitcoin = window.bitcoinjs;
-            console.log('✅ BitcoinJS fallback carregado com sucesso');
-          }
+      if (!window.Bitcoin || !window.Bitcoin.ECKey) {
+        console.warn('⚠️ bitcoinJS-lib.js local falhou. Carregando CDN emergencial...');
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/bitcoinjs-lib-browser@5.1.7/bitcoinjs.min.js';
+        s.onload = () => {
+          console.log('✅ BitcoinJS carregado via CDN (emergência)');
+          window.bitcoinLibReady = true;
         };
-        script.onerror = () => {
-          console.error('❌ BitcoinJS fallback também falhou');
-        };
-        document.head.appendChild(script);
+        s.onerror = () => console.error('❌ CDN emergencial também falhou.');
+        document.head.appendChild(s);
       } else {
-        console.log('✅ BitcoinJS carregado com sucesso do CDN principal');
+        console.log('✅ BitcoinJS local carregado com sucesso');
+        window.bitcoinLibReady = true;
       }
-    }, 1000);
+    }, 500);
   </script>
 
   <!-- Supabase -->
@@ -669,23 +911,7 @@
     </div>
   </nav>
 
-  <!-- 🔧 BANNER DE DESENVOLVIMENTO - FAIXA FIXA ABAIXO DA NAVBAR -->
-  <div id="dev-banner" title="Ambiente de Desenvolvimento - XAMPP">
-    <span>🔧 Dev (XAMPP)</span>
-    <span class="dev-sep">•</span>
-    <span>Supabase: ATIVO</span>
-    <span class="dev-sep">•</span>
-    <span>Debug: ON</span>
-    <button onclick="document.getElementById('dev-banner').classList.add('dev-banner-hidden')" title="Fechar">×</button>
-  </div>
 
-  <!-- 🚀 AUTO-REMOVE BANNER APÓS TEMPO -->
-  <script>
-    setTimeout(function () {
-      var b = document.getElementById('dev-banner');
-      if (b) b.classList.add('dev-banner-hidden');
-    }, 10000);
-  </script>
 
   <!-- SEÇÃO AD #1: Banner Top -->
   <div id="ad-banner-top" class="ad-banner-top" role="region" aria-label="Publicidade - Topo">
@@ -731,14 +957,18 @@
               src='https://megacontador.com.br/img-zsnBM7iJuUWa51R7-3.gif' border='0' alt='Contador de visitas'></a>
         </div>
       </div>
-    </aside>
+      <div class="sidebar-widget">
+        <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
+        <p><strong>Nunca</strong> use chaves geradas online para armazenar Bitcoin real. Apenas para fins educacionais.
+        </p>
+      </div>
 
-    <!-- Indicadores de Background Processing -->
-    <div id="background-indicator" class="background-indicator visible stopped"
-      title="Indicador de Processamento em Background">
-      <div class="pulse-icon"></div>
-      <span id="background-text">⏸️ Parado</span>
-    </div>
+      <!-- WIDGET OCULTO PARA RECARGA DO ADSENSE -->
+      <div class="sidebar-widget ad-hidden-reload" style="height:0; overflow:hidden; opacity:0; pointer-events:none;">
+        <ins class="adsbygoogle" style="display:inline-block;width:1px;height:1px;"
+          data-ad-client="ca-pub-3614622181047762" data-ad-slot="4371879523"></ins>
+      </div>
+    </aside>
 
     <!-- LEGENDA EXPLICATIVA -->
     <div class="background-legend" style="
@@ -767,7 +997,18 @@
     </div>
 
     <div id="background-status-badge" class="background-status-badge">
-      <span id="background-status-text">Foreground</span>
+      <div class="status-header">
+        <div class="header-info">
+          <i class="fas fa-desktop"></i>
+          <span>Status do Sistema</span>
+        </div>
+        <button class="status-close-btn" onclick="window.BackgroundProcessor.hideBadge()" title="Ocultar">
+          ×
+        </button>
+      </div>
+      <div class="status-body">
+        <span id="background-status-text">🖥️ Foreground</span>
+      </div>
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
@@ -783,7 +1024,7 @@
         <label for="privateKeyInput" class="output-label">
           <i class="fas fa-key"></i> Private Key HEX (para preencher matriz):
         </label>
-        <textarea id="privateKeyInput" class="output-box" rows="1"
+        <textarea id="privateKeyInput" class="output-box" rows="5"
           placeholder="Cole ou digite uma chave HEX aqui para preencher automaticamente a matriz..."
           aria-label="Campo para inserir Private Key HEX"></textarea>
       </div>
@@ -1098,21 +1339,21 @@
             <label for="hexBox" class="output-label">
               <i class="fas fa-hashtag"></i> Private Key HEX
             </label>
-            <textarea id="hexBox" class="output-box" rows="1" readonly aria-readonly="true"
+            <textarea id="hexBox" class="output-box" rows="5" readonly aria-readonly="true"
               aria-label="Chave privada em formato HEX"></textarea>
           </div>
           <div class="output-group">
             <label for="wifBox" class="output-label">
               <i class="fas fa-wallet"></i> WIF Comprimido
             </label>
-            <textarea id="wifBox" class="output-box" rows="1" readonly aria-readonly="true"
+            <textarea id="wifBox" class="output-box" rows="5" readonly aria-readonly="true"
               aria-label="Chave privada WIF comprimida"></textarea>
           </div>
           <div class="output-group">
             <label for="wifBoxUncompressed" class="output-label">
               <i class="fas fa-box-open"></i> WIF Não Comprimido
             </label>
-            <textarea id="wifBoxUncompressed" class="output-box" rows="1" readonly aria-readonly="true"
+            <textarea id="wifBoxUncompressed" class="output-box" rows="5" readonly aria-readonly="true"
               aria-label="Chave privada WIF não comprimida"></textarea>
           </div>
         </div>
@@ -1125,7 +1366,7 @@
           <div class="converter-input-group">
             <label for="converterInput" class="output-label"><i class="fas fa-keyboard"></i> Insira (WIF / HEX / Binário
               / Inteiro):</label>
-            <textarea id="converterInput" class="output-box" rows="1"
+            <textarea id="converterInput" class="output-box" rows="5"
               placeholder="WIF, HEX, binário ou número inteiro..." aria-label="Entrada para conversão"></textarea>
             <small style="opacity:0.8;color:var(--text-muted,#555);">
               Dica: se o HEX tiver apenas números, use prefixo 0x (ex.: 0x4000...). Sem 0x será tratado como inteiro.
@@ -1139,32 +1380,32 @@
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-hashtag"></i> HEX</label>
-            <textarea id="converterHex" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+            <textarea id="converterHex" class="output-box" rows="5" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-wallet"></i> WIF Comprimido</label>
-            <textarea id="converterWifCompressed" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+            <textarea id="converterWifCompressed" class="output-box" rows="5" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-wallet"></i> WIF Não Comprimido</label>
-            <textarea id="converterWifUncompressed" class="output-box" rows="1" readonly
+            <textarea id="converterWifUncompressed" class="output-box" rows="5" readonly
               aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-sort-numeric-up"></i> Inteiro</label>
-            <textarea id="converterInt" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+            <textarea id="converterInt" class="output-box" rows="5" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-stream"></i> Binário</label>
-            <textarea id="converterBin" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+            <textarea id="converterBin" class="output-box" rows="5" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-bolt"></i> Maior potência antes (2^k)</label>
-            <textarea id="converterPower" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+            <textarea id="converterPower" class="output-box" rows="5" readonly aria-readonly="true"></textarea>
           </div>
           <div class="output-group">
             <label class="output-label"><i class="fas fa-project-diagram"></i> Menor Mersenne depois (2^(k+1)-1)</label>
-            <textarea id="converterMersenne" class="output-box" rows="1" readonly aria-readonly="true"></textarea>
+            <textarea id="converterMersenne" class="output-box" rows="5" readonly aria-readonly="true"></textarea>
           </div>
         </div>
       </div>
@@ -1253,20 +1494,7 @@
       </div>
     </main>
 
-    <!-- SIDEBAR DIREITA -->
-    <aside class="sidebar-right">
-      <div class="sidebar-widget">
-        <h4><i class="fas fa-shield-alt"></i> Segurança</h4>
-        <p><strong>Nunca</strong> use chaves geradas online para armazenar Bitcoin real. Apenas para fins educacionais.
-        </p>
-      </div>
 
-      <!-- WIDGET OCULTO PARA RECARGA DO ADSENSE -->
-      <div class="sidebar-widget ad-hidden-reload" style="height:0; overflow:hidden; opacity:0; pointer-events:none;">
-        <ins class="adsbygoogle" style="display:inline-block;width:1px;height:1px;"
-          data-ad-client="ca-pub-3614622181047762" data-ad-slot="4371879523"></ins>
-      </div>
-    </aside>
   </div> <!-- Fecha .main-wrapper -->
     </div> <!-- Fecha .cqb-container -->
   </div> <!-- Fecha .page-wrapper -->
@@ -1276,10 +1504,10 @@
     <nav class="footer-nav container" aria-label="Navegação rodapé">
       <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
         <li><a href="/">Home</a></li>
-        <li><a href="paginas/about.html" class="dynamic-link">About</a></li>
-        <li><a href="paginas/privacidade.html" class="dynamic-link">Privacidade</a></li>
+        <li><a href="paginas/sobre.html" class="dynamic-link">Sobre</a></li>
+        <li><a href="paginas/politicadeprivacidade.html" class="dynamic-link">Privacidade</a></li>
         <li><a href="paginas/disclaimer.html" class="dynamic-link">Disclaimer</a></li>
-        <li><a href="paginas/contato.html" class="dynamic-link">Contatos</a></li>
+        <li><a href="paginas/contato.html" class="dynamic-link">Contato</a></li>
       </ul>
     </nav>
     <div class="text-center small text-muted">
@@ -1746,7 +1974,7 @@
   <script src="js/supabase-config.js?v=20260330-1109"></script>
 
   <!-- Background Processor - DEVE SER CARREGADO ANTES DOS PROCESSADORES -->
-  <script src="js/background-processor.js?v=20260330-1109"></script>
+
   
   <!-- Background Execution Manager V2 - PARA EXECUÇÃO CONTÍNUA GARANTIDA -->
   <script src="js/background-execution-manager-v2.js?v=20260330-1109"></script>
@@ -1754,8 +1982,6 @@
   <!-- Modal Manager - PARA GERENCIAR MODAIS -->
   <script src="js/modal-manager.js?v=20260330-1109"></script>
 
-  <!-- Wallet Counter - PARA CONTAR CARTEIRAS -->
-  <script src="js/wallet-counter.js?v=20260330-1109"></script>
 
   <script src="js/matriz.js?v=20260330-1600" defer></script>
   <script src="js/auto16-preset.js?v=20260330-1600" defer></script>
@@ -1882,44 +2108,7 @@
         });
       }
 
-      document.addEventListener('click', async function (e) {
-        const link = e.target.closest('a.dynamic-link');
-        if (!link) return;
 
-        e.preventDefault();
-        const href = link.getAttribute('href');
-
-        if (href) {
-          try {
-            const response = await fetch(href);
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const content = doc.querySelector('main');
-            const targetMain = document.querySelector('main');
-
-            if (content && targetMain) {
-              targetMain.innerHTML = content.innerHTML;
-              window.history.pushState({}, '', href);
-              window.scrollTo(0, 0);
-            } else if (targetMain && doc.body && doc.body.innerHTML.trim() !== "") {
-              // Suporte para fragmentos sem a tag <main>
-              targetMain.innerHTML = doc.body.innerHTML;
-              window.history.pushState({}, '', href);
-              window.scrollTo(0, 0);
-            } else {
-              // Fallback: se não encontrar onde inserir ou o conteúdo estiver vazio, navega normalmente
-              window.location.href = href;
-            }
-          } catch (error) {
-            console.error('Erro ao carregar conteúdo:', error);
-          }
-        }
-      });
-
-      window.addEventListener('popstate', () => {
-        location.reload();
-      });
 
       // 🚀 FECHA O BLOCO CONDICIONAL
     }

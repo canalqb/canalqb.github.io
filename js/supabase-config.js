@@ -88,10 +88,13 @@
         return false;
       }
 
-      // Verifica se a biblioteca Supabase foi carregada
-      if (typeof supabase === 'undefined') {
-        console.error('❌ Biblioteca Supabase não carregada. Adicione o script CDN no HTML.');
-        return false;
+      // Verifica se a biblioteca Supabase foi carregada (com suporte a window.supabase)
+      const supabaseLib = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+      
+      if (!supabaseLib) {
+        // Tenta um pequeno delay se não estiver pronto (pode ser o carregamento do script)
+        console.warn('⚠️ Biblioteca Supabase não detectada ainda, aguardando...');
+        return false; 
       }
 
       // Valida credenciais (apenas em ambiente local)

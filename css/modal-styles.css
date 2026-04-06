@@ -2,18 +2,27 @@
    MODAL STYLES UNIFIED - Layouts Corrigidos
    ============================================================ */
 
-/* Reset para todos os modais */
-[id*="modal"],
-[id*="modal"] *,
-[id*="modal"] *::before,
-[id*="modal"] *::after {
+/* Reset para todos os contêineres de modais */
+.footer-modal, 
+#eggs-modal, 
+#found-wallets-modal, 
+#puzzlesListModal, 
+#preset-progress-modal,
+.footer-modal *, 
+#eggs-modal *, 
+#found-wallets-modal *, 
+#puzzlesListModal *, 
+#preset-progress-modal * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Base para todos os modais */
-[id*="modal"] {
+/* Base para todos os modais principais */
+.footer-modal, 
+#eggs-modal, 
+#found-wallets-modal, 
+#puzzlesListModal {
   position: fixed;
   background: var(--bg-card, #ffffff);
   border-radius: 16px;
@@ -879,37 +888,42 @@
 }
 
 .footer-modal .modal-header {
-  padding: 25px;
-  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  padding: 20px 25px;
+  border-bottom: 2px solid rgba(255, 152, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
   color: white;
   border-radius: 20px 20px 0 0;
   flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .footer-modal .modal-header h2 {
   margin: 0;
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 800;
   color: white;
   display: flex;
   align-items: center;
   gap: 12px;
-  line-height: 1.2;
-  flex-wrap: wrap;
+  line-height: 1;
+  text-transform: none;
+  background: transparent !important;
+  position: relative !important;
+  box-shadow: none !important;
 }
 
 .footer-modal .modal-header h2 i {
-  font-size: 20px;
-  flex-shrink: 0;
+  font-size: 24px;
+  color: #ffc107;
 }
 
 .footer-modal .modal-header h2 span {
-  flex: 1;
-  min-width: 0;
+  background: transparent !important;
+  color: white !important;
 }
 
 .footer-modal .modal-close-btn {
@@ -918,20 +932,22 @@
   color: white !important;
   cursor: pointer;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex !important;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 24px;
-  font-weight: bold;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 26px;
+  line-height: 1;
   flex-shrink: 0;
+  padding-bottom: 4px;
 }
 
 .footer-modal .modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.4) !important;
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .footer-modal .modal-body {
@@ -1146,6 +1162,201 @@
 
 .footer-modal .error-content button:hover {
   background: #2563eb;
+}
+
+/* ============================================================
+   INDICADOR DE PROGRESSO EGGS (DRAGGABLE MODAL)
+   ============================================================ */
+
+#eggs-progress-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.95));
+  color: var(--text-primary, #1f2937);
+  border-radius: 12px;
+  font-family: inherit;
+  z-index: 10007;
+  border: 1px solid var(--border-color, #e5e7eb);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  min-width: 250px;
+  width: auto;
+  max-width: 320px;
+  backdrop-filter: blur(8px);
+  user-select: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.indicator-header {
+  padding: 10px 15px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+  font-weight: 700;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.indicator-header:active {
+  cursor: grabbing;
+}
+
+.indicator-header .header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicator-close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.indicator-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.indicator-body {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.indicator-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.indicator-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.indicator-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #059669;
+}
+
+#eggs-progress-text {
+  font-size: 12px;
+  color: var(--text-secondary, #6b7280);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   INDICADOR DE STATUS (BACKGROUND / FOREGROUND)
+   ============================================================ */
+
+#background-status-badge {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.95));
+  color: var(--text-primary, #1f2937);
+  border-radius: 10px;
+  font-family: inherit;
+  z-index: 10008;
+  border: 1px solid var(--border-color, #e5e7eb);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  width: auto;
+  max-width: 220px;
+  backdrop-filter: blur(8px);
+  user-select: none;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  pointer-events: auto !important;
+}
+
+#background-status-badge.visible {
+  display: flex !important;
+}
+
+.status-header {
+  padding: 6px 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+  font-weight: 700;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.status-header:active {
+  cursor: grabbing;
+}
+
+.status-header .header-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.status-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.status-body {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* Cores de estado para o Body */
+#background-status-badge.in-foreground .status-body {
+  color: #4f46e5;
+}
+
+#background-status-badge.in-background .status-body {
+  color: #f59e0b;
 }
 
 /* ============================================================

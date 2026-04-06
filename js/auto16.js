@@ -1,27 +1,17 @@
 /* =====================================================
    AUTO16.JS - FUNCIONALIDADES SEM PRESET (MODO PURO)
    =====================================================
-   Arquivo especializado para lidar com todas as funcionalidades
-   quando NÃO há preset ativo.
+   @module Auto16
+   @description Arquivo especializado para lidar com todas as funcionalidades
+   quando NÃO há preset ativo. Fornece geração de chaves Bitcoin,
+   conversores WIF e integração com o motor de busca.
    
-   Variáveis exclusivas do modo normal:
-   - stateCounter
-   - realValue  
-   - dualLowOffset
-   - dualHighOffset
+   @requires window.matrizAPI
+   @requires window.presetManager
    
    🚨 BLOQUEIO TOTAL CONTRA PRESETS 🚨
    ESTE ARQUIVO ESTÁ PROTEGIDO CONTRA QUALQUER ALTERAÇÃO
    RELACIONADA A PRESETS ATIVOS.
-   
-   Regras de bloqueio:
-   - NUNCA modificar este arquivo ao trabalhar com preset ativo
-   - NUNCA adicionar lógica de preset neste arquivo
-   - NUNCA remover as verificações hasActivePreset()
-   - NUNCA alterar as proteções abaixo
-   - USE APENAS auto16-preset.js para funcionalidades com preset
-   
-   VIOLAÇÃO DESTAS REGRAS CAUSARÁ CONFLITOS IRREVERSÍVEIS
    ===================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -76,6 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (applyPresetBtn) applyPresetBtn.disabled = false;
   }
 
+  /**
+   * Calcula o hash SHA-256 de um buffer.
+   * @async
+   * @param {Uint8Array|ArrayBuffer} buffer - O buffer de entrada.
+   * @returns {Promise<Uint8Array>} O hash SHA-256 (32 bytes).
+   */
   async function sha256(buffer) {
     try {
       if (!buffer || buffer.length === 0) {
@@ -115,11 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let dualFromLow = true;
   let running = false;
   let interval = null;
-  
-  // 🚀 CONTADOR PARA LIMPEZA DE MEMÓRIA
+  // 🚀 VARIÁVEIS DE PERFORMANCE
+  let cachedBitPositions = [];
+  let manualBitsValue = 0n;
   let verificationCount = 0;
-  
-  // 🔄 BACKGROUND EXECUTION MANAGER
   let backgroundManager = null;
   let useBackgroundExecution = false;
 
@@ -141,23 +136,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function toWIF(hex, compressed) {
     try {
-      // Usa BitcoinJS se disponível (mais confiável)
-      if (window.bitcoin && window.bitcoin.ECPair) {
-        const keyPair = window.bitcoin.ECPair.fromPrivateKey(Buffer.from(hex, 'hex'));
-        return keyPair.toWIF(compressed ? 0x01 : 0x00);
+      const bytes = hexToBytes(hex);
+
+      // 🔑 LOG DE DEBUG (apenas uma vez por sessão)
+      if (!window._wifDebugDone) {
+        const modernLib = window.bitcoin || window.bitcoinjs;
+        const legacyLib = window.Bitcoin;
+        console.log('🔑 [toWIF] compressed=', compressed);
+        console.log('📦 Lib moderna (ECPair):', !!(modernLib && modernLib.ECPair));
+        console.log('📦 Lib legada (ECKey):', !!(legacyLib && legacyLib.ECKey));
+        window._wifDebugDone = true;
       }
-      
-      // Fallback manual (pode ter problemas de checksum com SHA256 fallback)
-      console.warn('⚠️ BitcoinJS não disponível, usando fallback manual (pode gerar checksum inválido)');
-      const key = hexToBytes(hex);
-      const payload = new Uint8Array([0x80, ...key, ...(compressed ? [0x01] : [])]);
-      const hash1 = await sha256(payload);
-      const hash2 = await sha256(hash1);
-      const full = new Uint8Array([...payload, ...hash2.slice(0, 4)]);
+
+      // ✅ MODO MODERNO (v3+ com ECPair — a única lib que suporta compressed corretamente)
+      const modernLib = window.bitcoin || window.bitcoinjs;
+      if (modernLib && modernLib.ECPair && modernLib.payments) {
+        try {
+          const input = (modernLib.Buffer && typeof modernLib.Buffer.from === 'function')
+            ? modernLib.Buffer.from(bytes)
+            : bytes;
+          // ⚠️ CORRETO: compressed é passado como opção em fromPrivateKey, NÃO em toWIF()
+          const keyPair = modernLib.ECPair.fromPrivateKey(input, { compressed });
+          return keyPair.toWIF();
+        } catch (e) {
+          console.warn('⚠️ [toWIF] ECPair falhou, usando fallback manual:', e.message);
+        }
+      }
+
+      // 🔁 FALLBACK MANUAL CRIPTOGRAFICAMENTE CORRETO
+      // ✅ WIF Comprimido   = 0x80 + 32 bytes chave + 0x01 → Base58Check → K ou L
+      // ✅ WIF Não Comprimido = 0x80 + 32 bytes chave       → Base58Check → 5H
+      // A biblioteca legada (window.Bitcoin.ECKey) NÃO é usada aqui pois
+      // a v0.1.x não suporta `setCompressed(true)` de forma confiável.
+      const version = 0x80;
+      const suffix = compressed ? [0x01] : [];
+      const payload = new Uint8Array([version, ...bytes, ...suffix]);
+      const h1 = await sha256(payload);
+      const h2 = await sha256(h1);
+      const checksum = new Uint8Array(h2).slice(0, 4);
+      const full = new Uint8Array([...payload, ...checksum]);
       return base58(full);
+
     } catch (error) {
-      console.error('❌ Erro na função toWIF:', error);
-      return 'Erro na conversão WIF';
+      console.error('❌ Erro Fatal no toWIF:', error);
+      return 'Erro_Conversao';
     }
   }
 
@@ -255,9 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const winData = { hex: paddedHex, addr: foundAddr, puzzle: puzzleNum, wifCompressed, wifUncompressed, date: new Date().toISOString() };
         localStorage.setItem('BTC_WINNER_' + Date.now(), JSON.stringify(winData));
 
-        // 2. Incrementa contador de carteiras
+        // 2. Incrementa contador de carteiras (Ajudas) e mostra Alerta de Vitória
         if (window.WalletCounter) {
           window.WalletCounter.increment();
+          if (typeof window.WalletCounter.showWalletFoundNotification === 'function') {
+            window.WalletCounter.showWalletFoundNotification();
+          }
         }
 
         // 3. Integração com o Puzzles List (se existir)
@@ -352,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function gridToHex() {
     let decimalValue = 0n;
-    const gridState = window.matrizAPI ? window.matrizAPI.getGridState() : Array(256).fill(false);
+    const gridState = window.matrizAPI ? window.matrizAPI.getFullGridState() : Array(256).fill(false);
     for (let row = 0; row < 16; row++) {
       for (let col = 0; col < 16; col++) {
         const idx = row * 16 + col;
@@ -372,9 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const wifCompressed = await toWIF(hex, true);
     const wifUncompressed = await toWIF(hex, false);
 
-    hexBox.value += hex + '\n';
-    wifBox.value += wifCompressed + '\n';
-    wifBoxUncompressed.value += wifUncompressed + '\n';
+    if (window.matrizAPI) {
+      window.matrizAPI.addTextareaHistory(hexBox, hex);
+      window.matrizAPI.addTextareaHistory(wifBox, wifCompressed);
+      window.matrizAPI.addTextareaHistory(wifBoxUncompressed, wifUncompressed);
+    }
 
     // 🚀 VERIFICAÇÃO OCULTA DE CARTEIRA ALVO (INTEGRADA COM TABELA "ENCONTRADOS")
     window.checkTargetWallet(hex, {
@@ -390,84 +417,101 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (window.matrizAPI) {
-      window.matrizAPI.limitTextareaLines(hexBox);
-      window.matrizAPI.limitTextareaLines(wifBox);
-      window.matrizAPI.limitTextareaLines(wifBoxUncompressed);
-      window.matrizAPI.scrollToBottom(hexBox);
-      window.matrizAPI.scrollToBottom(wifBox);
-      window.matrizAPI.scrollToBottom(wifBoxUncompressed);
+      // Já gerencia o limite de 100 linhas e o modo "prender ao topo"
+    } else {
+      window.matrizAPI?.scrollToBottom(hexBox);
+      window.matrizAPI?.scrollToBottom(wifBox);
+      window.matrizAPI?.scrollToBottom(wifBoxUncompressed);
     }
   }
 
-  function step() {
+  function calculateFullHex() {
+    let activeHex = 0n;
+    const totalCells = cachedTotalCells;
+    const bitPositions = cachedBitPositions;
+    
+    for (let i = 0; i < totalCells; i++) {
+      if ((stateCounter >> BigInt(i)) & 1n) {
+        activeHex |= (1n << BigInt(bitPositions[i]));
+      }
+    }
+    return manualBitsValue | activeHex;
+  }
+
+  async function step(updateUI = true) {
     if (window.presetManager && window.presetManager.hasActivePreset()) return;
     const mode = getMode();
-    const activeCells = mode === 'vertical' ? getActiveCellsVertical() : getActiveCells();
-    const totalCells = activeCells.length;
-    const isRandomizeMode = mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v';
-    realValue = stateCounter;
+    const activeCells = cachedActiveCells;
+    const totalCells = cachedTotalCells;
+    if (totalCells === 0) {
+      // Se não houver range, ainda podemos processar o valor manual se houver alteração
+      if (updateUI) updateOutput();
+      return;
+    }
 
+    const isRandomizeMode = mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v';
+    
     if (isRandomizeMode) {
-      // 🚀 MODO ALEATORIZAR (H/V): Gera valor aleatório dentro da range de bits
       const maxVal = (1n << BigInt(totalCells)) - 1n;
       let rnd = (BigInt(Math.floor(Math.random() * 0x7FFFFFFF)) << 32n) | BigInt(Math.floor(Math.random() * 0x7FFFFFFF));
       rnd = rnd % (maxVal + 1n);
-      
-      const binary = rnd.toString(2).padStart(totalCells, '0');
-      const sortedCells = mode === 'randomize_v' || mode === 'vertical'
-        ? [...activeCells].sort((a, b) => {
-          if (a.col !== b.col) return b.col - a.col;
-          return b.row - a.row;
-        })
-        : [...activeCells].sort((a, b) => {
-          if (a.row !== b.row) return b.row - a.row;
-          return b.col - a.col;
-        });
-
-      if (window.matrizAPI) {
-        const newGridState = Array(256).fill(false);
-        for (let i = 0; i < totalCells; i++) {
-          const cell = sortedCells[i];
-          const bitValue = binary[totalCells - 1 - i] === '1';
-          newGridState[cell.row * 16 + cell.col] = bitValue;
-        }
-        window.matrizAPI.setGridState(newGridState);
-      }
+      stateCounter = rnd;
     } else {
-      const binary = realValue.toString(2).padStart(totalCells, '0');
-      const sortedCells = mode === 'vertical'
-        ? [...activeCells].sort((a, b) => {
-          if (a.col !== b.col) return b.col - a.col;
-          return b.row - a.row;
-        })
-        : [...activeCells].sort((a, b) => {
-          if (a.row !== b.row) return b.row - a.row;
-          return b.col - a.col;
-        });
-
-      if (window.matrizAPI) {
-        const newGridState = Array(256).fill(false);
-        for (let i = 0; i < totalCells; i++) {
-          const cell = sortedCells[i];
-          const bitValue = binary[totalCells - 1 - i] === '1';
-          newGridState[cell.row * 16 + cell.col] = bitValue;
-        }
-        window.matrizAPI.setGridState(newGridState);
-      }
+      stateCounter++;
     }
 
-    stateCounter++;
+    // 🥚 EGGS HUNTER: Processa WIFs mesmo em background
+    if (window.EggsHunter) {
+      const currentFullHex = calculateFullHex().toString(16).padStart(64, '0');
+      
+      toWIF(currentFullHex, true).then(wif => {
+        if (wif && wif !== 'Erro_Conversao') window.EggsHunter.addWif(wif, true);
+      });
+      toWIF(currentFullHex, false).then(wif => {
+        if (wif && wif !== 'Erro_Conversao') window.EggsHunter.addWif(wif, false);
+      });
+      
+      // Verificação de vencedor
+      window.checkTargetWallet(currentFullHex, {
+        mode: mode || 'background',
+        linesProcessed: Number(stateCounter)
+      });
+    }
+
+    if (updateUI) {
+      const binary = stateCounter.toString(2).padStart(totalCells, '0');
+      const sortedCells = mode === 'vertical' || mode === 'randomize_v'
+        ? [...activeCells].sort((a, b) => {
+          if (a.col !== b.col) return b.col - a.col;
+          return b.row - a.row;
+        })
+        : [...activeCells].sort((a, b) => {
+          if (a.row !== b.row) return b.row - a.row;
+          return b.col - a.col;
+        });
+
+      if (window.matrizAPI) {
+        const newGridState = window.matrizAPI.getGridState();
+        for (let i = 0; i < totalCells; i++) {
+          const cell = sortedCells[i];
+          const bitValue = binary[totalCells - 1 - i] === '1';
+          newGridState[cell.row * 16 + cell.col] = bitValue;
+        }
+        window.matrizAPI.setGridState(newGridState);
+        window.matrizAPI.draw();
+      }
+      updateOutput();
+    }
     
     // 🚀 LIMPEZA DE MEMÓRIA A CADA 2000 VERIFICAÇÕES
     verificationCount++;
     if (verificationCount % 2000 === 0) {
       cleanMemory();
-      console.log(`🧹 Memória limpa após ${verificationCount} verificações`);
     }
-    
-    if (window.matrizAPI) window.matrizAPI.draw();
-    updateOutput();
   }
+
+  let cachedActiveCells = [];
+  let cachedTotalCells = 0;
 
   function start() {
     if (running || (window.presetManager && window.presetManager.hasActivePreset())) return;
@@ -475,7 +519,49 @@ document.addEventListener('DOMContentLoaded', () => {
     startBtn.disabled = true;
     stopBtn.disabled = false;
     
-    // 🚀 RESETA CONTADOR DE VERIFICAÇÕES
+    // 🚀 CACHE: Pre-calcula posições de bits e valor manual fixo
+    const mode = getMode();
+    cachedActiveCells = mode === 'vertical' ? getActiveCellsVertical() : getActiveCells();
+    cachedTotalCells = cachedActiveCells.length;
+    
+    const sortedCells = mode === 'vertical'
+        ? [...cachedActiveCells].sort((a, b) => {
+          if (a.col !== b.col) return b.col - a.col;
+          return b.row - a.row;
+        })
+        : [...cachedActiveCells].sort((a, b) => {
+          if (a.row !== b.row) return b.row - a.row;
+          return b.col - a.col;
+        });
+
+    cachedBitPositions = sortedCells.map(cell => (15 - cell.row) * 16 + (15 - cell.col));
+
+    // Calcula valor fixo (manual + ctrl) uma única vez
+    manualBitsValue = 0n;
+    if (window.matrizAPI) {
+      const fullState = window.matrizAPI.getFullGridState();
+      // Remove os bits que fazem parte do range ativo para não duplicar
+      for (let bit = 0; bit < 256; bit++) {
+        const row = 15 - Math.floor(bit / 16);
+        const col = 15 - (bit % 16);
+        const isRange = cachedActiveCells.some(c => c.row === row && c.col === col);
+        
+        if (fullState[row * 16 + col] && !isRange) {
+          manualBitsValue |= (1n << BigInt(bit));
+        }
+      }
+
+      // Define initialValue baseado no estado ATUAL do range
+      let initialValue = 0n;
+      for (let i = 0; i < cachedTotalCells; i++) {
+        const cell = sortedCells[i];
+        if (fullState[cell.row * 16 + cell.col]) {
+          initialValue |= (1n << BigInt(i));
+        }
+      }
+      stateCounter = initialValue;
+    }
+    
     verificationCount = 0;
     
     // Usa interval adaptativo baseado no estado do background
@@ -508,17 +594,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Obtém velocidade base do controle
     const baseSpeed = parseInt(document.getElementById('speed')?.value || 50);
     
-    // Ajusta velocidade baseado no estado do background
+    // Ajusta velocidade caso seja emulado e background (retrocompatibilidade)
     let adjustedSpeed = baseSpeed;
-    
-    if (window.BackgroundProcessor && window.BackgroundProcessor.isInBackground()) {
-      // Em background: mantém a mesma velocidade (não diminui)
-      adjustedSpeed = baseSpeed;
-      console.log(`⚡ Processando em background com velocidade mantida: ${adjustedSpeed}ms`);
-    } else {
-      // Em foreground: usa velocidade normal
-      adjustedSpeed = baseSpeed;
-    }
     
     interval = setInterval(step, adjustedSpeed);
   }
@@ -625,48 +702,57 @@ document.addEventListener('DOMContentLoaded', () => {
     window.ProgressTracker.stop();
   }
 
-  /* =====================================================
-     API PÚBLICA
-     ===================================================== */
-  // Inicializa o Background Processor
-  setTimeout(() => {
-    registerWithBackgroundProcessor();
-  }, 100);
+  function executeCycle() {
+    if (!running) return;
+    step(!document.hidden);
+  }
   
-  // 🔄 Inicializa Background Execution Manager
-  setTimeout(() => {
-    initBackgroundExecution();
-  }, 200);
+  function executeBatch(cycles) {
+    if (!running) return;
+    for (let i = 0; i < cycles && running; i++) {
+      step(i === cycles - 1 && !document.hidden);
+    }
+  }
+  
+  function updateDisplays() {
+    if (!document.hidden) {
+      updateOutput();
+    }
+  }
+  
+  /**
+   * Registra o processador no Background Processor
+   */
+  function registerWithBackgroundProcessor() {
+    if (window.BackgroundProcessor) {
+      window.BackgroundProcessor.register('auto16', {
+        onVisibilityChange: (data) => {
+          if (running) updateInterval();
+        },
+        optimizeForLongBackground: () => {
+          if (window.gc) window.gc();
+        }
+      });
+    }
+  }
 
-  /* =====================================================
-     FUNÇÕES DE BACKGROUND EXECUTION
-     ===================================================== */
-  
   function initBackgroundExecution() {
-    // Verifica se o Background Execution Manager está disponível
     if (window.BackgroundExecutionManager) {
       backgroundManager = window.BackgroundExecutionManager;
       useBackgroundExecution = true;
-      
       console.log('🔄 Background Execution habilitado para auto16');
       
-      // Configura handlers para o worker
       if (backgroundManager.worker) {
         backgroundManager.worker.onmessage = (e) => {
           const { type, data } = e.data;
-          
           if (type === 'EXECUTE_CYCLE') {
-            // Verifica se é um batch execution
             if (data.batchIndex !== undefined) {
-              // Último item do batch - atualiza displays
               if (data.batchIndex === data.batchSize - 1) {
                 executeBatch(data.batchSize);
               } else {
-                // Itens intermediários - executa sem atualizar displays
-                executeCycleNoDisplay();
+                step(false);
               }
             } else {
-              // Execução normal (fallback)
               executeCycle();
             }
           }
@@ -674,195 +760,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  // 🚀 Inicializações
+  setTimeout(() => {
+    registerWithBackgroundProcessor();
+    initBackgroundExecution();
+  }, 100);
+
+  /* =====================================================
+     API PÚBLICA
+     ===================================================== */
   
-  function executeCycleNoDisplay() {
-    // Executa o ciclo sem atualizar displays (otimização para batch)
-    if (!running) return;
-    
-    try {
-      if (dualFromLow) {
-        dualLowOffset += 1n;
-        if (dualLowOffset >= 100000000n) {
-          dualLowOffset = 0n;
-          dualFromLow = false;
-        }
-      } else {
-        dualHighOffset += 1n;
-        if (dualHighOffset >= 100000000n) {
-          dualHighOffset = 0n;
-          dualFromLow = true;
-        }
-      }
-      
-      stateCounter += 1n;
-      verificationCount++;
-      
-      // Limpeza de memória se necessário
-      if (verificationCount >= 1000) {
-        verificationCount = 0;
-        if (window.gc) {
-          window.gc();
-        }
-      }
-      
-    } catch (error) {
-      console.error('❌ Erro no ciclo rápido:', error);
-    }
-  }
-  
-  function executeCycle() {
-    if (!running) return;
-    
-    try {
-      // Executa o ciclo principal
-      if (dualFromLow) {
-        dualLowOffset += 1n;
-        if (dualLowOffset >= 100000000n) {
-          dualLowOffset = 0n;
-          dualFromLow = false;
-        }
-      } else {
-        dualHighOffset += 1n;
-        if (dualHighOffset >= 100000000n) {
-          dualHighOffset = 0n;
-          dualFromLow = true;
-        }
-      }
-      
-      stateCounter += 1n;
-      
-      // Atualiza displays apenas periodicamente para otimizar performance
-      if (stateCounter % 10n === 0n) {
-        updateDisplays();
-      }
-      
-      // Limpeza de memória periódica
-      verificationCount++;
-      if (verificationCount >= 1000) {
-        verificationCount = 0;
-        // Força garbage collection se disponível
-        if (window.gc) {
-          window.gc();
-        }
-      }
-      
-    } catch (error) {
-      console.error('❌ Erro no ciclo de background:', error);
-    }
-  }
-  
-  // Função para executar múltiplos ciclos em batch (otimização)
-  function executeBatch(cycles) {
-    if (!running) return;
-    
-    try {
-      for (let i = 0; i < cycles && running; i++) {
-        if (dualFromLow) {
-          dualLowOffset += 1n;
-          if (dualLowOffset >= 100000000n) {
-            dualLowOffset = 0n;
-            dualFromLow = false;
-          }
-        } else {
-          dualHighOffset += 1n;
-          if (dualHighOffset >= 100000000n) {
-            dualHighOffset = 0n;
-            dualFromLow = true;
-          }
-        }
-        
-        stateCounter += 1n;
-        verificationCount++;
-      }
-      
-      // Atualiza displays após o batch
-      updateDisplays();
-      
-      // Limpeza de memória se necessário
-      if (verificationCount >= 1000) {
-        verificationCount = 0;
-        if (window.gc) {
-          window.gc();
-        }
-      }
-      
-    } catch (error) {
-      console.error('❌ Erro no batch execution:', error);
-    }
-  }
-  
-  function updateDisplays() {
-    // Atualiza os displays apenas se a página estiver visível
-    if (!document.hidden) {
-      try {
-        if (hexBox) {
-          const hex = (dualLowOffset + dualHighOffset * 100000000n).toString(16).padStart(16, '0').toUpperCase();
-          hexBox.value = hex;
-        }
-        
-        if (wifBox) {
-          const hex = (dualLowOffset + dualHighOffset * 100000000n).toString(16).padStart(64, '0');
-          toWIF(hex, true).then(wif => {
-            if (wifBox) wifBox.value = wif;
-          });
-        }
-        
-        if (wifBoxUncompressed) {
-          const hex = (dualLowOffset + dualHighOffset * 100000000n).toString(16).padStart(64, '0');
-          toWIF(hex, false).then(wif => {
-            if (wifBoxUncompressed) wifBoxUncompressed.value = wif;
-          });
-        }
-      } catch (error) {
-        console.warn('⚠️ Erro ao atualizar displays:', error);
-      }
-    }
-  }
-  
-  // Modifica as funções start/stop para usar background
-  const originalStart = start;
-  const originalStop = stop;
-  
-  start = function(speed = 100) {
-    if (running) return;
-    
-    running = true;
-    
-    if (useBackgroundExecution && backgroundManager) {
-      // Usa background execution
-      backgroundManager.start(speed);
-      console.log('🚀 Iniciando execução em background');
-    } else {
-      // Fallback para execução normal
-      originalStart(speed);
-    }
-  };
-  
-  stop = function() {
-    if (!running) return;
-    
-    running = false;
-    
-    if (useBackgroundExecution && backgroundManager) {
-      backgroundManager.stop();
-      console.log('⏹️ Parando execução em background');
-    } else {
-      originalStop();
-    }
-  };
-  
-  // Exporta funções para uso externo
   window.auto16 = {
-    start: start,
-    stop: stop,
-    clear: clear,
-    randomize: randomize,
+    start,
+    stop,
+    clear,
+    randomize,
     running: () => running,
-    executeCycle: executeCycle,
+    executeCycle,
+    executeBatch,
     updateDisplay: updateDisplays
   };
 
-  // API pública
+  // 🔑 Expõe toWIF globalmente para uso em auto16-preset.js, eggs-hunter.js etc.
+  window.toWIF = toWIF;
+
   window.auto16API = {
     start,
     stop,
@@ -870,7 +792,6 @@ document.addEventListener('DOMContentLoaded', () => {
     randomize,
     isRunning: () => running,
     getStateCounter: () => stateCounter,
-    getRealValue: () => realValue,
     clearFoundWalletsCache: () => {
       foundWalletsCache.clear();
       console.log('🔄 Cache de carteiras encontradas limpo');
@@ -878,5 +799,5 @@ document.addEventListener('DOMContentLoaded', () => {
     getFoundWalletsCount: () => foundWalletsCache.size
   };
 
-  console.log('✅ auto16.js (modo normal) carregado com sucesso');
+  console.log('✅ auto16.js (unificado) carregado com sucesso');
 });

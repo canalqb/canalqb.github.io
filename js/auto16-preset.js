@@ -386,35 +386,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const wifC = await window.toWIF(paddedHex, true);
         const wifU = await window.toWIF(paddedHex, false);
 
-        // Atualiza UI de WIFs
-        if (wifBox) {
-          const lines = wifBox.value.trim().split('\n').filter(x => x.trim());
-          if (!lines.includes(wifC)) {
-            lines.push(wifC);
-            if (lines.length > 100) lines.shift();
-            wifBox.value = lines.join('\n');
-            wifBox.scrollTop = wifBox.scrollHeight;
-          }
-        }
-        if (wifBoxUncompressed) {
-          const lines = wifBoxUncompressed.value.trim().split('\n').filter(x => x.trim());
-          if (!lines.includes(wifU)) {
-            lines.push(wifU);
-            if (lines.length > 100) lines.shift();
-            wifBoxUncompressed.value = lines.join('\n');
-            wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight;
-          }
+        // 🚀 ATUALIZA UI (Histórico de 100 linhas no topo)
+        if (window.matrizAPI) {
+          if (hexBox) window.matrizAPI.addTextareaHistory(hexBox, paddedHex);
+          if (wifBox) window.matrizAPI.addTextareaHistory(wifBox, wifC);
+          if (wifBoxUncompressed) window.matrizAPI.addTextareaHistory(wifBoxUncompressed, wifU);
+        } else {
+          // Fallback se matrizAPI não carregar
+          if (hexBox) hexBox.value = [paddedHex, ...hexBox.value.split('\n')].slice(0, 100).join('\n');
+          if (wifBox) wifBox.value = [wifC, ...wifBox.value.split('\n')].slice(0, 100).join('\n');
+          if (wifBoxUncompressed) wifBoxUncompressed.value = [wifU, ...wifBoxUncompressed.value.split('\n')].slice(0, 100).join('\n');
         }
 
-        // Eggs Hunter - TEMPORARIAMENTE DESATIVADO até corrigir checksum
-        // if (window.EggsHunter) {
-        //   if (wifC && wifC !== 'Erro na conversão' && !wifC.includes('Erro')) {
-        //     window.EggsHunter.addWif(wifC, true);
-        //   }
-        //   if (wifU && wifU !== 'Erro na conversão' && !wifU.includes('Erro')) {
-        //     window.EggsHunter.addWif(wifU, false);
-        //   }
-        // }
+        // 🥚 EGGS HUNTER: Adiciona WIFs para verificação de saldo em tempo real
+        if (window.EggsHunter) {
+          if (wifC && wifC !== 'Erro_Conversao') {
+            window.EggsHunter.addWif(wifC, true);
+          }
+          if (wifU && wifU !== 'Erro_Conversao') {
+            window.EggsHunter.addWif(wifU, false);
+          }
+        }
       }
 
       // Verificação de Vencedor

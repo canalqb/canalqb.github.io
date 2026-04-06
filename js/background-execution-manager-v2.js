@@ -36,7 +36,7 @@ class BackgroundExecutionManagerV2 {
     
     createWorker() {
         try {
-            this.worker = new Worker('/js/background-worker.js');
+            this.worker = new Worker('js/background-worker.js');
             this.worker.onmessage = (e) => this.handleWorkerMessage(e);
             this.worker.onerror = (e) => this.handleWorkerError(e);
             this.workerActive = true;
@@ -150,7 +150,8 @@ class BackgroundExecutionManagerV2 {
     
     executeFallbackCycle() {
         // Executa ciclo diretamente no thread principal
-        if (window.auto16 && window.auto16.running) {
+        // 🚚 FIX: window.auto16.running é uma função, precisa ser chamada como running()
+        if (window.auto16 && typeof window.auto16.running === 'function' && window.auto16.running()) {
             try {
                 // Executa múltiplos ciclos para manter velocidade
                 for (let i = 0; i < 10; i++) {
@@ -243,11 +244,9 @@ class BackgroundExecutionManagerV2 {
     checkAndRestoreExecution() {
         if (!this.isRunning) return;
         
-        // Verifica estado da execução
-        if (window.auto16 && !window.auto16.running()) {
-            console.log('🔄 Restaurando execução do auto16');
-            window.auto16.start(this.currentSpeed);
-        }
+        // 🚚 FIX: Não auto-iniciar o gerador. Apenas garantir que o worker/fallback
+        // continua rodando se o usuário JA tinha iniciado.
+        // window.auto16.start() só deve ser chamado pelo usuário via botão Play.
         
         // Garante worker ativo
         if (!this.workerActive && this.isWorkerSupported) {
@@ -327,20 +326,13 @@ class BackgroundExecutionManagerV2 {
 // Inicializa o gerenciador V2
 window.BackgroundExecutionManager = new BackgroundExecutionManagerV2();
 
-// Tenta restaurar estado salvo
+// Ao carregar a página, LIMPA o estado salvo para evitar auto-start indesejado.
+// O usuário deve pressionar Play manualmente a cada sessão.
 window.addEventListener('load', () => {
     try {
-        const saved = localStorage.getItem('backgroundExecutionStateV2');
-        if (saved) {
-            const state = JSON.parse(saved);
-            if (state.isRunning) {
-                console.log('🔄 Restaurando execução contínua');
-                setTimeout(() => {
-                    window.BackgroundExecutionManager.start(state.speed);
-                }, 1000);
-            }
-        }
+        localStorage.removeItem('backgroundExecutionStateV2');
+        console.log('✅ Estado de background limpo. Aguardando ação do usuário.');
     } catch (error) {
-        console.warn('⚠️ Erro ao restaurar estado:', error);
+        console.warn('⚠️ Erro ao limpar estado:', error);
     }
 });

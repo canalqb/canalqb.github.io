@@ -1,3 +1,8 @@
+/**
+ * @file matriz.js
+ * @description Gerenciamento da interface visual da matriz 16x16 (256 bits).
+ * @module MatrizAPI
+ */
 document.addEventListener('DOMContentLoaded', () => {
 
   /* =====================================================
@@ -101,11 +106,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function addTextareaHistory(textarea, newText) {
+    if (!textarea) return;
+    const currentVal = textarea.value.trim();
+    if (!currentVal) {
+      textarea.value = newText;
+      return;
+    }
+    const lines = [newText, ...currentVal.split('\n')];
+    if (lines.length > MAX_LINES) {
+      textarea.value = lines.slice(0, MAX_LINES).join('\n');
+    } else {
+      textarea.value = lines.join('\n');
+    }
+  }
+
   function limitTextareaLines(textarea) {
     const lines = textarea.value.split('\n');
     if (lines.length > MAX_LINES) {
-      // Remove as linhas mais antigas (mantém as últimas 100)
-      textarea.value = lines.slice(lines.length - MAX_LINES).join('\n');
+      textarea.value = lines.slice(0, MAX_LINES).join('\n');
     }
   }
 
@@ -810,6 +829,20 @@ document.addEventListener('DOMContentLoaded', () => {
   window.matrizAPI = {
     // Estado
     getGridState: () => [...gridState],
+    getFullGridState: () => {
+      const fullGrid = [...gridState];
+      // Adiciona células selecionadas manualmente
+      for (const cellKey of manuallySelectedCells) {
+        const [r, c] = cellKey.split(',').map(Number);
+        fullGrid[r * SIZE + c] = true;
+      }
+      // Adiciona células selecionadas com Ctrl
+      for (const cellKey of ctrlSelectedCells) {
+        const [r, c] = cellKey.split(',').map(Number);
+        fullGrid[r * SIZE + c] = true;
+      }
+      return fullGrid;
+    },
     setGridState: (newState) => {
       if (newState.length === SIZE * SIZE) {
         gridState = [...newState];
@@ -926,6 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateActiveRangeLabel,
     showTemporaryRangeIndicator,
     limitTextareaLines,
+    addTextareaHistory,
     scrollToBottom,
     getInitHexFromCard,
     getEndHexFromCard

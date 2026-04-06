@@ -1,9 +1,8 @@
 # ==========================================
 # 🤖 ROBOTS.TXT - SEO OPTIMIZED 2026
 # ==========================================
-# Domínio: puzzlebtc.canalqb.com.br
-# Padrão: Google SEO Best Practices
-# Atualizado: 2026-03-28
+# Domínio Principal: canalqb.github.io
+# Espelho: puzzlebtc.canalqb.com.br
 
 # ----- User Agents Globais -----
 User-agent: *
@@ -142,11 +141,11 @@ Disallow: /*.old$
 Disallow: /*~$
 
 # ----- Sitemaps -----
+Sitemap: https://canalqb.github.io/sitemap.xml
 Sitemap: https://puzzlebtc.canalqb.com.br/sitemap.xml
-Sitemap: https://puzzlebtc.canalqb.com.br/sitemap.xml.gz
 
 # ----- Host Information -----
-Host: https://puzzlebtc.canalqb.com.br
+Host: https://canalqb.github.io
 
 # ----- SEO Directives -----
 # IndexNow support

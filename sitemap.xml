@@ -21,43 +21,22 @@
 <!-- Páginas Institucionais - High Priority -->
 <url>
   <loc>https://puzzlebtc.canalqb.com.br/paginas/sobre.html</loc>
-  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <lastmod>2026-04-06T15:45:00-03:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.90</priority>
 </url>
 
 <url>
   <loc>https://puzzlebtc.canalqb.com.br/paginas/contato.html</loc>
-  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <lastmod>2026-04-06T15:45:00-03:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.90</priority>
-</url>
-
-<url>
-  <loc>https://puzzlebtc.canalqb.com.br/paginas/contatos.html</loc>
-  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.85</priority>
-</url>
-
-<url>
-  <loc>https://puzzlebtc.canalqb.com.br/paginas/about.html</loc>
-  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.85</priority>
 </url>
 
 <!-- Páginas Legais e Compliance - High Priority -->
 <url>
-  <loc>https://puzzlebtc.canalqb.com.br/paginas/privacidade.html</loc>
-  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
-  <changefreq>monthly</changefreq>
-  <priority>0.90</priority>
-</url>
-
-<url>
   <loc>https://puzzlebtc.canalqb.com.br/paginas/politicadeprivacidade.html</loc>
-  <lastmod>2026-03-28T12:28:00-03:00</lastmod>
+  <lastmod>2026-04-06T15:45:00-03:00</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.90</priority>
 </url>

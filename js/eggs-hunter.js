@@ -63,39 +63,28 @@
      */
     function wifToAddress(wif) {
         try {
+            // 🚀 DETECÇÃO DE BIBLIOTECA (bitcoinjs modern vs legacy)
             const lib = window.bitcoin || window.bitcoinjs;
-            if (!lib || !lib.ECPair) {
-                console.warn('⚠️ Biblioteca bitcoinjs não carregada');
-                return null;
+            const legacyLib = window.Bitcoin;
+
+            // MODO MODERNO (v3+)
+            if (lib && lib.ECPair) {
+                const keyPair = lib.ECPair.fromWIF(wif);
+                const { address } = lib.payments.p2pkh({ pubkey: keyPair.publicKey });
+                return address;
             }
 
-            // 🚀 CORREÇÃO: Tenta regenerar WIF com BitcoinJS se tiver HEX
-            if (typeof window.hexToWIF === 'function') {
-                try {
-                    // Tenta extrair HEX do WIF (fallback para casos de checksum inválido)
-                    const keyPair = lib.ECPair.fromWIF(wif);
-                    const hex = lib.Buffer ? 
-                        lib.Buffer.from(keyPair.privateKey).toString('hex') : 
-                        Array.from(keyPair.privateKey).map(b => b.toString(16).padStart(2, '0')).join('');
-                    
-                    // Regenera WIF válido com BitcoinJS
-                    const validWIF = window.hexToWIF(hex, wif.endsWith('L') || wif.endsWith('K'));
-                    if (validWIF && validWIF !== 'Erro na conversão') {
-                        const validKeyPair = lib.ECPair.fromWIF(validWIF);
-                        const { address } = lib.payments.p2pkh({ pubkey: validKeyPair.publicKey });
-                        return address;
-                    }
-                } catch (e) {
-                    // Se falhar, continua com o WIF original
-                }
+            // MODO LEGADO (v0.x - window.Bitcoin.ECKey)
+            if (legacyLib && legacyLib.ECKey) {
+                const key = new legacyLib.ECKey(wif);
+                return key.getBitcoinAddress().toString();
             }
 
-            const keyPair = lib.ECPair.fromWIF(wif);
-            const { address } = lib.payments.p2pkh({ pubkey: keyPair.publicKey });
-            return address;
+            console.warn('⚠️ Nenhuma biblioteca BitcoinJS válida encontrada para conversão de WIF.');
+            return null;
         } catch (error) {
             if (error.message && !error.message.includes('not in range')) {
-                console.error('❌ Erro ao converter WIF:', error.message);
+                console.error('❌ Erro ao converter WIF para endereço:', error.message);
             }
             return null;
         }
@@ -111,7 +100,12 @@
         }
 
         // 🚡 DEBUG: Log do WIF recebido
-        console.log(`🔍 [DEBUG] WIF recebido: ${wif.substring(0, 20)}... (comprimido: ${compressed})`);
+        console.log(`🔍 [DEBUG] WIF recebido: ${wif.substring(0, 15)}... (comprimido: ${compressed})`);
+        
+        if (wif.includes('Erro')) {
+            console.warn('⚠️ WIF inválido ignorado pelo EggsHunter');
+            return false;
+        }
 
         const address = wifToAddress(wif);
         if (!address) {
@@ -497,6 +491,78 @@
     }
 
     /**
+     * Torna um elemento arrastável (Desktop e Mobile)
+     */
+    function makeDraggable(element) {
+        const header = element.querySelector('.indicator-header');
+        if (!header) return;
+
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+        header.onmousedown = dragMouseDown;
+        header.ontouchstart = dragTouchStart;
+
+        function dragMouseDown(e) {
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        }
+
+        function dragTouchStart(e) {
+            const touch = e.touches[0];
+            pos3 = touch.clientX;
+            pos4 = touch.clientY;
+            document.ontouchend = closeDragElement;
+            document.ontouchmove = elementTouchDrag;
+        }
+
+        function elementDrag(e) {
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            
+            // Calcula novas posições
+            let newTop = element.offsetTop - pos2;
+            let newLeft = element.offsetLeft - pos1;
+
+            // Mantém dentro da tela (opcional)
+            const padding = 10;
+            newTop = Math.max(padding, Math.min(window.innerHeight - element.offsetHeight - padding, newTop));
+            newLeft = Math.max(padding, Math.min(window.innerWidth - element.offsetWidth - padding, newLeft));
+
+            element.style.top = newTop + "px";
+            element.style.left = newLeft + "px";
+            element.style.bottom = "auto"; // Remove bottom fixo se houver
+        }
+
+        function elementTouchDrag(e) {
+            const touch = e.touches[0];
+            pos1 = pos3 - touch.clientX;
+            pos2 = pos4 - touch.clientY;
+            pos3 = touch.clientX;
+            pos4 = touch.clientY;
+            
+            let newTop = element.offsetTop - pos2;
+            let newLeft = element.offsetLeft - pos1;
+            
+            element.style.top = newTop + "px";
+            element.style.left = newLeft + "px";
+            element.style.bottom = "auto";
+        }
+
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+            document.ontouchend = null;
+            document.ontouchmove = null;
+        }
+    }
+
+    /**
      * Cria indicador de progresso
      */
     function createProgressIndicator() {
@@ -505,36 +571,31 @@
 
         indicator = document.createElement('div');
         indicator.id = 'eggs-progress-indicator';
-        indicator.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: var(--bg-card);
-      color: var(--text-primary);
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-family: inherit;
-      z-index: 9999;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-md);
-      min-width: 250px;
-      transition: all 0.3s ease;
-      cursor: default;
-      pointer-events: none;
-    `;
-
-    indicator.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="font-size: 20px;">🥚</span>
-        <div style="flex: 1;">
-          <div style="font-weight: bold; margin-bottom: 4px; color: var(--accent-color);">Eggs Hunter</div>
-          <div id="eggs-progress-text" style="font-size: 11px; color: var(--text-secondary);">Inicializando...</div>
-        </div>
-      </div>
-    `;
+        
+        // Estrutura rica de modal
+        indicator.innerHTML = `
+            <div class="indicator-header">
+                <div class="header-info">
+                    <i class="fas fa-arrows-alt"></i>
+                    <span>Status</span>
+                </div>
+                <button class="indicator-close-btn" onclick="this.closest('#eggs-progress-indicator').style.display='none'" title="Ocultar">
+                    ×
+                </button>
+            </div>
+            <div class="indicator-body">
+                <div class="indicator-icon">🥚</div>
+                <div class="indicator-info">
+                    <div class="indicator-title">Eggs Hunter</div>
+                    <div id="eggs-progress-text">Inicializando...</div>
+                </div>
+            </div>
+        `;
 
         document.body.appendChild(indicator);
+        
+        // Torna arrastável
+        makeDraggable(indicator);
     }
 
     /**

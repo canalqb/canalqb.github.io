@@ -14,6 +14,7 @@ class BackgroundProcessor {
     this.visibilityHandlers = [];
     this.worker = null;
     this.fallbackInterval = null;
+    this.isBadgeHidden = false; // 🚀 Flag para respeitar fechar manual
     
     this.init();
   }
@@ -44,6 +45,11 @@ class BackgroundProcessor {
     this.statusBadgeText = document.getElementById('background-status-text');
     this.legend = document.getElementById('background-legend');
     
+    // 🚀 INICIALIZA ARRASTE (DRAGGABLE)
+    if (this.statusBadge) {
+      this.makeDraggable(this.statusBadge);
+    }
+    
     // 🚀 ADICIONA EVENTO DE HOVER PARA MOSTRAR LEGENDA
     if (this.indicator) {
       this.indicator.addEventListener('mouseenter', () => this.showLegend());
@@ -73,8 +79,12 @@ class BackgroundProcessor {
     }
     
     // Atualiza badge de status
-    this.statusBadge.className = `background-status-badge visible ${this.isInBackground ? 'in-background' : 'in-foreground'}`;
-    this.statusBadgeText.textContent = this.isInBackground ? '📱 Background' : '🖥️ Foreground';
+    if (this.isBadgeHidden) {
+      this.statusBadge.classList.remove('visible');
+    } else {
+      this.statusBadge.className = `background-status-badge visible ${this.isInBackground ? 'in-background' : 'in-foreground'}`;
+      this.statusBadgeText.textContent = this.isInBackground ? '📱 Background Active' : '🖥️ Foreground Display';
+    }
     
     // Log detalhado
     if (this.isInBackground && isProcessing) {
@@ -341,6 +351,93 @@ class BackgroundProcessor {
       }
     }
   }
+
+  /**
+   * Oculta o badge manualmente e impede que ele reapareça sozinho
+   */
+  hideBadge() {
+    this.isBadgeHidden = true;
+    if (this.statusBadge) {
+      this.statusBadge.classList.remove('visible');
+    }
+    console.log('🙈 Status badge ocultado manualmente');
+  }
+
+  /**
+   * Torna um elemento arrastável (Desktop e Mobile)
+   */
+  makeDraggable(element) {
+    const header = element.querySelector('.status-header');
+    if (!header) return;
+
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    // Handlers para Desktop
+    header.onmousedown = (e) => this.dragMouseDown(e, element);
+    
+    // Handlers para Mobile
+    header.ontouchstart = (e) => this.dragTouchStart(e, element);
+
+    this.draggableState = { pos1, pos2, pos3, pos4 };
+  }
+
+  dragMouseDown(e, element) {
+    e.preventDefault();
+    this.draggableState.pos3 = e.clientX;
+    this.draggableState.pos4 = e.clientY;
+    document.onmouseup = () => this.closeDragElement();
+    document.onmousemove = (e) => this.elementDrag(e, element);
+  }
+
+  dragTouchStart(e, element) {
+    const touch = e.touches[0];
+    this.draggableState.pos3 = touch.clientX;
+    this.draggableState.pos4 = touch.clientY;
+    document.ontouchend = () => this.closeDragElement();
+    document.ontouchmove = (e) => this.elementTouchDrag(e, element);
+  }
+
+  elementDrag(e, element) {
+    e.preventDefault();
+    this.draggableState.pos1 = this.draggableState.pos3 - e.clientX;
+    this.draggableState.pos2 = this.draggableState.pos4 - e.clientY;
+    this.draggableState.pos3 = e.clientX;
+    this.draggableState.pos4 = e.clientY;
+    
+    this.applyNewPosition(element);
+  }
+
+  elementTouchDrag(e, element) {
+    const touch = e.touches[0];
+    this.draggableState.pos1 = this.draggableState.pos3 - touch.clientX;
+    this.draggableState.pos2 = this.draggableState.pos4 - touch.clientY;
+    this.draggableState.pos3 = touch.clientX;
+    this.draggableState.pos4 = touch.clientY;
+    
+    this.applyNewPosition(element);
+  }
+
+  applyNewPosition(element) {
+    let newTop = element.offsetTop - this.draggableState.pos2;
+    let newLeft = element.offsetLeft - this.draggableState.pos1;
+
+    // Mantém dentro da tela
+    const padding = 10;
+    newTop = Math.max(padding, Math.min(window.innerHeight - element.offsetHeight - padding, newTop));
+    newLeft = Math.max(padding, Math.min(window.innerWidth - element.offsetWidth - padding, newLeft));
+
+    element.style.top = newTop + "px";
+    element.style.left = newLeft + "px";
+    element.style.bottom = "auto";
+    element.style.right = "auto";
+  }
+
+  closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+    document.ontouchend = null;
+    document.ontouchmove = null;
+  }
 }
 
 // Instância global do Background Processor
@@ -355,7 +452,8 @@ window.BackgroundProcessor = {
   unregister: (name) => window.backgroundProcessor.unregisterProcessor(name),
   getState: () => window.backgroundProcessor.getBackgroundState(),
   forceContinue: () => window.backgroundProcessor.forceContinueProcessing(),
-  isInBackground: () => window.backgroundProcessor.isInBackground
+  isInBackground: () => window.backgroundProcessor.isInBackground,
+  hideBadge: () => window.backgroundProcessor.hideBadge()
 };
 
 console.log('🔄 Background Processor API disponível globalmente');
