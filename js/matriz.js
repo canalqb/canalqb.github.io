@@ -107,18 +107,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addTextareaHistory(textarea, newText) {
-    if (!textarea) return;
-    const currentVal = textarea.value.trim();
+    if (!textarea || newText === undefined || newText === null || newText === '') return;
+    const currentVal = textarea.value;
     if (!currentVal) {
       textarea.value = newText;
-      return;
-    }
-    const lines = [newText, ...currentVal.split('\n')];
-    if (lines.length > MAX_LINES) {
-      textarea.value = lines.slice(0, MAX_LINES).join('\n');
     } else {
-      textarea.value = lines.join('\n');
+      const lines = currentVal.split('\n');
+      lines.push(newText);
+      if (lines.length > MAX_LINES) {
+        // Remove linhas mais antigas do TOPO, mantém as mais recentes
+        textarea.value = lines.slice(lines.length - MAX_LINES).join('\n');
+      } else {
+        textarea.value = lines.join('\n');
+      }
     }
+    // Auto-scroll para o fundo: nova entrada sempre visível
+    requestAnimationFrame(() => {
+      textarea.scrollTop = textarea.scrollHeight;
+    });
   }
 
   function limitTextareaLines(textarea) {
