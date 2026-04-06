@@ -360,42 +360,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const startTimeLocal = startTime;
     const linesTotal = linhasProcessadas;
 
-    // 1. Atualiza HEX Box
-    const hexLines = hexBox.value.trim().split('\n').filter(l => l.trim());
-    for (const hex of hexList) {
-      const cleanHex = hex.replace(/^0+/, '') || '0';
-      if (!hexLines.includes(cleanHex)) {
-        hexLines.push(cleanHex);
-      }
-    }
-    
-    // Log para depuração de espelhamento
-    if (hexList.length > 1) {
-      console.log(`🔄 [ESPELHAMENTO] Processando par: ${hexList[0]} | ${hexList[1]}`);
-    }
-    if (hexLines.length > 100) hexLines.splice(0, hexLines.length - 100);
-    hexBox.value = hexLines.join('\n');
-    hexBox.scrollTop = hexBox.scrollHeight;
-
-    // 2. Processa cada chave (WIF e Verificação)
+    // Processa cada chave (WIF e Verificação)
     for (const hex of hexList) {
       const paddedHex = hex.padStart(64, '0');
+      // ✅ Remove zeros à esquerda para exibição (sem duplicar com o padded)
+      const cleanHex = hex.replace(/^0+/, '') || '0';
 
       // Gera WIFs (Comprimida e Não Comprimida)
       if (window.toWIF) {
         const wifC = await window.toWIF(paddedHex, true);
         const wifU = await window.toWIF(paddedHex, false);
 
-        // 🚀 ATUALIZA UI (Histórico de 100 linhas no topo)
+        // 🚀 ATUALIZA UI — UMA ÚNICA VEZ POR CHAVE, hex sem zeros à esquerda
         if (window.matrizAPI) {
-          if (hexBox) window.matrizAPI.addTextareaHistory(hexBox, paddedHex);
+          if (hexBox) window.matrizAPI.addTextareaHistory(hexBox, cleanHex);
           if (wifBox) window.matrizAPI.addTextareaHistory(wifBox, wifC);
           if (wifBoxUncompressed) window.matrizAPI.addTextareaHistory(wifBoxUncompressed, wifU);
         } else {
           // Fallback se matrizAPI não carregar
-          if (hexBox) hexBox.value = [paddedHex, ...hexBox.value.split('\n')].slice(0, 100).join('\n');
-          if (wifBox) wifBox.value = [wifC, ...wifBox.value.split('\n')].slice(0, 100).join('\n');
-          if (wifBoxUncompressed) wifBoxUncompressed.value = [wifU, ...wifBoxUncompressed.value.split('\n')].slice(0, 100).join('\n');
+          if (hexBox) { hexBox.value += '\n' + cleanHex; hexBox.scrollTop = hexBox.scrollHeight; }
+          if (wifBox) { wifBox.value += '\n' + wifC; wifBox.scrollTop = wifBox.scrollHeight; }
+          if (wifBoxUncompressed) { wifBoxUncompressed.value += '\n' + wifU; wifBoxUncompressed.scrollTop = wifBoxUncompressed.scrollHeight; }
         }
 
         // 🥚 EGGS HUNTER: Adiciona WIFs para verificação de saldo em tempo real
