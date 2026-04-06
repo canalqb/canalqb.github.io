@@ -202,8 +202,18 @@
       linesProcessed
     } = puzzleData;
 
+    // Normaliza o modo para 'horizontal' ou 'vertical' para respeitar a constraint do banco
+    let normalizedMode = mode.toLowerCase();
+    if (normalizedMode.includes('horizontal') || normalizedMode.includes('_h') || normalizedMode === 'randomize' || normalizedMode === 'manual') {
+      normalizedMode = 'horizontal';
+    } else if (normalizedMode.includes('vertical') || normalizedMode.includes('_v')) {
+      normalizedMode = 'vertical';
+    } else {
+      normalizedMode = 'horizontal'; // Fallback
+    }
+
     // Validações obrigatórias
-    if (!preset || !hexPrivateKey || !wifCompressed || !wifUncompressed || !mode) {
+    if ((typeof preset === 'undefined' || preset === null) || !hexPrivateKey || !wifCompressed || !wifUncompressed || !mode) {
       throw new Error('Dados obrigatórios ausentes');
     }
 
@@ -223,18 +233,8 @@
       throw new Error('Endereço não comprimido inválido');
     }
 
-    if (!['horizontal', 'vertical'].includes(mode)) {
+    if (!['horizontal', 'vertical'].includes(normalizedMode)) {
       throw new Error('Modo inválido');
-    }
-
-    // Normaliza o modo para 'horizontal' ou 'vertical' para respeitar a constraint do banco
-    let normalizedMode = mode.toLowerCase();
-    if (normalizedMode.includes('horizontal') || normalizedMode.includes('_h') || normalizedMode === 'randomize') {
-      normalizedMode = 'horizontal';
-    } else if (normalizedMode.includes('vertical') || normalizedMode.includes('_v')) {
-      normalizedMode = 'vertical';
-    } else {
-      normalizedMode = 'horizontal'; // Fallback
     }
 
     // Prepara dados para inserção conforme solicitado (exatamente os 11 campos + metadados padrão do banco)

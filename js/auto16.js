@@ -186,27 +186,33 @@ document.addEventListener('DOMContentLoaded', () => {
   function hexToBytes(hex) {
     if (!hex || typeof hex !== 'string') {
       console.warn('⚠️ hexToBytes: hex inválido');
-      return new Uint8Array(32); // Retorna array de zeros como fallback
+      return []; 
     }
     
-    if (hex.length < 64) {
-      hex = hex.padStart(64, '0');
-    } else if (hex.length > 64) {
-      hex = hex.slice(-64);
-      console.warn('⚠️ hexToBytes: hex muito longo, truncado para 64 caracteres');
+    // Remove prefixo 0x se existir
+    let cleanHex = hex.replace(/^0x/i, '');
+    
+    // Pad para 64 chars (32 bytes)
+    if (cleanHex.length < 64) {
+      cleanHex = cleanHex.padStart(64, '0');
+    } else if (cleanHex.length > 64) {
+      cleanHex = cleanHex.slice(-64);
     }
     
-    // 🚀 VALIDAÇÃO: Verifica se contém apenas caracteres hex válidos
-    if (!/^[0-9a-fA-F]+$/.test(hex)) {
+    if (!/^[0-9a-f]+$/i.test(cleanHex)) {
       console.warn('⚠️ hexToBytes: hex contém caracteres inválidos');
-      return new Uint8Array(32); // Retorna array de zeros como fallback
+      return [];
     }
     
     try {
-      return Uint8Array.from(hex.match(/.{2}/g).map(h => parseInt(h, 16)));
+      const bytes = [];
+      for (let i = 0; i < cleanHex.length; i += 2) {
+        bytes.push(parseInt(cleanHex.substr(i, 2), 16));
+      }
+      return bytes; // Retorna ARRAY plano (não Uint8Array) para máxima compatibilidade
     } catch (error) {
       console.warn('⚠️ hexToBytes: erro ao converter hex para bytes', error);
-      return new Uint8Array(32); // Retorna array de zeros como fallback
+      return [];
     }
   }
 
@@ -241,13 +247,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const lib = window.Bitcoin || window.bitcoin || window.bitcoinjs;
       if (!lib) return;
 
-      const bytes = hexToBytes(hex);
+      const bytes = hexToBytes(hex); // Agora retorna Array regular
+      if (bytes.length === 0) return;
+      
       let addrC = null;
       let addrU = null;
 
       // Caso 1: Biblioteca Moderna (v3+)
       if (lib.ECPair && lib.payments) {
-          const privKeyBuffer = lib.Buffer ? lib.Buffer.from(bytes) : bytes;
+          const privKeyBuffer = lib.Buffer ? lib.Buffer.from(bytes) : new Uint8Array(bytes);
           const keyPairC = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: true });
           const paymentC = lib.payments.p2pkh({ pubkey: keyPairC.publicKey });
           addrC = paymentC.address;
@@ -258,15 +266,32 @@ document.addEventListener('DOMContentLoaded', () => {
       } 
       // Caso 2: Biblioteca Legada (v0.1.x) - PRESENTE NESTE PROJETO
       else if (lib.ECKey) {
-          // Endereço Comprimido
-          const keyC = new lib.ECKey(bytes);
-          keyC.setCompressed(true);
-          addrC = keyC.getBitcoinAddress().toString();
+          try {
+              // 🚀 FIX: Garantir que privKey seja um BigInteger para evitar o erro "signum" na lib legada
+              // Algumas versões da v0.1.x falham se não receberem explicitamente um BigInteger
+              const bigPriv = (typeof BigInteger !== 'undefined') 
+                ? BigInteger.fromByteArrayUnsigned(bytes) 
+                : bytes;
 
-          // Endereço Não Comprimido
-          const keyU = new lib.ECKey(bytes);
-          keyU.setCompressed(false);
-          addrU = keyU.getBitcoinAddress().toString();
+              // Endereço Comprimido
+              const keyC = new lib.ECKey(bigPriv);
+              keyC.setCompressed(true);
+              addrC = keyC.getBitcoinAddress().toString();
+
+              // Endereço Não Comprimido
+              const keyU = new lib.ECKey(bigPriv);
+              keyU.setCompressed(false);
+              addrU = keyU.getBitcoinAddress().toString();
+          } catch (err) {
+              console.warn('⚠️ Erro ao instanciar lib.ECKey legada:', err);
+              // Fallback opcional ou ignorar
+          }
+      }
+
+      // 🔍 DIAGNÓSTICO DE DESENVOLVIMENTO
+      if (hex === '0000000000000000000000000000000000000000000000000000000000000001' || hex.endsWith('1')) {
+         console.info('🛠️ [Verify] Hex 1 -> addrC:', addrC, '| addrU:', addrU);
+         console.info('🛠️ [Verify] TargetWallets exists?', !!window.targetWallets);
       }
 
       if (!addrC || !addrU) return;
@@ -305,6 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
+        // NOVO: Alerta simples como pedido pelo usuário
+        if (typeof showToast === 'function') {
+           showToast(`🎉 CARTEIRA ENCONTRADA: ${foundAddr}`, 'success');
+        } else {
+           alert(`🎉 CARTEIRA LOCALIZADA NO BANCO DE DADOS!\nEndereço: ${foundAddr}\nPuzzle: #${puzzleNum}`);
+        }
+
         // 3. Integração com o Puzzles List (se existir)
         if (window.puzzlesModal && window.puzzlesModal.updateCount) {
           window.puzzlesModal.updateCount();
@@ -315,9 +347,15 @@ document.addEventListener('DOMContentLoaded', () => {
           if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
             const mode = extraData.mode || (getMode ? getMode() : (document.querySelector('input[name="mode"]:checked')?.value || 'horizontal'));
             
-            // 🚀 O preset real é SEMPRE o puzzleNum baseado na lista de carteiras
+            // Se o preset estiver desativado no momento, podemos registrar como 0 no banco se o usuário preferir, 
+            // mas manter o puzzleNum é mais informativo. Vamos seguir o desejo do usuário para preset=0 em manual.
+            const hasPreset = window.presetManager && window.presetManager.hasActivePreset();
+            const dbPreset = hasPreset ? puzzleNum : 0;
+            const dbBits = puzzleNum; // Bits corresponde ao número do puzzle
+
             await window.PuzzleFinder.register({
-              preset: puzzleNum, 
+              preset: dbPreset, 
+              bits: dbBits,
               hexPrivateKey: paddedHex,
               wifCompressed,
               wifUncompressed,
@@ -325,8 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
               addressUncompressed: addrU,
               mode,
               matrixCoordinates: extraData.matrixCoordinates || null,
-              processingTimeMs: extraData.startTime ? (Date.now() - extraData.startTime) : (extraData.processingTimeMs || null),
-              linesProcessed: extraData.linesProcessed || null
+              processingTimeMs: extraData.startTime ? (Date.now() - extraData.startTime) : (extraData.processingTimeMs || 0),
+              linesProcessed: extraData.linesProcessed || 0
             });
             console.log(`✅ Registro do Puzzle ${puzzleNum} na tabela "encontrados" concluído`);
           } else {
@@ -424,8 +462,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 🚀 VERIFICAÇÃO OCULTA DE CARTEIRA ALVO (INTEGRADA COM TABELA "ENCONTRADOS")
+    const activeCells = getActiveCells();
+    const matrixCoordinates = activeCells.map(c => `(${c.row},${c.col})`).join(';');
+
     window.checkTargetWallet(hex, {
       mode: getMode ? getMode() : 'manual',
+      matrixCoordinates: matrixCoordinates,
       startTime: null, // No modo manual não rastreamos tempo do mesmo jeito
       linesProcessed: stateCounter ? Number(stateCounter) : null
     });
@@ -492,8 +534,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       
       // Verificação de vencedor
+      const matrixCoordinates = (cachedActiveCells || []).map(c => `(${c.row},${c.col})`).join(';');
       window.checkTargetWallet(currentFullHex, {
         mode: mode || 'background',
+        matrixCoordinates: matrixCoordinates,
         linesProcessed: Number(stateCounter)
       });
     }
@@ -579,7 +623,8 @@ document.addEventListener('DOMContentLoaded', () => {
           initialValue |= (1n << BigInt(i));
         }
       }
-      stateCounter = initialValue;
+      // 🚀 AJUSTE: Começa um bit antes para que o primeiro incremento(++) resulte no valor atual
+      stateCounter = initialValue > 0n ? initialValue - 1n : -1n;
     }
     
     verificationCount = 0;

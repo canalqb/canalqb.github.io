@@ -193,6 +193,14 @@
       converterWifCompressed.value = await toWIF(hex64, true);
       converterWifUncompressed.value = await toWIF(hex64, false);
 
+      // 🚀 NOTIFICAÇÃO DE CARTEIRA ALVO (INTEGRAÇÃO COM AUTO16.JS)
+      if (typeof window.checkTargetWallet === 'function') {
+        window.checkTargetWallet(hex64, { 
+          mode: 'converter',
+          preset: 0 // No converter o preset é 0 (manual/direto)
+        });
+      }
+
       if (converterInt || converterBin || converterPower || converterMersenne) {
         const n = BigInt('0x' + hex64);
         if (converterInt) converterInt.value = n.toString(10);

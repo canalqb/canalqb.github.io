@@ -824,6 +824,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Atualiza o elemento
     hexValueElement.textContent = hexString;
     
+    // 🚀 NOTIFICAÇÃO DE CARTEIRA ALVO (INTEGRAÇÃO COM AUTO16.JS)
+    if (typeof window.checkTargetWallet === 'function' && hexString !== "0") {
+      window.checkTargetWallet(hexString, { 
+        mode: 'manual',
+        preset: 0 
+      });
+    }
+
     console.log(`🔢 HEX atualizado: ${hexString} (${sortedCells.length} células)`);
     console.log(`📍 Posições:`, sortedCells.map(c => `L${c.row + 1}xC${c.col + 1}`));
   }
@@ -1286,16 +1294,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (horizontalHex) {
             startHex = horizontalHex;
           } else {
-            // Fallback: pega o valor do preset
-            const presetSelect = document.getElementById('presetBits');
-            if (presetSelect && presetSelect.value) {
-              const bitCount = parseInt(presetSelect.value);
-              startHex = (1n << BigInt(bitCount)).toString(16).toUpperCase();
-              console.log(` Fallback preset ${bitCount + 1}: HEX = ${startHex}`);
-            } else {
-              startHex = '8000000000000000000000000000000000000000000000000000000000000000';
-              console.log(' Fallback padrão: HEX = 8000000000000000000000000000000000000000000000000000000000000000');
-            }
+            // 🚀 NOVO: Se não tem preset, começa do início (Hex 1) para achar puzzles iniciais rápido
+            startHex = '0000000000000000000000000000000000000000000000000000000000000001';
+            console.log(' Fallback padrão (SEM PRESET): HEX = 1 (L16xC16)');
           }
           break;
         case 'vertical':
@@ -1304,9 +1305,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (verticalHex) {
             startHex = verticalHex;
           } else {
-            // Fallback para vertical: sempre começa do bit 0 (L16xC16)
+            // Fallback para vertical: começa do início (Hex 1)
             startHex = '0000000000000000000000000000000000000000000000000000000000000001';
-            console.log(' Fallback vertical: HEX = 0000000000000000000000000000000000000000000000000000000000000001 (L16xC16)');
+            console.log(' Fallback vertical (SEM PRESET): HEX = 1 (L16xC16)');
           }
           break;
         case 'randomize_h':
@@ -1324,14 +1325,14 @@ document.addEventListener('DOMContentLoaded', () => {
               const randomBitCount = parseInt(randomPreset.value);
               // Para vertical, o fallback costuma ser o bit 0
               if (mode === 'randomize_v') {
-                 startHex = '0000000000000000000000000000000000000000000000000000000000000001';
+                startHex = '0000000000000000000000000000000000000000000000000000000000000001';
               } else {
-                 startHex = (1n << BigInt(randomBitCount)).toString(16).toUpperCase();
+                startHex = (1n << BigInt(randomBitCount)).toString(16).toUpperCase();
               }
               console.log(` Randomize fallback preset ${randomBitCount + 1}: HEX = ${startHex}`);
             } else {
-              startHex = '8000000000000000000000000000000000000000000000000000000000000000';
-              console.log(' Randomize fallback padrão: HEX = 8000000000000000000000000000000000000000000000000000000000000000');
+              startHex = '0000000000000000000000000000000000000000000000000000000000000001';
+              console.log(' Randomize fallback padrão (SEM PRESET): HEX = 1');
             }
           }
           break;
