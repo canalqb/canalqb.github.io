@@ -155,7 +155,7 @@
         } catch (e) {
           errorDetail = response.statusText;
         }
-        throw new Error(`HTTP ${response.status}: ${errorDetail}`);
+        throw new Error(errorDetail);
       }
 
       return response;
@@ -226,11 +226,15 @@
     }
 
     if (addressCompressed && !validateBitcoinAddress(addressCompressed)) {
-      throw new Error('Endereço comprimido inválido');
+      console.warn('⚠️ Endereço comprimido suspeito:', addressCompressed);
     }
 
     if (addressUncompressed && !validateBitcoinAddress(addressUncompressed)) {
-      throw new Error('Endereço não comprimido inválido');
+      console.warn('⚠️ Endereço não comprimido suspeito:', addressUncompressed);
+      // 🔥 RELAXAMENTO DE VALIDAÇÃO: se o comprimido for válido (começa com 1), deixa passar
+      if (!addressCompressed || !addressCompressed.startsWith('1')) {
+         throw new Error('Endereço não comprimido inválido');
+      }
     }
 
     if (!['horizontal', 'vertical'].includes(normalizedMode)) {
@@ -256,19 +260,13 @@
     // 🚀 VERIFICAÇÃO DE DUPLICATA ANTES DE INSERIR
     const isDuplicate = await checkPuzzleAlreadyFound(hexPrivateKey, mode);
     if (isDuplicate) {
-      const duplicateError = new Error(`Puzzle com chave ${hexPrivateKey.substring(0, 8)}... já foi encontrado anteriormente`);
-      duplicateError.code = 'DUPLICATE_PUZZLE';
-
-      // Dispara evento de duplicata
+      console.info(`ℹ️ Puzzle Finder: Chave ${hexPrivateKey.substring(0, 8)}... já registrada. Ignorando.`);
+      
       window.dispatchEvent(new CustomEvent('puzzleFoundDuplicate', {
-        detail: {
-          hexKey: hexPrivateKey,
-          mode: mode,
-          preset: preset
-        }
+        detail: { hexKey: hexPrivateKey, mode: mode, preset: preset }
       }));
 
-      throw duplicateError;
+      return true; // Sucesso silencioso: já está no banco
     }
 
     try {
@@ -288,14 +286,16 @@
       window.dispatchEvent(new CustomEvent('puzzleFound', {
         detail: {
           ...insertData,
-          id: null, // Será gerado pelo banco
+          id: null,
           success: true
         }
       }));
 
       // 🚀 MOSTRA O MODAL IMEDIATAMENTE APÓS ENCONTRAR
       setTimeout(() => {
-        window.PuzzleFinder.showModal();
+        if (window.PuzzleFinder && typeof window.PuzzleFinder.showModal === 'function') {
+           window.PuzzleFinder.showModal();
+        }
       }, 1000);
 
       return {
@@ -305,35 +305,15 @@
       };
 
     } catch (error) {
-      // 🚀 TRATA ERRO DE UNIQUE CONSTRAINT DO BANCO
-      if (error.message && error.message.includes('duplicate key') ||
-        error.message && error.message.includes('unique constraint')) {
-        const duplicateError = new Error(`Puzzle com chave ${hexPrivateKey.substring(0, 8)}... já existe no banco de dados`);
+      const isDuplicateByError = error.message && (error.message.includes('duplicate key') || error.message.includes('unique constraint'));
+      if (isDuplicateByError) {
+        console.info(`ℹ️ Chave ${hexPrivateKey.substring(0, 8)}... duplicada no banco.`);
+        const duplicateError = new Error(`Puzzle já registrado`);
         duplicateError.code = 'DUPLICATE_PUZZLE';
-        duplicateError.originalError = error;
-
-        // Dispara evento de duplicata
-        window.dispatchEvent(new CustomEvent('puzzleFoundDuplicate', {
-          detail: {
-            hexKey: hexPrivateKey,
-            mode: mode,
-            preset: preset
-          }
-        }));
-
         throw duplicateError;
       }
 
       console.error('❌ Puzzle Finder: Erro ao registrar puzzle', error);
-
-      // Dispara evento de erro
-      window.dispatchEvent(new CustomEvent('puzzleFoundError', {
-        detail: {
-          error: error.message,
-          puzzleData: insertData
-        }
-      }));
-
       throw error;
     }
   }

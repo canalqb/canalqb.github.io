@@ -187,15 +187,26 @@ document.addEventListener('DOMContentLoaded', () => {
           const supabaseData = await window.SupabaseDB.fetch(Number(bitCount));
           if (supabaseData) {
             displayStart = supabaseData.inicio;
-            displayEnd = supabaseData.fim;  // 🚀 CORREÇÃO: Atualiza também o FIM!
+            displayEnd = supabaseData.fim;
             usingSupabase = true;
             dataForStatus = { ...supabaseData, isStandard: false };
           } else {
+            // Se fetch retornou null/undefined explicitamente (não existe)
             try {
-              await window.SupabaseDB.create(Number(bitCount), standardRange.startHex, standardRange.endHex);
-            } catch (e) { }
+              const newData = await window.SupabaseDB.create(Number(bitCount), standardRange.startHex, standardRange.endHex);
+              if (newData) {
+                  displayStart = newData.inicio;
+                  displayEnd = newData.fim;
+                  usingSupabase = true;
+                  dataForStatus = { ...newData, isStandard: false };
+              }
+            } catch (e) { 
+                console.warn('⚠️ Falha ao criar preset (provavelmente já existe):', e.message);
+            }
           }
-        } catch (e) { }
+        } catch (e) {
+            console.error('❌ Erro na comunicação com Supabase (Fetch):', e);
+        }
       }
 
       const startHexPadded = displayStart.padStart(64, '0');
@@ -487,8 +498,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   applyPresetBtn.addEventListener('click', () => {
-    const selectedValue = presetBitsInput.options[presetBitsInput.selectedIndex].value;
-    if (selectedValue) {
+    const selectedValue = (presetBitsInput && presetBitsInput.selectedIndex !== -1) 
+        ? presetBitsInput.options[presetBitsInput.selectedIndex].value 
+        : (presetBitsInput ? presetBitsInput.value : "");
+        
+    if (selectedValue && selectedValue !== "") {
       updateIntervalRanges(selectedValue);
     } else {
       const statusEl = document.getElementById('database-status-section');
@@ -529,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('matrixChanged', async (event) => {
     const { bits } = event.detail;
     if (!window.presetManager || !window.presetManager.hasActivePreset()) {
-      await updateIntervalRanges(bits);
+      updateIntervalRanges(bits);
     }
   });
 
@@ -545,11 +559,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   initializeStatus();
 
-  // 🚀 AUTO-LOAD PRESET 71 (VALOR 70) APÓS 0.5 SEGUNDOS
+  // 🚀 AUTO-LOAD PUZZLE 10 (VALOR 9) PARA TESTES
   setTimeout(() => {
     if (presetBitsInput && applyPresetBtn) {
-      console.log('🚀 Auto-carregando Puzzle 71...');
-      presetBitsInput.value = "70";
+      console.log('🚀 Auto-carregando Puzzle 10...');
+      presetBitsInput.value = "9";
       applyPresetBtn.click();
     }
   }, 500);

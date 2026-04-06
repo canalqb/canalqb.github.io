@@ -44,21 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
     currentPresetBits = BigInt(n);
     window.presetExpressoAtivo = true; // 🚀 ATIVA MODO PRESET
 
-    if (window.matrizAPI) window.matrizAPI.applyPreset(n);
-    updateSpeedControlVisibility();
-
-    window.dispatchEvent(new CustomEvent('presetChanged', { detail: { preset: n } }));
-
-    const hexBox = document.getElementById('hexBox');
-    const wifBox = document.getElementById('wifBox');
-    const wifBoxUncompressed = document.getElementById('wifBoxUncompressed');
-
-    if (hexBox) hexBox.value = '';
-    if (wifBox) wifBox.value = '';
-    if (wifBoxUncompressed) wifBoxUncompressed.value = '';
-
     if (window.matrizAPI) {
       window.matrizAPI.setGridState(Array(256).fill(false));
+      window.matrizAPI.applyPreset(n);
       window.matrizAPI.draw();
     }
 
@@ -68,6 +56,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     return { preset: n, hasSupabaseData: !!currentPresetData, isUsingSupabaseRange };
   }
+
+  window.addEventListener('presetApplied', (e) => {
+    dbInicio = e.detail.data.inicio;
+    dbFim = e.detail.data.fim;
+    currentInicio = dbInicio;
+    currentFim = dbFim;
+    linhasProcessadas = 0;
+
+    // 🚀 SINCRONIZAÇÃO HUD: Garante que o valor inicial apareça no painel
+    const hexValEl = document.getElementById('hexValue');
+    if (hexValEl && dbInicio) {
+        hexValEl.textContent = dbInicio.replace(/^0+/, '') || '0';
+    }
+  });
 
   window.addEventListener('presetRangeUpdated', (event) => {
     const { bitCount, startHex, endHex, usingSupabase, supabaseData } = event.detail;
@@ -184,8 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyPresetBtn = document.getElementById('applyPresetBtn');
     if (applyPresetBtn && presetBitsInput) {
       applyPresetBtn.addEventListener('click', () => {
-        const selectedValue = presetBitsInput.options[presetBitsInput.selectedIndex].value;
-        if (selectedValue === "") {
+        const selectedValue = (presetBitsInput && presetBitsInput.selectedIndex !== -1) 
+            ? presetBitsInput.options[presetBitsInput.selectedIndex].value 
+            : (presetBitsInput ? presetBitsInput.value : "");
+            
+        if (!selectedValue || selectedValue === "") {
           resetPreset();
           if (window.matrizAPI && typeof window.matrizAPI.reset === 'function') {
             window.matrizAPI.reset();

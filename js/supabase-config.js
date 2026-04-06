@@ -384,6 +384,11 @@
       return data;
 
     } catch (error) {
+      // 🚀 SILENCIA CONFLITOS DE CHAVE DUPLICADA
+      if (error.code === '23505') {
+          console.info(`ℹ️ Preset ${preset} já existe no banco. Ignorando criação.`);
+          return null; 
+      }
       console.error(`❌ Erro ao criar preset ${preset}:`, error);
       throw error;
     }
@@ -455,9 +460,16 @@
     try {
       return await fn();
     } catch (error) {
-      if (attempts <= 1) throw error;
+      // 🚀 NÃO TENTA DE NOVO SE O ERRO FOR FATAL OU LÓGICO
+      // 23505 = Unique Constraint (Chave Duplicada) - Não adianta tentar de novo
+      const isFatal = error.code === '23505' || (error.status >= 400 && error.status < 500 && error.status !== 408 && error.status !== 429);
+      
+      if (attempts <= 1 || isFatal) {
+          if (isFatal && error.code === '23505') return null; // Retorna null suavemente para duplicatas
+          throw error;
+      }
 
-      console.warn(`⚠️ Tentativa falhou, restam ${attempts - 1}. Aguardando ${CONFIG.RETRY_DELAY}ms...`);
+      console.warn(`⚠️ Tentativa falhou (${error.message || error.code}), restam ${attempts - 1}. Aguardando ${CONFIG.RETRY_DELAY}ms...`);
       await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
 
       return withRetry(fn, attempts - 1);

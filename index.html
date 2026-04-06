@@ -13,10 +13,10 @@
       cdn.jsdelivr.net unpkg.com cdnjs.cloudflare.com blob:;
     style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdnjs.cloudflare.com;
     font-src 'self' fonts.gstatic.com cdn.jsdelivr.net cdnjs.cloudflare.com;
-    img-src 'self' data: *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net;
+    img-src 'self' data: *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net *.adtrafficquality.google;
     connect-src 'self' https://puzzlebtc.canalqb.com.br https://canalqb.github.io 
       https://*.supabase.co https://blockchain.info https://*.google.com https://*.doubleclick.net 
-      https://*.google https://*.google-analytics.com https://*.googlesyndication.com cdn.jsdelivr.net;
+      https://*.google https://*.google-analytics.com https://*.googlesyndication.com *.adtrafficquality.google cdn.jsdelivr.net;
     frame-src 'self' *.google.com *.googlesyndication.com *.doubleclick.net *.adtrafficquality.google;
     worker-src 'self' blob:;
     child-src 'self' blob:;
@@ -1042,7 +1042,8 @@
       <div class="preset-row">
         <label for="presetBits" class="preset-label"><i class="fas fa-layer-group"></i> Puzzle:</label>
         <select class="form-select" id="presetBits" aria-label="Selecionar quantidade de bits">
-          <option value="70" selected>Puzzle 71 (2^70 a 2^71 - 1)</option>
+          <option value="9" selected>Puzzle 10 (2^9 a 2^10 - 1)</option>
+          <option value="70">Puzzle 71 (2^70 a 2^71 - 1)</option>
           <option value="71">Puzzle 72 (2^71 a 2^72 - 1)</option>
           <option value="72">Puzzle 73 (2^72 a 2^73 - 1)</option>
           <option value="73">Puzzle 74 (2^73 a 2^74 - 1)</option>
@@ -1953,8 +1954,6 @@
   <script src="js/gdpr-consent-analytics.js?v=20260330-1109" defer></script>
   <script src="js/script_random_pisca.js?v=20260330-1109" defer></script>
   <script src="js/btc-wallet-balances.js?v=20260330-1109" defer></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762"
-    crossorigin="anonymous"></script>
 
   <!-- Debug Disabler - PRIMEIRO PARA OTIMIZAR MEMÓRIA -->
   <script src="js/debug-disabler.js?v=20260330-1109"></script>
@@ -2035,10 +2034,7 @@
             ${type === 'success' ? '✅' : type === 'warning' ? '⚠️' : type === 'error' ? '❌' : 'ℹ️'}
           </span>
           <span>${message}</span>
-        </div>
-      `;
-
-        // Adicionar ao container
+        </div>`;
         container.appendChild(toast);
 
         // Auto-remove após 5 segundos
@@ -2116,10 +2112,11 @@
 
   <!-- Database Status Manager Script -->
   <script>
-    /**
+     /**
      * Database Status Manager
-     * Gerencia a exibição do status do banco de dados Supabase
+     * Gerenciado via script dedicado.
      */
+
     (function () {
       'use strict';
 

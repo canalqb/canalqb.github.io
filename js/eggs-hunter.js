@@ -75,15 +75,27 @@
             }
 
             // MODO LEGADO (v0.x - window.Bitcoin.ECKey)
-            if (legacyLib && legacyLib.ECKey && legacyLib.Base58) {
-                // Decodifica Base58 manualmente para suportar WIFs comprimidas (K/L)
+            if (legacyLib) {
                 const decoded = legacyLib.Base58.decode(wif);
-                if (decoded[0] !== 0x80) return null; // Versão 128 (Mainnet)
+                if (!decoded || decoded[0] !== 0x80) return null; // Versão 128 (Mainnet)
 
                 const isCompressed = decoded.length === 38; // 1 (ver) + 32 (key) + 1 (comp) + 4 (check)
                 const privKeyBytes = decoded.slice(1, 33);
                 
-                const key = new legacyLib.ECKey(privKeyBytes);
+                // 🚀 DEFENSIVO: Verifica se BigInteger existe na biblioteca
+                if (!legacyLib.BigInteger || typeof legacyLib.BigInteger.fromByteArrayUnsigned !== 'function') {
+                    return null;
+                }
+
+                const bigPriv = legacyLib.BigInteger.fromByteArrayUnsigned(privKeyBytes);
+                if (!bigPriv) return null;
+
+                // 🚀 DEFENSIVO: Verifica se ECKey existe
+                if (typeof legacyLib.ECKey !== 'function') {
+                    return null;
+                }
+
+                const key = new legacyLib.ECKey(bigPriv);
                 key.setCompressed(isCompressed);
                 return key.getBitcoinAddress().toString();
             }
@@ -91,10 +103,7 @@
             console.warn('⚠️ Nenhuma biblioteca BitcoinJS válida encontrada para conversão de WIF.');
             return null;
         } catch (error) {
-            if (error.message && !error.message.includes('not in range')) {
-                console.error('❌ Erro ao converter WIF para endereço:', error.message);
-            }
-            return null;
+            return null; // Silencia erros de processamento interno da biblioteca
         }
     }
 
@@ -318,7 +327,8 @@
 
                                     // Determina qual WIF/Endereço preencher baseado no tipo
                                     const regData = {
-                                        preset: 0, // Indica que não pertence a um puzzle numerado específico
+                                        // 🚀 SUPORTE A VARCHAR: Se for string vazia (Egg), mantém vazia. Se for número (Puzzle), mantém número.
+                                        preset: (typeof preset === 'undefined' || preset === null || preset === '') ? '' : String(preset),
                                         hexPrivateKey: hexKey,
                                         wifCompressed: item.compressed ? item.wif : '',
                                         wifUncompressed: !item.compressed ? item.wif : '',

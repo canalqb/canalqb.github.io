@@ -683,15 +683,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 🚀 MODAL APENAS PARA MODOS SEQUENCIAIS (H/V)
     const mode = getMode();
+    const hModal = document.getElementById('preset-progress-modal');
+    const vModal = document.getElementById('vertical-progress-modal');
+
     if (mode === 'horizontal' && window.presetExpressoAtivo && presetRunning) {
+      if (vModal) vModal.style.display = 'none';
       createProgressModal();
     } else if (mode === 'vertical' && presetRunning) {
+      if (hModal) hModal.style.display = 'none';
       createVerticalProgressModal();
     } else {
-      // 🚀 GARANTE que modais de sincronização não apareçam em modo Aleatório
-      const hModal = document.getElementById('preset-progress-modal');
       if (hModal) hModal.style.display = 'none';
-      const vModal = document.getElementById('vertical-progress-modal');
       if (vModal) vModal.style.display = 'none';
     }
     const speed = parseInt(document.getElementById('speed')?.value || 50);
@@ -829,8 +831,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const saved = localStorage.getItem('modal-pos-' + storageKey);
       if (saved) {
         const pos = JSON.parse(saved);
-        el.style.left = pos.left + 'px';
-        el.style.top = pos.top + 'px';
+        
+        // 🚀 SEGURANÇA: Garante que a posição salva esteja dentro da tela atual
+        const safeLeft = Math.max(0, Math.min(window.innerWidth - 300, pos.left));
+        const safeTop = Math.max(0, Math.min(window.innerHeight - 100, pos.top));
+        
+        el.style.left = safeLeft + 'px';
+        el.style.top = safeTop + 'px';
         el.style.right = 'auto';
         el.style.bottom = 'auto';
         el.style.position = 'fixed';
@@ -874,7 +881,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateVerticalProgressUI(count) {
     const modal = document.getElementById('vertical-progress-modal');
-    if (!modal || modal.style.display === 'none') return;
+    if (!modal) return;
+    
+    // Se estiver rodando vertical, garante que está visível
+    if (presetRunning && getMode() === 'vertical') {
+        modal.style.display = 'block';
+    }
 
     const barEl = document.getElementById('v-progress-bar');
     const textEl = document.getElementById('v-progress-linhas');
@@ -1166,6 +1178,12 @@ document.addEventListener('DOMContentLoaded', () => {
     currentInicio = dbInicio;
     currentFim = dbFim;
     linhasProcessadas = 0;
+
+    // 🚀 SINCRONIZAÇÃO HUD: Garante que o valor inicial apareça no painel (Ref: Anexo 3)
+    const hexValEl = document.getElementById('hexValue');
+    if (hexValEl && dbInicio) {
+        hexValEl.textContent = dbInicio.replace(/^0+/, '') || '0';
+    }
   });
 
   window.addEventListener('presetReset', () => {

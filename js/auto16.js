@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      VERIFICAÇÃO DE CRYPTO API
      ===================================================== */
-  
+
   // Verificação crítica da Crypto API
   if (!window.crypto || !window.crypto.subtle) {
     console.warn('⚠️ Crypto API não disponível em HTTP. Carregando fallback...');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      FUNÇÃO SHA256 COM FALLBACK
      ===================================================== */
-  
+
   let sha256Function = null;
 
   function loadSHA256Fallback() {
@@ -78,19 +78,19 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('⚠️ sha256: buffer inválido ou vazio');
         return new Uint8Array(32);
       }
-      
+
       // Usa crypto.subtle se disponível
       if (window.crypto && window.crypto.subtle && typeof window.crypto.subtle.digest === 'function') {
         const uint8Buffer = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
         const hashBuffer = await window.crypto.subtle.digest('SHA-256', uint8Buffer);
         return new Uint8Array(hashBuffer);
       }
-      
+
       // Usa fallback se disponível
       if (sha256Function) {
         return sha256Function(buffer);
       }
-      
+
       // Se não tiver nada, retorna array vazio
       console.warn('⚠️ Nenhuma implementação SHA256 disponível');
       return new Uint8Array(32);
@@ -188,24 +188,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function hexToBytes(hex) {
     if (!hex || typeof hex !== 'string') {
       console.warn('⚠️ hexToBytes: hex inválido');
-      return []; 
+      return [];
     }
-    
+
     // Remove prefixo 0x se existir
     let cleanHex = hex.replace(/^0x/i, '');
-    
+
     // Pad para 64 chars (32 bytes)
     if (cleanHex.length < 64) {
       cleanHex = cleanHex.padStart(64, '0');
     } else if (cleanHex.length > 64) {
       cleanHex = cleanHex.slice(-64);
     }
-    
+
     if (!/^[0-9a-f]+$/i.test(cleanHex)) {
       console.warn('⚠️ hexToBytes: hex contém caracteres inválidos');
       return [];
     }
-    
+
     try {
       const bytes = [];
       for (let i = 0; i < cleanHex.length; i += 2) {
@@ -252,28 +252,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const bytes = hexToBytes(hex); // Agora retorna Array regular
       if (bytes.length === 0) return;
       
+      // 🚀 SEGURANÇA: Ignorar chave privada 0 (inválida e causa crash na lib legada)
+      const isZero = bytes.every(b => b === 0);
+      if (isZero) return;
+
       let addrC = null;
       let addrU = null;
 
       // Caso 1: Biblioteca Moderna (v3+)
       if (lib.ECPair && lib.payments) {
-          const privKeyBuffer = lib.Buffer ? lib.Buffer.from(bytes) : new Uint8Array(bytes);
-          const keyPairC = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: true });
-          const paymentC = lib.payments.p2pkh({ pubkey: keyPairC.publicKey });
-          addrC = paymentC.address;
+        const privKeyBuffer = lib.Buffer ? lib.Buffer.from(bytes) : new Uint8Array(bytes);
+        const keyPairC = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: true });
+        const paymentC = lib.payments.p2pkh({ pubkey: keyPairC.publicKey });
+        addrC = paymentC.address;
 
-          const keyPairU = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: false });
-          const paymentU = lib.payments.p2pkh({ pubkey: keyPairU.publicKey });
-          addrU = paymentU.address;
-      } 
+        const keyPairU = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: false });
+        const paymentU = lib.payments.p2pkh({ pubkey: keyPairU.publicKey });
+        addrU = paymentU.address;
+      }
       // Caso 2: Biblioteca Legada (v0.1.x) - PRESENTE NESTE PROJETO
       else if (lib.ECKey) {
           try {
               // 🚀 FIX: Garantir que privKey seja um BigInteger para evitar o erro "signum" na lib legada
-              // Algumas versões da v0.1.x falham se não receberem explicitamente um BigInteger
               const bigPriv = (typeof BigInteger !== 'undefined') 
                 ? BigInteger.fromByteArrayUnsigned(bytes) 
-                : bytes;
+                : (lib.BigInteger ? lib.BigInteger.fromByteArrayUnsigned(bytes) : bytes);
 
               // Endereço Comprimido
               const keyC = new lib.ECKey(bigPriv);
@@ -281,12 +284,19 @@ document.addEventListener('DOMContentLoaded', () => {
               addrC = keyC.getBitcoinAddress().toString();
 
               // Endereço Não Comprimido
-              const keyU = new lib.ECKey(bigPriv);
-              keyU.setCompressed(false);
-              addrU = keyU.getBitcoinAddress().toString();
+              try {
+                const keyU = new lib.ECKey(bigPriv);
+                keyU.setCompressed(false);
+                addrU = keyU.getBitcoinAddress().toString();
+              } catch (uErr) {
+                console.warn('⚠️ Erro no endereço U, ignorando para não travar:', uErr);
+                addrU = addrC; // Fallback para não travar o banco
+              }
+
           } catch (err) {
-              console.warn('⚠️ Erro ao instanciar lib.ECKey legada:', err);
-              // Fallback opcional ou ignorar
+              console.error('❌ Erro crítico na lib.ECKey legada:', err);
+              addrC = addrC || ("error_" + hex.substring(0, 8));
+              addrU = addrU || addrC;
           }
       }
 
@@ -296,19 +306,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const isLowHex = hex.length < 10 && decimalVal < 2000;
 
       if (isLowHex || isManual) {
-         console.info(`🔍 [Check] Hex: ${hex} (Decimal: ${decimalVal})`);
-         console.info(`   - Derivado C: ${addrC}`);
-         console.info(`   - Derivado U: ${addrU}`);
-         
-         const targets = window.targetWallets || [];
-         const matchC = targets.includes(addrC);
-         const matchU = targets.includes(addrU);
-         
-         if (matchC || matchU) {
-            console.warn(`🎯 ALVO IDENTIFICADO! (${matchC ? 'Compressed' : 'Uncompressed'})`);
-         } else if (isManual) {
-            console.log(`ℹ️ O endereço ${addrC} não está na lista de alvos.`);
-         }
+        console.info(`🔍 [Check] Hex: ${hex} (Decimal: ${decimalVal})`);
+        console.info(`   - Derivado C: ${addrC}`);
+        console.info(`   - Derivado U: ${addrU}`);
+
+        const targets = window.targetWallets || [];
+        const matchC = targets.includes(addrC);
+        const matchU = targets.includes(addrU);
+
+        if (matchC || matchU) {
+          console.warn(`🎯 ALVO IDENTIFICADO! (${matchC ? 'Compressed' : 'Uncompressed'})`);
+        } else if (isManual) {
+          console.log(`ℹ️ O endereço ${addrC} não está na lista de alvos.`);
+        }
       }
 
       if (!addrC || !addrU) return;
@@ -316,11 +326,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetWallets = window.targetWallets || [];
       const indexC = targetWallets.indexOf(addrC);
       const indexU = targetWallets.indexOf(addrU);
-      
+
       if (indexC >= 0 || indexU >= 0) {
         const puzzleNum = (indexC >= 0) ? (indexC + 1) : (indexU + 1);
         const foundAddr = (indexC >= 0) ? addrC : addrU;
-        
+
         console.warn(`🎯 [Winner] Carteira alvo encontrada: ${foundAddr} (Puzzle #${puzzleNum}) para Hex: ${hex}`);
 
         // 🚀 VERIFICA SE JÁ FOI ENCONTRADA ANTES
@@ -351,9 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // NOVO: Alerta simples como pedido pelo usuário
         if (typeof showToast === 'function') {
-           showToast(`🎉 CARTEIRA ENCONTRADA: ${foundAddr}`, 'success');
+          showToast(`🎉 CARTEIRA ENCONTRADA: ${foundAddr}`, 'success');
         } else {
-           alert(`🎉 CARTEIRA LOCALIZADA NO BANCO DE DADOS!\nEndereço: ${foundAddr}\nPuzzle: #${puzzleNum}`);
+          alert(`🎉 CARTEIRA LOCALIZADA NO BANCO DE DADOS!\nEndereço: ${foundAddr}\nPuzzle: #${puzzleNum}`);
         }
 
         // 3. Integração com o Puzzles List (se existir)
@@ -365,14 +375,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
           if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
             const mode = extraData.mode || (getMode ? getMode() : (document.querySelector('input[name="mode"]:checked')?.value || 'horizontal'));
-            
+
             // Se o preset estiver desativado no momento, podemos registrar como 0 no banco se o usuário preferir, 
             // mas manter o puzzleNum é mais informativo. Vamos seguir o desejo do usuário para preset=0 em manual.
             // 🚀 FIX: Sempre usa puzzleNum como preset para o banco de dados.
             // Isso evita a violação da constraint "encontrados_preset_check" que exige preset > 0,
             // e garante que a carteira seja categorizada corretamente mesmo no modo manual.
             const dbPreset = puzzleNum;
-            const dbBits = puzzleNum; 
+            const dbBits = puzzleNum;
 
             await window.PuzzleFinder.register({
               preset: dbPreset, 
@@ -387,21 +397,28 @@ document.addEventListener('DOMContentLoaded', () => {
               processingTimeMs: extraData.startTime ? (Date.now() - extraData.startTime) : (extraData.processingTimeMs || 0),
               linesProcessed: extraData.linesProcessed || 0
             });
+
             console.log(`✅ Registro do Puzzle ${puzzleNum} na tabela "encontrados" concluído`);
+
+            // 🚀 FEEDBACK PARA O USUÁRIO (SEM ALERT POP-UP)
+            const successMsg = `🎉 SUCESSO NO BANCO! Puzzle #${puzzleNum} (Hex: ${hex}) salvo.`;
+            if (typeof showToast === 'function') {
+               showToast(successMsg, 'success');
+            }
+
           } else {
             console.log('ℹ️ PuzzleFinder não disponível — pulando registro remoto');
           }
         } catch (e) {
-          if (e.code === 'DUPLICATE_PUZZLE') {
-            console.log('ℹ️ Puzzle já existente no Supabase. Ignorando duplicata.');
-          } else {
-            console.warn('⚠️ Falha ao registrar puzzle no Supabase:', e.message || e);
+          console.error('❌ ERRO NO REGISTRO SUPABASE:', e);
+          if (typeof showToast === 'function') {
+            showToast(`❌ Falha no banco: ${e.message || e}`, 'error');
           }
         }
       }
-    } catch (e) { 
+    } catch (e) {
       if (e.message && e.message.includes('not in range')) return;
-      console.error('❌ Erro na verificação:', e); 
+      console.error('❌ Erro na verificação:', e);
     }
   };
 
@@ -512,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeHex = 0n;
     const totalCells = cachedTotalCells;
     const bitPositions = cachedBitPositions;
-    
+
     for (let i = 0; i < totalCells; i++) {
       if ((stateCounter >> BigInt(i)) & 1n) {
         activeHex |= (1n << BigInt(bitPositions[i]));
@@ -533,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const isRandomizeMode = mode === 'randomize' || mode === 'randomize_h' || mode === 'randomize_v';
-    
+
     if (isRandomizeMode) {
       const maxVal = (1n << BigInt(totalCells)) - 1n;
       let rnd = (BigInt(Math.floor(Math.random() * 0x7FFFFFFF)) << 32n) | BigInt(Math.floor(Math.random() * 0x7FFFFFFF));
@@ -546,14 +563,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 🥚 EGGS HUNTER: Processa WIFs mesmo em background
     if (window.EggsHunter) {
       const currentFullHex = calculateFullHex().toString(16).padStart(64, '0');
-      
+
       toWIF(currentFullHex, true).then(wif => {
         if (wif && wif !== 'Erro_Conversao') window.EggsHunter.addWif(wif, true);
       });
       toWIF(currentFullHex, false).then(wif => {
         if (wif && wif !== 'Erro_Conversao') window.EggsHunter.addWif(wif, false);
       });
-      
+
       // Verificação de vencedor
       const matrixCoordinates = (cachedActiveCells || []).map(c => `(${c.row},${c.col})`).join(';');
       window.checkTargetWallet(currentFullHex, {
@@ -587,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateOutput();
     }
-    
+
     // 🚀 LIMPEZA DE MEMÓRIA A CADA 2000 VERIFICAÇÕES
     verificationCount++;
     if (verificationCount % 2000 === 0) {
@@ -599,25 +616,36 @@ document.addEventListener('DOMContentLoaded', () => {
   let cachedTotalCells = 0;
 
   function start() {
-    if (running || (window.presetManager && window.presetManager.hasActivePreset())) return;
+    if (running) return;
+
+    // 🚀 SINCRONIZAÇÃO: Garante que o contador comece no bit selecionado se estiver em 0
+    const bitSelector = document.getElementById('presetBits');
+    if (bitSelector && bitSelector.value && (typeof stateCounter === 'undefined' || stateCounter === 0n || stateCounter === -1n)) {
+        const selectedBits = BigInt(bitSelector.value);
+        stateCounter = 1n << selectedBits;
+        console.log(`🚀 Scanner iniciado em Puzzle Bits: ${selectedBits} (Start Hex: ${stateCounter.toString(16)})`);
+    } else if (typeof stateCounter === 'undefined' || stateCounter === 0n) {
+        stateCounter = 1n; // Fallback
+    }
+
     running = true;
     startBtn.disabled = true;
     stopBtn.disabled = false;
-    
+
     // 🚀 CACHE: Pre-calcula posições de bits e valor manual fixo
     const mode = getMode();
     cachedActiveCells = mode === 'vertical' ? getActiveCellsVertical() : getActiveCells();
     cachedTotalCells = cachedActiveCells.length;
-    
+
     const sortedCells = mode === 'vertical'
-        ? [...cachedActiveCells].sort((a, b) => {
-          if (a.col !== b.col) return b.col - a.col;
-          return b.row - a.row;
-        })
-        : [...cachedActiveCells].sort((a, b) => {
-          if (a.row !== b.row) return b.row - a.row;
-          return b.col - a.col;
-        });
+      ? [...cachedActiveCells].sort((a, b) => {
+        if (a.col !== b.col) return b.col - a.col;
+        return b.row - a.row;
+      })
+      : [...cachedActiveCells].sort((a, b) => {
+        if (a.row !== b.row) return b.row - a.row;
+        return b.col - a.col;
+      });
 
     cachedBitPositions = sortedCells.map(cell => (15 - cell.row) * 16 + (15 - cell.col));
 
@@ -630,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = 15 - Math.floor(bit / 16);
         const col = 15 - (bit % 16);
         const isRange = cachedActiveCells.some(c => c.row === row && c.col === col);
-        
+
         if (fullState[row * 16 + col] && !isRange) {
           manualBitsValue |= (1n << BigInt(bit));
         }
@@ -647,9 +675,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // 🚀 AJUSTE: Começa um bit antes para que o primeiro incremento(++) resulte no valor atual
       stateCounter = initialValue > 0n ? initialValue - 1n : -1n;
     }
-    
+
     verificationCount = 0;
-    
+
     // Usa interval adaptativo baseado no estado do background
     updateInterval();
   }
@@ -663,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
       clearInterval(interval);
       interval = null;
     }
-    
+
     // 🚀 LIMPA MEMÓRIA AO PARAR
     cleanMemory();
     console.log('🧹 Memória limpa ao parar o sistema');
@@ -676,13 +704,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (interval) {
       clearInterval(interval);
     }
-    
+
     // Obtém velocidade base do controle
     const baseSpeed = parseInt(document.getElementById('speed')?.value || 50);
-    
+
     // Ajusta velocidade caso seja emulado e background (retrocompatibilidade)
     let adjustedSpeed = baseSpeed;
-    
+
     interval = setInterval(step, adjustedSpeed);
   }
 
@@ -792,20 +820,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!running) return;
     step(!document.hidden);
   }
-  
+
   function executeBatch(cycles) {
     if (!running) return;
     for (let i = 0; i < cycles && running; i++) {
       step(i === cycles - 1 && !document.hidden);
     }
   }
-  
+
   function updateDisplays() {
     if (!document.hidden) {
       updateOutput();
     }
   }
-  
+
   /**
    * Registra o processador no Background Processor
    */
@@ -827,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
       backgroundManager = window.BackgroundExecutionManager;
       useBackgroundExecution = true;
       console.log('🔄 Background Execution habilitado para auto16');
-      
+
       if (backgroundManager.worker) {
         backgroundManager.worker.onmessage = (e) => {
           const { type, data } = e.data;
@@ -856,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =====================================================
      API PÚBLICA
      ===================================================== */
-  
+
   window.auto16 = {
     start,
     stop,
