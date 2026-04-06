@@ -898,6 +898,18 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  line-height: 1.2;
+  flex-wrap: wrap;
+}
+
+.footer-modal .modal-header h2 i {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.footer-modal .modal-header h2 span {
+  flex: 1;
+  min-width: 0;
 }
 
 .footer-modal .modal-close-btn {
@@ -933,6 +945,115 @@
 .footer-modal .page-content {
   line-height: 1.6;
   color: var(--text-primary, #1f2937);
+}
+
+/* Estilos específicos para conteúdo da página About */
+.footer-modal .page-content .hero-section {
+  text-align: center;
+  padding: 30px 0;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.footer-modal .page-content .hero-section h1 {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 12px;
+}
+
+.footer-modal .page-content .hero-section .subtitle {
+  font-size: 16px;
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+}
+
+.footer-modal .page-content .control-card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.footer-modal .page-content .control-card h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-modal .page-content .control-card h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 12px;
+}
+
+.footer-modal .page-content .control-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 16px;
+}
+
+.footer-modal .page-content .control-card ul {
+  margin: 16px 0;
+  padding-left: 20px;
+}
+
+.footer-modal .page-content .control-card li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 8px;
+}
+
+.footer-modal .page-content .control-card a {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-modal .page-content .control-card a:hover {
+  text-decoration: underline;
+}
+
+.footer-modal .page-content .text-center {
+  text-align: center;
+}
+
+.footer-modal .page-content .btn-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer-modal .page-content .btn-start {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+}
+
+.footer-modal .page-content .btn-start:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.footer-modal .page-content .mt-5 {
+  margin-top: 30px;
 }
 
 .footer-modal .page-content h1,
