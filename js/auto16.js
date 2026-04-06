@@ -237,19 +237,39 @@ document.addEventListener('DOMContentLoaded', () => {
   window.checkTargetWallet = async function (hex, extraData = {}) {
     if (!window.targetWallets || !hex) return;
     try {
-      const lib = window.bitcoin || window.bitcoinjs;
-      if (!lib || !lib.ECPair) return;
+      // 🚀 SUPORTE A BIBLIOTECAS MÚLTIPLAS (MODERNA OU LEGADA)
+      const lib = window.Bitcoin || window.bitcoin || window.bitcoinjs;
+      if (!lib) return;
 
       const bytes = hexToBytes(hex);
-      const privKeyBuffer = lib.Buffer ? lib.Buffer.from(bytes) : bytes;
+      let addrC = null;
+      let addrU = null;
 
-      // 1. Derivar Par de Chaves Comprimido
-      const keyPairC = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: true });
-      const { address: addrC } = lib.payments.p2pkh({ pubkey: keyPairC.publicKey });
+      // Caso 1: Biblioteca Moderna (v3+)
+      if (lib.ECPair && lib.payments) {
+          const privKeyBuffer = lib.Buffer ? lib.Buffer.from(bytes) : bytes;
+          const keyPairC = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: true });
+          const paymentC = lib.payments.p2pkh({ pubkey: keyPairC.publicKey });
+          addrC = paymentC.address;
 
-      // 2. Derivar Par de Chaves Não Comprimido
-      const keyPairU = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: false });
-      const { address: addrU } = lib.payments.p2pkh({ pubkey: keyPairU.publicKey });
+          const keyPairU = lib.ECPair.fromPrivateKey(privKeyBuffer, { compressed: false });
+          const paymentU = lib.payments.p2pkh({ pubkey: keyPairU.publicKey });
+          addrU = paymentU.address;
+      } 
+      // Caso 2: Biblioteca Legada (v0.1.x) - PRESENTE NESTE PROJETO
+      else if (lib.ECKey) {
+          // Endereço Comprimido
+          const keyC = new lib.ECKey(bytes);
+          keyC.setCompressed(true);
+          addrC = keyC.getBitcoinAddress().toString();
+
+          // Endereço Não Comprimido
+          const keyU = new lib.ECKey(bytes);
+          keyU.setCompressed(false);
+          addrU = keyU.getBitcoinAddress().toString();
+      }
+
+      if (!addrC || !addrU) return;
 
       const targetWallets = window.targetWallets;
       const indexC = targetWallets.indexOf(addrC);

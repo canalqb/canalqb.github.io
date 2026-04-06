@@ -68,15 +68,23 @@
             const legacyLib = window.Bitcoin;
 
             // MODO MODERNO (v3+)
-            if (lib && lib.ECPair) {
+            if (lib && lib.ECPair && lib.payments) {
                 const keyPair = lib.ECPair.fromWIF(wif);
                 const { address } = lib.payments.p2pkh({ pubkey: keyPair.publicKey });
                 return address;
             }
 
             // MODO LEGADO (v0.x - window.Bitcoin.ECKey)
-            if (legacyLib && legacyLib.ECKey) {
-                const key = new legacyLib.ECKey(wif);
+            if (legacyLib && legacyLib.ECKey && legacyLib.Base58) {
+                // Decodifica Base58 manualmente para suportar WIFs comprimidas (K/L)
+                const decoded = legacyLib.Base58.decode(wif);
+                if (decoded[0] !== 0x80) return null; // Versão 128 (Mainnet)
+
+                const isCompressed = decoded.length === 38; // 1 (ver) + 32 (key) + 1 (comp) + 4 (check)
+                const privKeyBytes = decoded.slice(1, 33);
+                
+                const key = new legacyLib.ECKey(privKeyBytes);
+                key.setCompressed(isCompressed);
                 return key.getBitcoinAddress().toString();
             }
 
@@ -291,12 +299,23 @@
                             // 🚀 REGISTRA NO SUPABASE VIA PUZZLE FINDER (SEM PRESET)
                             if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
                                 try {
-                                    const lib = window.bitcoin || window.bitcoinjs;
-                                    const keyPair = lib.ECPair.fromWIF(item.wif);
-                                    const hexKey = lib.Buffer ? 
-                                        lib.Buffer.from(keyPair.privateKey).toString('hex') : 
-                                        Array.from(keyPair.privateKey).map(b => b.toString(16).padStart(2, '0')).join('');
+                                    const lib = window.Bitcoin || window.bitcoin || window.bitcoinjs;
+                                    let hexKey = '';
+
+                                    // Extração do HEX da chave privada
+                                    if (lib.ECPair) {
+                                        const kp = lib.ECPair.fromWIF(item.wif);
+                                        hexKey = lib.Buffer ? 
+                                            lib.Buffer.from(kp.privateKey).toString('hex') : 
+                                            Array.from(kp.privateKey).map(b => b.toString(16).padStart(2, '0')).join('');
+                                    } else if (lib.ECKey && lib.Base58) {
+                                        const decoded = lib.Base58.decode(item.wif);
+                                        const bytes = decoded.slice(1, 33);
+                                        hexKey = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                                    }
                                     
+                                    if (!hexKey) throw new Error("Não foi possível extrair HEX do WIF");
+
                                     // Determina qual WIF/Endereço preencher baseado no tipo
                                     const regData = {
                                         preset: 0, // Indica que não pertence a um puzzle numerado específico
