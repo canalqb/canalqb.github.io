@@ -7,8 +7,7 @@
 
 # ----- User Agents Globais -----
 User-agent: *
-Allow: /
-Crawl-delay: 1
+Allow: / 
 
 # ----- Googlebot Específico -----
 User-agent: Googlebot
