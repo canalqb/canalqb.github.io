@@ -159,6 +159,17 @@
       modal.insertBefore(header, modal.firstChild);
     }
 
+    // Garante que o botão X exista (especialmente para eggs-modal)
+    let closeBtn = header.querySelector('.modal-close-btn');
+    if (!closeBtn) {
+      closeBtn = document.createElement('button');
+      closeBtn.className = 'modal-close-btn';
+      closeBtn.innerHTML = '×';
+      closeBtn.setAttribute('aria-label', 'Fechar modal');
+      closeBtn.onclick = () => hideModal(modal.id);
+      header.appendChild(closeBtn);
+    }
+
     // Verifica se tem body
     let body = modal.querySelector('.modal-body');
     if (!body) {
@@ -166,13 +177,12 @@
       body.className = 'modal-body';
       
       // Move conteúdo existente para o body
-      while (modal.children.length > 1) {
-        if (modal.children[1] !== header) {
-          body.appendChild(modal.children[1]);
-        } else {
-          modal.removeChild(modal.children[1]);
+      const children = Array.from(modal.children);
+      children.forEach(child => {
+        if (child !== header) {
+          body.appendChild(child);
         }
-      }
+      });
       
       modal.appendChild(body);
     }

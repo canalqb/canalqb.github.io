@@ -22,7 +22,15 @@
   z-index: 10000;
   font-family: inherit;
   max-height: 90vh;
+  max-width: 95vw;
+  width: auto;
+  height: auto;
+  min-width: 300px;
+  min-height: 200px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  resize: both;
 }
 
 /* Backdrop padrão */
@@ -263,13 +271,17 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-color, #e5e7eb);
   z-index: 10002;
-  min-width: 500px;
-  max-width: 90vw;
-  max-height: 85vh;
+  min-width: 400px;
+  max-width: 95vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
   overflow: hidden;
   display: none;
+  resize: both;
 }
 
+/* Header padrão do Eggs Modal */
 #eggs-modal .modal-header {
   padding: 25px;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
@@ -279,6 +291,7 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
   border-radius: 20px 20px 0 0;
+  flex-shrink: 0;
 }
 
 #eggs-modal .modal-header h2 {
@@ -291,31 +304,35 @@
   gap: 12px;
 }
 
-#eggs-modal .modal-header button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+/* Garantir que o botão X exista e seja visível */
+#eggs-modal .modal-close-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
   cursor: pointer;
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
   font-size: 24px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
-#eggs-modal .modal-header button:hover {
-  background: rgba(255, 255, 255, 0.3);
+#eggs-modal .modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
   transform: scale(1.05);
 }
 
 #eggs-modal .modal-body {
   padding: 25px;
-  max-height: calc(85vh - 120px);
+  max-height: calc(90vh - 120px);
   overflow-y: auto;
+  flex: 1;
+  width: 100%;
 }
 
 #eggs-backdrop {
@@ -835,6 +852,179 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ============================================================
+   MODAIS DO FOOTER - Páginas em Modal
+   ============================================================ */
+
+.footer-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-card, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color, #e5e7eb);
+  z-index: 10006;
+  min-width: 500px;
+  max-width: 95vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  overflow: hidden;
+  display: none;
+  resize: both;
+}
+
+.footer-modal .modal-header {
+  padding: 25px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
+  flex-shrink: 0;
+}
+
+.footer-modal .modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-modal .modal-close-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 24px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.footer-modal .modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.05);
+}
+
+.footer-modal .modal-body {
+  padding: 30px;
+  max-height: calc(90vh - 120px);
+  overflow-y: auto;
+  flex: 1;
+  width: 100%;
+}
+
+.footer-modal .page-content {
+  line-height: 1.6;
+  color: var(--text-primary, #1f2937);
+}
+
+.footer-modal .page-content h1,
+.footer-modal .page-content h2,
+.footer-modal .page-content h3,
+.footer-modal .page-content h4,
+.footer-modal .page-content h5,
+.footer-modal .page-content h6 {
+  color: var(--text-primary, #1f2937);
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.footer-modal .page-content p {
+  margin-bottom: 16px;
+}
+
+.footer-modal .page-content a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.footer-modal .page-content a:hover {
+  text-decoration: underline;
+}
+
+.footer-modal .page-content ul,
+.footer-modal .page-content ol {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.footer-modal .page-content li {
+  margin-bottom: 8px;
+}
+
+/* Loading content */
+.footer-modal .loading-content {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color, #e5e7eb);
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error content */
+.footer-modal .error-content {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary, #6b7280);
+}
+
+.footer-modal .error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.footer-modal .error-content h3 {
+  color: #ef4444;
+  margin-bottom: 8px;
+}
+
+.footer-modal .error-content p {
+  margin-bottom: 8px;
+}
+
+.footer-modal .error-content button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.footer-modal .error-content button:hover {
+  background: #2563eb;
 }
 
 /* ============================================================
