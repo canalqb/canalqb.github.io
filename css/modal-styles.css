@@ -1,0 +1,856 @@
+/* ============================================================
+   MODAL STYLES UNIFIED - Layouts Corrigidos
+   ============================================================ */
+
+/* Reset para todos os modais */
+[id*="modal"],
+[id*="modal"] *,
+[id*="modal"] *::before,
+[id*="modal"] *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base para todos os modais */
+[id*="modal"] {
+  position: fixed;
+  background: var(--bg-card, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color, #e5e7eb);
+  z-index: 10000;
+  font-family: inherit;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Backdrop padrão */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+/* ============================================================
+   MODAL DE PUZZLES - Sistema de 3 Estados
+   ============================================================ */
+
+/* Estado 1: OCULTO */
+#puzzlesListModal {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10001;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  color: white;
+  border: none;
+  box-shadow: -8px 0 35px rgba(59, 130, 246, 0.4), -4px 0 15px rgba(6, 182, 212, 0.2);
+  max-width: 400px;
+  width: 320px;
+}
+
+/* Estado 2: TICKET LATERAL */
+#puzzlesListModal.ticket {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  cursor: pointer;
+  transform: translateY(-50%) translateX(0);
+  transition: all 0.3s ease;
+}
+
+#puzzlesListModal.ticket:hover {
+  box-shadow: -8px 0 35px rgba(59, 130, 246, 0.55), -4px 0 15px rgba(6, 182, 212, 0.3);
+  transform: translateY(-50%) translateX(0) scale(1.05);
+}
+
+/* Estado 3: EXPANDIDO */
+#puzzlesListModal.expanded {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  border-radius: 20px;
+  width: 420px;
+  max-width: 90vw;
+  max-height: 85vh;
+  cursor: default;
+  transform: translateY(-50%) translateX(0);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#puzzlesListModal.expanded::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: -1;
+  backdrop-filter: blur(4px);
+}
+
+/* Header do Modal */
+.puzzles-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px;
+  transition: all 0.3s ease;
+}
+
+#puzzlesListModal.ticket .puzzles-modal-header {
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-bottom: none;
+}
+
+#puzzlesListModal.expanded .puzzles-modal-header {
+  border-radius: 20px 20px 0 0;
+  cursor: default;
+  border-bottom: 2px solid rgba(255, 152, 0, 0.25);
+}
+
+#puzzlesListModal.ticket .puzzles-modal-header:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  transform: scale(1.05);
+}
+
+/* Título */
+#puzzlesModalTitle {
+  font-size: 1.3em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  margin: 0;
+}
+
+#puzzlesListModal.ticket #puzzlesModalTitle {
+  font-size: 0;
+}
+
+#puzzlesListModal.expanded #puzzlesModalTitle {
+  font-size: 1.3em;
+}
+
+/* Botões */
+.puzzles-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.puzzles-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+#puzzlesListModal.ticket .puzzles-collapse-btn {
+  display: flex;
+}
+
+#puzzlesListModal.expanded .puzzles-collapse-btn {
+  display: none;
+}
+
+#puzzlesListModal.ticket .puzzles-close-btn {
+  display: none;
+}
+
+#puzzlesListModal.expanded .puzzles-close-btn {
+  display: flex;
+}
+
+/* Ticket Content */
+.ticket-content {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.ticket-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.ticket-text {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+#puzzlesListModal.expanded .ticket-content {
+  display: none;
+}
+
+#puzzlesListModal.ticket .ticket-content {
+  display: flex;
+}
+
+/* Corpo do Modal */
+.puzzles-modal-body {
+  padding: 25px;
+  max-height: calc(85vh - 100px);
+  overflow-y: auto;
+  display: none;
+}
+
+#puzzlesListModal.expanded .puzzles-modal-body {
+  display: block;
+}
+
+/* Count Badge */
+.puzzle-count-badge {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* ============================================================
+   MODAL DE EGGS HUNTER
+   ============================================================ */
+
+#eggs-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-card, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color, #e5e7eb);
+  z-index: 10002;
+  min-width: 500px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow: hidden;
+  display: none;
+}
+
+#eggs-modal .modal-header {
+  padding: 25px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+
+#eggs-modal .modal-header h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#eggs-modal .modal-header button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#eggs-modal .modal-header button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+#eggs-modal .modal-body {
+  padding: 25px;
+  max-height: calc(85vh - 120px);
+  overflow-y: auto;
+}
+
+#eggs-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  backdrop-filter: blur(4px);
+  display: none;
+}
+
+/* ============================================================
+   MODAL DE PROGRESSO
+   ============================================================ */
+
+#preset-progress-modal {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  z-index: 10003;
+  min-width: 300px;
+  max-width: 90vw;
+  display: none;
+}
+
+#preset-progress-modal .progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#preset-progress-modal .progress-header span {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#preset-progress-modal .progress-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+#preset-progress-modal .progress-header button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#preset-progress-modal .progress-info {
+  margin-bottom: 12px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+#preset-progress-modal .progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#preset-progress-modal .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* ============================================================
+   MODAL DE CARTEIRAS ENCONTRADAS
+   ============================================================ */
+
+#found-wallets-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  z-index: 10004;
+  min-width: 500px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#found-wallets-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#found-wallets-modal .modal-header h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#found-wallets-modal .modal-header button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+
+#found-wallets-modal .modal-header button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+#found-wallets-modal .wallet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#found-wallets-modal .wallet-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+#found-wallets-modal .wallet-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+#found-wallets-modal .wallet-item h4 {
+  margin: 0 0 8px 0;
+  color: #fbbf24;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#found-wallets-modal .wallet-item p {
+  margin: 4px 0;
+  font-size: 13px;
+  opacity: 0.9;
+  word-break: break-all;
+}
+
+#found-wallets-modal .wallet-item .address {
+  color: #60a5fa;
+  font-family: 'Courier New', monospace;
+}
+
+#found-wallets-modal .wallet-item .wif {
+  color: #34d399;
+  font-family: 'Courier New', monospace;
+}
+
+#found-wallets-modal .wallet-item .puzzle {
+  color: #f87171;
+  font-weight: 600;
+}
+
+/* ============================================================
+   GDPR BANNER
+   ============================================================ */
+
+#gdpr-consent-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: white;
+  padding: 20px;
+  z-index: 10005;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+#gdpr-consent-banner .banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+#gdpr-consent-banner .banner-text h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+#gdpr-consent-banner .banner-text p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+#gdpr-consent-banner .banner-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#gdpr-consent-banner .btn-accept {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+#gdpr-consent-banner .btn-accept:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+#gdpr-consent-banner .btn-reject {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#gdpr-consent-banner .btn-reject:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#gdpr-consent-banner #consent-close-banner {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+#gdpr-consent-banner #consent-close-banner:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  #puzzlesListModal.ticket {
+    width: 64px;
+    height: 64px;
+  }
+  
+  #puzzlesListModal.expanded {
+    width: 92%;
+    max-width: 650px;
+  }
+  
+  #eggs-modal,
+  #found-wallets-modal {
+    min-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  #puzzlesListModal.ticket {
+    width: 56px;
+    height: 56px;
+  }
+  
+  #puzzlesListModal.expanded {
+    width: 95%;
+    max-width: 95vw;
+    max-height: 90vh;
+  }
+  
+  #puzzlesListModal.expanded .puzzles-modal-header {
+    padding: 15px;
+  }
+  
+  #puzzlesListModal.expanded #puzzlesModalTitle {
+    font-size: 1.15em;
+  }
+  
+  #puzzlesListModal.expanded .puzzles-modal-body {
+    padding: 15px;
+    max-height: calc(90vh - 80px);
+  }
+  
+  #eggs-modal,
+  #found-wallets-modal {
+    min-width: 300px;
+    max-width: 95vw;
+  }
+  
+  #eggs-modal .modal-header,
+  #found-wallets-modal .modal-header {
+    padding: 20px;
+  }
+  
+  #eggs-modal .modal-header h2,
+  #found-wallets-modal .modal-header h3 {
+    font-size: 20px;
+  }
+  
+  #eggs-modal .modal-body,
+  #found-wallets-modal .modal-body {
+    padding: 20px;
+  }
+  
+  #preset-progress-modal {
+    right: 10px;
+    bottom: 10px;
+    min-width: 250px;
+  }
+  
+  #gdpr-consent-banner .banner-content {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  #gdpr-consent-banner .banner-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  #puzzlesListModal.ticket {
+    width: 48px;
+    height: 48px;
+  }
+  
+  #puzzlesListModal.expanded {
+    width: 98%;
+    max-height: 92vh;
+  }
+  
+  #eggs-modal,
+  #found-wallets-modal {
+    min-width: 280px;
+    max-width: 98vw;
+  }
+  
+  #eggs-modal .modal-header,
+  #found-wallets-modal .modal-header {
+    padding: 15px;
+  }
+  
+  #eggs-modal .modal-header h2,
+  #found-wallets-modal .modal-header h3 {
+    font-size: 18px;
+  }
+  
+  #eggs-modal .modal-body,
+  #found-wallets-modal .modal-body {
+    padding: 15px;
+  }
+  
+  #preset-progress-modal {
+    right: 5px;
+    bottom: 5px;
+    min-width: 200px;
+    padding: 15px;
+  }
+  
+  #gdpr-consent-banner {
+    padding: 15px;
+  }
+  
+  #gdpr-consent-banner .banner-text h2 {
+    font-size: 16px;
+  }
+  
+  #gdpr-consent-banner .banner-text p {
+    font-size: 13px;
+  }
+  
+  #gdpr-consent-banner .banner-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  #gdpr-consent-banner .btn-accept,
+  #gdpr-consent-banner .btn-reject {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   TEMA ESCURO
+   ============================================================ */
+
+[data-theme="dark"] #eggs-modal {
+  background: #1f2937;
+  border-color: #374151;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] #found-wallets-modal {
+  background: rgba(17, 24, 39, 0.95);
+  border-color: #374151;
+}
+
+[data-theme="dark"] #preset-progress-modal {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+/* ============================================================
+   ANIMAÇÕES
+   ============================================================ */
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#eggs-modal,
+#found-wallets-modal {
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+#preset-progress-modal {
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+.modal-backdrop {
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+/* ============================================================
+   REDUÇÃO DE MOVIMENTO (ACESSIBILIDADE)
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  [id*="modal"],
+  [id*="modal"] *,
+  [id*="modal"] *::before,
+  [id*="modal"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   IMPRESSÃO
+   ============================================================ */
+
+@media print {
+  [id*="modal"] {
+    display: none !important;
+  }
+  
+  .modal-backdrop {
+    display: none !important;
+  }
+  
+  #gdpr-consent-banner {
+    display: none !important;
+  }
+}

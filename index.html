@@ -45,6 +45,7 @@
 
   <!-- CSS Customizado -->
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/modal-styles.css" />
   <link rel="stylesheet" href="css/adsense-styles.css" />
   <link rel="stylesheet" href="css/gdpr-consent-styles.css" />
   <link rel="stylesheet" href="css/database-status.css" />
@@ -1321,11 +1322,7 @@
         data-ad-format="auto" data-full-width-responsive="true"></ins>
     </div>
   </div>
-
-  <!-- MODAL DE PUZZLES - SISTEMA DE 3 ESTADOS -->
-  MODAL DE PUZZLES - SISTEMA DE 3 ESTADOS
-  Oculto → Ticket Lateral → Modal Expandido
-  ============================================ -->
+  <!-- MODAL DE PUZZLES - SISTEMA DE 3 ESTADOS: Oculto → Ticket Lateral → Modal Expandido -->
 
   <!-- Modal de Puzzles Encontrados -->
   <div id="puzzlesListModal" role="dialog" aria-modal="true" aria-labelledby="puzzlesModalTitle" aria-hidden="true">
@@ -1335,11 +1332,11 @@
       aria-label="Expandir lista de puzzles">
 
       <!-- Título e Ícone -->
-      <h5 id="puzzlesModalTitle">
+      <div id="puzzlesModalTitle">
         <i class="fas fa-trophy"></i>
         <span id="puzzlesCountText">0 puzzles encontrados</span>
         <span class="puzzle-count-badge" id="puzzlesCountBadge">0</span>
-      </h5>
+      </div>
 
       <!-- Botões do Header -->
       <div class="puzzles-header-buttons">
@@ -1360,8 +1357,8 @@
 
     <!-- Conteúdo do Ticket (visível apenas no modo ticket) -->
     <div class="ticket-content" id="ticketContent">
-      <p>Clique para ver detalhes</p>
-      <p class="highlight">🎯 Puzzles Bitcoin!</p>
+      <div class="ticket-icon">🎯</div>
+      <div class="ticket-text">Puzzles!</div>
     </div>
 
     <!-- Corpo do Modal (lista expandida - visível apenas no modo expandido) -->
@@ -1882,11 +1879,21 @@
             const html = await response.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            const main = doc.querySelector('main');
+            const content = doc.querySelector('main');
+            const targetMain = document.querySelector('main');
 
-            if (main) {
-              document.querySelector('main').innerHTML = main.innerHTML;
+            if (content && targetMain) {
+              targetMain.innerHTML = content.innerHTML;
               window.history.pushState({}, '', href);
+              window.scrollTo(0, 0);
+            } else if (targetMain && doc.body && doc.body.innerHTML.trim() !== "") {
+              // Suporte para fragmentos sem a tag <main>
+              targetMain.innerHTML = doc.body.innerHTML;
+              window.history.pushState({}, '', href);
+              window.scrollTo(0, 0);
+            } else {
+              // Fallback: se não encontrar onde inserir ou o conteúdo estiver vazio, navega normalmente
+              window.location.href = href;
             }
           } catch (error) {
             console.error('Erro ao carregar conteúdo:', error);
