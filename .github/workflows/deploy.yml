@@ -99,6 +99,7 @@ jobs:
             "$DOMAIN/indexnow.txt"
             "$DOMAIN/401d492e65fa47d3b34a0d4aaf092636.txt"
             "$DOMAIN/tiktokrRJTPPZZNWru5GcCtxpYZCrYh4A82OaC.txt"
+            "$DOMAIN/tiktokf67su8HbnwXcIXJ3UOrtD6vzaoU6rCc7.txt"
           )
 
           echo "🔗 Enviando URLs para IndexNow..."
