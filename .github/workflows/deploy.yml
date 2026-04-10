@@ -63,7 +63,7 @@ jobs:
       - name: Prepare Dist
         run: |
           mkdir dist
-          cp -r css js paginas regras examples index.html ads.txt favicon.ico canalqb.ico robots.txt sitemap.xml .nojekyll dist/ 2>/dev/null || true
+          cp -r css js paginas regras examples index.html ads.txt favicon.ico canalqb.ico robots.txt sitemap.xml .nojekyll tiktokrRJTPPZZNWru5GcCtxpYZCrYh4A82OaC.txt dist/ 2>/dev/null || true
           # Garantir que arquivos IndexNow estejam incluídos
           cp paginas/indexnow.txt dist/
           cp paginas/401d492e65fa47d3b34a0d4aaf092636.txt dist/
