@@ -93,7 +93,7 @@ jobs:
       - name: Submit URLs to IndexNow
         run: |
           INDEXNOW_KEY=${{ secrets.INDEXNOW_KEY }}
-          DOMAIN="https://puzzlebtc.canalqb.com.br"
+          DOMAIN="https://puzzle.canalqb.com.br"
 
           # Lista de URLs a enviar
           URLS=(
