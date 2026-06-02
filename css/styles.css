@@ -26,8 +26,8 @@
   --bg-card: #ffffff;
 
   /* Texto */
-  --text-primary: #1a2332;
-  --text-secondary: #4a5568;
+  --text-primary: #333333;
+  --text-secondary: #555555;
   --text-muted: #718096;
 
   /* Borda */
@@ -520,14 +520,14 @@ body:has(#dev-banner.dev-banner-hidden) {
    HERO SECTION
    ============================================================ */
 .hero-section {
-  background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 50%, #c3e6cb 100%);
-  color: #1b5e20;
+  background: linear-gradient(135deg, var(--green-100) 0%, var(--green-200) 50%, var(--green-200) 100%);
+  color: var(--green-700);
   padding: 20px 24px;
   border-radius: var(--radius-xl);
   text-align: center;
   margin-bottom: 14px;
   box-shadow: 0 4px 20px rgba(40, 167, 69, 0.18), 0 1px 4px rgba(40, 167, 69, 0.1);
-  border: 1.5px solid #a5d6a7;
+  border: 1.5px solid var(--green-500);
   position: relative;
   overflow: hidden;
 }
@@ -539,7 +539,7 @@ body:has(#dev-banner.dev-banner-hidden) {
   top: -10px;
   font-size: 90px;
   opacity: 0.07;
-  color: #28a745;
+  color: var(--green-500);
   font-weight: 900;
   line-height: 1;
   pointer-events: none;
@@ -549,7 +549,7 @@ body:has(#dev-banner.dev-banner-hidden) {
   font-size: 1.7em;
   font-weight: 800;
   margin-bottom: 4px;
-  color: #1b5e20;
+  color: var(--green-700);
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
@@ -557,7 +557,7 @@ body:has(#dev-banner.dev-banner-hidden) {
 .hero-section .subtitle {
   font-size: 0.96em;
   margin: 0;
-  color: #2e7d32;
+  color: var(--green-600);
   font-weight: 500;
   opacity: 0.9;
 }
@@ -1712,15 +1712,15 @@ body.keep-alive {
    NAVBAR (navbar de rodapé)
    ============================================================ */
 .site-footer {
-  background: linear-gradient(135deg, #1a2332 0%, #2c3e50 100%);
-  color: #c9d1d9;
+  background: var(--bg-secondary, #f8fafb);
+  color: var(--text-primary, #333333);
   padding: 24px 0 16px;
   margin-top: 30px;
   border-top: 2px solid var(--green-500);
 }
 
 .footer-nav a {
-  color: #c9d1d9;
+  color: var(--text-primary, #333333);
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.88em;
@@ -1737,7 +1737,7 @@ body.keep-alive {
 
 .site-footer .text-center {
   font-size: 0.82em;
-  color: #8b949e;
+  color: var(--text-secondary, #555555);
   line-height: 1.6;
 }
 
@@ -2764,6 +2764,23 @@ body.keep-alive {
 [data-theme="dark"] .puzzles-modal-body::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #ffa726, #ff9800);
   border-color: #2d2d2d;
+}
+
+[data-theme="dark"] .site-footer {
+  background: var(--bg-secondary, #161b22);
+  color: var(--text-primary, #e6edf3);
+}
+
+[data-theme="dark"] .footer-nav a {
+  color: var(--text-primary, #e6edf3);
+}
+
+[data-theme="dark"] .site-footer .text-center {
+  color: var(--text-secondary, #c9d1d9);
+}
+
+[data-theme="dark"] .output-label {
+  color: var(--text-secondary, #c9d1d9);
 }
 
 /* ============================================================

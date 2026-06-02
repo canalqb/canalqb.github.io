@@ -15,14 +15,14 @@
   align-items: center;
   gap: 8px;
   padding: 10px 15px; /* CORREÇÃO: Maior padding para melhor visibilidade */
-  background: rgba(0, 0, 0, 0.9); /* CORREÇÃO: Mais opaco */
-  color: white;
+  background: var(--bg-card, #ffffff);
+  color: var(--text-primary, #333333);
   border-radius: 25px; /* CORREÇÃO: Mais arredondado */
   font-size: 13px; /* CORREÇÃO: Maior para melhor legibilidade */
   font-weight: 600;
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* CORREÇÃO: Sombra para destaque */
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* CORREÇÃO: Sombra para destaque */
   transition: all 0.3s ease;
   opacity: 0;
   transform: translateY(-20px);
@@ -37,16 +37,19 @@
 
 .background-indicator.processing {
   background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
   border-color: rgba(40, 167, 69, 0.3);
 }
 
 .background-indicator.paused {
   background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: white;
   border-color: rgba(255, 193, 7, 0.3);
 }
 
 .background-indicator.stopped {
   background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
   border-color: rgba(220, 53, 69, 0.3);
 }
 
@@ -107,16 +110,34 @@
 }
 
 /* Tema escuro */
-@media (prefers-color-scheme: dark) {
-  .background-indicator {
-    background: rgba(30, 30, 30, 0.9);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  .background-status-badge {
-    background: rgba(30, 30, 30, 0.9);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
+[data-theme="dark"] .background-indicator {
+  background: var(--bg-card, #1c2128);
+  border-color: var(--border-color, #30363d);
+  color: var(--text-primary, #e6edf3);
+}
+
+[data-theme="dark"] .background-indicator.processing {
+  background: var(--green-500, #28a745);
+  border-color: rgba(40, 167, 69, 0.4);
+  color: white;
+}
+
+[data-theme="dark"] .background-indicator.paused {
+  background: #ffc107;
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #000;
+}
+
+[data-theme="dark"] .background-indicator.stopped {
+  background: #d32f2f;
+  border-color: rgba(211, 47, 47, 0.4);
+  color: white;
+}
+
+[data-theme="dark"] .background-status-badge {
+  background: var(--bg-card, #1c2128);
+  border-color: var(--border-color, #30363d);
+  color: var(--text-primary, #e6edf3);
 }
 
 /* Animação de entrada */

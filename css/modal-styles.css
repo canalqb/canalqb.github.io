@@ -69,10 +69,10 @@
   visibility: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 10001;
-  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
   color: white;
   border: none;
-  box-shadow: -8px 0 35px rgba(59, 130, 246, 0.4), -4px 0 15px rgba(6, 182, 212, 0.2);
+  box-shadow: -8px 0 35px rgba(40, 167, 69, 0.4), -4px 0 15px rgba(40, 167, 69, 0.2);
   max-width: 400px;
   width: 320px;
 }
@@ -91,7 +91,7 @@
 }
 
 #puzzlesListModal.ticket:hover {
-  box-shadow: -8px 0 35px rgba(59, 130, 246, 0.55), -4px 0 15px rgba(6, 182, 212, 0.3);
+  box-shadow: -8px 0 35px rgba(40, 167, 69, 0.55), -4px 0 15px rgba(40, 167, 69, 0.3);
   transform: translateY(-50%) translateX(0) scale(1.05);
 }
 
@@ -150,7 +150,7 @@
 }
 
 #puzzlesListModal.ticket .puzzles-modal-header:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
   transform: scale(1.05);
 }
 
@@ -351,7 +351,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
+  z-index: 10001;
   backdrop-filter: blur(4px);
   display: none;
 }
@@ -437,18 +437,18 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.95);
-  color: white;
+  background: var(--bg-card, #ffffff);
+  color: var(--text-primary, #333333);
   padding: 30px;
   border-radius: 20px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   z-index: 10004;
   min-width: 500px;
   max-width: 90vw;
   max-height: 85vh;
   overflow-y: auto;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 #found-wallets-modal .modal-header {
@@ -457,23 +457,23 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
 }
 
 #found-wallets-modal .modal-header h3 {
   margin: 0;
   font-size: 24px;
   font-weight: bold;
-  color: #fbbf24;
+  color: var(--green-600, #218838);
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 #found-wallets-modal .modal-header button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: white;
+  background: var(--bg-secondary, #f8fafb);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-secondary, #555555);
   cursor: pointer;
   border-radius: 50%;
   width: 36px;
@@ -486,7 +486,7 @@
 }
 
 #found-wallets-modal .modal-header button:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--bg-tertiary, #edf0f2);
   transform: scale(1.05);
 }
 
@@ -497,21 +497,21 @@
 }
 
 #found-wallets-modal .wallet-item {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary, #f8fafb);
   padding: 15px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-color, #e2e8f0);
   transition: all 0.2s ease;
 }
 
 #found-wallets-modal .wallet-item:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--bg-tertiary, #edf0f2);
   transform: translateY(-2px);
 }
 
 #found-wallets-modal .wallet-item h4 {
   margin: 0 0 8px 0;
-  color: #fbbf24;
+  color: var(--green-600, #218838);
   font-size: 16px;
   font-weight: 600;
 }
@@ -519,22 +519,22 @@
 #found-wallets-modal .wallet-item p {
   margin: 4px 0;
   font-size: 13px;
-  opacity: 0.9;
+  color: var(--text-secondary, #555555);
   word-break: break-all;
 }
 
 #found-wallets-modal .wallet-item .address {
-  color: #60a5fa;
+  color: var(--green-600, #218838);
   font-family: 'Courier New', monospace;
 }
 
 #found-wallets-modal .wallet-item .wif {
-  color: #34d399;
+  color: var(--green-500, #28a745);
   font-family: 'Courier New', monospace;
 }
 
 #found-wallets-modal .wallet-item .puzzle {
-  color: #f87171;
+  color: var(--text-primary, #333333);
   font-weight: 600;
 }
 
@@ -547,12 +547,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  color: white;
+  background: var(--bg-card, #ffffff);
+  color: var(--text-primary, #333333);
   padding: 20px;
   z-index: 10005;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.3);
+  border-top: 2px solid var(--green-500, #28a745);
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.15);
 }
 
 #gdpr-consent-banner .banner-content {
@@ -568,13 +568,13 @@
   margin: 0 0 8px 0;
   font-size: 18px;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary, #333333);
 }
 
 #gdpr-consent-banner .banner-text p {
   margin: 0;
   font-size: 14px;
-  opacity: 0.9;
+  color: var(--text-secondary, #555555);
   line-height: 1.5;
 }
 
@@ -602,8 +602,8 @@
 
 #gdpr-consent-banner .btn-reject {
   background: transparent;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-secondary, #555555);
+  border: 1px solid var(--border-color, #e2e8f0);
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -611,13 +611,13 @@
 }
 
 #gdpr-consent-banner .btn-reject:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary, #f8fafb);
 }
 
 #gdpr-consent-banner #consent-close-banner {
   background: transparent;
   border: none;
-  color: white;
+  color: var(--text-secondary, #555555);
   cursor: pointer;
   font-size: 20px;
   padding: 0;
@@ -631,7 +631,7 @@
 }
 
 #gdpr-consent-banner #consent-close-banner:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary, #f8fafb);
 }
 
 /* ============================================================

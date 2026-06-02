@@ -114,7 +114,7 @@
 
 .database-info-label {
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-muted, #718096);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -123,7 +123,7 @@
 
 .database-info-value {
   font-size: 14px;
-  color: #1e293b;
+  color: var(--text-primary, #333333);
   font-weight: 500;
   word-break: break-all;
 }
@@ -131,13 +131,13 @@
 /* Hex display */
 .database-hex-display {
   font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  background: #f8fafc;
+  background: var(--bg-secondary, #f8fafb);
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   font-size: 11px;
   line-height: 1.4;
-  color: #374151;
+  color: var(--text-primary, #333333);
   position: relative;
   margin: 8px 0;
   word-break: break-all;
@@ -172,7 +172,7 @@
 }
 
 .database-progress-text {
-  color: #374151;
+  color: var(--text-primary, #333333);
   font-weight: 500;
 }
 
@@ -183,7 +183,7 @@
 }
 
 .database-progress-bar {
-  background: #e2e8f0;
+  background: var(--bg-tertiary, #e2e8f0);
   height: 12px;
   border-radius: 6px;
   overflow: hidden;
@@ -223,31 +223,32 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #f8fafc;
+  background: var(--bg-secondary, #f8fafb);
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
   font-size: 12px;
   transition: all 0.3s ease;
+  color: var(--text-primary);
 }
 
 .database-status-indicator:hover {
-  background: #e2e8f0;
+  background: var(--bg-tertiary, #e2e8f0);
   transform: translateY(-1px);
 }
 
 .database-status-indicator.online {
-  border-color: #28a745;
-  background: #f0fdf4;
+  border-color: var(--green-500, #28a745);
+  background: rgba(40, 167, 69, 0.1);
 }
 
 .database-status-indicator.syncing {
-  border-color: #f59e0b;
-  background: #fffbeb;
+  border-color: #ffc107;
+  background: rgba(255, 193, 7, 0.1);
 }
 
 .database-status-indicator.offline {
-  border-color: #ef4444;
-  background: #fef2f2;
+  border-color: #d32f2f;
+  background: rgba(211, 47, 47, 0.1);
 }
 
 .database-status-dot {
@@ -262,11 +263,11 @@
 }
 
 .database-status-dot.syncing {
-  background: #f59e0b;
+  background: #ffc107;
 }
 
 .database-status-dot.offline {
-  background: #ef4444;
+  background: #d32f2f;
 }
 
 /* Action buttons */
@@ -297,7 +298,8 @@
 }
 
 .database-status-btn.secondary {
-  background: linear-gradient(135deg, #64748b, #475569);
+  background: var(--bg-tertiary, #64748b);
+  color: var(--text-primary);
 }
 
 .database-status-btn:hover {
@@ -322,27 +324,27 @@
 }
 
 .database-status-alert.info {
-  background: #dbeafe;
-  border: 1px solid #bfdbfe;
-  color: #1e40af;
+  background: rgba(33, 150, 243, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.3);
+  color: #2196f3;
 }
 
 .database-status-alert.success {
-  background: #d1fae5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: var(--green-500, #28a745);
 }
 
 .database-status-alert.warning {
-  background: #fed7aa;
-  border: 1px solid #fdba74;
-  color: #92400e;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #f57c00;
 }
 
 .database-status-alert.error {
-  background: #fee2e2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
+  background: rgba(211, 47, 47, 0.1);
+  border: 1px solid rgba(211, 47, 47, 0.3);
+  color: #d32f2f;
 }
 
 /* Loading state */
@@ -351,14 +353,14 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  color: #64748b;
+  color: var(--text-muted, #718096);
 }
 
 .database-status-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #e2e8f0;
-  border-top: 2px solid #28a745;
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-top: 2px solid var(--green-500, #28a745);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 12px;
@@ -368,7 +370,7 @@
 .database-status-empty {
   text-align: center;
   padding: 40px;
-  color: #64748b;
+  color: var(--text-muted, #718096);
 }
 
 .database-status-empty-icon {
@@ -381,7 +383,7 @@
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #374151;
+  color: var(--text-primary, #333333);
 }
 
 .database-status-empty-description {
@@ -523,44 +525,33 @@
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .database-status-section {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    border-color: #475569;
-  }
-  
-  .database-info-card {
-    background: #334155;
-    border-color: #475569;
-  }
-  
-  .database-info-label {
-    color: #94a3b8;
-  }
-  
-  .database-info-value {
-    color: #f1f5f9;
-  }
-  
-  .database-hex-display {
-    background: #1e293b;
-    border-color: #475569;
-    color: #e2e8f0;
-  }
-  
-  .database-progress-label {
-    color: #e2e8f0;
-  }
-  
-  .database-status-indicator {
-    background: #334155;
-    border-color: #475569;
-    color: #e2e8f0;
-  }
-  
-  .database-status-indicator:hover {
-    background: #475569;
-  }
+[data-theme="dark"] .database-status-section {
+  background: var(--bg-card, #1c2128);
+  border-color: var(--border-color, #30363d);
+}
+
+[data-theme="dark"] .database-info-card {
+  background: var(--bg-primary, #0d1117);
+  border-color: var(--border-color, #30363d);
+}
+
+[data-theme="dark"] .database-hex-display::before {
+  background: var(--green-500, #28a745);
+}
+
+[data-theme="dark"] .database-status-indicator.online {
+  border-color: var(--green-500, #28a745);
+  background: rgba(40, 167, 69, 0.15);
+}
+
+[data-theme="dark"] .database-status-indicator.syncing {
+  border-color: #ffc107;
+  background: rgba(255, 193, 7, 0.15);
+}
+
+[data-theme="dark"] .database-status-indicator.offline {
+  border-color: #d32f2f;
+  background: rgba(211, 47, 47, 0.15);
 }
 
 /* Print styles */
