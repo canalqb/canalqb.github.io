@@ -64,7 +64,9 @@ jobs:
         run: |
           mkdir dist
           # Copia todos os arquivos principais
-          cp -r css js paginas regras examples index.html ads.txt favicon.ico canalqb.ico robots.txt sitemap.xml .nojekyll dist/ 2>/dev/null || true
+          cp -r css js paginas regras examples index.html landing.html ads.txt favicon.ico canalqb.ico robots.txt sitemap.xml .nojekyll dist/ 2>/dev/null || true
+          # Copia imagens da landing page
+          cp landing-*.png dist/ 2>/dev/null || true
           # Copia TODOS os arquivos .txt da raiz (incluindo futuros)
           find . -maxdepth 1 -name "*.txt" -not -path "./dist/*" -exec cp {} dist/ \; 2>/dev/null || true
           # Garantir que arquivos IndexNow estejam incluídos
