@@ -1,9 +1,10 @@
 /**
  * ========================================================================
- * EGGS HUNTER V2 - VERIFICADOR AVANÇADO DE SALDO EM WIFs
+ * EGGS HUNTER V3 - VERIFICADOR LEVE DE SALDO EM WIFs
  * ========================================================================
- * Sistema que acumula 1000 WIFs únicas antes de fazer verificação em lote.
- * Usa IndexedDB para armazenamento local temporário.
+ * Acumula WIFs temporariamente em IndexedDB (sem consumir memória RAM),
+ * consulta em pequenos lotes em segundo plano e descarta cada WIF após
+ * verificação. Se encontrar saldo, exibe modal com WIF e Address.
  */
 
 (function () {
@@ -11,9 +12,9 @@
 
     // 🥚 CONFIGURAÇÕES
     const CONFIG = {
-        MAX_WIFS_BEFORE_CHECK: 1000,  // Acumula 1000 WIFs antes de verificar
-        BATCH_SIZE: 20,               // Máximo de endereços por consulta API
-        CHECK_INTERVAL: 2000,         // Intervalo entre verificações (2s)
+        MAX_WIFS_BEFORE_CHECK: 50,    // Acumula 50 WIFs antes de verificar (leve)
+        BATCH_SIZE: 10,               // Endereços por consulta API (pequeno para não sobrecarregar)
+        CHECK_INTERVAL: 3000,         // Intervalo entre ciclos de verificação (3s)
         DB_NAME: 'EggsHunterDB',
         DB_VERSION: 1,
         STORE_NAME: 'wifs'
@@ -111,26 +112,12 @@
      * Adiciona WIF ao IndexedDB
      */
     async function addWifToDB(wif, compressed) {
-        if (!db) {
-            console.warn('⚠️ DB não inicializado');
-            return false;
-        }
+        if (!db) return false;
 
-        // 🚡 DEBUG: Log do WIF recebido
-        console.log(`🔍 [DEBUG] WIF recebido: ${wif.substring(0, 15)}... (comprimido: ${compressed})`);
-        
-        if (wif.includes('Erro')) {
-            console.warn('⚠️ WIF inválido ignorado pelo EggsHunter');
-            return false;
-        }
+        if (!wif || wif.includes('Erro')) return false;
 
         const address = wifToAddress(wif);
-        if (!address) {
-            console.warn(`⚠️ [DEBUG] Falha ao converter WIF para endereço: ${wif.substring(0, 20)}...`);
-            return false;
-        }
-
-        console.log(`✅ [DEBUG] WIF válido: ${wif.substring(0, 20)}... → ${address.substring(0, 15)}...`);
+        if (!address) return false;
 
         pendingWifs.push({
             address,
@@ -139,8 +126,38 @@
             timestamp: Date.now()
         });
 
-        // Retorna true de forma otimista, a gravação será em lote
         return true;
+    }
+
+    /**
+     * Deleta uma WIF do banco pelo address (descarta após consulta)
+     */
+    async function deleteWif(address) {
+        if (!db) return;
+        return new Promise((resolve) => {
+            const transaction = db.transaction([CONFIG.STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(CONFIG.STORE_NAME);
+            store.delete(address);
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => resolve();
+        });
+    }
+
+    /**
+     * Obtém as primeiras N WIFs armazenadas (para processamento incremental)
+     */
+    async function getFirstWifs(limit) {
+        if (!db) return [];
+        return new Promise((resolve) => {
+            const transaction = db.transaction([CONFIG.STORE_NAME], 'readonly');
+            const store = transaction.objectStore(CONFIG.STORE_NAME);
+            const request = store.getAll();
+            request.onsuccess = () => {
+                const all = request.result || [];
+                resolve(all.slice(0, limit));
+            };
+            request.onerror = () => resolve([]);
+        });
     }
 
     /**
@@ -150,18 +167,15 @@
         if (pendingWifs.length === 0 || isSavingBatch || !db) return;
 
         isSavingBatch = true;
-        // Processar lotes menores para manter a interface fluida
-        const batch = pendingWifs.splice(0, 1000);
+        const batch = pendingWifs.splice(0, 500);
 
         try {
             await new Promise((resolve, reject) => {
                 const transaction = db.transaction([CONFIG.STORE_NAME], 'readwrite');
                 const store = transaction.objectStore(CONFIG.STORE_NAME);
 
-                let addedCount = 0;
-
                 transaction.oncomplete = () => {
-                    totalWifsStored += addedCount;
+                    totalWifsStored += batch.length;
                     resolve();
                 };
 
@@ -170,10 +184,7 @@
                     resolve();
                 };
 
-                batch.forEach(item => {
-                    const request = store.put(item);
-                    request.onsuccess = () => { addedCount++; };
-                });
+                batch.forEach(item => store.put(item));
             });
         } catch (error) {
             console.error('❌ Erro em processPendingWifs:', error);
@@ -256,37 +267,31 @@
     }
 
     /**
-     * Processa verificação de saldo em lote
+     * Processa verificação de saldo — consulta lotes pequenos e descarta cada WIF após checar
      */
     async function processWifsBatch() {
         if (isChecking) return;
 
         const count = await countWifs();
 
-        // Só processa se tiver pelo menos 1000 WIFs
-        if (count < CONFIG.MAX_WIFS_BEFORE_CHECK) {
-            console.log(`📊 WIFs acumuladas: ${count}/${CONFIG.MAX_WIFS_BEFORE_CHECK}`);
-            return;
-        }
+        if (count < CONFIG.MAX_WIFS_BEFORE_CHECK) return;
 
         isChecking = true;
-        console.log(`🔍 Iniciando verificação de ${count} WIFs...`);
 
         try {
-            const allWifs = await getAllWifs();
-            const totalBatches = Math.ceil(allWifs.length / CONFIG.BATCH_SIZE);
-            let processed = 0;
+            // Pega um lote pequeno por vez (não carrega tudo em memória)
+            let batch = await getFirstWifs(CONFIG.BATCH_SIZE);
 
-            for (let i = 0; i < allWifs.length; i += CONFIG.BATCH_SIZE) {
-                const batch = allWifs.slice(i, i + CONFIG.BATCH_SIZE);
+            while (batch.length > 0) {
                 const addresses = batch.map(item => item.address);
 
                 try {
                     const balances = await checkBalances(addresses);
 
-                    // Verifica quais têm saldo
-                    batch.forEach(item => {
+                    // Verifica cada WIF individualmente
+                    for (const item of batch) {
                         const balanceData = balances[item.address];
+
                         if (balanceData && balanceData.final_balance > 0) {
                             const balanceBTC = (balanceData.final_balance / 1e8).toFixed(8);
 
@@ -298,84 +303,70 @@
                                 timestamp: new Date().toISOString()
                             });
 
-                            console.log(`🥚 [EGGS] SALDO ENCONTRADO! ${item.address} = ${balanceBTC} BTC`);
+                            console.log(`🥚 SALDO ENCONTRADO! ${item.address} = ${balanceBTC} BTC`);
 
-                            // 🚀 NOTIFICAÇÃO IMEDIATA
+                            // Notificação toast
                             if (typeof showToast === 'function') {
-                                showToast(`🎉 CARTEIRA COM SALDO ENCONTRADA! ${item.address} = ${balanceBTC} BTC`, 'success');
+                                showToast(`🎉 CARTEIRA COM SALDO! ${item.address} = ${balanceBTC} BTC`, 'success');
                             }
 
-                            // 🚀 REGISTRA NO SUPABASE VIA PUZZLE FINDER (SEM PRESET)
+                            // Registra no Supabase via PuzzleFinder
                             if (window.PuzzleFinder && typeof window.PuzzleFinder.register === 'function') {
                                 try {
                                     const lib = window.Bitcoin || window.bitcoin || window.bitcoinjs;
                                     let hexKey = '';
-
-                                    // Extração do HEX da chave privada
                                     if (lib.ECPair) {
                                         const kp = lib.ECPair.fromWIF(item.wif);
-                                        hexKey = lib.Buffer ? 
-                                            lib.Buffer.from(kp.privateKey).toString('hex') : 
+                                        hexKey = lib.Buffer ?
+                                            lib.Buffer.from(kp.privateKey).toString('hex') :
                                             Array.from(kp.privateKey).map(b => b.toString(16).padStart(2, '0')).join('');
                                     } else if (lib.ECKey && lib.Base58) {
                                         const decoded = lib.Base58.decode(item.wif);
                                         const bytes = decoded.slice(1, 33);
                                         hexKey = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
                                     }
-                                    
-                                    if (!hexKey) throw new Error("Não foi possível extrair HEX do WIF");
-
-                                    // Determina qual WIF/Endereço preencher baseado no tipo
-                                    const regData = {
-                                        // 🚀 SUPORTE A VARCHAR: Se for string vazia (Egg), mantém vazia. Se for número (Puzzle), mantém número.
-                                        preset: (typeof preset === 'undefined' || preset === null || preset === '') ? '' : String(preset),
-                                        hexPrivateKey: hexKey,
-                                        wifCompressed: item.compressed ? item.wif : '',
-                                        wifUncompressed: !item.compressed ? item.wif : '',
-                                        addressCompressed: item.compressed ? item.address : '',
-                                        addressUncompressed: !item.compressed ? item.address : '',
-                                        mode: 'horizontal', // Fallback obrigatório
-                                        matrixCoordinates: 'eggs-hunter',
-                                        processingTimeMs: 0,
-                                        linesProcessed: totalWifsStored
-                                    };
-
-                                    window.PuzzleFinder.register(regData).catch(e => {
-                                        if (e.code !== 'DUPLICATE_PUZZLE') {
-                                            console.warn('⚠️ Erro ao registrar Egg no Supabase:', e.message);
-                                        }
-                                    });
+                                    if (hexKey) {
+                                        window.PuzzleFinder.register({
+                                            preset: (typeof preset === 'undefined' || preset === null || preset === '') ? '' : String(preset),
+                                            hexPrivateKey: hexKey,
+                                            wifCompressed: item.compressed ? item.wif : '',
+                                            wifUncompressed: !item.compressed ? item.wif : '',
+                                            addressCompressed: item.compressed ? item.address : '',
+                                            addressUncompressed: !item.compressed ? item.address : '',
+                                            mode: 'horizontal',
+                                            matrixCoordinates: 'eggs-hunter',
+                                            processingTimeMs: 0,
+                                            linesProcessed: totalWifsStored
+                                        }).catch(() => {});
+                                    }
                                 } catch (e) {
                                     console.error('❌ Erro ao preparar registro de Egg:', e);
                                 }
                             }
                         }
-                    });
 
-                    processed += batch.length;
-                    const progress = ((processed / allWifs.length) * 100).toFixed(1);
-                    console.log(`📊 Progresso: ${progress}% (${processed}/${allWifs.length})`);
-
-                    // Aguarda 1 segundo entre lotes para não sobrecarregar a API
-                    if (i + CONFIG.BATCH_SIZE < allWifs.length) {
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        // Descarta a WIF após consulta (individual)
+                        await deleteWif(item.address);
                     }
 
                 } catch (error) {
+                    // Em caso de erro (429, rede), não descarta — tenta novamente no próximo ciclo
                     if (error && error.message && !error.message.includes('429') && !error.message.includes('Failed to fetch')) {
-                        console.error(`❌ Erro no lote ${Math.floor(i / CONFIG.BATCH_SIZE) + 1}:`, error);
+                        console.error('❌ Erro ao consultar lote:', error);
                     }
+                    break;
                 }
-            }
 
-            console.log(`✅ Verificação concluída! ${eggsFound.length} eggs encontrados.`);
+                // Mostra modal se encontrou algo
+                if (eggsFound.length > 0) {
+                    updateEggsModal();
+                }
 
-            // Limpa o banco após verificação
-            await clearWifsDB();
+                // Pausa entre lotes para não sobrecarregar a API
+                await new Promise(resolve => setTimeout(resolve, CONFIG.CHECK_INTERVAL));
 
-            // Atualiza o modal
-            if (eggsFound.length > 0) {
-                updateEggsModal();
+                // Pega próximo lote
+                batch = await getFirstWifs(CONFIG.BATCH_SIZE);
             }
 
         } catch (error) {
@@ -386,7 +377,7 @@
     }
 
     /**
-     * Cria o modal "Eggs"
+     * Cria o modal "Eggs" — usa z-index compatível com o sistema de modais
      */
     function createEggsModal() {
         let modal = document.getElementById('eggs-modal');
@@ -400,35 +391,35 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: var(--bg-card);
-      color: var(--text-primary);
+      background: var(--bg-card, #1a1a2e);
+      color: var(--text-primary, #e0e0e0);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: var(--shadow-lg);
-      z-index: 99999;
-      min-width: 700px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      z-index: 10002;
+      min-width: 600px;
       max-width: 90vw;
       max-height: 85vh;
       overflow-y: auto;
       font-family: inherit;
-      border: 2px solid var(--border-color);
+      border: 2px solid var(--border-color, #333);
     `;
 
         modal.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 28px; font-weight: bold; color: var(--accent-color);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color, #333); padding-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 28px; font-weight: bold; color: var(--accent-color, #ffd700);">
           🥚 EGGS ENCONTRADOS
         </h2>
         <button onclick="document.getElementById('eggs-modal').style.display='none'; document.getElementById('eggs-backdrop').style.display='none'" 
-                style="background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s; font-weight: bold; display: flex; align-items: center; justify-content: center;">
+                style="background: var(--bg-tertiary, #2a2a4a); border: 1px solid var(--border-color, #333); color: var(--text-primary, #e0e0e0); cursor: pointer; font-size: 24px; width: 40px; height: 40px; border-radius: 50%; transition: all 0.3s; font-weight: bold; display: flex; align-items: center; justify-content: center;">
           ×
         </button>
       </div>
       <div id="eggs-content" style="font-size: 14px;">
-        <p style="text-align: center; color: var(--text-muted); font-size: 16px;">Nenhum egg encontrado ainda...</p>
+        <p style="text-align: center; color: var(--text-muted, #888); font-size: 16px;">Nenhum egg encontrado ainda...</p>
       </div>
-      <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border-color); text-align: center; font-size: 12px; color: var(--text-muted);">
-        💡 O sistema acumula 1000 WIFs antes de verificar saldo
+      <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border-color, #333); text-align: center; font-size: 12px; color: var(--text-muted, #888);">
+        💡 O sistema acumula 50 WIFs em IndexedDB, consulta e descarta automaticamente
       </div>
     `;
 
@@ -445,7 +436,7 @@
       width: 100%;
       height: 100%;
       background: rgba(0,0,0,0.7);
-      z-index: 99998;
+      z-index: 10001;
       backdrop-filter: blur(5px);
     `;
         backdrop.onclick = () => {
@@ -463,42 +454,42 @@
         if (!content) return;
 
         if (eggsFound.length === 0) {
-            content.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 16px;">Nenhum egg encontrado ainda...</p>';
+            content.innerHTML = '<p style="text-align: center; color: var(--text-muted, #888); font-size: 16px;">Nenhum egg encontrado ainda...</p>';
             return;
         }
 
         let html = `
-      <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-color);">
+      <div style="background: var(--bg-tertiary, #2a2a4a); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-color, #333);">
         <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
-        <strong style="font-size: 24px; display: block; margin-bottom: 5px; color: var(--text-primary);">Total de Eggs: ${eggsFound.length}</strong>
-        <div style="font-size: 14px; color: var(--text-secondary);">Parabéns! Você encontrou carteiras com saldo!</div>
+        <strong style="font-size: 24px; display: block; margin-bottom: 5px; color: var(--text-primary, #e0e0e0);">Total de Eggs: ${eggsFound.length}</strong>
+        <div style="font-size: 14px; color: var(--text-secondary, #aaa);">Parabéns! Você encontrou carteiras com saldo!</div>
       </div>
     `;
 
         eggsFound.forEach((egg, index) => {
             html += `
-        <div style="background: var(--bg-secondary); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--accent-color); border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); transition: all 0.3s; cursor: pointer;" 
-             onmouseover="this.style.background='var(--bg-tertiary)'" 
-             onmouseout="this.style.background='var(--bg-secondary)'">
+        <div style="background: var(--bg-secondary, #222); padding: 18px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid var(--accent-color, #ffd700); border-top: 1px solid var(--border-color, #333); border-right: 1px solid var(--border-color, #333); border-bottom: 1px solid var(--border-color, #333); transition: all 0.3s; cursor: pointer;" 
+             onmouseover="this.style.background='var(--bg-tertiary, #2a2a4a)'" 
+             onmouseout="this.style.background='var(--bg-secondary, #222)'">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <strong style="font-size: 18px; color: var(--text-primary);">🥚 Egg #${index + 1}</strong>
-            <span style="background: var(--accent-color); color: white; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; box-shadow: var(--shadow-sm);">
+            <strong style="font-size: 18px; color: var(--text-primary, #e0e0e0);">🥚 Egg #${index + 1}</strong>
+            <span style="background: var(--accent-color, #ffd700); color: #111; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(255,215,0,0.3);">
               💰 ${egg.balance} BTC
             </span>
           </div>
-          <div style="background: var(--bg-primary); padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+          <div style="background: var(--bg-primary, #111); padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color, #333);">
             <div style="font-family: monospace; font-size: 13px; word-break: break-all; margin-bottom: 8px;">
-              <strong style="color: var(--accent-color);">Address:</strong><br>
-              <span style="color: var(--text-primary); user-select: all;">${egg.address}</span>
+              <strong style="color: var(--accent-color, #ffd700);">Address:</strong><br>
+              <span style="color: var(--text-primary, #e0e0e0); user-select: all;">${egg.address}</span>
             </div>
             <div style="font-family: monospace; font-size: 13px; word-break: break-all;">
-              <strong style="color: var(--accent-color);">WIF:</strong><br>
-              <span style="color: var(--text-primary); user-select: all;">${egg.wif}</span>
+              <strong style="color: var(--accent-color, #ffd700);">WIF:</strong><br>
+              <span style="color: var(--text-primary, #e0e0e0); user-select: all;">${egg.wif}</span>
             </div>
           </div>
-          <div style="font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between;">
-            <span><strong style="color: var(--text-secondary);">Tipo:</strong> ${egg.compressed ? '🔒 Comprimida' : '🔓 Não Comprimida'}</span>
-            <span><strong style="color: var(--text-secondary);">Data:</strong> ${new Date(egg.timestamp).toLocaleString('pt-BR')}</span>
+          <div style="font-size: 12px; color: var(--text-muted, #888); display: flex; justify-content: space-between;">
+            <span><strong style="color: var(--text-secondary, #aaa);">Tipo:</strong> ${egg.compressed ? '🔒 Comprimida' : '🔓 Não Comprimida'}</span>
+            <span><strong style="color: var(--text-secondary, #aaa);">Data:</strong> ${new Date(egg.timestamp).toLocaleString('pt-BR')}</span>
           </div>
         </div>
       `;
@@ -554,18 +545,16 @@
             pos3 = e.clientX;
             pos4 = e.clientY;
             
-            // Calcula novas posições
             let newTop = element.offsetTop - pos2;
             let newLeft = element.offsetLeft - pos1;
 
-            // Mantém dentro da tela (opcional)
             const padding = 10;
             newTop = Math.max(padding, Math.min(window.innerHeight - element.offsetHeight - padding, newTop));
             newLeft = Math.max(padding, Math.min(window.innerWidth - element.offsetWidth - padding, newLeft));
 
             element.style.top = newTop + "px";
             element.style.left = newLeft + "px";
-            element.style.bottom = "auto"; // Remove bottom fixo se houver
+            element.style.bottom = "auto";
         }
 
         function elementTouchDrag(e) {
@@ -601,7 +590,6 @@
         indicator = document.createElement('div');
         indicator.id = 'eggs-progress-indicator';
         
-        // Estrutura rica de modal
         indicator.innerHTML = `
             <div class="indicator-header">
                 <div class="header-info">
@@ -623,7 +611,6 @@
 
         document.body.appendChild(indicator);
         
-        // Torna arrastável
         makeDraggable(indicator);
     }
 
@@ -635,13 +622,13 @@
         if (!text) return;
 
         const count = await countWifs();
-        const percentage = ((count / CONFIG.MAX_WIFS_BEFORE_CHECK) * 100).toFixed(1);
 
         if (isChecking) {
             text.innerHTML = '🔍 Verificando saldos...';
         } else if (count >= CONFIG.MAX_WIFS_BEFORE_CHECK) {
             text.innerHTML = `✅ ${count} WIFs prontas para verificação`;
         } else {
+            const percentage = ((count / CONFIG.MAX_WIFS_BEFORE_CHECK) * 100).toFixed(0);
             text.innerHTML = `📊 ${count}/${CONFIG.MAX_WIFS_BEFORE_CHECK} WIFs (${percentage}%)`;
         }
     }
@@ -655,7 +642,7 @@
             createEggsModal();
             createProgressIndicator();
 
-            // Processa inserções em lote do DB a cada 500ms (ALTA PERFORMANCE)
+            // Processa inserções em lote do DB a cada 500ms
             setInterval(processPendingWifs, 500);
 
             // Atualiza indicador a cada 2 segundos
@@ -669,8 +656,7 @@
                 }
             }, 5000);
 
-            console.log('✅ Eggs Hunter V2 inicializado');
-            console.log(`📊 Acumulará ${CONFIG.MAX_WIFS_BEFORE_CHECK} WIFs antes de verificar`);
+            console.log('✅ Eggs Hunter V3 inicializado');
         } catch (error) {
             console.error('❌ Erro ao inicializar Eggs Hunter:', error);
         }

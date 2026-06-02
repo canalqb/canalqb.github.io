@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="CanalQB — Plataforma educacional líder em Bitcoin, criptografia e puzzles BTC. Ferramentas gratuitas, scripts prontos e conteúdo exclusivo por Rodrigo Moraes.">
+  <meta name="keywords"
+    content="bitcoin, bitcoin private key, gerador de chave privada bitcoin, puzzle bitcoin, puzzle 1000 btc, bitcoin puzzle 2025, criptografia bitcoin, blockchain, educação bitcoin, canalqb, rodrigo moraes, como funciona bitcoin, chave privada bitcoin, private key generator, bitcoin key generator, wif compressed, wif uncompressed, bitcoin cryptography, secp256k1, base58check, bitcoin wallet, desafio bitcoin, puzzle btc, hex to wif, bitcoin puzzle solver, ferramenta bitcoin gratuita, estudo criptomoedas, bitcoin Brasil, aprender bitcoin, btc puzzle challenge, bitcoin private key hex, gerador bitcoin online, matriz 16x16 bitcoin, bitcoin educational tool, open source bitcoin tool">
+  <meta name="author" content="Rodrigo Moraes — CanalQB">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:large">
+  <meta name="google-adsense-account" content="ca-pub-3614622181047762" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://canalqb.github.io/landing.html">
+  <meta property="og:site_name" content="CanalQB — Plataforma Educacional Bitcoin">
+  <meta property="og:title" content="CanalQB — Educação Bitcoin de Alto Nível | Ferramentas Gratuitas">
+  <meta property="og:description"
+    content="Descubra ferramentas educacionais premium para estudo de Bitcoin, criptografia e puzzles BTC. Conteúdo gratuito e exclusivo por Rodrigo Moraes.">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://canalqb.github.io/favicon.ico">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@CanalQB">
+  <meta name="twitter:creator" content="@CanalQB">
+  <meta name="twitter:title" content="CanalQB — Educação Bitcoin de Alto Nível | Ferramentas Gratuitas">
+  <meta name="twitter:description"
+    content="Plataforma educacional brasileira líder em Bitcoin, criptografia e puzzles BTC. Ferramentas gratuitas e conteúdo exclusivo.">
+  <link rel="canonical" href="https://canalqb.github.io/landing.html">
+  <title>CanalQB — Plataforma Educacional Bitcoin | Ferramentas, Scripts e Conteúdo Gratuito</title>
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://canalqb.github.io/#website",
+        "url": "https://canalqb.github.io/",
+        "name": "CanalQB — Plataforma Educacional Bitcoin",
+        "description": "Plataforma educacional brasileira líder em Bitcoin, criptografia e puzzles BTC.",
+        "inLanguage": "pt-BR",
+        "author": { "@id": "https://canalqb.github.io/#person" },
+        "publisher": { "@id": "https://canalqb.github.io/#organization" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://canalqb.github.io/#person",
+        "name": "Rodrigo Moraes",
+        "alternateName": "CanalQb",
+        "url": "https://canalqb.blogspot.com/",
+        "jobTitle": "Desenvolvedor e Educador em Bitcoin & Blockchain",
+        "nationality": { "@type": "Country", "name": "Brasil" },
+        "worksFor": { "@id": "https://canalqb.github.io/#organization" },
+        "sameAs": [
+          "https://canalqb.blogspot.com/",
+          "https://github.com/canalqb",
+          "https://canalqb.github.io/"
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://canalqb.github.io/#organization",
+        "name": "CanalQB",
+        "url": "https://canalqb.github.io/",
+        "logo": { "@type": "ImageObject", "url": "https://canalqb.github.io/favicon.ico" },
+        "sameAs": [
+          "https://canalqb.blogspot.com/",
+          "https://github.com/canalqb"
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://canalqb.github.io/landing.html#webpage",
+        "url": "https://canalqb.github.io/landing.html",
+        "name": "CanalQB — Plataforma Educacional Bitcoin | Ferramentas, Scripts e Conteúdo Gratuito",
+        "description": "Plataforma educacional brasileira líder em Bitcoin, criptografia e puzzles BTC. Ferramentas gratuitas, scripts prontos e conteúdo exclusivo por Rodrigo Moraes.",
+        "isPartOf": { "@id": "https://canalqb.github.io/#website" },
+        "about": [
+          { "@type": "Thing", "name": "Bitcoin" },
+          { "@type": "Thing", "name": "Criptografia" },
+          { "@type": "Thing", "name": "Blockchain" },
+          { "@type": "Thing", "name": "Private Keys" },
+          { "@type": "Thing", "name": "Puzzle Bitcoin" }
+        ],
+        "inLanguage": "pt-BR"
+      },
+      {
+        "@type": "LearningResource",
+        "@id": "https://canalqb.github.io/landing.html#learning",
+        "name": "Plataforma Educacional Bitcoin — CanalQB",
+        "url": "https://canalqb.github.io/landing.html",
+        "educationalLevel": "Beginner to Intermediate",
+        "learningResourceType": ["Interactive Tool", "Tutorial", "Simulation"],
+        "teaches": [
+          "Como funciona uma Private Key Bitcoin",
+          "Conversão entre formatos: HEX, WIF Comprimido, WIF Não Comprimido",
+          "Criptografia de curva elíptica (secp256k1)",
+          "O desafio criptográfico Puzzle 1000 BTC",
+          "Base58Check encoding",
+          "Geração segura de chaves privadas"
+        ],
+        "about": [
+          { "@type": "Thing", "name": "Bitcoin" },
+          { "@type": "Thing", "name": "Criptografia" },
+          { "@type": "Thing", "name": "Blockchain" }
+        ],
+        "author": { "@id": "https://canalqb.github.io/#person" },
+        "inLanguage": "pt-BR",
+        "isAccessibleForFree": true
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://canalqb.github.io/landing.html#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Início",
+            "item": "https://canalqb.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Plataforma Educacional",
+            "item": "https://canalqb.github.io/landing.html"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://canalqb.github.io/landing.html#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "O que é o CanalQB?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "CanalQB é uma plataforma educacional brasileira criada por Rodrigo Moraes, focada em Bitcoin, criptografia e blockchain, oferecendo ferramentas gratuitas, scripts prontos e conteúdo exclusivo para estudo de private keys e puzzles BTC."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O que é o Puzzle 1000 BTC?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "É um desafio criptográfico criado em 2015 onde 1000 BTC foram distribuídos em 256 endereços com private keys em faixas de bits progressivas, tornando-se cada vez mais difíceis de encontrar. Até 2025, puzzles até o nível 68 já foram resolvidos."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "A ferramenta CanalQB é gratuita?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sim, a ferramenta é 100% gratuita e open source. Funciona diretamente no navegador, sem necessidade de cadastro, download ou instalação. Todo o processamento é feito client-side."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Como funciona a matriz 16x16 de Private Keys?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A matriz 16x16 representa visualmente os 256 bits de uma Private Key Bitcoin. Cada célula corresponde a um bit, permitindo visualizar e manipular chaves privadas de forma interativa, com suporte a geração sequencial e aleatória."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O que é WIF Comprimido e Não Comprimido?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "WIF (Wallet Import Format) é uma codificação Base58Check da chave privada. O formato Comprimido (prefixo K/L) usa chaves públicas de 33 bytes, enquanto o Não Comprimido (prefixo 5) usa 65 bytes. O formato comprimido é o padrão moderno."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- CSS Landing -->
+  <link rel="stylesheet" href="css/landing-styles.css">
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3614622181047762"
+    crossorigin="anonymous"></script>
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-NLMLKHPS');
+  </script>
+</head>
+
+<body class="lp-page">
+
+  <!-- GTM noscript -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NLMLKHPS" height="0" width="0"
+      style="display:none;visibility:hidden" aria-hidden="true"></iframe></noscript>
+
+  <!-- ============================================================
+       NAVBAR
+       ============================================================ -->
+  <nav class="lp-navbar" role="navigation" aria-label="Menu principal">
+    <div class="lp-container">
+      <a href="https://canalqb.github.io/" class="lp-brand" aria-label="CanalQB - Início">
+        <span class="lp-brand-icon"><i class="fas fa-key"></i></span>
+        <span>CanalQB</span>
+      </a>
+
+      <ul class="lp-nav-links" role="menubar">
+        <li role="none"><a href="#recursos" role="menuitem">Recursos</a></li>
+        <li role="none"><a href="#como-funciona" role="menuitem">Como Funciona</a></li>
+        <li role="none"><a href="#diferenciais" role="menuitem">Diferenciais</a></li>
+        <li role="none"><a href="#roadmap" role="menuitem">Roadmap</a></li>
+        <li role="none"><a href="https://canalqb.com.br/" target="_blank" rel="noopener" class="lp-nav-cta"
+            role="menuitem"><i class="fas fa-rocket"></i> Acessar Agora</a></li>
+      </ul>
+
+      <button class="lp-mobile-toggle" aria-label="Abrir menu" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO SECTION
+       ============================================================ -->
+  <header class="lp-hero" id="hero">
+    <div class="lp-hero-bg-effects" aria-hidden="true">
+      <div class="lp-hero-orb lp-hero-orb--1" data-lp-parallax="0.15"></div>
+      <div class="lp-hero-orb lp-hero-orb--2" data-lp-parallax="0.1"></div>
+      <div class="lp-hero-orb lp-hero-orb--3" data-lp-parallax="0.2"></div>
+      <div class="lp-hero-grid-overlay"></div>
+      <div class="lp-hero-particles"></div>
+    </div>
+
+    <div class="lp-container">
+      <div class="lp-hero-content">
+        <div class="lp-hero-badge">
+          <span class="pulse-dot"></span>
+          Plataforma 100% Gratuita e Open Source
+        </div>
+
+        <h1>
+          Domine a <span class="text-gradient">Criptografia Bitcoin</span><br>
+          com Ferramentas de Nível Profissional
+        </h1>
+
+        <p class="lp-hero-subtitle">
+          A plataforma educacional brasileira mais completa para estudo de Private Keys, puzzles BTC e blockchain.
+          Ferramentas interativas, scripts prontos e conteúdo validado na prática.
+        </p>
+
+        <div class="lp-hero-actions">
+          <a href="https://canalqb.github.io/" class="lp-btn lp-btn-primary">
+            <i class="fas fa-play"></i> Usar a Ferramenta Grátis
+          </a>
+          <a href="https://canalqb.com.br/" target="_blank" rel="noopener" class="lp-btn lp-btn-outline">
+            <i class="fas fa-blog"></i> Ver Conteúdos Exclusivos
+          </a>
+        </div>
+
+        <div class="lp-hero-stats">
+          <div class="lp-hero-stat">
+            <span class="lp-hero-stat-value" data-count="256" data-count-suffix="">0</span>
+            <span class="lp-hero-stat-label">Puzzles Bitcoin</span>
+          </div>
+          <div class="lp-hero-stat">
+            <span class="lp-hero-stat-value" data-count="1000" data-count-suffix=" BTC">0</span>
+            <span class="lp-hero-stat-label">Em Recompensas</span>
+          </div>
+          <div class="lp-hero-stat">
+            <span class="lp-hero-stat-value" data-count="100" data-count-suffix="%">0</span>
+            <span class="lp-hero-stat-label">Gratuito</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main">
+
+    <!-- ============================================================
+         SEÇÃO: RECURSOS (Features)
+         ============================================================ -->
+    <section class="lp-section" id="recursos" aria-labelledby="features-title">
+      <div class="lp-container">
+        <div class="lp-section-header lp-reveal">
+          <span class="lp-section-badge"><i class="fas fa-star"></i> Recursos</span>
+          <h2 id="features-title" class="lp-section-title">Tudo que Você Precisa para<br>Estudar Bitcoin</h2>
+          <p class="lp-section-desc">Ferramentas desenvolvidas por quem entende do assunto, testadas e validadas com a
+            comunidade brasileira de cripto.</p>
+        </div>
+
+        <div class="lp-features-grid">
+          <article class="lp-feature-card lp-reveal" data-delay="0">
+            <div class="lp-feature-icon"><i class="fas fa-th"></i></div>
+            <h3>Matriz 16×16 Interativa</h3>
+            <p>Visualize e manipule bits de uma Private Key em tempo real com nossa matriz exclusiva de 256 células.
+            </p>
+          </article>
+
+          <article class="lp-feature-card lp-reveal" data-delay="100">
+            <div class="lp-feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+            <h3>Explorador de Puzzles BTC</h3>
+            <p>Navegue pelos 256 puzzles do desafio 1000 BTC, com faixas HEX e WIF pré-configuradas para cada nível.</p>
+          </article>
+
+          <article class="lp-feature-card lp-reveal" data-delay="200">
+            <div class="lp-feature-icon"><i class="fas fa-exchange-alt"></i></div>
+            <h3>Conversor Universal de Chaves</h3>
+            <p>Converta entre HEX, WIF Comprimido, WIF Não Comprimido, Binário e Inteiro instantaneamente.</p>
+          </article>
+
+          <article class="lp-feature-card lp-reveal" data-delay="300">
+            <div class="lp-feature-icon"><i class="fas fa-cogs"></i></div>
+            <h3>Geração Sequencial e Aleatória</h3>
+            <p>Modos horizontal, vertical, aleatório H e V com controle de velocidade ajustável de 1ms a 50ms.</p>
+          </article>
+
+          <article class="lp-feature-card lp-reveal" data-delay="400">
+            <div class="lp-feature-icon"><i class="fas fa-database"></i></div>
+            <h3>Integração Supabase</h3>
+            <p>Progresso salvo na nuvem com rastreamento de intervalos HEX, WIF e porcentagem de conclusão.</p>
+          </article>
+
+          <article class="lp-feature-card lp-reveal" data-delay="500">
+            <div class="lp-feature-icon"><i class="fas fa-search-dollar"></i></div>
+            <h3>Eggs Hunter Inteligente</h3>
+            <p>Busca automática por carteiras com saldo, com registro instantâneo no banco de dados ao encontrar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: COMO FUNCIONA
+         ============================================================ -->
+    <!-- AdSense: In-Article #1 -->
+    <div class="lp-section" style="padding: 40px 0;">
+      <div class="lp-container">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="8052390745" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </div>
+
+    <section class="lp-section" id="como-funciona" aria-labelledby="steps-title"
+      style="background: linear-gradient(180deg, transparent 0%, rgba(99,102,241,0.04) 50%, transparent 100%);">
+      <div class="lp-container">
+        <div class="lp-section-header lp-reveal">
+          <span class="lp-section-badge"><i class="fas fa-route"></i> Passo a Passo</span>
+          <h2 id="steps-title" class="lp-section-title">Como Funciona</h2>
+          <p class="lp-section-desc">Da teoria à prática em 4 passos simples. Comece a explorar o mundo da criptografia
+            Bitcoin agora.</p>
+        </div>
+
+        <div class="lp-steps">
+          <div class="lp-step lp-reveal" data-delay="0">
+            <div class="lp-step-number">1</div>
+            <h3>Escolha o Puzzle</h3>
+            <p>Selecione um dos 190+ puzzles BTC disponíveis com faixa de bits pré-configurada.</p>
+          </div>
+
+          <div class="lp-step lp-reveal" data-delay="150">
+            <div class="lp-step-number">2</div>
+            <h3>Configure a Matriz</h3>
+            <p>Defina altura, base e modo de varredura (sequencial ou aleatório) na matriz 16×16.</p>
+          </div>
+
+          <div class="lp-step lp-reveal" data-delay="300">
+            <div class="lp-step-number">3</div>
+            <h3>Gere as Chaves</h3>
+            <p>Inicie a geração e acompanhe em tempo real as Private Keys sendo geradas nos formatos HEX e WIF.</p>
+          </div>
+
+          <div class="lp-step lp-reveal" data-delay="450">
+            <div class="lp-step-number">4</div>
+            <h3>Monitore Resultados</h3>
+            <p>O sistema verifica automaticamente se cada chave possui saldo e registra descobertas no banco.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: DIFERENCIAIS (Showcase)
+         ============================================================ -->
+    <section class="lp-section" id="diferenciais" aria-labelledby="diff-title">
+      <div class="lp-container">
+        <div class="lp-showcase">
+          <div class="lp-showcase-visual lp-reveal-left" data-lp-parallax="0.05">
+            <canvas id="lp-matrix-canvas" aria-label="Animação visual da matriz 16x16"></canvas>
+          </div>
+
+          <div class="lp-showcase-content lp-reveal-right">
+            <span class="lp-section-badge"><i class="fas fa-shield-alt"></i> Por que CanalQB?</span>
+            <h2 id="diff-title">Construído por Quem <span style="color:var(--lp-primary)">Vive</span> Isso Todo Dia
+            </h2>
+            <p>Não somos teóricos. Somos desenvolvedores e entusiastas que testam, erram e validam na prática. Cada
+              recurso da plataforma nasceu de uma necessidade real da comunidade.</p>
+
+            <ul class="lp-check-list">
+              <li>
+                <span class="check-icon"><i class="fas fa-check"></i></span>
+                <span><strong>100% Client-Side</strong> — Nenhum dado sensível sai do seu navegador</span>
+              </li>
+              <li>
+                <span class="check-icon"><i class="fas fa-check"></i></span>
+                <span><strong>Open Source</strong> — Código transparente e auditável pela comunidade</span>
+              </li>
+              <li>
+                <span class="check-icon"><i class="fas fa-check"></i></span>
+                <span><strong>Sem Cadastro</strong> — Use imediatamente, sem barreiras</span>
+              </li>
+              <li>
+                <span class="check-icon"><i class="fas fa-check"></i></span>
+                <span><strong>Background Processing</strong> — Continue gerando mesmo com a aba fechada</span>
+              </li>
+              <li>
+                <span class="check-icon"><i class="fas fa-check"></i></span>
+                <span><strong>Cripto nativa</strong> — SHA-256 via Web Crypto API com fallback</span>
+              </li>
+            </ul>
+
+            <div style="margin-top: 32px;">
+              <a href="https://canalqb.github.io/" class="lp-btn lp-btn-primary">
+                <i class="fas fa-external-link-alt"></i> Experimentar Agora
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: ROADMAP / PLANO DE DESENVOLVIMENTO
+         ============================================================ -->
+    <!-- AdSense: In-Article #2 -->
+    <div class="lp-section" style="padding: 40px 0;">
+      <div class="lp-container">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3614622181047762"
+          data-ad-slot="8052390745" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+      </div>
+    </div>
+
+    <section class="lp-section" id="roadmap" aria-labelledby="roadmap-title"
+      style="background: linear-gradient(180deg, transparent 0%, rgba(247,147,26,0.04) 50%, transparent 100%);">
+      <div class="lp-container">
+        <div class="lp-section-header lp-reveal">
+          <span class="lp-section-badge"><i class="fas fa-map-marked-alt"></i> Roadmap</span>
+          <h2 id="roadmap-title" class="lp-section-title">Plano de Desenvolvimento</h2>
+          <p class="lp-section-desc">Evolução contínua da plataforma com entregas incrementais e foco em valor real para
+            o usuário.</p>
+        </div>
+
+        <div class="lp-roadmap">
+          <div class="lp-roadmap-item lp-reveal" data-delay="0">
+            <div class="lp-roadmap-phase">1</div>
+            <div>
+              <h4>Core Funcional</h4>
+              <p>Matriz 16×16, geração de chaves, conversor universal, presets de puzzles e integração Supabase.</p>
+              <span class="lp-roadmap-status lp-status-done"><i class="fas fa-check"></i> Concluído</span>
+            </div>
+          </div>
+
+          <div class="lp-roadmap-item lp-reveal" data-delay="100">
+            <div class="lp-roadmap-phase">2</div>
+            <div>
+              <h4>Background & Performance</h4>
+              <p>Processamento em background com Web Workers, Service Worker, persistência de sessão e cache offline.</p>
+              <span class="lp-roadmap-status lp-status-done"><i class="fas fa-check"></i> Concluído</span>
+            </div>
+          </div>
+
+          <div class="lp-roadmap-item lp-reveal" data-delay="200">
+            <div class="lp-roadmap-phase">3</div>
+            <div>
+              <h4>Landing Page & SEO</h4>
+              <p>Página de apresentação premium, otimização SEO técnico, Schema.org e AdSense compliance.</p>
+              <span class="lp-roadmap-status lp-status-progress"><i class="fas fa-spinner"></i> Em Progresso</span>
+            </div>
+          </div>
+
+          <div class="lp-roadmap-item lp-reveal" data-delay="300">
+            <div class="lp-roadmap-phase">4</div>
+            <div>
+              <h4>PWA & Mobile</h4>
+              <p>Progressive Web App instalável, notificações push, tema escuro nativo e experiência mobile-first.</p>
+              <span class="lp-roadmap-status lp-status-planned"><i class="fas fa-clock"></i> Planejado</span>
+            </div>
+          </div>
+
+          <div class="lp-roadmap-item lp-reveal" data-delay="400">
+            <div class="lp-roadmap-phase">5</div>
+            <div>
+              <h4>Dashboard Analytics</h4>
+              <p>Gráficos em tempo real de keys/segundo, probabilidade de sucesso e histórico de gerações.</p>
+              <span class="lp-roadmap-status lp-status-planned"><i class="fas fa-clock"></i> Planejado</span>
+            </div>
+          </div>
+
+          <div class="lp-roadmap-item lp-reveal" data-delay="500">
+            <div class="lp-roadmap-phase">6</div>
+            <div>
+              <h4>Internacionalização</h4>
+              <p>Suporte a Inglês e Espanhol para alcançar a audiência global do Bitcoin.</p>
+              <span class="lp-roadmap-status lp-status-planned"><i class="fas fa-clock"></i> Planejado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO: CTA FINAL
+         ============================================================ -->
+    <section class="lp-section lp-cta-section" id="cta" aria-labelledby="cta-title">
+      <div class="lp-container">
+        <div class="lp-cta-box lp-reveal">
+          <h2 id="cta-title">Pronto para Explorar o<br><span style="color:var(--lp-primary)">Mundo da Criptografia
+              Bitcoin?</span></h2>
+          <p>Acesse scripts prontos, conteúdos exclusivos e recursos gratuitos no blog CanalQB. Comece agora — é 100%
+            grátis, sem cadastro.</p>
+          <div class="lp-hero-actions">
+            <a href="https://canalqb.github.io/" class="lp-btn lp-btn-primary">
+              <i class="fas fa-key"></i> Abrir a Ferramenta
+            </a>
+            <a href="https://canalqb.com.br/" target="_blank" rel="noopener" class="lp-btn lp-btn-outline">
+              <i class="fas fa-book-open"></i> Blog CanalQB
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="lp-footer" role="contentinfo">
+    <div class="lp-container">
+      <ul class="lp-footer-links" role="navigation" aria-label="Links do rodapé">
+        <li><a href="https://canalqb.github.io/">Ferramenta</a></li>
+        <li><a href="https://canalqb.com.br/" target="_blank" rel="noopener">Blog</a></li>
+        <li><a href="paginas/sobre.html">Sobre</a></li>
+        <li><a href="paginas/politicadeprivacidade.html">Privacidade</a></li>
+        <li><a href="paginas/termos.html">Termos</a></li>
+        <li><a href="paginas/contato.html">Contato</a></li>
+        <li><a href="paginas/disclaimer.html">Disclaimer</a></li>
+      </ul>
+      <p class="lp-footer-copy">
+        &copy; 2025–2026 CanalQB — Rodrigo Moraes. Todos os direitos reservados.<br>
+        <small>Este site é exclusivamente educacional. Nunca use chaves geradas online para armazenar Bitcoin
+          real.</small>
+      </p>
+    </div>
+  </footer>
+
+  <!-- JS Landing -->
+  <script src="js/landing-page.js"></script>
+
+</body>
+
+</html>

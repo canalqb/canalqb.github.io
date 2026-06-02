@@ -125,7 +125,7 @@
 #ad-in-article-3 .ad-label,
 .ad-in-article .ad-label {
   font-size: 0.6rem;
-  color: #6c757d;
+  color: var(--text-muted, #718096);
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -138,9 +138,9 @@
   bottom: 20px;
   right: 20px;
   z-index: 9998;
-  background: white;
+  background: var(--bg-card, #ffffff);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg, 0 10px 40px rgba(0, 0, 0, 0.15));
   max-width: 360px;
   min-width: 280px;
   overflow: hidden;
@@ -148,6 +148,7 @@
   opacity: 1;
   visibility: visible;
   transition: all 0.3s ease;
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 /* Oculta quando vazio */
@@ -166,7 +167,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-color, #28a745);
   color: white;
   border-radius: 12px 12px 0 0;
 }
@@ -214,7 +215,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
+  background: var(--bg-secondary, #f8fafb);
   border-radius: 0 0 12px 12px;
 }
 
@@ -224,20 +225,23 @@
   background: transparent;
 }
 
-/* Suporte a Dark Mode (futuro) */
-@media (prefers-color-scheme: dark) {
-  .ad-floating-content {
-    background: #2d3748;
-  }
+/* Suporte a Dark Mode */
+[data-theme="dark"] .ad-floating-content {
+  background: var(--bg-secondary, #161b22);
+}
 
-  .ad-floating {
-    background: #1a202c;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  }
+[data-theme="dark"] .ad-floating {
+  background: var(--bg-card, #1c2128);
+  border-color: var(--border-color, #30363d);
+  box-shadow: var(--shadow-lg, 0 10px 40px rgba(0, 0, 0, 0.5));
+}
 
-  .ad-label {
-    color: #a0aec0 !important;
-  }
+[data-theme="dark"] .ad-label {
+  color: var(--text-muted, #8b949e) !important;
+}
+
+[data-theme="dark"] .ad-floating-header {
+  background: var(--bg-tertiary, #21262d);
 }
 
 /* Animações */
@@ -383,10 +387,10 @@
 /* Classe para bloqueador detectado */
 .ads-blocked {
   padding: 12px;
-  background: #fff3cd;
+  background: var(--bg-secondary, #fff3cd);
   border: 1px solid #ffc107;
   border-radius: 8px;
-  color: #856404;
+  color: var(--text-secondary, #856404);
   font-size: 0.85rem;
   margin: 12px 0;
   text-align: center;
@@ -407,13 +411,13 @@ body[data-device-type]::before {
 .ad-awaiting-consent {
   opacity: 0.5;
   pointer-events: none;
-  background: #f0f0f0;
-  border: 1px dashed #ccc;
+  background: var(--bg-tertiary, #f0f0f0);
+  border: 1px dashed var(--border-color, #ccc);
   border-radius: 4px;
   padding: 8px;
   text-align: center;
   font-size: 0.8rem;
-  color: #666;
+  color: var(--text-muted, #666);
 }
 
 .ad-awaiting-consent::after {

@@ -27,7 +27,7 @@
     upgrade-insecure-requests;
   ">
   <meta name="description" content="Gerador educacional de Private Keys Bitcoin usando matriz 16x16 interativa. Explore o Puzzle 1000 BTC e aprenda criptografia Bitcoin com Rodrigo Moraes — CanalQB.">
-  <meta name="keywords" content="bitcoin, private key, bitcoin private key, puzzle bitcoin, puzzle 1000 btc, gerador bitcoin, bitcoin puzzle, matriz 16x16, cryptography, blockchain, chave privada bitcoin, estudo bitcoin, privatekeys, privatekeys.pw, puzzle, puzzles, bitcoin-puzzle-tx, rodrigo moraes, canalqb, canalqb.blogspot.com">
+  <meta name="keywords" content="bitcoin, bitcoin private key, gerador de chave privada bitcoin, private key generator, bitcoin key generator, puzzle bitcoin, puzzle 1000 btc, bitcoin puzzle 2025, puzzle btc, btc puzzle challenge, bitcoin puzzle solver, gerador bitcoin, bitcoin puzzle, matriz 16x16 bitcoin, cryptography, bitcoin cryptography, criptografia bitcoin, blockchain, chave privada bitcoin, private key, estudo bitcoin, estudo criptomoedas, aprender bitcoin, como funciona bitcoin, bitcoin Brasil, privatekeys, privatekeys.pw, bitcoin-puzzle-tx, rodrigo moraes, canalqb, canalqb.blogspot.com, secp256k1, base58check, wif compressed, wif uncompressed, hex to wif, bitcoin private key hex, gerador bitcoin online, ferramenta bitcoin gratuita, open source bitcoin tool, bitcoin educational tool, bitcoin wallet, desafio bitcoin, criptomoedas, Bitcoin">
   <meta name="author" content="Rodrigo Moraes — CanalQB">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="google-site-verification" content="2Y9-oF7dxXk9Xq-MNVGlef1S9EP8f95jwU7gUl7FrA8" />
@@ -40,6 +40,7 @@
   <meta property="og:title" content="Gerador Private Keys Bitcoin — Puzzle 1000 BTC | CanalQB">
   <meta property="og:description" content="Ferramenta educacional interativa para geração de Private Keys Bitcoin com matriz 16×16. Criado por Rodrigo Moraes do CanalQB para estudo de criptografia e puzzles Bitcoin.">
   <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://canalqb.github.io/favicon.ico">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -300,6 +301,11 @@
     })(window, document, 'script', 'dataLayer', 'GTM-NLMLKHPS');
   </script>
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <!-- CSS Externo -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
@@ -341,54 +347,6 @@
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Schema.org JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "@id": "https://canalqb.github.io/#website",
-        "url": "https://canalqb.github.io/",
-        "name": "CanalQB - Gerador de Private Keys Bitcoin",
-        "description": "Gerador educacional de Private Keys Bitcoin usando matriz 16x16 baseado no Puzzle 1000 BTC.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "CanalQB",
-          "url": "https://github.com/canalqb"
-        }
-      },
-      {
-        "@type": "WebApplication",
-        "@id": "https://canalqb.github.io/#webapp",
-        "name": "Gerador de Private Keys Bitcoin",
-        "url": "https://canalqb.github.io/",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "All",
-        "browserRequirements": "Requires JavaScript",
-        "description": "Aplicação educacional que demonstra a geração de Private Keys Bitcoin utilizando matriz 16x16 para estudo criptográfico.",
-        "creator": {
-          "@type": "Organization",
-          "name": "CanalQB",
-          "url": "https://github.com/canalqb"
-        }
-      },
-      {
-        "@type": "LearningResource",
-        "@id": "https://canalqb.github.io/#learningresource",
-        "name": "Bitcoin Private Key Puzzle 1000 BTC",
-        "educationalLevel": "Intermediate",
-        "learningResourceType": "Simulation",
-        "about": [
-          { "@type": "Thing", "name": "Bitcoin" },
-          { "@type": "Thing", "name": "Criptografia" },
-          { "@type": "Thing", "name": "Blockchain" }
-        ],
-        "description": "Recurso educacional para estudo de chaves privadas Bitcoin e puzzles criptográficos."
-      }
-    ]
-  }
-  </script>
   <!-- =============================================
      CSS MOBILE RESPONSIVO — apenas inline
      Não altera nenhum CSS/JS existente
@@ -868,6 +826,160 @@
   }
 }
 </style>
+
+<!-- =============================================
+     CSS PREMIUM — Hero Enhancements, Scroll Reveal,
+     Counter Animations, prefers-reduced-motion
+     (Inspirado no landing-styles.css)
+     ============================================= -->
+<style>
+/* -----------------------------------------------
+   HERO BADGE — Pill com pulse dot
+----------------------------------------------- */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(40, 167, 69, 0.12);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  padding: 6px 18px;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--green-600, #218838);
+  margin-bottom: 12px;
+  animation: cqbFadeInUp 0.8s ease-out;
+}
+
+.hero-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: cqbPulse 2s ease-in-out infinite;
+}
+
+/* -----------------------------------------------
+   HERO GRADIENT TEXT
+----------------------------------------------- */
+.hero-text-gradient {
+  background: linear-gradient(135deg, #F7931A 0%, #f59e0b 50%, #28a745 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* -----------------------------------------------
+   HERO STATS — Contadores animados
+----------------------------------------------- */
+.hero-stats {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  margin-top: 20px;
+  animation: cqbFadeInUp 0.8s ease-out 0.4s both;
+}
+
+.hero-stat-item {
+  text-align: center;
+}
+
+.hero-stat-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--btc-orange, #F7931A);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.hero-stat-label {
+  font-size: 0.78rem;
+  color: var(--text-muted, #718096);
+  margin-top: 2px;
+}
+
+/* Dark theme adaptation */
+[data-theme="dark"] .hero-badge {
+  background: rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.4);
+  color: #a5d6a7;
+}
+
+[data-theme="dark"] .hero-stat-label {
+  color: #94a3b8;
+}
+
+/* -----------------------------------------------
+   SCROLL REVEAL — IntersectionObserver
+----------------------------------------------- */
+.cqb-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.cqb-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* -----------------------------------------------
+   ANIMAÇÕES KEYFRAMES
+----------------------------------------------- */
+@keyframes cqbFadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cqbPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+/* -----------------------------------------------
+   RESPONSIVIDADE — Hero Stats
+----------------------------------------------- */
+@media (max-width: 768px) {
+  .hero-stats {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .hero-stat-value {
+    font-size: 1.3rem;
+  }
+  .hero-badge {
+    font-size: 0.75rem;
+    padding: 5px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats {
+    gap: 14px;
+  }
+  .hero-stat-value {
+    font-size: 1.1rem;
+  }
+  .hero-stat-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* -----------------------------------------------
+   ACESSIBILIDADE — prefers-reduced-motion
+----------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .cqb-reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -895,6 +1007,9 @@
       <a class="navbar-brand fw-bold text-primary" href="https://canalqb.infinityfree.me/" target="_blank"
         rel="noopener noreferrer" aria-label="Visitar sistema de troca de inscritos">
         <i class="fas fa-right-left" aria-hidden="true"></i> Troca de Inscritos
+      </a>
+      <a class="navbar-brand fw-bold text-primary" href="landing.html" aria-label="Landing Page CanalQB">
+        <i class="fas fa-rocket" aria-hidden="true"></i> Landing
       </a>
 
       <!-- Botão para Ver Carteiras Localizadas -->
@@ -1014,9 +1129,27 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <main id="main-content" class="main-content flex-grow-1" role="main">
       <!-- Hero Section -->
-      <div class="hero-section">
-        <h1>🔑 Gerador de Private Keys Bitcoin</h1>
-        <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16</p>
+      <div class="hero-section cqb-reveal">
+        <div class="hero-badge">
+          <span class="hero-pulse-dot"></span>
+          Plataforma 100% Gratuita e Open Source
+        </div>
+        <h1>🔑 Gerador de <span class="hero-text-gradient">Private Keys Bitcoin</span></h1>
+        <p class="subtitle">Ferramenta Educacional Interativa usando Matriz 16×16 — Puzzle 1000 BTC</p>
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <span class="hero-stat-value" data-count="256" data-count-suffix="">0</span>
+            <span class="hero-stat-label">Puzzles Bitcoin</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-value" data-count="1000" data-count-suffix=" BTC">0</span>
+            <span class="hero-stat-label">Em Recompensas</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-value" data-count="100" data-count-suffix="%">0</span>
+            <span class="hero-stat-label">Gratuito</span>
+          </div>
+        </div>
       </div>
 
       <!-- Preencher a matriz com Private Key HEX -->
@@ -1030,7 +1163,7 @@
       </div>
 
       <!-- Canvas Centralizado - MATRIZ 16x16 INTACTA -->
-      <div class="canvas-wrapper">
+      <div class="canvas-wrapper cqb-reveal" data-delay="100">
         <canvas id="grid" aria-label="Matriz interativa 16x16 para seleção de células" width="1200"
           height="900"></canvas>
       </div>
@@ -1039,7 +1172,7 @@
         <strong>🔢 HEX Selecionado:</strong> <span id="hexValue">0</span>
       </div>
       <!-- Preset (combobox) -->
-      <div class="preset-row">
+      <div class="preset-row cqb-reveal" data-delay="150">
         <label for="presetBits" class="preset-label"><i class="fas fa-layer-group"></i> Puzzle:</label>
         <select class="form-select" id="presetBits" aria-label="Selecionar quantidade de bits">
           <option value="70" selected>Puzzle 71 (2^70 a 2^71 - 1)</option>
@@ -1504,15 +1637,20 @@
     <nav class="footer-nav container" aria-label="Navegação rodapé">
       <ul class="list-unstyled d-flex flex-wrap gap-3 justify-content-center">
         <li><a href="/">Home</a></li>
+        <li><a href="landing.html">Landing Page</a></li>
+        <li><a href="https://canalqb.com.br/" target="_blank" rel="noopener">Blog</a></li>
         <li><a href="paginas/sobre.html" class="dynamic-link">Sobre</a></li>
         <li><a href="paginas/politicadeprivacidade.html" class="dynamic-link">Privacidade</a></li>
+        <li><a href="paginas/termos.html" class="dynamic-link">Termos</a></li>
         <li><a href="paginas/disclaimer.html" class="dynamic-link">Disclaimer</a></li>
         <li><a href="paginas/contato.html" class="dynamic-link">Contato</a></li>
+        <li><a href="paginas/cookies.html" class="dynamic-link">Cookies</a></li>
       </ul>
     </nav>
     <div class="text-center small text-muted">
-      © 2025 @CanalQb – Rodrigo Carlos Moraes<br />
-      Gerador de private keys Bitcoin - Puzzle 1000 BTC
+      © 2025–2026 CanalQB — Rodrigo Carlos Moraes. Todos os direitos reservados.<br />
+      <small>Gerador de Private Keys Bitcoin — Puzzle 1000 BTC<br />
+      Este site é exclusivamente educacional. Nunca use chaves geradas online para armazenar Bitcoin real.</small>
     </div>
   </footer>
 
@@ -1983,7 +2121,7 @@
 
   <script src="js/matriz.js?v=20260330-1600" defer></script>
   <script src="js/auto16-preset.js?v=20260330-1600" defer></script>
-  <script src="js/eggs-hunter.js?v=20260330-1600" defer="defer"></script>
+  <script src="js/eggs-hunter.js?v=20260601" defer="defer"></script>
 
   <!-- SCRIPT DE NAVEGAÇÃO DINÂMICA -->
   <script>
@@ -2681,6 +2819,101 @@
   <script src="js/cell-percent-config.js"></script>
   <script src="js/converter.js?v=20260330-1600" defer></script>
   <script src="js/footer-modal-manager.js?v=20260406-1043" defer></script>
+
+  <!-- =============================================
+       JS PREMIUM — Scroll Reveal + Counter Animations
+       (Inspirado no landing-page.js)
+       ============================================= -->
+  <script>
+  (function() {
+    'use strict';
+
+    /* =====================================================
+       SCROLL REVEAL — IntersectionObserver
+       ===================================================== */
+    function initScrollReveal() {
+      var revealElements = document.querySelectorAll('.cqb-reveal');
+      if (!revealElements.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        revealElements.forEach(function(el) { el.classList.add('visible'); });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var delay = entry.target.dataset.delay || 0;
+            setTimeout(function() {
+              entry.target.classList.add('visible');
+            }, Number(delay));
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.15,
+        rootMargin: '0px 0px -30px 0px'
+      });
+
+      revealElements.forEach(function(el) { observer.observe(el); });
+    }
+
+    /* =====================================================
+       COUNTER ANIMATION — Animated Stats
+       ===================================================== */
+    function initCounters() {
+      var counters = document.querySelectorAll('[data-count]');
+      if (!counters.length) return;
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      counters.forEach(function(counter) { observer.observe(counter); });
+    }
+
+    function animateCounter(el) {
+      var target = parseInt(el.dataset.count, 10);
+      var suffix = el.dataset.countSuffix !== undefined ? el.dataset.countSuffix : '';
+      var prefix = el.dataset.countPrefix || '';
+      var duration = 2000;
+      var start = performance.now();
+
+      function update(now) {
+        var elapsed = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        // Easing: easeOutExpo
+        var eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        var current = Math.floor(eased * target);
+        el.textContent = prefix + current.toLocaleString('pt-BR') + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    /* =====================================================
+       INIT
+       ===================================================== */
+    function init() {
+      initScrollReveal();
+      initCounters();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
 
 </body>
 

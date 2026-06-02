@@ -1,0 +1,43 @@
+# ============================================================
+# SUPABASE KEEP-ALIVE — Executa 1x por dia às 12:00 UTC
+# Impede desativação do projeto por inatividade (plano free)
+# ============================================================
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Todos os dias às 12:00 UTC
+  workflow_dispatch:        # Permite execução manual
+
+jobs:
+  keep-alive:
+    name: Ping Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Health check na REST API
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "Status: $HTTP_CODE"
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "⚠️ API respondeu com erro"
+          else
+            echo "✅ Supabase ativo"
+          fi
+
+      - name: Query direta no banco (opcional)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        if: env.SUPABASE_KEY != ''
+        run: |
+          curl -s -X POST \
+            "${SUPABASE_URL}/rest/v1/rpc/" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"query": "SELECT NOW()"}' || echo "Query ignorada"

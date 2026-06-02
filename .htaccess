@@ -1,7 +1,7 @@
 # ==========================================
 # 🔒 .HTACCESS - SEO & SECURITY OPTIMIZED 2026
 # ==========================================
-# Domínio: puzzlebtc.canalqb.com.br
+# Domínio: puzzle.canalqb.com.br
 # Padrão: Google SEO Best Practices
 # Atualizado: 2026-03-28
 
@@ -11,21 +11,21 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # ----- WWW para não-WWW -----
-RewriteCond %{HTTP_HOST} ^www\.puzzlebtc\.canalqb\.com\.br [NC]
-RewriteRule ^(.*)$ https://puzzlebtc.canalqb.com.br/$1 [L,R=301]
+RewriteCond %{HTTP_HOST} ^www\.puzzle\.canalqb\.com\.br [NC]
+RewriteRule ^(.*)$ https://puzzle.canalqb.com.br/$1 [L,R=301]
 
-# ----- CanalQB GitHub Pages para PuzzleBTC -----
+# ----- CanalQB GitHub Pages para puzzle -----
 RewriteCond %{HTTP_HOST} ^canalqb\.github\.io [NC]
-RewriteRule ^(.*)$ https://puzzlebtc.canalqb.com.br/$1 [L,R=301]
+RewriteRule ^(.*)$ https://puzzle.canalqb.com.br/$1 [L,R=301]
 
 # ----- Canonical URLs -----
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^?]+)\.html\ HTTP/
-RewriteRule ^([^?]+)\.html$ https://puzzlebtc.canalqb.com.br/$1 [R=301,L]
+RewriteRule ^([^?]+)\.html$ https://puzzle.canalqb.com.br/$1 [R=301,L]
 
 # ----- Remove trailing slash -----
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} /(.*)/$
-RewriteRule ^(.*)/$ https://puzzlebtc.canalqb.com.br/$1 [R=301,L]
+RewriteRule ^(.*)/$ https://puzzle.canalqb.com.br/$1 [R=301,L]
 
 # ----- Adiciona .html se não existir -----
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -42,7 +42,7 @@ RewriteRule ^([^\.]+)$ $1.html [NC,L]
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
     
     # Content Security Policy
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net *.google cdn.jsdelivr.net unpkg.com cdnjs.cloudflare.com blob:; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdnjs.cloudflare.com; font-src 'self' fonts.gstatic.com cdn.jsdelivr.net cdnjs.cloudflare.com; img-src 'self' data: *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net; connect-src 'self' https://puzzlebtc.canalqb.com.br https://canalqb.github.io https://*.supabase.co https://blockchain.info https://*.google.com https://*.doubleclick.net https://*.google https://*.google-analytics.com https://*.googlesyndication.com cdn.jsdelivr.net; frame-src 'self' *.google.com *.googlesyndication.com *.doubleclick.net *.adtrafficquality.google; worker-src 'self' blob:; child-src 'self' blob:; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" env=HTTPS
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net *.google cdn.jsdelivr.net unpkg.com cdnjs.cloudflare.com blob:; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdn.jsdelivr.net cdnjs.cloudflare.com; font-src 'self' fonts.gstatic.com cdn.jsdelivr.net cdnjs.cloudflare.com; img-src 'self' data: *.google.com *.googlesyndication.com *.googletagmanager.com *.google-analytics.com *.doubleclick.net; connect-src 'self' https://puzzle.canalqb.com.br https://canalqb.github.io https://*.supabase.co https://blockchain.info https://*.google.com https://*.doubleclick.net https://*.google https://*.google-analytics.com https://*.googlesyndication.com cdn.jsdelivr.net; frame-src 'self' *.google.com *.googlesyndication.com *.doubleclick.net *.adtrafficquality.google; worker-src 'self' blob:; child-src 'self' blob:; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" env=HTTPS
     
     # X-Frame-Options
     Header always set X-Frame-Options "SAMEORIGIN"

@@ -8,7 +8,7 @@
 }
 
 h1 {
-    color: #FF8000;
+    color: var(--btc-orange, #F7931A);
     font-size: 30px;
     font-weight: bold;
 }
@@ -19,17 +19,19 @@ h2 {
 }
 
 .textbox {
-    border: 1px dotted #000000;
+    border: 1px dotted var(--border-color, #e2e8f0);
     outline: 0;
     height: 25px;
     width: 476px;
     padding-left: 5px;
     padding-right: 5px;
     margin-bottom: 20px;
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #1a2332);
 }
 
 .textboxOnlineResult {
-    border: 1px dotted #000000;
+    border: 1px dotted var(--border-color, #e2e8f0);
     outline: 0;
     display: none;
     height: 25px;
@@ -37,10 +39,12 @@ h2 {
     padding-left: 5px;
     padding-right: 5px;
     margin-bottom: 20px;
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #1a2332);
 }
 
 .textboxVis {
-    border: 1px dotted #FF8000;
+    border: 1px dotted var(--btc-orange, #F7931A);
     outline: 0;
     height: 25px;
     width: 476px;
@@ -48,16 +52,20 @@ h2 {
     padding-right: 5px;
     margin-bottom: 20px;
     margin-top: 5px;
-    display: inline-block
+    display: inline-block;
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #1a2332);
 }
 
 .textfield {
-    border: 1px dotted #000000;
+    border: 1px dotted var(--border-color, #e2e8f0);
     outline: 0;
     height: 75px;
     width: 476px;
     padding-left: 5px;
     padding-right: 5px;
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #1a2332);
 }
 
 .TextDescr {
@@ -69,13 +77,13 @@ h2 {
     width: 660px;
     padding-left: 5px;
     padding-right: 5px;
-    background-color: #FDF4E3;
+    background-color: var(--bg-secondary, #f8fafb);
     overflow: hidden;
-    color: black;
+    color: var(--text-primary, #1a2332);
 }
 
 .TextWarn {
-    border: 1px solid red;
+    border: 1px solid #d32f2f;
     border-radius: 13px;
     resize: none;
     outline: 0;
@@ -83,13 +91,13 @@ h2 {
     width: 660px;
     padding-left: 5px;
     padding-right: 5px;
-    background-color: #FDF4E3;
+    background-color: rgba(211, 47, 47, 0.1);
     overflow: hidden;
-    color: red;
+    color: #d32f2f;
 }
 
 .VisWarn {
-    border: 1px solid orange;
+    border: 1px solid #ffc107;
     border-radius: 7px;
     resize: none;
     outline: 0;
@@ -97,40 +105,43 @@ h2 {
     width: 560px;
     padding-left: 11px;
     padding-right: 11px;
-    background-color: #FDF4E3;
+    background-color: rgba(255, 193, 7, 0.1);
     overflow: hidden;
-    color: black;
+    color: var(--text-primary, #1a2332);
 }
 
 .textfieldPK {
-    border: 1px dotted #000000;
+    border: 1px dotted var(--border-color, #e2e8f0);
     outline: 0;
     height: 30px;
     width: 484px;
     padding-left: 1px;
     padding-right: 1px;
+    background: var(--bg-primary, #ffffff);
+    color: var(--text-primary, #1a2332);
 }
 
 a.btn {
     color: #fff;
     text-decoration: none;
     user-select: none;
-    background: #FF8000;
+    background: var(--btc-orange, #F7931A);
     padding: .33em 1.0em;
     outline: none;
     border-width: 1px;
     border-style: solid;
-    border-color: #FDBE33 #000 #D77206;
+    border-color: var(--btc-orange-dark, #e07b0a);
     border-radius: 8px;
     transition: 0.2s;
 }
 
 a.btn:hover {
-    background: #FFA000;
+    background: var(--btc-orange-dark, #e07b0a);
 }
 
 a.btn:active {
-    background: #DAA520;
+    background: var(--btc-orange-dark, #e07b0a);
+    transform: translateY(1px);
 }
 
 .gtr {
@@ -141,7 +152,7 @@ a.btn:active {
 }
 
 .gtr+.gtr {
-    border-top: 1px solid #f0f2f3;
+    border-top: 1px solid var(--border-color, #e2e8f0);
 }
 
 .rtg {
@@ -155,7 +166,7 @@ a.btn:active {
     margin-right: 5px;
     width: 18px;
     height: 18px;
-    border: 2px solid #FF8000;
+    border: 2px solid var(--btc-orange, #F7931A);
     border-radius: 12px;
 }
 
@@ -168,7 +179,7 @@ a.btn:active {
     margin: -5px 0 0 -6px;
     height: 4px;
     width: 8px;
-    border: solid #39ca74;
+    border: solid var(--green-500, #28a745);
     border-width: 0 0 4px 4px;
     -webkit-transform: rotate(-45deg);
     -moz-transform: rotate(-45deg);
@@ -178,7 +189,7 @@ a.btn:active {
 }
 
 .rtg:checked~.mrt {
-    border-color: #39ca74;
+    border-color: var(--green-500, #28a745);
 }
 
 .rtg:checked~.mrt:before {
@@ -187,25 +198,25 @@ a.btn:active {
 
 .lst {
     font-weight: bold;
-    color: #39A9E1;
+    color: #2196f3;
 }
 
 .rtg:checked~.lst {
-    color: #34bf6e;
+    color: var(--green-500, #28a745);
 }
 
 .Reslbl {
     position: absolute;
     margin-left: 10px;
     margin-top: 5px;
-    color: #4682B4;
+    color: #2196f3;
 }
 
 .ExportDIVField {
-    background-color: #EEE8AA;
+    background-color: var(--bg-secondary, #f8fafb);
     padding-top: 0px;
     padding-bottom: 0px;
-    border: 2px solid orange;
+    border: 2px solid var(--btc-orange, #F7931A);
     border-radius: 20px;
     display: none;
 }
@@ -256,16 +267,16 @@ a.btn:active {
 
 a.AddrLink {
     text-decoration: none;
-    color: #4682B4;
+    color: #2196f3;
 }
 
 a.AddrLink:active {
-    color: #FF8C00
+    color: var(--btc-orange, #F7931A);
 }
 
 a.AddrLink:hover {
     font-size: 115%;
-    border: 2px solid orange;
+    border: 2px solid var(--btc-orange, #F7931A);
     border-radius: 11px;
     padding: 6px;
 }
@@ -276,9 +287,9 @@ a.AddrLink:hover {
     position: fixed;
     bottom: 150px;
     left: 140px;
-    background: #fff;
-    box-shadow: -3px 4px 12px -2px #333;
-    border: 5px solid orange;
+    background: var(--bg-card, #ffffff);
+    box-shadow: var(--shadow-lg, -3px 4px 12px -2px rgba(0,0,0,0.2));
+    border: 5px solid var(--btc-orange, #F7931A);
     border-radius: 5px;
     padding-right: 128px;
     padding-left: 128px;
@@ -293,11 +304,11 @@ a.AddrLink:hover {
 }
 
 .imgPopUp:hover {
-    color: #E88307;
+    color: var(--btc-orange-dark, #e07b0a);
 }
 
 .youtubeLink:hover {
-    color: #E88303;
+    color: var(--btc-orange-dark, #e07b0a);
 }
 
 .cbx {
@@ -321,7 +332,7 @@ a.AddrLink:hover {
     border-radius: 4px;
     transform: scale(1);
     vertical-align: middle;
-    border: 1px solid #4682B4;
+    border: 1px solid #2196f3;
     transition: all 0.2s ease;
 }
 
@@ -345,7 +356,7 @@ a.AddrLink:hover {
     content: "";
     width: 100%;
     height: 100%;
-    background: #FF8000;
+    background: var(--btc-orange, #F7931A);
     display: block;
     transform: scale(0);
     opacity: 1;
@@ -357,12 +368,12 @@ a.AddrLink:hover {
 }
 
 .cbx:hover span:first-child {
-    border-color: orange;
+    border-color: var(--btc-orange, #F7931A);
 }
 
 .inp-cbx:checked+.cbx span:first-child {
-    background: orange;
-    border-color: orange;
+    background: var(--btc-orange, #F7931A);
+    border-color: var(--btc-orange, #F7931A);
     animation: wave 0.4s ease;
 }
 
@@ -380,4 +391,45 @@ a.AddrLink:hover {
     50% {
         transform: scale(0.9);
     }
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] .mainDIVcss {
+    background: var(--bg-primary, #0d1117);
+}
+
+[data-theme="dark"] h1 {
+    color: var(--btc-orange, #F7931A);
+}
+
+[data-theme="dark"] .textbox,
+[data-theme="dark"] .textboxOnlineResult,
+[data-theme="dark"] .textboxVis,
+[data-theme="dark"] .textfield,
+[data-theme="dark"] .textfieldPK {
+    background: var(--bg-primary, #0d1117);
+    color: var(--text-primary, #e6edf3);
+    border-color: var(--border-color, #30363d);
+}
+
+[data-theme="dark"] .TextDescr,
+[data-theme="dark"] .VisWarn {
+    background-color: var(--bg-secondary, #161b22);
+    color: var(--text-primary, #e6edf3);
+}
+
+[data-theme="dark"] .TextWarn {
+    background-color: rgba(211, 47, 47, 0.15);
+    color: #ef5350;
+}
+
+[data-theme="dark"] .ExportDIVField {
+    background-color: var(--bg-secondary, #161b22);
+    border-color: var(--btc-orange, #F7931A);
+}
+
+[data-theme="dark"] .imgPopUp span {
+    background: var(--bg-card, #1c2128);
+    border-color: var(--btc-orange, #F7931A);
+    box-shadow: var(--shadow-lg, 0 10px 28px rgba(0, 0, 0, 0.5));
 }
